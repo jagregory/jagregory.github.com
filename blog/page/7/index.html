@@ -1,0 +1,1300 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="Data-binding Hierarchical Objects After my post about my ObjectField column, I thought I&#8217;d elaborate a bit on why it&#8217;s necessary. When &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/data-binding-hierarchical-objects/">Data-binding Hierarchical Objects</a></h1>
+    <div class="entry">
+        <p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I&#8217;d elaborate a bit on why it&#8217;s necessary.</p>
+
+<p>When you&#8217;re data binding against an object that isn&#8217;t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code>BoundField</code> incorrectly handling a hierarchical object path.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>A field or property with the name 'MySubObject.PropertyName' was not found on the selected data source.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Take this following Customer object for example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Customer</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">public</span> <span class="n">ContactDetails</span> <span class="n">ContactDetails</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">contactDetails</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ContactDetails</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">public</span> <span class="kt">string</span> <span class="n">TelephoneNumber</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">telephoneNumber</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you were to just use <code>DataField="ContactDetails"</code> on a <code>BoundField</code>, it would work fine because it&#8217;s binding against a property on your customer. However,  if you were to try to get the <code>TelephoneNumber</code> property of the <code>ContactDetails</code> by doing: <code>DataField="ContactDetails.TelephoneNumber"</code>, it would fail because the field can&#8217;t interpret the two property names; it treats the <code>DataField</code> as one big name, which obviously isn&#8217;t correct.</p>
+
+<p>The <code>BoundField</code> simply isn&#8217;t capable of resolving this kind of hierarchical path using late-binding. This is because it uses the DataField as the literal property name on the component, using a TypeDescriptor to get the property.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">TypeDescriptor</span><span class="p">.</span><span class="n">GetProperties</span><span class="p">(</span><span class="n">component</span><span class="p">).</span><span class="n">Find</span><span class="p">(</span><span class="n">dataField</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path. It&#8217;s pure speculation, but if this is a conscious decision it may be down to the performance implications of using late binding; however, I can&#8217;t see that it&#8217;s any worse than reflection.</p>
+
+<p>Unfortunately there isn&#8217;t a solution to this if you still want to use the <code>BoundField</code>. If you don&#8217;t mind a bit of untidy mark-up, you can do this instead:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;asp:TemplateField&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ItemTemplate&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;%#</span> <span class="n">Eval</span><span class="p">(</span><span class="s">&quot;ContactDetails.TelephoneNumber&quot;</span><span class="p">)</span> <span class="nt">%&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ItemTemplate&gt;</span>
+</span><span class='line'><span class="nt">&lt;/asp:TemplateField&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is pretty messy though, and you&#8217;re going to quadruple the markup for your columns; imagine having 10 of those, it&#8217;s going to get pretty ugly. My solution is to use the <a href="/writings/objectfield/">ObjectField I wrote about previously</a>, which is a column that derives from <code>BoundField</code> and overrides it&#8217;s binding mechanism, allowing it to correctly evaluate hierarchical paths.</p>
+
+<p>The <code>ObjectField</code> allows you to use the familiar markup from the <code>BoundField</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;jag:ObjectField</span> <span class="na">BoundField=</span><span class="s">&quot;ContactDetails.TelephoneNumber&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hopefully one of those solutions will suit you. Personally I&#8217;d prefer to see the <code>ObjectField</code>, or other derived field, instead of the nasty <code>TemplateField</code> usage.</p>
+
+<p><em>This is a follow up to my ObjectField post, because a few people have been hitting that page in search of the exception, which it doesn&#8217;t really cover.</em></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/objectfield/">ObjectField - a GridView Field</a></h1>
+    <div class="entry">
+        <blockquote><p>The version of the ObjectField that this post refers to is now out of date. Please go to the <a href="/writings/objectfield-11/">ObjectField 1.1</a> post for the latest version.</p></blockquote>
+
+<p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn&#8217;t support specifying a nested value in it&#8217;s DataField property. So if you have a list of Customer&#8217;s, and want to display the TelephoneNumber property from inside the customer&#8217;s ContactDetails property, you&#8217;re out of luck.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">&quot;ContactDetails.TelephoneNumber&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above would fall over with an exception along the lines of:
+<code>A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
+
+<p>This is a mind-boggling flaw in the BoundField, with the main solution being to create a nested GridView, which is just overkill for most situations. This problem especially rears it&#8217;s ugly head if you&#8217;re using an ORM layer such as <a href="http://www.nhibernate.org/">NHibernate</a> or <a href="http://www.subsonicproject.com">SubSonic</a>.</p>
+
+<p>So what have I done? I&#8217;ve just gone and created a solution to this problem.</p>
+
+<p>Introducing the ObjectField, a GridView field that allows binding against hierarchical structured objects. In short, it takes a BoundField and splits it on full-stops (periods!) using each element to find an object.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;jag:ObjectField</span> <span class="na">DataField=</span><span class="s">&quot;ContactDetails.TelephoneNumber&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above is now possible! Huzzah.</p>
+
+<h2>Extras</h2>
+
+<p>There&#8217;s one extra thing you should know about. The field has a couple of additional properties that can be useful.</p>
+
+<p>The first is <code>AllowNulls</code> which defaults to <code>true</code>, this will make the field return silently when a null is encountered anywhere along the object hierarchy; this can be useful if you know that there might be a null somewhere along the lines.</p>
+
+<p>The second property is <code>NullValue</code>, which is displayed by the field when <code>AllowNulls</code> is <code>true</code> and a null is encountered. Setting this value allows you to give a user-friendly message if a value is null.</p>
+
+<h2>Downloads</h2>
+
+<p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-17T00:00:00+11:00" pubdate data-updated="true">Feb 17<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/nhibernate-and-the-sqltypeexception/">NHibernate and the SqlTypeException</a></h1>
+    <div class="entry">
+        <p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I&#8217;ve had trouble it&#8217;s actually ended up being my own fault. <em>This is one of those times.</em></p>
+
+<p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
+
+<p>Upon execution of the second query, NHibernate was throwing a <code>SqlTypeException</code> for a <code>SqlDateTime</code> overflow. <code>SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
+
+<p>A good place to start for NHibernate debugging is always the logs, so I delved in. I discovered NHibernate was attempting to execute an update statement just before it tried the second query. It just kept getting stranger, why would a straightforward query cause an update?</p>
+
+<p>I thought i&#8217;d investigate why the update statement was failing first, then I&#8217;d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code>DateTime</code> column that was trying to be set to <code>DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code>DateTime</code> should be.</p>
+
+<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn&#8217;t. So because <code>DateTime</code> is a value type and cannot be set to <code>null</code>, NHibernate was populating it with the closest value to <code>null</code> as it could manage.</p>
+
+<p>That was the key, as soon as I had that realisation, it was obvious what the problem was.</p>
+
+<p>NHibernate knew that the database had a nullable column, but it had to manage with the non-nullable field on the object. When it came to run the second query, it noticed that the property wasn&#8217;t null as the mapping file said it should be, so it determined the value must have changed. It then attempted to persist those changes before executing the query!</p>
+
+<h2>To break it down</h2>
+
+<ol>
+  <li>Nullable column pulled into a non-nullable field forces NHibernate to create the smallest value it can.</li>
+  <li>NHibernate then checks for any changes, expecting a <code>null</code> on that field but finding a value.</li>
+  <li>Object now considered dirty because value has allegedly changed.</li>
+  <li>NHibernate performs an update before it pulls back the data agian.</li>
+</ol>
+
+
+<p>So the fix was simply to make the <code>DateTime</code> in the object a <code>DateTime?</code>, a nullable <code>DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
+
+<p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-18T00:00:00+11:00" pubdate data-updated="true">Dec 18<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/percieved-value-and-developer-education/">Percieved Value and Developer Education</a></h1>
+    <div class="entry">
+        <p>A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller&#8217;s blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.</p>
+
+<p>He makes a fair point really, we use tools because they solve a problem for us, if we haven&#8217;t actually experienced what they&#8217;re solving then their value is appears to be much less than what it is. Similarly, the value of such tools and methodologies is nil when there is a lack of recognition of a problem even existing.</p>
+
+<p>However, I don&#8217;t think the solution is to have developers learn &#8220;the hard way&#8221;. To discover the problem before using the solution is a problem in its-self. If we were to all learn from our own mistakes, and not from each-others, then we&#8217;re not going to make much progress as we&#8217;re all going to be solving the same problems.</p>
+
+<p>Most people will have struggled with whatever problem has necessitated the creation of these tools/methodologies, so I think it&#8217;s more a case of helping the developers connect the dots; &#8220;You remember such and such a problem? Well that&#8217;s easily solved using methodology/technology x!&#8221;, rather than making them retrace the steps of every developer before them.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-12T00:00:00+11:00" pubdate data-updated="true">Dec 12<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/on-testing-implementation/">On Testing Implementation</a></h1>
+    <div class="entry">
+        <p>I&#8217;ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what&#8217;s more concerning is I&#8217;ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it&#8217;s supposed to.</p>
+
+<p>There are a few problems with falling into this trap. Firstly, it&#8217;s very brittle. Secondly, you shouldn&#8217;t be concerned with the internals. Thirdly, it&#8217;s very time consuming.</p>
+
+<p>To elaborate&#8230;</p>
+
+<p>It&#8217;s brittle because you&#8217;re essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to <a href="http://martinfowler.com/bliki/TestCancer.html">test cancer</a>, where tests aren&#8217;t run or are commented out.</p>
+
+<p>You shouldn&#8217;t be concerned with the internals, because as long as your method is doing as requested, you shouldn&#8217;t really care how it&#8217;s achieving it&#8217;s goal. Not bolting down the internals allows methods to be refactored without too much resistance from the tests. This will increase the signal-to-noise ratio, allowing failing tests to be representative of a problem greater than your basic refactorings.</p>
+
+<p>Finally, it&#8217;s time consuming simply because you&#8217;re duplicating most of your work. All the time you spent writing the method (or the test, if done first) is then duplicated writing the tests (or code&#8230;). This is a pain, because as mentioned above, you&#8217;ll keep doing this work every time you change the method.</p>
+
+<p>The hardest part is learning how to not do this kind thing blindly. There are plenty of times when you&#8217;ll need this kind of testing, but don&#8217;t make it your default! Test expectations, not implementations.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-10T00:00:00+11:00" pubdate data-updated="true">Dec 10<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/delegrid/">DeleGrid - a Paged GridView Control</a></h1>
+    <div class="entry">
+        <h2>Introducing the DeleGrid</h2>
+
+<p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
+
+<h3>Why the DeleGrid?</h3>
+
+<p>It came about because I wanted a nice way of implementing paging using NHibernate without having the grid know about it. I really didn&#8217;t want NHibernate to leave my data layer, so I needed a nice way of the grid calling my DAL with the paging parameters.</p>
+
+<p>I didn&#8217;t want to utilise the ObjectDataSource because honestly, it made me feel dirty. I&#8217;m all for delegation and composition, but not when it means creating a control in my HTML that acts as a DAL. Additionally, I didn&#8217;t feel the ObjectDataSource was very type-safe, or refactor-friendly, with the method names and types exposed in the HTML. Granted, the IDE would probably pick it up, but I don&#8217;t want to risk a runtime failure on it.</p>
+
+<h2>Using the DeleGrid (aka The Example)</h2>
+
+<p>After getting the source or assembly and doing the usual song-and-dance, add a reference to the control to your page:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;%@</span> <span class="n">Register</span> <span class="n">Assembly</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls.DeleGrid&quot;</span> <span class="n">Namespace</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls&quot;</span> <span class="n">TagPrefix</span><span class="p">=</span><span class="s">&quot;jag&quot;</span> <span class="nt">%&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then create an instance of the control, turning the paging on and setting the correct page size:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;jag:DeleGrid</span> <span class="na">ID=</span><span class="s">&quot;grid&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">AllowPaging=</span><span class="s">&quot;true&quot;</span> <span class="na">PageSize=</span><span class="s">&quot;4&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you have a control set up, however it sill won&#8217;t bind correctly. So, you need to attach the event handlers in the code-behind.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// code to get total</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Starting with the TotalRecordCountRequest, this event is raised when the grid needs to know how many records in total your grid is going to be displaying. This number is the cumulative count of all the pages. I&#8217;m going to use a simple repository pattern to factor away my DAL logic.</p>
+
+<p>The OnInit method is now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now your grid knows how many records it has overall, however we still haven&#8217;t told it how to actually get the data. So now to put the code in the PageDataRequest handler. This event is raised when the grid is needing a new page of data, this will get called once on initial data-bind, then again every time you change the page (or sorting etc&#8230;).</p>
+
+<p>The OnInit method is now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">PageDataRequest</span> <span class="p">+=</span> <span class="k">delegate</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">DataRequestEventArgs</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetRange</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">Start</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">Size</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The event-handler receives an instance of DataRequestEventArgs, which contains the start index of the current page of data, and the number of records in a page. It also contains a SortField and SortDirection, for when sorting is enabled on the grid; however, we aren&#8217;t utilising them in this example.</p>
+
+<p>Finally we just need to bind the grid on page load. We don&#8217;t re-bind the grid on post-back, due to that being handled internally in the DeleGrid.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnLoad</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnLoad</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(!</span><span class="n">IsPostBack</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">grid</span><span class="p">.</span><span class="n">DataBind</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s all there is to it!</p>
+
+<p>You don&#8217;t need to use delegates, the normal event-handler syntax is fine (and probably preferred for larger examples). I just did it this way for brevity&#8217;s sake.</p>
+
+<h2>Further reading&#8230;</h2>
+
+<h3>Testing</h3>
+
+<p>I&#8217;ve written a small number of tests that cover the implementation of the grid as best I can. There was only so-far I was willing to go to test the control, as it&#8217;s heavily tied to the ASP.Net implementation; which can get pretty messy for testing without using something like NUnitASP, which was a bit much for one control.. I&#8217;ve got coverage of about 85% of the code, which I&#8217;d say is pretty reasonable anyway.</p>
+
+<h3>Sorting</h3>
+
+<p>As mentioned above, you can implement sorting in your handlers by accessing the SortField and SortDirection properties of the event arguments.</p>
+
+<h3>DeleGrid.AlwaysRequestTotal</h3>
+
+<p>By default the DeleGrid only requests the total number of records on the initial data-bind, however if you see this as being a problem (such as with rapidly changing data-sets), you may want to set this property to true so it refreshes the total on every data-bind.</p>
+
+<h2>Downloads</h2>
+
+<p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you&#8217;re allowed to do.</p>
+
+<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0-source.zip">Download Source</a>.</p>
+
+<p>You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0.zip">Download Binary</a>.</p>
+
+<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
+
+<p><strong>All patches are welcomed with open arms!</strong></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-09T00:00:00+11:00" pubdate data-updated="true">Dec 9<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/test-drive-properly-test-fully/">Test-drive Properly, Test Fully</a></h1>
+    <div class="entry">
+        <p>I started writing this as a comment, but I felt it’s own post was deserved.</p>
+
+<p><a href="http://rickyclarkson.blogspot.com/">Ricky Clarkson</a> left me a link in a comment to one of <a href="http://rickyclarkson.blogspot.com/2007/05/you-dont-need-tdd-you-need-repl.html">his posts</a> that ties in quite nicely to my recent <a href="http://blog.jagregory.com/2007/07/17/getting-with-it-test-driven-development/">Getting with it: Test Driven Development</a> post.</p>
+
+<p>Ricky makes the point that <span class="caps">TDD</span> can be dangerous, and can lull you into a false sense of security. <em>I agree.</em></p>
+
+<p>As with any technology, when used incorrectly it can cause more damage than not using it at all.</p>
+
+<p>Ricky’s example should serve as a double-barreled warning. You can’t be test-driven only when it’s convenient, and you need to have good test coverage.</p>
+
+<h2>Being Test-Driven isn’t being Convenience-Driven</h2>
+
+<p>Just by being in a car with seat-belts doesn’t mean they’ll save you when you crash, you need to actually wear them.</p>
+
+<p>You can’t pick and choose which parts of <span class="caps">TDD</span> you want to use, then be surprised when it lets you down.</p>
+
+<p>If your boss comes storming in demanding a copy of the system, tell him to wait. Remember, it’s your hide on the line, if you give him a broken system you’ll be the one to pay. If he doesn’t understand testing, lie, tell him it’s building or something similar, it doesn’t exist until it’s finished.</p>
+
+<h2>Test coverage</h2>
+
+<p>There’s very little more important than good test coverage, without it you’re leaving yourself wide open for problems.</p>
+
+<p>In Ricky’s example, he’s fallen into a common problem with test design. <em>He’s only testing the expected outcome of his method.</em> We’ve all fallen into this trap at some point, but it’s a dangerous place to be. Without full coverage, just as Ricky said, you end up with a false sense of security.</p>
+
+<p>For full test coverage of a method, you really need to test it’s expected outcome, how it handles edge-cases, and how it handles bad data.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scheme'><span class='line'><span class="p">(</span><span class="nf">assert</span> <span class="p">(</span><span class="nf">equal</span> <span class="p">(</span><span class="nf">point+</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">999</span> <span class="mi">987</span><span class="p">)</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">789</span> <span class="mi">998</span><span class="p">))</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">1788</span> <span class="mi">1985</span><span class="p">)))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Had Ricky’s test suite included the above edge-case test, it would have caught the flaw in his method’s design, and been able to correct it. A few more like the above, to cover minus numbers and very low values, and his situation would have been greatly different.</p>
+
+<p>If there’s a way you can improve testing, it’s to write more unit tests. Only leave those bits you really can’t test to integration. Everything else should be adequately covered.</p>
+
+<h2>In parting</h2>
+
+<p>Remember, using <span class="caps">TDD</span> isn’t an excuse to leave your common sense at the door. If you’re writing a method which you know is going to be used in several places, test those several places, give it very good coverage. If you’re writing a sum function like Ricky, you know how it’s going to be used, don’t just write if statements to cover all your input data, that’s using coding to make a test pass an excuse to write bad code.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-07-21T00:00:00+10:00" pubdate data-updated="true">Jul 21<span>st</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/applying-a-bit-of-xp-to-hobby-projects/">Applying a Bit of XP to Hobby Projects</a></h1>
+    <div class="entry">
+        	<p>Hobby projects, everybody has one or two on the go. They&#8217;re fun little side-steps from the mundane routine of developing for a living. These projects usually get a fair bit of thought put into them, but precious little time&#8212;an unfortunate side-effect of having a life outside work.</p>
+
+
+	<p>We&#8217;re all used to working within limited time-frames, but the limitations are much more noticeable when you only have a few hours on a Sunday afternoon. This time is precious, but unfortunately we often find ourselves spending the time doing much less than we would like. That might be because you&#8217;ve hit a design aspect you can&#8217;t solve yet, or more often because your time is spent flitting between tasks. This lack of visible progress has a demoralising effect, next time you get some free time you may be less inclined to spend it on your project because you know you&#8217;ll not make much headway.</p>
+
+
+	<p>After spending what few spare minutes I have (aka. toilet breaks) reading <a href="http://www.xprogramming.com/">Ron Jeffries</a>&#8217; book <cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&#38;tag=jamegreg-21&#38;linkCode=as2&#38;camp=1634&#38;creative=6738&#38;creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, which by-the-way is an excellent read, one aspect stood out that might help reduce the feeling of futility. It&#8217;s a concept called User Stories<sup><a href="#xp-hobby-fn1">1</a></sup>.</p>
+
+
+	<blockquote>
+		<p>A User Story is a short description of the behavior of the system from the point of view of the Customer. They are in the format of about three sentences of text written in the Customer’s terminology without technical jargon. In simplistic terms, user stories are the response to, &#8220;Tell me the stories of what the system will do. Write down the name of the story and a paragraph or two.&#8221; 
+&#8212;<a href="http://www.mayford.ca/xp/stories.html">XP Practices &#8211; User Stories</a>, Mayford Technologies</p>
+	</blockquote>
+
+
+	<p>These stories describe how the customer wants the system to work, in manageable chunks.</p>
+
+
+Some examples would be:
+	<blockquote>
+		<p>After adding a new product, we should be shown the inventory with our new product highlighted.</p>
+	</blockquote>
+
+
+	<blockquote>
+		<p>When removing a product from the inventory a reason for the deletion should be supplied by the user, then an e-mail should be sent to the person who added the product with this reason.</p>
+	</blockquote>
+
+
+	<blockquote>
+		<p>Actions should be recorded, so on startup the most commonly used actions can be presented for quick access.</p>
+	</blockquote>
+
+
+	<p>By hijacking this concept, we can improve our morale by giving us some feeling of progress in our project. Next time you&#8217;re daydreaming about your hobby project, break down your thoughts and write little stories about the functionality, nothing more than a couple of sentences. Once you&#8217;ve got a few stories together, prioritise the stories in whatever fashion suits you best.</p>
+
+
+	<p>Armed with your collection of stories, the next time you sit down for some hobby time, focus only on the first story. When your time is up, if you&#8217;ve managed to complete the story, cross it off the list. Then when you&#8217;re wrapping up, take a look at that list, doesn&#8217;t it feel nice to actually see some progress? You&#8217;ve reduced your list by one. That&#8217;s substantially more noticeable than just the buckshot effect we&#8217;re used to. You&#8217;ve actually implemented a new feature!</p>
+
+
+	<p>If you repeat this process whenever you get to do some development, you&#8217;ll start making some very visible progress, which is certainly a good feeling. I&#8217;ve found that this feeling makes me want to spend more time developing, definitely an improvement over the common feelings of futility.</p>
+
+
+	<p>Give it a try, see how it suits you.</p>
+
+
+	<p id="xp-hobby-fn1"><sup>1</sup> <a href="http://www.extremeprogramming.org/rules/userstories.html">User Stories</a>, ExtremeProgramming.org</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-07-18T00:00:00+10:00" pubdate data-updated="true">Jul 18<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/getting-with-it-test-driven-development/">Getting With It: Test-Driven Development</a></h1>
+    <div class="entry">
+        <p>Test-driven development is a practice that has started to make some serious headway into the average developer world of .Net. The tools have reached a stage of maturity where they offer solutions to most (if not all) aspects of test-driven development. Alongside the improved tools there has been a dramatic increase in the quantity and quality of articles addressing the needs of new and established test-driven developers. The combined effect of this is of a reduced learning curve for the average developer.</p>
+
+<p>On a personal note, test-driven development is something I should have started doing a long time ago, it&#8217;s certainly something that I&#8217;ve known about long-enough to be unable to claim ignorance. I take no pride in saying that my sole reason for not learning sooner is laziness. I bet I&#8217;m not the only one though. There&#8217;s a lot to learn, and not all of it is simply new tools, some of it is mental too; rewiring your brain isn&#8217;t an easy task.</p>
+
+<p>Having broke through the pain barrier, I can now vouch for the other side and say it really is nicer.</p>
+
+<p>So how would I convince my-self from six months ago, that test-driven development is a worthwhile pursuit? Well after a bit of ear twisting about being lazy, I&#8217;d have to raise the point of security. I don&#8217;t mean the &#8220;IM <span class="caps">IN UR HARD DRIVE</span>, STEALIN <span class="caps">UR FILEZ</span>&#8221; security, but the knowledge that you&#8217;re the one who&#8217;ll find bugs in your code, not the tester (or worse, the customer). A record of bugless (or bug-minimal) releases will bode well at your performance reviews. That, and nobody likes people finding problems in their code, so it&#8217;s best you find them first.</p>
+
+<p>That all sounds rather selfish and egotistical. What about the team, the flexibility, and the clean structured code-base? I&#8217;m a big advocate of a clean code-base, and a well oiled team can&#8217;t be beat, but from experience, not everybody else feels the same way. Developers tend to respond more readily to two things: money, and fun. I&#8217;m generalising of course, but your average-joe developer isn&#8217;t an altruist, he isn&#8217;t going to go out of his way to help others. Give him the prospect of some extra cash, or even just the chance to break out of the mundane, and it&#8217;s a whole different game.</p>
+
+<p>This was the turning point for me, where test-driven development past the point of being a nice-to-have practice and entered the territory of being something that could benefit me in my daily life. I also discovered it&#8217;s pretty fun too.</p>
+
+<blockquote><p>Test-Driven Development = Security in code = Security in your job</p></blockquote>
+
+<p><em>N.B. I shall not be held responsible for anyone who still proceeds to lose their job, even while practicing test-driven development.</em></p>
+
+<p>One last thing that I haven&#8217;t mentioned. There&#8217;s a feeling. A feeling of joy, a reassuring warmth. You get this feeling often when you&#8217;re test-driven. Found a bug? Write a test. Test fails. Fix the bug. Test passes. You&#8217;ve fixed the bug; knowledge, safety, and security.</p>
+
+<h2>Learning to drive</h2>
+
+<p>When learning how to test drive your development, it&#8217;s important to know that you aren&#8217;t specifically learning a new tool as many people have put it. Not in the same respect as learning a new <span class="caps">IDE</span> or source control system. Test-driven development isn&#8217;t something physical. As I mentioned earlier, it requires you to rewire your programming brain. Although to successfully master test-driven development you are required to learn some physical tools (<a href="http://www.nunit.org/">NUnit</a> for example), the primary change will be a
+mental one.</p>
+
+<p>The most basic changes to your mental-model will be that your tests literally drive your code. You&#8217;ve probably heard it before, but you test first<sup><a href="#fn1">1</a></sup>.</p>
+
+<p>What follows is a simple run-through of how you&#8217;d test-drive some simple development, and how changes to a system would be handled.</p>
+
+<p>I&#8217;m going to try to keep the code as terse as possible, as to not complicate the theory with execution. There will be some boilerplate code that I will not include, such as setting up the fixtures. <a href="http://xprogramming.com">Ron Jeffries</a> provides a <a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">good introduction to NUnit</a> for .Net developers.</p>
+
+<h3>The First Iteration</h3>
+
+<p>To set the scene: you&#8217;re a developer building a system for a very small shop. They&#8217;ve been working primarily from spreadsheets, but feel they&#8217;re ready to move on to a real system.</p>
+
+<p>While other developers are creating the rest of the system, we&#8217;re tasked with creating the method for retrieving the price for the products. As this is a very small outfit, we&#8217;re only going to start with one product. Very small outfit.</p>
+
+<p>We&#8217;re told that the product we&#8217;re going to be passed is an Apple, so following our mantra we&#8217;re going to write our test first.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ReturnsCorrectPriceForApples</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Inventory</span> <span class="n">inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Inventory</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">0.5</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Apple&quot;</span><span class="p">),</span> <span class="s">&quot;One apple should cost 50p.&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see that we&#8217;ve now written our first test, unfortunately this test will not pass yet as we can&#8217;t even compile.</p>
+
+<p>Never fear, lets create the class.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">class</span> <span class="nc">Inventory</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;ve now created the class, so the code compiles and we&#8217;re able to execute our first test.</p>
+
+<p>It failed. This one of the key steps in test-driven development. Make a test, and make it fail, then write the functionality required to make the test pass. Baring that in mind, we&#8217;ll now modify our code to allow the test to pass.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="m">0.5</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It passed, that&#8217;s one test under our belt.</p>
+
+<p>You&#8217;ll notice that this isn&#8217;t a very good design, but we&#8217;ve written enough code for the method to work for it&#8217;s current usage. We&#8217;re letting the tests drive our code, which means we&#8217;re ending up with only the code we require. <span class="caps">YAGNI</span>: You Aren&#8217;t Gonna Need It<sup><a href="#fn2">2</a></sup>.</p>
+
+<h3>The Second Product</h3>
+
+<p>Our implementation of <code>GetPrice</code> is painfully simple, so simple that we don&#8217;t even support multiple products. This worked fine for us while the customer only had one product, but they&#8217;ve now expanded and have requested their second product be added. Lets write another test to cover this new request.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ReturnsCorrectPriceForSausages</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Inventory</span> <span class="n">inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Inventory</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">2.99</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Sausages&quot;</span><span class="p">),</span> <span class="s">&quot;One pack of sausages should cost £2.99&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once again, if we compile and run this test it will fail, because we&#8217;ve hard-coded the method to always return <code>£0.50</code>. So lets update the method to work for sausages too.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">product</span> <span class="p">==</span> <span class="s">&quot;Apple&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="m">0.5</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="k">return</span> <span class="m">2.99</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test now passes.</p>
+
+<p>Once again, this code isn&#8217;t pretty, but it does the job. We could implement this in a much better way, but we don&#8217;t have the time, there&#8217;s always more urgent things that need doing. What&#8217;s important in what we&#8217;ve just been doing is creating the tests, which serve as our safety net for when we eventually do decide to make this code nicer. We know that by re-running our tests, our code still works as it did originally.</p>
+
+<h3>Refactoring</h3>
+
+<p>Fast forward a couple of months in our systems life. The customer now wants some more products adding, after all there&#8217;s only so much you can do with apples and sausages. They&#8217;ve supplied us with a list of products, with their prices:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;table&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;&lt;strong&gt;</span>Product<span class="nt">&lt;/strong&gt;&lt;/td&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;&lt;strong&gt;</span>Price<span class="nt">&lt;/strong&gt;&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>Potatoes<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>3.99<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>Cola<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>1.27<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>Bread<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>0.99<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>Milk<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;td&gt;</span>0.47<span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'><span class="nt">&lt;/table&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looking at our code, we can easily see that this is going to get messy, fast. This is where we turn to refactoring our code.</p>
+
+<blockquote><p>&#8220;Refactoring is the process of changing a software system in such a way that it does not alter the external behavior of the code yet improves its internal structure.&#8221; &#8212;Martin Fowler</p></blockquote>
+
+<p>Test-driven development makes it easier for a developer to refactor, as the tests you create define a contract that the code must adhere to, any breaking of the contract is immediately noticeable.</p>
+
+<p>Lets spend a small amount of time refactoring our current implementation to make it easier for future product additions.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">class</span> <span class="nc">Inventory</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">private</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">double</span><span class="p">&gt;</span> <span class="n">products</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">Inventory</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">products</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">double</span><span class="p">&amp;</span><span class="n">gt</span><span class="p">;();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">products</span><span class="p">[</span><span class="s">&quot;Apple&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.5</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">products</span><span class="p">[</span><span class="s">&quot;Sausages&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">2.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">products</span><span class="p">[</span><span class="n">product</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;ve now made the code a bit cleaner, and the design a little bit more flexible. If we now re-run our tests, we will see that everything still passes. We are safe in the knowledge that everything the customer requested previously still works. We&#8217;re now safe to proceed with their new request, adding the new products. Thanks to our refactoring, this change is nice and easy. First things first, we need to create our tests to cover this requirement.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ReturnsCorrectPricesForOtherProducts</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Inventory</span> <span class="n">inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Inventory</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">3.99</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Potatoes&quot;</span><span class="p">),</span> <span class="s">&quot;Potatoes should be £3.99.&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">1.27</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Cola&quot;</span><span class="p">),</span> <span class="s">&quot;Cola should be £1.27.&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">0.99</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Bread&quot;</span><span class="p">),</span> <span class="s">&quot;Bread should be 99p.&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">0.47</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;Milk&quot;</span><span class="p">),</span> <span class="s">&quot;Milk should be 47p.&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As should be realising by now, this test is going to fail. After running to confirm, we need to update our constructor to include the new products.</p>
+
+<p>You may wonder why we bothered to run the test when we know that it was going to fail. Well it&#8217;s a good practice to get into, because if you don&#8217;t actually witness your test failing, you don&#8217;t know for certain whether your test is actually correct. You might be testing the wrong thing. If your test passes when you expect it not to, you know there&#8217;s something wrong; but if you don&#8217;t catch it, your pass after your change won&#8217;t mean anything.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="nf">Inventory</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">products</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">double</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Apple&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.5</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Sausuages&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">2.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Potatoes&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">3.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Cola&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">1.27</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Bread&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;Milk&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.47</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After making this change, our test will now pass. We&#8217;ve now successfully completed our customer&#8217;s requirement, and our code has become a little bit more manageable in the process.</p>
+
+<h3>Boundary Conditions</h3>
+
+<p>The customer is happy with our implementation of their requirements, even if we can see some places for improvement, and the release date is looming. The customer starts integrating their existing data into our system. After importing the list of products from a spreadsheet, the system is given a thorough run through.</p>
+
+<p>The customer noticed that after importing the list of products, whenever anyone bought an apple, the system crashed. After some investigation, it ends up the spreadsheet with the products had apples in all lower-case, while our inventory has it stored with an upper-case letter a.</p>
+
+<p>This exposes a flaw in our testing logic. We&#8217;ve currently just been testing how we expect the method to behave under normal usage, but not actually testing how it will act if we pass it things other than what it&#8217;s expecting. Our tests should also be testing for invalid data and boundary conditions.</p>
+
+<blockquote><p><strong>Boundary Condition:</strong> A problem or situation that occurs only at a extreme (maximum or minimum) operating parameter.
+An example of a boundary condition would be supplying <code>1</code> and <code>12</code> to a <code>GetDaysInMonth</code> method.</p>
+
+<p><strong>Invalid Input:</strong> Anything outside standard operating expectations.
+Using the same example as boundary conditions, invalid input would cover supplying <code>-6</code>, <code>0</code> and <code>76</code> to the <code>GetDaysInMonth</code> method.</p></blockquote>
+
+<p>We&#8217;ll write a test to cover the invalid input the customer encountered, we&#8217;ll pass in a valid product name, but one that&#8217;s capitalised incorrectly.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ReturnsCorrectProductPriceWhenPassedIncorrectCasedName</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Inventory</span> <span class="n">inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Inventory</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="m">0.5</span><span class="p">,</span> <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;AppLE&quot;</span><span class="p">),</span> <span class="s">&quot;Should return price of Apples, 50p.&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running this test will fail, as usual. So lets fix the code to allow case-insensitive product names.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="nf">Inventory</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">products</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">double</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;apple&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.5</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;sausuages&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">2.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;potatoes&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">3.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;cola&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">1.27</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;bread&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.99</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">products</span><span class="p">[</span><span class="s">&quot;milk&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="m">0.47</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">products</span><span class="p">[</span><span class="n">product</span><span class="p">.</span><span class="n">ToLower</span><span class="p">()];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;ve modified our constructor to set the product names as lower-case, then modified our method to convert the inputted product name to lower-case as well. This way our searches are case-insensitive.</p>
+
+<p>Running all our tests should assure us that our existing code still functions, and we&#8217;re now safe from any case variations from the customer&#8217;s product list.</p>
+
+<p>While doing this change, it&#8217;s noticeable that we&#8217;re also not handling the case for if a price is requested for a product that isn&#8217;t in the inventory. If this occurs we really should pass a message up to the <span class="caps">GUI</span>, so it can present the user with something.</p>
+
+<p>Due to this being an exceptional situation, it&#8217;s ideally suited to an exception! Let&#8217;s write a test to handle this case.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test, ExpectedException(typeof(InvalidProductException))]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ThrowsAnExceptionForAnInvalidProduct</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Inventory</span> <span class="n">inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Inventory</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">inventory</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">(</span><span class="s">&quot;My Invalid Product&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;ve introduced a new attribute to our test in this case, <code>ExpectedException</code>, this simply allows you to specify what exception you want a method to throw in the situation you&#8217;re testing.</p>
+
+<blockquote><p><strong>Note:</strong> This test requires the use of a custom exception, I&#8217;m not going to show the implementation here as it&#8217;s simple stuff. I&#8217;ve chosen to use a custom exception so our &#8220;GUI guys&#8221; know what to capture for this case.</p>
+
+<p>It&#8217;s generally regarded as good practice to wrap your internal errors in something that&#8217;s meaningful to the rest of the application, hiding the implementation details. An <code>InvalidProductException</code> is much easier to understand and implement than <code>NullReferenceException</code>, <code>IndexOutOfRangeException</code> etc. This is another topic in itself though.</p></blockquote>
+
+<p>To make this test pass, we need to update our <code>GetPrice</code> method to handle invalid products.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(!</span><span class="n">products</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="n">product</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidProductException</span><span class="p">(</span><span class="s">&quot;Product supplied, &quot;</span> <span class="p">+</span> <span class="n">product</span> <span class="p">+</span><span class="s">&quot;, is not in the inventory.&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">products</span><span class="p">[</span><span class="n">product</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re now doing a simple check to see if the internal product Dictionary contains an entry for the requested product, if it doesn&#8217;t we&#8217;ll throw one of our <code>InvalidProductException</code>&#8217;s.</p>
+
+<p>Running our test again will now assure us that our method throws an exception in these circumstances.</p>
+
+<p>We can now return to integration and the customer can be assured that it all works.</p>
+
+<h3>Learning Conclusions</h3>
+
+<p>What have we witnessed in running through this little exercise?</p>
+
+<ol>
+    <li><strong>How easy it is to test first</strong> &#8211; It&#8217;s really not that complicated. Once you&#8217;ve learnt to apply the restraint needed to stop yourself from just diving in, it&#8217;s easy.</li>
+        <li><strong>The security you get from tests</strong> &#8211; If you&#8217;ve come from an environment that doesn&#8217;t have any code tests, you&#8217;re probably enjoying the reassurance that tests bring. You&#8217;re at least safe in the knowledge that you haven&#8217;t broken anything existing with your new features. The more tests you introduce, the more solid your base for making changes becomes.</li>
+        <li><strong>Ease of refactoring</strong> &#8211; As with the above, it&#8217;s easy to refactor your existing code when you&#8217;ve got a suite of tests in-place.</li>
+        <li><strong>Light-weight nature of your code</strong> &#8211; When you&#8217;re only coding to make your tests pass, you&#8217;re less likely to code features that aren&#8217;t required. This makes your code as light as possible.</li>
+</ol>
+
+
+<h2>Dealing with Legacies</h2>
+
+<p>Lets be honest here, nobody likes legacy code. You know the kind of code I mean. The code written by the mysterious and elusive previous developers. Usually it&#8217;s dire, sometimes it&#8217;s shocking, most of the time it&#8217;s untested.</p>
+
+<p>Testing legacy code can be a nightmare in itself, but it is possible. What you need to remember in this situation is that you can&#8217;t be a hero. There&#8217;s no way you can create a test suite that covers the whole system, it&#8217;s just not feasible.</p>
+
+<p>Your best approach to testing legacy code is an incremental one. If you find a bug in the system, write a test that fails because of it, then fix the code and run your test. That way you have a test that covers that bug, and you&#8217;re now safe from that bug showing up again. Eventually, if you continue this way, you&#8217;ll end-up with a nice suite of tests covering your common bugs.</p>
+
+<p>Often the system you&#8217;re trying to test will be an unstructured mess, it&#8217;ll be very hard to separate out logical concerns. It may be possible for you to utilise mock and stub objects<sup><a href="#fn3">3</a></sup> in these situations, which will help you break down the barriers. Sometimes even this isn&#8217;t possible, and these may be the cases where you&#8217;re either going to have to live with a few hundred lines of setup code for your tests, or live without automated testing, at least until you can rework the code to facilitate testing more readily.</p>
+
+<p>Another form of legacy that you&#8217;re no doubt going to encounter is that of the legacy mind. How you write code may have been turned on its head by the introduction of test-driven development, and you&#8217;re going to slip back into your old ways every now and again. This happens to everyone at some point, but if you can force yourself to maintain your standards then you&#8217;ll eventually break the barrier and you wont look back. If I code without unit tests now, I feel an overwhelming sense of insecurity and dirtiness. It&#8217;s a good thing!</p>
+
+<h2>Recommended Reading</h2>
+
+<ul>
+    <li><a href="http://c2.com/cgi/wiki?ExtremeProgrammingRoadmap">Extreme Programming Roadmap</a> Great resource, lots of discussion, including some from the greats.</li>
+        <li><a href="http://www.martinfowler.com/">Martin Fowler</a> Lots of good articles.</li>
+        <li><a href="http://codebetter.com/blogs/jeremy.miller">Jeremy Miller</a> Plenty of reading material, lots of insightful stuff. Rules of <span class="caps">TDD</span>: <a href="http://codebetter.com/blogs/jeremy.miller/archive/2005/10/20/133437.aspx">1</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/03/09/140465.aspx">2</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx">3</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/04/27/Jeremy_2700_s-Fourth-Law-of-Test-Driven-Development_3A00_-Keep-Your-Tail-Short.aspx">4</a></li>
+        <li><a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">Adventures in C#: Using NUnit</a> Good introduction to using NUnit.</li>
+        <li><cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, Ron Jeffries &#8211; Honest and friendly introduction to <span class="caps">TDD</span> and XP.</li>
+        <li><cite><a href="http://www.amazon.co.uk/gp/product/0201485672?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0201485672">Refactoring: Improving the Design of Existing Code</a></cite>, Martin Fowler &#8211; Refactoring bible.</li>
+</ul>
+
+
+<h2>References</h2>
+
+<p id="fn1"><sup>1</sup> <a href="http://www.extremeprogramming.org/rules/testfirst.html">Extreme Rules: Test First</a>, ExtremeProgramming.org</p>
+
+
+<p id="fn2"><sup>2</sup> <a href="http://c2.com/xp/YouArentGonnaNeedIt.html">You Aren&#8217;t Gonna Need It</a>, Extreme Programming Roadmap</p>
+
+
+<p id="fn3"><sup>3</sup> <a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a>, Martin Fowler</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-07-17T00:00:00+10:00" pubdate data-updated="true">Jul 17<span>th</span>, 2007</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/a-usability-moan-about-adobes-website/">A Usability Moan About Adobe&#8217;s Website</a></h1>
+    <div class="entry">
+        <p>When recently performing a system-wide clean-out, I removed a long-expired Macromedia Flash 8 Studio trial. Unknown to me at the time, it had taken it upon itself to remove the flash player as-well; because, of course, now that I don’t want to develop flash, I’ll never need it again!</p>
+
+<p>Anyway, a week or so later I discovered that I needed to re-install the player, so off I went to <a href="http://www.adobe.com">Adobe’s Website</a>. When I arrived, I was presented with a fairly reasonable page - in terms of design - but there was something on there that epitomises the lack of thought that goes into usability on the web. People, you have to remember it isn’t just about how you create your links (bad “click here”, no play-time for you!), it’s also about how your content is worded.</p>
+
+<p><img src="/images/adobe-flash-small.jpg" alt="Adobe's no-flash warning message" /></p>
+
+<p>What you can see in the screenshot is what you’re shown if you don’t have the flash player installed (or JavaScript enabled, I’m guessing).</p>
+
+<p>What’s wrong with this picture?</p>
+
+<p>It’s very misleading, that’s what.</p>
+
+<p>The heading is asking me “Can’t see this content?”, but I can, can’t I? I’m reading it! Oh, the word “this” isn’t associated to what I’m reading (as it should be), but rather what I’m <strong>not</strong> reading. Interesting.</p>
+
+<p>Misleading text has also found its way into the body content, once again, I am reading the content aren’t I? Another thing is that the content also implies that I have JavaScript disabled when I actually don’t. I believe you’re statistically more likely to have a user without flash installed, than without JavaScript enabled. So with that in mind, it would have been a better idea to ask if they have flash first then ask about JavaScript. Even better would be to do a check to see if JavaScript is enabled, if it is you don’t need to display that part of the message at all!</p>
+
+<p>One last thing, those controls at the bottom; what are they doing there? I know (now) that they’re there because the content that’s supposed to be showing is a movie, but prior to having that knowledge surely they just reinforce the feeling that I am seeing what I’m supposed to. I have content, I have play controls, hey why aren’t they working? They serve no purpose apart from to confuse the user.</p>
+
+<h2>A slightly better picture</h2>
+
+<p>I’ve modified the content to be - in my eyes - a bit more respectable. It still isn’t perfect, like I said above, some JavaScript detection would be nice. Here it is non-the-less though:</p>
+
+<p><img src="/images/adobe-flash-fixed.gif" alt="An improved version of Adobe's message" /></p>
+
+<p>“Reading this?”</p>
+
+<p>I most certainly am.</p>
+
+<p>“If you are reading this message, then you are unable to view our active content.”</p>
+
+<p>Oh dear, so that’s what this is all about. How do I fix it?</p>
+
+<p>“Please either download the latest version of the Macromedia Flash Player or enable JavaScript in your browser.”</p>
+
+<p>Will do, thanks for the help Mr. Usable Information Box.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-07-01T00:00:00+10:00" pubdate data-updated="true">Jul 1<span>st</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/6/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/8/" class="next">Next</a>
+    
+    <a href="/blog/archives" class="center">Blog Archives</a>
+</nav></div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

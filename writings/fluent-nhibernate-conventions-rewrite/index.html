@@ -1,0 +1,338 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Fluent NHibernate: Conventions Rewrite - James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="Fluent NHibernate: Conventions Rewrite I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner"><article class="post">
+    <h1 class="title">Fluent NHibernate: Conventions Rewrite</h1>
+    <div class="entry"><p>I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I&#8217;ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+
+
+
+
+<p><strong>So why have I rewritten conventions?</strong> Our original implementation was simple, but not really maintainable into the future. It was a single class that was a major violation of separation of concerns, and it just kept growing and growing. It didn&#8217;t gracefully degrade either; if we didn&#8217;t have the exact convention you needed it was tough luck, there was very little you could do short of modifying the code yourself.</p>
+
+
+
+
+<p>Our original design worked something like this:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">TableName</span> <span class="p">=</span> <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Table&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">DefaultLazy</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>As you can see, it&#8217;s a fairly simple design. Lambda functions were set that got called in various places throughout the mapping generation cycle. It was a good design for simple scenarios; however, when you start overriding more conventions, and introducing logic into them, it can quickly become a massive ball of mud. So while there was an initial simplicity to it, that simplicity was quickly lost if you were trying to do anything clever with it. This is another thing that the rewrite aims to solve.</p>
+
+
+
+
+<p><strong>So how have things changed?</strong> The ability to define conventions inline is gone, for starters. Instead what you have is a series of interfaces of varying degrees of granularity; any classes implementing any of the interfaces will be automagically hooked into the mapping generation cycle. What this equates to is you&#8217;ll have a folder/namespace in your projects dedicated to conventions, each class making an alteration to the conventions when it&#8217;s called. As each convention is an interface, it means you can implement multiples of them in a single class, which allows you to group common conventions into a single class if you desire.</p>
+
+
+
+
+<h2 id="example_customising_the_table_name">Example: Customising the table name</h2>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">TableNameConvention</span> <span class="p">:</span> <span class="n">IClassConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Accept</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// apply to all mappings</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">Apply</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// will produce table names like: tbl_Customer, tbl_Product</span>
+</span><span class='line'>    <span class="n">classMap</span><span class="p">.</span><span class="n">WithTable</span><span class="p">(</span><span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">classMap</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This is a simple implementation of the <code>IClassConvention</code> interface, which is applied to all class mappings (hence the <code>return true</code> in <code>Accept</code>) and simply prefixes the table name with <code>tbl_</code>.</p>
+
+
+
+
+<h2 id="example_adding_your_conventions">Example: Adding your conventions</h2>
+
+
+
+
+<p>There&#8217;s one thing you need to do to get Fluent NHibernate to use your conventions, and that&#8217;s to inform the convention discovery mechanism of where it&#8217;s to search for conventions. You do this using the <code>PersistenceModel</code>s <code>CovnentionFinder</code> property, or through the <code>ConventionDiscovery</code> property through <a href="http://wiki.fluentnhibernate.org/show/FluentConfiguration">Fluent Configuration</a>.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;())</span>
+</span><span class='line'>  <span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>That&#8217;s all there is to it really, certainly from a users perspective anyway. The architecture is designed in such a way that you have a much greater control of the granularity of your conventions; if you need a convention we haven&#8217;t explicitly supplied, you can use the convention &#8220;above&#8221; the one you want, and implement it yourself. If you need a convention for just Bag collections (which we don&#8217;t have one for), you just need to create an implementation of <code>IHasManyConvention</code> and limit it to bags. Easy.</p>
+
+
+
+
+<h2 id="some_shortcuts">Some shortcuts</h2>
+
+
+
+
+<p>I realise that the new design is more verbose than it was originally, and if your scenario really is one that only uses one or two conventions, then the new design might be too much for you. To cater for you people, I&#8217;ve created some basic inline support. I really don&#8217;t recommend you use these unless you&#8217;re doing something <em>really</em> simple. Separation is always preferred.</p>
+
+
+
+
+<p>There&#8217;s the <code>ConventionBuilder</code> class which has several static properties (<code>Class</code> for example, there&#8217;s one for each convention) which allow you to create an inline convention.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">When</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">PropertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Num&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>These can be used directly in the <code>ConventionDiscovery</code> property mentioned above; it has an <code>Add</code> method that can take a params array of conventions, there&#8217;s also a <code>Setup</code> method which can be used for multiple additions.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">)),</span>
+</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">c</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;();</span>
+</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)));</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>In addition to that, there&#8217;s a limited selection of very common conventions which can be used inline. Again, I don&#8217;t advocate using these for anything complicated. If you start having logic in your conventions, or even if the lambdas end up being multi-line, I&#8217;d suggest using the full conventions. These helpers live in the <code>FluentNHibernate.Conventions.Helpers</code> namespace.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Table</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">x</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span>
+</span><span class='line'><span class="n">PrimaryKey</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">DynamicUpdate</span><span class="p">.</span><span class="n">AlwaysTrue</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>These can be used in the same way as the <code>ConventionBuilder</code> above.</p>
+
+
+
+
+<h2 id="regarding_auto_mapping">Regarding auto mapping</h2>
+
+
+
+
+<p>The auto mapper uses a small subset of conventions to discover various parts of your mappings. It was originally the case that these special conventions were lumped in with the rest of the conventions, even though you couldn&#8217;t use them outside of the automapper. As the old style conventions have gone, the automapper now has a separate set of conventions (they&#8217;re the same ones, just moved) that it uses. So in addition to the <code>ConventionDiscovery</code> property, the auto mapper has a <code>WithSetup</code> method that you can use to configure the auto mapping specific ones (<code>IsBaseType</code> primarily).</p>
+
+
+
+
+<h2 id="further_reading">Further reading</h2>
+
+
+
+
+<p>So this post should have given you a basic introduction to the changes I&#8217;ve made. To go further, you&#8217;re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there&#8217;s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
+
+</div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-11T00:00:00+11:00" pubdate data-updated="true">Mar 11<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4eb4a0c47196e907"></script>
+</div>
+</div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

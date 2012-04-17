@@ -1,0 +1,259 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>How-to use ClientIDs in JavaScript without the ugliness - James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="How-to Use ClientIDs in JavaScript Without the Ugliness ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner"><article class="post">
+    <h1 class="title">How-to Use ClientIDs in JavaScript Without the Ugliness</h1>
+    <div class="entry"><p>ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent’s ID.</p>
+
+<p><code>&lt;asp:TextBox ID="txtUsername" Runat="server" /&gt;</code> within a standard page simply has an ID of <code>txtUsername</code> within the HTML output. On the other hand, the following example would result in something along the lines of <code>_parent_txtUsername</code> as the ID:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;parent&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:TextBox</span> <span class="na">ID=</span><span class="s">&quot;txtUsername&quot;</span> <span class="na">Runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
+
+<p>One solution, which I have used time-and-again, is to use a script block at the end of your page where you create a series of variables that contain the actual IDs. You then use these variables to reach the actual elements via JavaScript.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtUsername.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtPassword.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This solution works fine, but it isn’t exactly pretty and it doesn’t weigh well on my conscience.</p>
+
+<h2>Javascript Mapping</h2>
+
+<p>I’ve created a simple class that traverses the control structure and outputs an object that contains the mappings, as above, but without any client-side intervention; not a <code>&lt;%= ...ClientID %></code> in sight.</p>
+
+<p>An example of the output would be:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">ClientIDs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">txtUsername</span> <span class="o">=</span> <span class="s1">&#39;ctrl0_txtUsername&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">txtPassword</span> <span class="o">=</span> <span class="s1">&#39;ctrl0_txtPassword&#39;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which enables you to reference elements, that you know are server-controls, by calling <code>ClientIDs.txtUsername</code>.</p>
+
+<h3>Before:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtUsername.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtPassword.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtUsernameID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtPasswordID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">&#39;james&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;you shouldn&#39;t be here!&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>After:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtUsername</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtPassword</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">&#39;james&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;you shouldn&#39;t be here!&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>ServerControlIDs class</h2>
+
+<h3>Methods</h3>
+
+<p><code>void Emit(page)</code> - Builds the controls of the page into a mapped structure, registering a client-side script block for the output.</p>
+
+<p><code>void Emit(control, literal)</code> - Builds the controls of the control into a mapped structure, rendering the output into the literal control supplied. The literal is best suited to being placed into the <code><head></code> tag, which helps improve the semantic nature of your page.</p>
+
+<h3>Properties</h3>
+
+<p><code>bool Whitespace</code> - Sets whether the output should contain whitespace, provided only for “prettifying” your code; defaults to off.</p>
+
+<p><code>string VariableName</code> - Sets the JavaScript variable name used; defaults to ClientID.</p>
+
+<h3>Usage</h3>
+
+<p>To use this class, simply create an instance in the PreRender event for your page — this ensures that all the controls have been set to their correct state — then call the Emit method you desire.</p>
+
+<h2>History</h2>
+
+<ul>
+<li>[1.1] Removed IDs from Repeater/DataGrid contained controls.</li>
+<li>[1.0] Initial release</li>
+</ul>
+
+
+<h2>Download</h2>
+
+<p>That’s all there is to it, use the link below to get the latest version of ServerControlIDs.</p>
+
+<p>Please note that this code isn’t pretty and it could probably do with some revising, but it works and that’s what’s important to me. I’m open to suggestions and feature requests.</p>
+
+<p><a href="http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip">Current Version (1.1)</a></p>
+</div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4eb4a0c47196e907"></script>
+</div>
+</div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Nested DataGrid/Repeater with Key Value access - James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="Nested DataGrid/Repeater With Key Value Access One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner"><article class="post">
+    <h1 class="title">Nested DataGrid/Repeater With Key Value Access</h1>
+    <div class="entry"><p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code>Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='aspx-vb'><span class='line'><span class="nt">&lt;asp:Repeater</span> <span class="na">id=</span><span class="s">&quot;rptLogins&quot;</span> <span class="na">Runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ItemTemplate&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;%#</span> <span class="n">DataBinder</span><span class="p">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="s">&quot;DataItem.Password&quot;</span><span class="p">)</span> <span class="nt">%&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;asp:DataGrid</span> <span class="na">id=</span><span class="s">&quot;dgUsageDetail&quot;</span> <span class="na">Runat=</span><span class="s">&quot;server&quot;</span> <span class="na">DataSource=</span><span class="s">&#39;%# Container.DataItem.Row.GetChildRows(&quot;myRelation&quot;) %&gt;&#39;</span> <span class="na">AutoGenerateColumns=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;Columns&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">&quot;Date&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;ItemTemplate&gt;&lt;%#</span> <span class="n">DataBinder</span><span class="p">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="s">&quot;DataItem(1)&quot;</span><span class="p">,</span> <span class="s">&quot;{0:dd/MM/yyyy}&quot;</span><span class="p">)</span> <span class="nt">%&gt;&lt;/ItemTemplate&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">&quot;Time&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;ItemTemplate&gt;&lt;%#</span> <span class="n">DataBinder</span><span class="p">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="s">&quot;DataItem(1)&quot;</span><span class="p">,</span> <span class="s">&quot;{0:T}&quot;</span><span class="p">)</span> <span class="nt">%&gt;&lt;/ItemTemplate&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">&quot;Page Visited&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;ItemTemplate&gt;&lt;%#</span> <span class="n">Container</span><span class="p">.</span><span class="n">DataItem</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="nt">%&gt;&lt;/ItemTemplate&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/Columns&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/asp:DataGrid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ItemTemplate&gt;</span>
+</span><span class='line'><span class="nt">&lt;/asp:Repeater&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I was never happy with this solution, for the above reason. In my opinion if you’re referencing columns you should never, ever reference them by index because it’s making your code reliant on the physical structure of the database. Something you may not have any control over what-so-ever.</p>
+
+<p>Anyway, just now I was working on my own little project (…on my lunch) and I needed to do the same thing; perfect time for some investigation. If you look at the DataSource of the above nested datagrid you’ll see it’s bound to the current rows <code>GetChildRows</code> method, ends up (fairly obviously in hind sight) this returns a simple 1-dimensional array of DataRow objects. These DataRow objects (to my knowledge) basically contain an internal array of values, these values map to their parents <code>Columns</code> collection. There’s no reference to the actual name of the column, hence why the key access doesn’t work.</p>
+
+<p>The solution is quite simple. So simple it’s unbelievable… Replace <code>Row.GetChildRows("myRelation")</code> with <code>Row.CreateChildView("myRelation")</code>. This creates a DataView object of the child rows, so essentially it’s a mini-dataset for you to deal with as if it were standard. Keyed referencing is back in action!</p>
+
+<blockquote><p>Note: For those that are wondering, a dataview isn’t actually a mini-dataset but a filtered view of its parent dataset.</p></blockquote>
+</div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2005-10-20T00:00:00+10:00" pubdate data-updated="true">Oct 20<span>th</span>, 2005</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4eb4a0c47196e907"></script>
+</div>
+</div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

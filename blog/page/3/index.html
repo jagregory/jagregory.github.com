@@ -1,0 +1,2178 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="Fluent NHibernate: Auto Mapping, Overrides and Alterations Notice: This is an excerpt from the Auto Mapping wiki page. It is recommended you refer &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations/">Fluent NHibernate: Auto Mapping, Overrides and Alterations</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> This is an excerpt from the <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping'>Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p></blockquote>
+
+<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping'>Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you&#8217;re having to alter many entities.</p>
+
+
+
+
+<p>An alternative is to use an <code>IAutoMappingOverride<T></code>, which is an interface you can implement to override the mappings of a particular auto-mapped class.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">PersonMappingOverride</span> <span class="p">:</span> <span class="n">IAutoMappingOverride</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">Override</span><span class="p">(</span><span class="n">AutoMap</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">mapping</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This example overrides the auto-mapping of a <code>Person</code> entity. Within the <code>Override</code> method you can perform any actions on the mapping that you can in the <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping'>Fluent Mappings</a>.</p>
+
+
+
+
+<p>To use overrides, you need to instruct your <code>AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration'>Fluent Configuration</a> setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">UseOverridesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">PersonMappingOverride</span><span class="p">&gt;();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>It&#8217;s the <code>UserOverridesFromAssemblyOf<T></code> call that instructs the <code>AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code>T</code>.</p>
+
+
+
+
+<p>These overrides are made possible with use of the configuration alteration capabilities of the <code>AutoPersistenceModel</code>. You can use these features yourself to create your own customisations, or simply to separate your configuration into logical sections.</p>
+
+
+
+
+<p>An alteration is an implementation of the <code>IAutoMappingAlteration</code> interface, and is a self contained piece of configuration logic that can be applied with others to an <code>AutoPersistenceModel</code> prior to any mappings being generated. These are simple to use, but very powerful.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">WhereAlteration</span> <span class="p">:</span> <span class="n">IAutoMappingAlteration</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">Alter</span><span class="p">(</span><span class="n">AutoPersistenceModel</span> <span class="n">model</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">model</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">IsMappable</span><span class="p">(</span><span class="n">type</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">bool</span> <span class="nf">IsMappable</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// some logic</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The <code>Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code>IMappingOverride<T></code> instances and executes each one against the model.</p>
+
+
+
+
+<p>You need to instruct your <code>AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code>WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithAlterations</span><span class="p">(</span><span class="n">alterations</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">alterations</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">WhereAlteration</span><span class="p">&gt;());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The <code>WithAlterations</code> method takes a lambda action that allows you to set multiple alterations on your model; you can add single alterations with <code>Add</code>, and everything from an assembly like the above example.</p>
+
+
+
+
+<p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There&#8217;s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-10T00:00:00+11:00" pubdate data-updated="true">Feb 10<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-the-official-website/">Fluent NHibernate - the Official Website</a></h1>
+    <div class="entry">
+        <p>&#8220;Documentation? What documentation!&#8221; I hear you say. Yes, Fluent NHibernate is not best known for it&#8217;s abundance of documentation. I know.</p>
+
+
+
+
+<p>I&#8217;ve realised that over the past couple of months Fluent NHibernate has been growing in popularity, stupidly so. We&#8217;ve got new features out the bjingo, an active mailing list, and a flow of people moaning on twitter. Well I figure enough is enough, we need a proper website; googlecode is great for hosting, but it&#8217;s wiki is poor, we needed something better.</p>
+
+
+
+
+<p style="text-align:left"><strong>Announcing the official Fluent NHibernate website:</strong> <a href='http://www.fluentnhibernate.org'>http://fluentnhibernate.org</a> and it&#8217;s <a href='https://github.com/jagregory/fluent-nhibernate/wiki'>wiki</a>.</p>
+
+
+
+
+<p>As always, comments are welcome on the <a href='http://groups.google.com/group/fluent-nhibernate'>mailing list</a>. Please, no porn on the wiki just yet.</p>
+
+
+
+
+<p>I will be updating all my recent blog posts to point to the appropriate content on the wiki, and I would prefer if people would direct-link to the website rather than the googlecode project from now on. We&#8217;ll still be using googlecode for hosting and issue tracking, but the wiki will be cleared out.</p>
+
+
+
+
+<p>As with any wiki, the content is not final, and not exhaustive. I&#8217;m working on it.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-green-and-brown/">Fluent Green and Brown</a></h1>
+    <div class="entry">
+        <p>To paint a very black-and-white picture, there are two camps of applications: greenfield and brownfield. Greenfield are generally nice, they have good separation of concerns, probably an IoC container, they may even be covered by unit tests. Brownfield apps are not. They generally don&#8217;t have great separation of concerns (they&#8217;re usually pretty concerned about everything), they definitely don&#8217;t have great unit test coverage (but you&#8217;re working on it!), and they don&#8217;t have IoC containers.</p>
+
+<p>If you&#8217;re designing a framework you need to cater for both these markets. Unfortunately, they&#8217;re both at odds with each other. A design that caters for inversion of control can sometimes be too verbose or &#8220;bitty&#8221; to use easily without a container. Similarly, if designed without a container in mind it will fall short for use with one; it&#8217;ll be too tightly nit, too hard to break apart.</p>
+
+<p>Although when Fluent NHibernate was started it was heading towards a design for greenfield, when I took over I steered it in the direction I thought was most important - brownfield. Fluent NHibernate has been aimed at being a drop-in replacement for your traditional NHibernate setup, simply replace your <code>CreateSessionFactory</code> method with ours and you&#8217;re away. The problem is, by focussing so hard on brownfield, I&#8217;ve neglected the green.</p>
+
+<p>I&#8217;m not apologising, because nobody has complained, but considerations need to be made for the other half. I still very much believe that Fluent NHibernate is heading in the right direction, we want to make life easier for those people who&#8217;s lives are pretty damn hard (those greenfield guys have it easy anyway); however, I do believe considerations need to be made to allow Fluent NHibernate to be more accessible for those of us who have the pleasure of working in a well designed system.</p>
+
+<p><strong>What does the future hold for Fluent NHibernate?</strong> Supporting all of NHibernate&#8217;s mapping options, making the automapper a lot more powerful, improving testability even more, and finally&#8230; giving some love to the PersistenceModel and SessionSource that the greenfield guys need.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-configuring-your-application/">Fluent NHibernate: Configuring Your Application</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
+
+<p>There&#8217;s been a grey area of how to actually configure your application to use <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+
+
+
+
+<blockquote>
+<p>I&#8217;m going to assume that you&#8217;ve got an application already set up, or you know how to structure a standard NHibernate application. If you don&#8217;t, I suggest you read up on that first.</p>
+</blockquote>
+
+
+
+
+<p>All the examples that follow are tailored to directly replace your <code>SessionFactory</code> instantiation code.</p>
+
+
+
+
+<h2 id='introducing_the_configuration_api'>Introducing the configuration API</h2>
+
+
+
+
+<p>You can now <code>Fluently.Configure</code> your application. The API is broken down into five main methods, three of which are required.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="cm">/* your database settings */</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="cm">/* your mappings */</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">ExposeConfiguration</span><span class="p">(</span><span class="cm">/* alter Configuration */</span><span class="p">)</span> <span class="c1">// optional</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>You can combine these methods in various ways to setup your application.</p>
+
+
+
+
+<ol><li><code>Fluently.Configure</code> starts the configuration process</li><li><code>Database</code> is where you specify your database configuration</li><li><code>Mappings</code> is where you supply which mappings you&#8217;re using</li><li><code>ExposeConfiguration</code> is optional, but allows you to alter the raw Configuration object</li><li><code>BuildSessionFactory</code> is the final call, and it creates the NHibernate SessionFactory instance from your configuration.</li></ol>
+
+
+
+
+<h2 id='exclusively_fluent'>Exclusively fluent</h2>
+
+
+
+
+<p>If you&#8217;re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;())</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This setup uses the SQLite database configuration, but you can substitute that with your own; it then adds any fluent mappings from the assebly that contains <code>YourEntity</code>.</p>
+
+
+
+
+<h2 id='automappings'>Automappings</h2>
+
+
+
+
+<p>If you&#8217;re using only auto mappings, then this config is for you.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// your automapping setup here</span>
+</span><span class='line'>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Entities&quot;</span><span class="p">))))</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Replace the code inside <code>AutoMappings.Add</code> with your auto mapping configuration. You can see more about auto mappings in my <a href='http://blog.jagregory.com/tag/automapping/'>automapping tag</a>.</p>
+
+
+
+
+<h2 id='mixed_fluent_mappings_and_auto_mappings'>Mixed fluent mappings and auto mappings</h2>
+
+
+
+
+<p>If you&#8217;re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// your automapping setup here</span>
+</span><span class='line'>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Entities&quot;</span><span class="p">)));</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>You can see that this is a combination of the two previous examples, the <code>Mappings</code> method can accept multiple kinds of mappings.</p>
+
+
+
+
+<h2 id='hbm_mappings'>HBM mappings</h2>
+
+
+
+
+<p>You&#8217;ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;())</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The <code>HbmMappings</code> property allows you to add HBM XML mappings in a few different ways, this example adds everything from an assembly which defines <code>YourEntity</code>; however, you can add from an assembly instance, or just add single types.</p>
+
+
+
+
+<h2 id='mixed_hbm_and_fluent_mappings'>Mixed HBM and fluent mappings</h2>
+
+
+
+
+<p>You&#8217;re migrating your entities to Fluent NHibernate but haven&#8217;t quite got them all across yet - this is for you.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<h2 id='the_whole_shebang_fluent_auto_and_hbm_mappings'>The whole shebang: fluent, auto, and hbm mappings</h2>
+
+
+
+
+<p>You&#8217;re a crazy fool and map a bit of everything, then this is how you&#8217;d configure it.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// your automapping setup here</span>
+</span><span class='line'>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Entities&quot;</span><span class="p">)));</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<h3 id='exporting_hbmxml_mappings'>Exporting hbm.xml mappings</h3>
+
+
+
+
+<p>In the <code>Mappings</code> call, you can do the following:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">ExportTo</span><span class="p">(</span><span class="s">@&quot;C:\your\export\path&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">Add</span><span class="p">(...)</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">ExportTo</span><span class="p">(</span><span class="s">@&quot;C:\your\export\path&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>That will export all of your fluent and automapped mappings in hbm.xml format to whatever location you specify.</p>
+
+
+
+
+<h3 id='altering_nonautomapped_conventions'>Altering non-automapped conventions</h3>
+
+
+
+
+<p>If you want to override conventions that are used by your non-automapped classes, then you can use the <code>AlterConventions</code> method on <code>FluentMappings</code>.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">AlterConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="n">conventions</span><span class="p">.</span><span class="n">IsBaseType</span> <span class="p">=</span>
+</span><span class='line'>        <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">BaseType</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<h3 id='validation'>Validation</h3>
+
+
+
+
+<p>If you forget to setup your database, or don&#8217;t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It&#8217;ll tell you whether you&#8217;ve forgot to add any entities, or not setup your database.</p>
+
+
+
+
+<p>That&#8217;s it for now, I hope this helps to make configuring your application a little clearer.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-03T00:00:00+11:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/i-think-you-mean-a-many-to-one-sir/">I Think You Mean a Many-to-one, Sir</a></h1>
+    <div class="entry">
+        <blockquote>
+<p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a> and <a href='http://groups.google.com/group/nhusers'>NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn&#8217;t working, what&#8217;s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
+</blockquote>
+
+
+
+
+<p>There&#8217;s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it&#8217;s a one-to-one they need; after all, there&#8217;s their current entity (one) and the related entity (to-one). They&#8217;re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
+
+
+
+
+<p>There&#8217;s also a big distinction between what&#8217;s possible in the domain, and what&#8217;s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there&#8217;s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there&#8217;s nothing in the underlying pattern to disallow it.</p>
+
+
+
+
+<h2 id='manytoone'>Many-to-one</h2>
+
+
+
+
+<p>Lets have a look at what actually is a many-to-one. Here&#8217;s a small database schema and the related entity.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">AddressId</span> <span class="nb">int</span> <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">Address</span><span class="p">.</span><span class="n">Id</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="nb">Number</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Street</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
+</span><span class='line'><span class="err">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nb">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'><span class="err">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This is a standard many-to-one relationship, many <code>Customers</code> to one <code>Address</code>; the tables are linked by the <code>AddressId</code> key in the <code>Customer</code> table. You can see how people can misinterpret this as a one-to-one relationship when designing the Customer entity; the customer has one address, so it must be a one-to-one. People forget about this scenario:</p>
+
+
+
+
+<table class="db-table">
+  <caption>Customer</caption>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>AddressId</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Plumbers</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Joiners</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Roofers</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<table class="db-table">
+  <caption>Address</caption>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Number</th>
+      <th>Street</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>23</td>
+      <td>Baker St.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>47</td>
+      <td>Jefferson Ave.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<p>That is, the first and third customer both reference the first address.</p>
+
+
+
+
+<h2 id='onetoone'>One-to-one</h2>
+
+
+
+
+<p><strong>So what actually is a one-to-one relationship then?</strong> A one-to-one is a relationship between two tables that share a mutually exclusive primary key value.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="nb">Number</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Street</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
+</span><span class='line'><span class="err">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nb">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+</span><span class='line'><span class="err">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It&#8217;s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
+
+
+
+
+<p>It&#8217;s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it&#8217;s not immediately clear from the class what kind of relationship it is.</p>
+
+
+
+
+<p>So just remember this: <strong>if you think you&#8217;re mapping a one-to-one, you probably aren&#8217;t!</strong> It&#8217;s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it&#8217;ll be a many-to-one you need.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-27T00:00:00+11:00" pubdate data-updated="true">Jan 27<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/introduction-to-static-reflection/">Introduction to Static Reflection</a></h1>
+    <div class="entry">
+        <blockquote>This post could&#8217;ve also been called &#8220;Fluent NHibernate secrets exposed!&#8221; but it sounded a bit sensationalist.</blockquote>
+
+
+
+
+<p>You may have heard people mention static reflection recently, quite possibly because it&#8217;s used extensively in <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a>, <a href='http://ayende.com/projects/rhino-mocks.aspx'>Rhino Mocks</a>, and I believe <a href='http://www.lostechies.com/blogs/jimmy_bogard/'>Jimmy Bogard&#8217;s</a> new <a href='http://www.codeplex.com/AutoMapper'>AutoMapper</a> also uses it; pretty much any of the new &#8220;fluent&#8221; interfaces use some kind of static reflection.</p>
+
+
+
+
+<p><strong>So what actually is static reflection?</strong> Well, it&#8217;s a statically compiled way of utilising the Reflection API.</p>
+
+
+
+
+<p>Traditionally, if you wanted to use the Reflection API to interrogate your classes, you&#8217;d need to utilise strings to refer to properties and methods; this can make your design quite brittle, because you have to make sure these strings are kept up-to-date whenever you rename anything. What&#8217;s worse is that because reflection is late-bound, you aren&#8217;t aware of the problems until the code is actually executed, so this renaming could introduce hidden bugs that don&#8217;t appear until runtime. With the growing popularity of refactoring techniques, it&#8217;s becoming more important that we can use reflection without having to worry about this problem.</p>
+
+
+
+
+<blockquote>
+<p>It&#8217;s very true that tools like Resharper can certainly help with refactoring reflection-based code, but none of them are perfect and they only help the people that use them.</p>
+</blockquote>
+
+
+
+
+<p>In C# 3 we were introduced to lambda expressions and Linq, and with them came the <code>Func<></code> and <code>Expression<></code> classes; these are the key to static reflection. The <code>Func<></code> set of classes allow you to use lambda expressions that return a value, while an <code>Expression<></code> can be used to programatically access the contents of a delegate.</p>
+
+<p>Combining <code>Func<></code> and <code>Expression<></code> can give us a very powerful way to statically retrieve <code>PropertyInfo</code> (and similar) instances from a lambda expression. For example <code>Expression<Func<Customer, object>></code> represents an expression that contains a delegate that returns a value (of type object), with a <code>Customer</code> parameter; I&#8217;ll illustrate:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// method to receive an expression</span>
+</span><span class='line'><span class="k">public</span> <span class="n">PropertyInfo</span> <span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">&gt;(</span><span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">expression</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// usage</span>
+</span><span class='line'><span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;(</span><span class="n">customer</span> <span class="p">=&gt;</span> <span class="n">customer</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>What this is actually doing is creating a lambda that returns a value, the value of <code>customer.Name</code> in this case. Here&#8217;s the trick, we don&#8217;t actually care about the value that&#8217;s returned! In-fact, we don&#8217;t even evaluate this expression at all.</p>
+
+<blockquote>
+<p>The reason we use <code>object</code> in the <code>Func</code> signature, rather than a more specific type, is because we want to allow <em>any</em> property to be used; however, if you were only interested in <code>string</code> properties, then you could restrict it by replacing this parameter.</p>
+</blockquote>
+
+<p>The <code>Expression</code> API itself is very in-depth, so I won&#8217;t go into the intricacies of it but here&#8217;s a very simple implementation of static reflection.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="n">PropertyInfo</span> <span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">&gt;(</span><span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">expression</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">var</span> <span class="n">memberExpression</span> <span class="p">=</span> <span class="n">expression</span><span class="p">.</span><span class="n">Body</span> <span class="k">as</span> <span class="n">MemberExpression</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">memberExpression</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">&quot;Not a member access.&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">memberExpression</span><span class="p">.</span><span class="n">Member</span> <span class="k">as</span> <span class="n">PropertyInfo</span><span class="p">;</span> <span class="c1">// Should account for FieldInfo too</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Stepping through this code, we start by getting the body of the expression which we cast to a <code>MemberExpression</code>; this is us grabbing the <code>customer.Name</code> part of our expression. Now we can get the member itself and cast it to a <code>PropertyInfo</code>, this is the <code>Name</code> part of the expression body. That&#8217;s it! We&#8217;ve not evaluated the expression, but we&#8217;ve inspected it and retrieved the property.</p>
+
+<blockquote>
+<p>This example is for illustrative purposes, there are many different types of expressions which would be excluded by this. If you are to implement your own static reflection parser, you should cater for these other types of expressions.</p>
+</blockquote>
+
+<p>As this example shows, we&#8217;re able to use reflection without having to resort to strings. The great thing about this is that if you change the name of a member inside a lambda, you&#8217;ll get a compile error if you haven&#8217;t updated all the references! No more hidden bugs.</p>
+
+<p>So that&#8217;s how the magic behind Fluent NHibernate (and others) works, simple when you know how!</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-26T00:00:00+11:00" pubdate data-updated="true">Jan 26<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-and-base-classes/">Fluent NHibernate: Auto Mapping and Base-classes</a></h1>
+    <div class="entry">
+        <p>Carrying on with the <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a> Auto Mapping theme, I&#8217;ll now demonstrate how to map inheritance hierarchies.</p>
+
+
+
+
+<p>There are two main things that you&#8217;d want to do with inherited classes, either ignore the base class all together, or map them using an inheritance strategy. I&#8217;m going to start with the former, then move on to the latter.</p>
+
+
+
+
+<h2 id='ignoring_basetypes'>Ignoring base-types</h2>
+
+
+
+
+<p>This scenario is where you may have a base class in your domain that you use to simplify your entities, you&#8217;ve moved common properties into it so you don&#8217;t have to recreate them on every entity; typically this would be the Id and perhaps some audit information. So lets start with a model that has a base class we&#8217;d like to ignore.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Entities</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Entity</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span> <span class="p">:</span> <span class="n">Entity</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Animal</span> <span class="p">:</span> <span class="n">Entity</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Species</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Relatively simple model here, we&#8217;ve got an <code>Entity</code> base class that defines the <code>Id</code>, then the <code>Person</code> and <code>Animal</code> entities. We have no desire to have <code>Entity</code> mapped by NHibernate, so we need a way to tell the auto mapper to ignore it.</p>
+
+
+
+
+<p>For those individuals from traditional XML mapping land, this is what we&#8217;re going to be recreating:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Person&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;FirstName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;LastName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/class&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Animal&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Species&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/class&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We need to initialise the NHibernate configuration, and supply it with any auto mappings we&#8217;re going to create:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The first section is the configuration of Fluent NHibernate, which we&#8217;re telling to map anything in the <code>Entities</code> namespace from the assembly that contains our <code>Entity</code> base-class; then we configure NHibernate and inject our auto mappings.</p>
+
+
+
+
+<p>If we were to run this now, we wouldn&#8217;t get the mapping we desire. Fluent NHibernate would see <code>Entity</code> as an actual entity and map it with <code>Animal</code> and <code>Person</code> as subclasses; this is not what we desire, so we need to modify our auto mapping configuration to reflect that.</p>
+
+
+
+
+<p>After <code>MapEntitiesFromAssemblyOf<Entity>()</code> we need to alter the conventions that the auto mapper is using so it can identify our base-class.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">IsBaseType</span> <span class="p">=</span>
+</span><span class='line'>      <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Entity</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;ve added the <code>WithConventions</code> call in which we replace the <code>IsBaseType</code> convention with our own. This convention is used to identify whether a type is simply a base-type for abstraction purposes, or a legitimate storage requirement. In our case we&#8217;ve set it to return <code>true</code> if the type is an <code>Entity</code>.</p>
+
+
+
+
+<p>With this change, we now get our desired mapping. <code>Entity</code> is ignored as far is Fluent NHibernate is concerned, and all the properties (<code>Id</code> in our case) are treated as if they were on the specific subclasses.</p>
+
+
+
+
+<h2 id='basetype_as_an_inheritance_strategy'>Base-type as an inheritance strategy</h2>
+
+
+
+
+<p>What we&#8217;re going to do is create a simple model that we&#8217;ll map as a <a href='http://www.hibernate.org/hib_docs/nhibernate/html/inheritance.html'>table-per-subclass</a> inheritance strategy, which is the equivalent of the NHibernate <code>joined-subclass</code> mapping.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Entities</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Employee</span> <span class="p">:</span> <span class="n">Person</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="n">DateTime</span> <span class="n">StartDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Guest</span> <span class="p">:</span> <span class="n">Person</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GuestPassId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Relatively simple model here, we&#8217;ve got an <code>Person</code> class that defines the <code>Id</code> and name properties, then the <code>Employee</code> and <code>Guest</code> subclass entities.</p>
+
+
+
+
+<p>The XML equivalent is as follows:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Person&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;FirstName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;LastName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">&quot;Employee&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;PersonId&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;StartDate&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/joined-subclass&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">&quot;Guest&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;PersonId&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;GuestPassId&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/joined-subclass&gt;</span>
+</span><span class='line'><span class="nt">&lt;/class&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Again we configure NHibernate session factory to integrate with the auto mapping:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This is the same configuration that I used in the first example, except that if you recall the reason we had to change the last example was because it was mapping it as a joined-subclass - that&#8217;s right, we don&#8217;t need to do anything now! Our mapping is complete, Fluent NHibernate automatically assumes that any inherited classes (that haven&#8217;t had their base-type excluded by the <code>IsBaseType</code> convention) should be mapped as joined-subclasses.</p>
+
+
+
+
+<p>That&#8217;s how to deal with base-classes with Fluent NHibernate&#8217;s auto mapping.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-26T00:00:00+11:00" pubdate data-updated="true">Jan 26<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-components/">Fluent NHibernate: Auto Mapping Components</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></p></blockquote>
+
+<p>I&#8217;ve just committed a change that should allow automatic mapping of simple components; by simple, I mean components that just map properties, nothing fancy. I&#8217;ll be looking to expand this functionality in the future, but for the time being any kind of relationships aren&#8217;t supported within components. With that in mind, I&#8217;ll walk through how to automap your components.</p>
+
+
+
+
+<p>Lets imagine this database structure:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Person</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Address_Number</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Address_Street</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Address_PostCode</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We want to map that to the following model:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Domain</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="n">Address</span> <span class="n">Address</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">namespace</span> <span class="nn">Domain.Components</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Address</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">int</span> <span class="n">Number</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Street</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">PostCode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>With this design, <code>Address</code> is actually a component, which isn&#8217;t a full entity, more of a way of providing a clean model to a normalised database structure. I&#8217;ll get started by setting up the auto-mapper.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Domain&quot;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>That&#8217;s our auto mappings integrated with NHibernate. Next we need to instruct the auto mapper in how to identify components; after the <code>Where</code> call, we can add a call to <code>WithConvention</code> which is where we&#8217;ll give it a hand.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">IsComponentType</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Domain.Components&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The <code>IsComponentType</code> convention is what Fluent NHibernate uses to determine whether a type is one that will be mapped as a component, rather than a full entity.</p>
+
+
+
+
+<p>There are two things you need to know about this convention:</p>
+
+
+
+
+<ol>
+<li>You can only set this convention once, so you&#8217;ll need to use it in a way that allows you to identify multiple component types with it; there are several options to this, including using the namespace (the above example), or checking a suffix on the type name (anything that ends in &#8220;Component&#8221;, for example).</li>
+
+<li>This is not an exclusive call, so you need to segregate your component types from your standard entity types (so they&#8217;ll be excluded by the <code>Where</code> call), otherwise they&#8217;ll be auto-mapped as full entities as well as components - <em>not good</em>. I&#8217;ve done that in this example by separating components into their own namespace.</li>
+</ol>
+
+
+
+
+<p>With that, the <code>Address</code> should now be automatically mapped as a component; the auto mapper will pick up the three properties and map them as properties on the component.</p>
+
+
+
+
+<p>There&#8217;s one more thing, for illustrative purposes I&#8217;ve deliberately gone against Fluent NHibernate&#8217;s inbuilt convention for naming columns. By default any columns mapped in a convention will be prefixed with their property name, so <code>person.HomeAddress.Street</code> would be mapped against a column called <code>HomeAddressStreet</code>; this is my personal preference, but not what our database contains! We can control how our columns are named by altering the <code>GetComponentColumnPrefix</code> convention, like so:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">IsComponentType</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Address</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">GetComponentColumnPrefix</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">property</span> <span class="p">=&gt;</span> <span class="n">property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;_&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The convention now specifies that columns should be named ComponentPropertyName_PropertyName, so <code>person.Address.Street</code> is now correctly mapped against <code>Address_Street</code>.</p>
+
+
+
+
+<p>Magic.</p>
+
+
+
+
+<h4>Update:</h4>
+
+
+<p>I&#8217;ve updated this post to reflect some recent changes whereby the <code>GetComponentColumnPrefix</code> convention was updated to use the component property instead of the component type. This is to allow for multiple component properties on an entity that are of the same type. If you still need to use the type you can access it through the <code>PropertyInfo</code> parameter.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-19T00:00:00+11:00" pubdate data-updated="true">Jan 19<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-mapping-private-and-protected-properties/">Fluent NHibernate: Mapping Private and Protected Properties</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
+
+<p>There&#8217;s been a point of contention for some users of <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a> since the beginning, and that&#8217;s the lack of a method of mapping private and protected properties on their domain entities.</p>
+
+
+
+
+<p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we&#8217;re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
+
+
+
+
+<p>None of the solutions we have are ideal, we&#8217;ll be the first to admit that; but considering Fluent NHibernate was never designed to support these situations, and the limitations C# imposes on us, we&#8217;ve got some pretty reasonable choices. Each option comes with it&#8217;s own compromises, so it&#8217;s important you pick the method that has the compromises you&#8217;re more willing to accept; I&#8217;ll outline the pros and cons of each approach.</p>
+
+
+
+
+<h2 id='nested_expression_exposition_class'>Nested expression exposition class</h2>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Expressions</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">Id</span> <span class="p">=</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Id</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">Id</span><span class="p">(</span><span class="n">Product</span><span class="p">.</span><span class="n">Expressions</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This option takes advantage of an interesting side effect of nested class scope and access modifiers. If you haven&#8217;t done something like this before, basically nested classes can access their parent&#8217;s private/protected members. We create a nested static class that exposes an <code>Expression</code> for each hidden member. We can then use the expressions declared in this static class to reflect against the hidden members. It&#8217;s reasonably clean, made even more so if you separate the <code>Expressions</code> class into a partial class of your entity; so you could have <code>Product.cs</code> and <code>ProductExpressions.cs</code>.</p>
+
+
+
+
+<h3 id='pros'>Pros</h3>
+
+
+<ul><li>Refactoring friendly</li><li>Mappings still readable</li></ul>
+
+
+
+
+<h3 id='cons'>Cons</h3>
+
+
+<ul><li>Modification to entities required</li><li>Need 3 classes to map an entity (entity, expression class, and mapping)</li></ul>
+
+
+
+
+<h2 id='nested_mapping'>Nested mapping</h2>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="n">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Again using the scope trick, you can wrap your mapping inside your entity. This allows you to use the expressions as normal, without having to do any expression tricks. Like the expression class previously, this can be made neater by using partial classes.</p>
+
+
+
+
+<h3 id='pros'>Pros</h3>
+
+
+<ul><li>Refactoring friendly</li><li>Can use normal expressions</li></ul>
+
+
+
+
+<h3 id='cons'>Cons</h3>
+
+
+<ul><li>Modification to entities required</li><li>Mapping nested in entity, so can&#8217;t be separated across assemblies/namespaces</li></ul>
+
+
+
+
+<h2 id='reveal_and_string_names'>Reveal static class and string-based names</h2>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">Id</span><span class="p">(</span><span class="n">Reveal</span><span class="p">.</span><span class="n">Property</span><span class="p">(</span><span class="s">&quot;Id&quot;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Our final option is different to the previous two, in that it utilises an expression generator to create an expression for a private or protected member. This is essentially what the first two are doing, just with strings instead of nesting tricks.</p>
+
+
+
+
+<h3 id='pros'>Pros</h3>
+
+
+<ul><li>No modifications to entities needed</li><li>Mappings and entity remain separate</li></ul>
+
+
+
+
+<h3 id='cons'>Cons</h3>
+
+
+<ul><li>Potential renaming issues</li></ul>
+
+
+
+
+<h2 id='conclusion'>Conclusion</h2>
+
+
+
+
+<p>You have the power, now pick the one that suits you best. Compile time safety, or entity purity? You&#8217;re now free to make the decision, instead of us.</p>
+
+
+
+
+<p>I don&#8217;t think anyone on the Fluent NHibernate team is particularly happy with that we have to write these hacks, but we&#8217;re doing the best with what we&#8217;ve got. We all have different preferences, but at least there&#8217;s something for everyone now.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-13T00:00:00+11:00" pubdate data-updated="true">Jan 13<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions/">Fluent NHibernate: Auto Mapping Type Conventions</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
+
+<p>I&#8217;ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I&#8217;ll cover now.</p>
+
+
+
+
+<p>We&#8217;re going to use the same domain as before, but with a few extensions.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">ReplenishmentDay</span> <span class="n">ReplenishmentDay</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Shelf</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">Products</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDay</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Monday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;mon&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="cm">/* ... */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Sunday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;sun&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">string</span> <span class="n">day</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="kt">string</span> <span class="n">day</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="n">day</span> <span class="p">=</span> <span class="n">day</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;ve extended our domain with a <code>Description</code> and a <code>ReplenishmentDay</code> for the <code>Product</code>; the replenishment day is represented by a type-safe enum (using the <a href='http://www.javacamp.org/designPattern/enum.html'>type-safe enum pattern</a>). Also there&#8217;s a <code>Description</code> against the <code>Shelf</code> too (not sure why you&#8217;d have a description of a shelf, but hey, that&#8217;s customers for you). These changes are mapped against the following schema:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">ProductId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">250</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Price</span> <span class="nb">decimal</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">RepOn</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Shelf_FK</span> <span class="nb">int</span> <span class="k">foreign</span> <span class="k">key</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">table</span> <span class="n">Shelf</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">ShelfId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Now, if you&#8217;ve been following along you&#8217;ll remember that we made all strings default to 250; and yet the new description columns are 2000 characters long. The customer has stipulated that all descriptions of anything in the domain will always be 2000 or less characters, so lets map that without affecting our other rule for strings.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// other conventions</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;re using the Fluent NHibernate&#8217;s <code>ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code>AddTypeConvention</code> method takes a <code>ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code>string</code> property, and only for ones that are called &#8220;Description&#8221;, lets see how the <code>DescriptionTypeConvention</code> is declared.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">DescriptionTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">propertyMapping</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">!=</span> <span class="s">&quot;Description&quot;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">propertyMapping</span><span class="p">.</span><span class="n">WithLengthOf</span><span class="p">(</span><span class="m">2000</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>It&#8217;s fairly expressive of what it does, but I&#8217;ll cover it for completeness. The <code>ITypeConvention</code> specifies two methods: <code>bool CanHandle(Type)</code> and <code>void AlterMap(IProperty)</code>. <code>CanHandle</code> should be implemented to return <code>true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it&#8217;s ancestry, but in our case we just check whether it&#8217;s a string. <code>AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code>CanHandle</code> returns <code>true</code> for. We&#8217;ve implemented <code>AlterMap</code> to firstly check if the property is called &#8220;Description&#8221; (if it isn&#8217;t, we do nothing) and then alter the length of the property. Simple really.</p>
+
+
+
+
+<p>With a simple implementation like this, we&#8217;re able to map every Description property (that&#8217;s a <code>string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
+
+
+
+
+<h2 id='iusertype_support'>IUserType support</h2>
+
+
+
+
+<p>The other alteration to our domain was the addition of the <code>ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it&#8217;s stored in an <code>int</code> column, which obviously doesn&#8217;t match our type; and secondly the column is called <code>RepOn</code>, which we mustn&#8217;t change. We&#8217;re going to utilise NHibernate&#8217;s <code>IUserType</code> to handle this column.</p>
+
+
+
+
+<blockquote>
+<p>For the sake of this example we&#8217;re going to assume you&#8217;ve got an <code>IUserType</code> called <code>ReplenishmentDayUserType</code>, but as it&#8217;s beyond the scope of this post I won&#8217;t actually show the implementation as it can be quite lengthy. It&#8217;s best to just assume that the <code>IUserType</code> reads an <code>int</code> from the database and can convert it to a <code>ReplenishmentDay</code> instance. There&#8217;s a <a href='http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx'>nice example of implementing <code>IUserType</code></a> on <a href='http://intellect.dk'>Jakob Andersen</a>&#8217;s blog.</p>
+</blockquote>
+
+
+
+
+<p>So how do we tell Fluent NHibernate to use an <code>IUserType</code> instead of the specified type? Easy, with another <code>ITypeConvention</code>.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">ReplenishmentDayTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// other conventions</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Here&#8217;s how our new <code>ReplenishmentDayTypeConvention</code> looks:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDayTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">ReplenishmentDay</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">propertyMapping</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">CustomTypeIs</span><span class="p">&lt;</span><span class="n">ReplenishmentDayUserType</span><span class="p">&gt;()</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">TheColumnNameIs</span><span class="p">(</span><span class="s">&quot;RepOn&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>As you can see, we handle any <code>ReplenishmentDay</code> types, and then supply a <code>IUserType</code> using the <code>CustomTypeIs<T>()</code> method, and override the column name with <code>TheColumnNameIs(string)</code>. Again, easy!</p>
+
+
+
+
+<p>So that&#8217;s it, with those conventions we&#8217;re able to keep our standard rule that all strings should be 250 characters or less, unless they&#8217;re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code>int</code> in the database, which also has a custom column name.</p>
+
+
+
+
+<p>Next time: How to override conventions on an entity-by-entity basis.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-11T00:00:00+11:00" pubdate data-updated="true">Jan 11<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/2/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/4/" class="next">Next</a>
+    
+    <a href="/blog/archives" class="center">Blog Archives</a>
+</nav></div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

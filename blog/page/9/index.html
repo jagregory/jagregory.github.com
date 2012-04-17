@@ -1,0 +1,870 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="How-to Use ClientIDs in JavaScript Without the Ugliness ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/">How-to Use ClientIDs in JavaScript Without the Ugliness</a></h1>
+    <div class="entry">
+        <p>ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent’s ID.</p>
+
+<p><code>&lt;asp:TextBox ID="txtUsername" Runat="server" /&gt;</code> within a standard page simply has an ID of <code>txtUsername</code> within the HTML output. On the other hand, the following example would result in something along the lines of <code>_parent_txtUsername</code> as the ID:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;parent&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;asp:TextBox</span> <span class="na">ID=</span><span class="s">&quot;txtUsername&quot;</span> <span class="na">Runat=</span><span class="s">&quot;server&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
+
+<p>One solution, which I have used time-and-again, is to use a script block at the end of your page where you create a series of variables that contain the actual IDs. You then use these variables to reach the actual elements via JavaScript.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtUsername.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtPassword.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This solution works fine, but it isn’t exactly pretty and it doesn’t weigh well on my conscience.</p>
+
+<h2>Javascript Mapping</h2>
+
+<p>I’ve created a simple class that traverses the control structure and outputs an object that contains the mappings, as above, but without any client-side intervention; not a <code>&lt;%= ...ClientID %></code> in sight.</p>
+
+<p>An example of the output would be:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">ClientIDs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">txtUsername</span> <span class="o">=</span> <span class="s1">&#39;ctrl0_txtUsername&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">txtPassword</span> <span class="o">=</span> <span class="s1">&#39;ctrl0_txtPassword&#39;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which enables you to reference elements, that you know are server-controls, by calling <code>ClientIDs.txtUsername</code>.</p>
+
+<h3>Before:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtUsername.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">&#39;&lt;%= txtPassword.ClientID %&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtUsernameID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtPasswordID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">&#39;james&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;you shouldn&#39;t be here!&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>After:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtUsername</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtPassword</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">&#39;james&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;you shouldn&#39;t be here!&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>ServerControlIDs class</h2>
+
+<h3>Methods</h3>
+
+<p><code>void Emit(page)</code> - Builds the controls of the page into a mapped structure, registering a client-side script block for the output.</p>
+
+<p><code>void Emit(control, literal)</code> - Builds the controls of the control into a mapped structure, rendering the output into the literal control supplied. The literal is best suited to being placed into the <code><head></code> tag, which helps improve the semantic nature of your page.</p>
+
+<h3>Properties</h3>
+
+<p><code>bool Whitespace</code> - Sets whether the output should contain whitespace, provided only for “prettifying” your code; defaults to off.</p>
+
+<p><code>string VariableName</code> - Sets the JavaScript variable name used; defaults to ClientID.</p>
+
+<h3>Usage</h3>
+
+<p>To use this class, simply create an instance in the PreRender event for your page — this ensures that all the controls have been set to their correct state — then call the Emit method you desire.</p>
+
+<h2>History</h2>
+
+<ul>
+<li>[1.1] Removed IDs from Repeater/DataGrid contained controls.</li>
+<li>[1.0] Initial release</li>
+</ul>
+
+
+<h2>Download</h2>
+
+<p>That’s all there is to it, use the link below to get the latest version of ServerControlIDs.</p>
+
+<p>Please note that this code isn’t pretty and it could probably do with some revising, but it works and that’s what’s important to me. I’m open to suggestions and feature requests.</p>
+
+<p><a href="http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip">Current Version (1.1)</a></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/hello-from-jagregorycom/">Hello From JAGregory.com!</a></h1>
+    <div class="entry">
+        <p>You should now be receiving this syndicated content from my new(ish) website <a href="http://www.jagregory.com">http://www.jagregory.com</a>. I’ve finally moved away from the .Text powered blogging system I’ve been using for the past few years in favour of Typo, a Ruby on Rails system.</p>
+
+<p>I have a few reasons for doing this but the main one is that my blog as well as my personal website both validate to <acronym title="Extensible Hypertext Markup Language">XHTML</acronym> 1.0. On top of that, with the dynamic nature of Ruby on Rails, I can make changes to the layouts without having to recompile.</p>
+
+<p>Please drop me a line if you spot anything out of place.</p>
+
+<blockquote><p>Future James: Isn&#8217;t this cute?</p></blockquote>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-04-04T00:00:00+10:00" pubdate data-updated="true">Apr 4<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix/">JavaScript Behaviour & getElementsBySelector() Mini-fix</a></h1>
+    <div class="entry">
+        <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
+
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code>body#profile</code>, when <code>#profile</code> doesn’t exist), a script error occurs; yet using <code>#profile</code> alone works fine.</p>
+
+<p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It’s finding the <code>tagName</code> (<code>body</code>), but element is undefined due to the ID being invalid. A slight change to the above if statement fixes the problem.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">))</span> <span class="p">{</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Maybe somebody will find that useful, I’ve posted it on Simons blog, but incase he doesn’t accept the change you can download the modified version here.</p>
+
+<blockquote><p>Note: If you’re using Behaviour, as opposed to just <code>getElementsBySelector()</code>, you’ll need to paste the contents of the above file into the bottom of your behaviour.js file, overwriting everything after the <code>Behaviour.start();</code> line.</p></blockquote>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-03-24T00:00:00+11:00" pubdate data-updated="true">Mar 24<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/accessibility-for-uk-based-websites/">Accessibility for UK Based Websites</a></h1>
+    <div class="entry">
+        <p>As reported by <a href="http://news.bbc.co.uk/">BBC News</a>, a new set of <a href="http://news.bbc.co.uk/1/hi/technology/4783686.stm">accessibility guidelines</a> have been developed for UK websites.</p>
+
+<p>Although this certainly isn’t anything new — being as a law was passed in 1999 for compliance — and it isn’t even legally binding, it may be used in court if a case arises. This is just one more little pebble added to the mounting landslide that will occur when a disabled user finally does the american thing and sues a company for not providing sufficient means to access their website.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-03-08T00:00:00+11:00" pubdate data-updated="true">Mar 8<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors/">Trust Wireless Scroll Tablet With Dual Monitors</a></h1>
+    <div class="entry">
+        <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
+
+<p>As far as I am aware there isn’t an option in the trust software to allow you to map to a specific monitor, only to restrict the area on the tablet (which isn’t at all helpful). So what I’ve figured out is purely a work around, and it isn’t great either<sup>1</sup>. This is mainly for my reference, but someone else might find it useful, so here we go:</p>
+
+<ol>
+    <li>Open up Display Properties and disable (“un-attach”) your secondary monitor.</li>
+    <li>Open the Trust Control Panel from the icon in your system tray.</li>
+    <li>Re-enable your second monitor.</li>
+    <li>Click ok in your Trust Control Panel.</li>
+</ol>
+
+
+<p>From there on out your tablet should only be mapped to the monitor that stayed enabled the whole time, that is until you re-open the Trust Control Panel. I didn’t say it was pretty!</p>
+
+<p>What I can gather is that after disabling your monitor, when you open up the control panel it maps the overall screen size so it can apply that to the tablet, but when you click OK after re-enabling the monitor it doesn’t refresh with the screen change and so uses the single monitor values.</p>
+
+<p><sup>1</sup> Also note that I have only tested this on my system.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-03-07T00:00:00+11:00" pubdate data-updated="true">Mar 7<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/just-so-you-know/">Personal Note: A Brief Interlude</a></h1>
+    <div class="entry">
+        <p>Recently, while working on my website I&#8217;ve become exposed to the <a href="http://bennolan.com/behaviour/">Behaviour JavaScript library</a>, which I may say is absolutely wonderful. Very simple and straight forward, completely removes the need for those cursed script tags appended to the bottom of a page; something which I’ve never liked doing but became a bit of a necessary burden! In short it allows you to execute arbitrary code on elements in the DOM using CSS selectors; so, for example, you can apply an <code>onclick</code> event only to elements which match <code>form fieldset div#items a.add</code><sup>1</sup>, very handy indeed!</p>
+
+<p>Outside of the web I got my hands on a copy of <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0007A5FZS/qid=1141728007/sr=8-1/ref=sr_8_xs_ap_i1_xgl/026-0724979-2170829">Star Wars: Empire at War</a>, which is easily the best Star Wars RTS game I’ve played (which isn’t hard). Very entertaining, if a little same-y after a while. Definitely worth playing though.</p>
+
+<p>Even further outside of the web — in the real world — Sara and I got tickets for the Foo Fighters, Queens of the Stone Age and Motörhead show in Hyde Park, London. That should be an entertaining night and it’s a very good excuse to get ourselfs down to London again, a city we really enjoyed last time.</p>
+
+<p><sup>1</sup> Any anchors with a class of “add”, within a div with an ID of “items” that itself is within a fieldset in a form tag.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-03-07T00:00:00+11:00" pubdate data-updated="true">Mar 7<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/a-time-to-doodle/">A Time to Doodle</a></h1>
+    <div class="entry">
+        <p>After being inspired by Kevin Cornell at <a href="http://www.bearskinrug.co.uk/">Bearskinrug</a> I finally decided to try a drawing tablet, one of those magical designer tools. I bought a <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/026-0724979-2170829?%5Fencoding=UTF8">Trust 1200-V2 Wireless Scroll Tablet</a> from Amazon for a fairly reasonable £40, which was an absolute breeze to set up, windows picked it up without the need to install the drivers, which is always nice.</p>
+
+<p>My main complaint with it is that I was unable to (logically) get the tablet to map to anything less than both of my monitors, which was rubbish because that meant the tablet was being stretched horizontally; so you couldn’t trace anything without it becoming distorted. I say logically, because last thing yesterday I somehow managed it, so my tablet maps to my primary monitor and my mouse continues to work across both - it’ll take me a bit of time to get used to swapping but it’s definitely worth it. I will try and figure out how I managed to get it working, so I can at least make a note of it for next time.</p>
+
+<p>Now all I need to do is learn how to draw… I’m currently at <a href="http://neopoleon.com/">Rory</a>’s standard of drawing, which of course is amazing!</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-03-07T00:00:00+11:00" pubdate data-updated="true">Mar 7<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/venkman-for-firefox-1501-javascript-debugger/">Venkman for Firefox 1.5.0.1 (Javascript Debugger)</a></h1>
+    <div class="entry">
+        <p>Once again the guys at Mozilla have broken quite possibly the best plug-in for Firefox: the <a href="http://www.mozilla.org/projects/venkman/">Venkman Javascript Debugger</a>. This is becoming quite commonplace, with every update for firefox disabling the debugger until a fix is released.</p>
+
+<p>Anyway, even though both the extensions manager and Venkmans official website both say there aren’t any updates available, Joe Walker from <a href="http://getahead.ltd.uk/home">Getahead</a> has created and update that contains some bug fixes from Bugzilla, but most importantly Venkman now works with Firefox 1.5.0.1!</p>
+
+<p>Source: <a href="http://getahead.ltd.uk/ajax/venkman">Venkman for Firefox 1.5</a></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-02-07T00:00:00+11:00" pubdate data-updated="true">Feb 7<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/first-working-weekend/">First Working Weekend</a></h1>
+    <div class="entry">
+        <p>The weekend just past was my first that I’ve had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.</p>
+
+<p>The reason we had to work the weekend was down to us launching (re-launching actually) a product for the Swift Group’s extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.</p>
+
+<p>Something I wasn’t too happy about when I first inherited this project is that it was my sole responsibility. Slowly I came around to the idea though, it would be all my fault if everything went wrong, true, but it’d also be all down to me if everything went well; looks pretty good being responsible for a whole project only 10 months into a job.</p>
+
+<p>Anyway, this is now day 1 of the launch at an end and a few niggling things aside, everything went swimmingly. No show stopping bugs at all, only minor things that took barely more than a minute to fix. I can safely say I’m in the good books.</p>
+
+<p>Here’s to day 2 going as well as day 1.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-01-23T00:00:00+11:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/javascript-getnextelement-and-getpreviouselement-revised/">JavaScript getNextElement and getPreviousElement - Revised</a></h1>
+    <div class="entry">
+        <blockquote><p>This is a very old post. Please, stop reading and just <a href="http://jquery.com/">download jQuery</a>.</p></blockquote>
+
+<p>As I said I would be in my previous post, I’ve been working on improving getNextElement. I’ve improved the overall performance of the function and also created a few others with similar purpose; including the sister function getPrevious element. I outline all the functions and their uses below; you can find the download link at the top and bottom of this post.</p>
+
+<p>Any bugs anyone finds don’t fret to email me or post a comment here, i’ll work on fixing them asap.</p>
+
+<h2>The Functions</h2>
+
+<h3>getNextElement &amp; getPreviousElement</h3>
+
+<p>Basically this function is a more advanced, flexible version of the “element.nextSibling” and “element.previousSibling” properties. Features include the ability to specify the next element you’e looking for explicitly, so you can return the next list-item in a list (even if it happens to be a child of the current element) or the next matching node type. Also recursion is toggleable.</p>
+
+<h3>getFirstChild &amp; getLastChild</h3>
+
+<p>A core part of getNextElement/getPreviousElement, this function recursively searches an elements child nodes for a matching element. Can be used stand alone to only return from within an elements child structure; recursively parses the childNode structures of all child elements.</p>
+
+<h3>getNextParent &amp; getPreviousParent</h3>
+
+<p>Gets the next node in the DOM tree after the current nodes parent; this walks the DOM tree backwards until it finds a parent of the current node with a nextSibling/previousSibling present.</p>
+
+<h3>isType</h3>
+
+<p>Detects whether a specified element is of correct type; compares against a numerical value (nodeType) or a string value (tagName).</p>
+
+<h2>The Examples</h2>
+
+<p>Note: All functions that require an element as a parameter can either take a direct reference or a string ID value.</p>
+
+<h3>getNextElement &amp; getPreviousElement</h3>
+
+<p>Both functions take exactly the same parameters and are used in the same way, so I’ll only provide examples for one.</p>
+
+<blockquote><p>Note: These functions also walk up the DOM tree, so if you have two lists and call getNextElement on the last list-item in the first list it will return the first item of the second list.</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the next element, regardless of type, after id.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the next list item, after id; could potentially be a child of id.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the next element with a nodeType of 1.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the next list-item that resides on the same level, or higher, as id; no child nodes are searched.</p>
+
+<h3>Practical example:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;popup&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;h1&gt;</span>This is a popup<span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;paragraph&quot;</span><span class="nt">&gt;</span>Below are some options:<span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li&gt;</span>Your first choice<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">&quot;secondItem&quot;</span><span class="nt">&gt;</span>Your second choice<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would most likely return whitespace.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the H1 tag.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">&#39;paragraph&#39;</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the first list-item, “Your first choice”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getPreviousElement</span><span class="p">(</span><span class="s1">&#39;secondItem&#39;</span><span class="p">,</span> <span class="s1">&#39;ul&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the UL element.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getPreviousElement</span><span class="p">(</span><span class="s1">&#39;paragraph&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the paragraph element.</p>
+
+<h3>getFirstChild &amp; getLastChild</h3>
+
+<p>Once again, both these functions take the same parameters and behave the same way so I’ll only provide examples for one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the first child of id, regardless of type.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the first child of id that is a list-item.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the first child of id that has a nodeType of 1.</p>
+
+<h3>Practical example:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;popup&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;h1&gt;</span>This is a popup<span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;p&gt;</span>Below are some options:<span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li&gt;</span>Your first choice<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li&gt;</span>Your second choice<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would most likely return a Text node with some whitespace.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the H1 element.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the first list-item, “Your first choice”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once again, probably whitespace.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the UL element.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the last list-item, “Your second choice”.</p>
+
+<h3>getNextParent &amp; getPreviousParent</h3>
+
+<p>Again, both these functions take the same parameters, so I’ll only show one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextParent</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns the node next to the parent of id.</p>
+
+<h3>Practical example:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">&quot;first&quot;</span><span class="nt">&gt;</span>Item One<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">&quot;second&quot;</span><span class="nt">&gt;</span>Item Two<span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ul&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getNextParent</span><span class="p">(</span><span class="s1">&#39;first&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the second UL element.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">getPreviousParent</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Would return the first UL element.</p>
+
+<h3>isType</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">isType</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;li&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns true if id has a tagName of ‘li’.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">isType</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Returns true if id has a nodeType of 3.</p>
+
+<p>Download: <a href="#" title="DOM Navigation javascript file">domnavigation-1.1.js</a> <em>(this download is no longer available, sorry)</em></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-01-12T00:00:00+11:00" pubdate data-updated="true">Jan 12<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/8/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/10/" class="next">Next</a>
+    
+    <a href="/blog/archives" class="center">Blog Archives</a>
+</nav></div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

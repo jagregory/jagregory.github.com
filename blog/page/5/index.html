@@ -1,0 +1,1051 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="SharpDiff - Diff Parsing in .NET About SharpDiff SharpDiff is a library for parsing the output of various diffing tools. It&#8217;s primary purpose &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/sharpdiff-diff-parsing-in-net/">SharpDiff - Diff Parsing in .NET</a></h1>
+    <div class="entry">
+        <h2>About SharpDiff</h2>
+
+<p>SharpDiff is a library for parsing the output of various diffing tools. It&#8217;s primary purpose is to reduce the time spent by SCM UI developers in handing diff output.</p>
+
+<h2>Why SharpDiff</h2>
+
+<p>I&#8217;ve got a few tools in mind that require parsing of diff files. I figure it&#8217;s a pretty common thing for SCM UI developers to have to do, so I thought i&#8217;d put it out for others to use.</p>
+
+<h2>Parsing your first diff</h2>
+
+<p>The implementation is not concrete yet, but the current (easiest) way to parse a diff file is as follows.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">string</span> <span class="n">diffContent</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;MyDiffFile.diff&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Diff</span> <span class="n">diff</span> <span class="p">=</span> <span class="n">Diff</span><span class="p">.</span><span class="n">CreateFrom</span><span class="p">(</span><span class="n">diffContent</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From there you have a compiled version of your diff document. Intellisense will be your friend here, but basically you have a Chunks collection, and a Files collection.</p>
+
+<p>The Wikipedia <a href="http://en.wikipedia.org/wiki/Diff">article on Diffs</a> is worth a read if you&#8217;re interested. In short though, chunks are formed as a chunk header containing the affected lines, and the lines themselves.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='diff'><span class='line'><span class="gu">@@ -1,3 +1,6 @@</span>
+</span><span class='line'>This is a small text file
+</span><span class='line'><span class="gi">+that I quite like,</span>
+</span><span class='line'> with a few lines of text
+</span><span class='line'><span class="gd">-inside, nothing much.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The chunk header is <code>@@ -1,3 +1,6 @@</code>. The -1,3 describes the affected lines in the original file, the first number (ignoring the minus) is the start line, and the second number is the total of context lines plus subtraction lines. The second range (+1,6) is in the new file, and that starts on the first line, and has six affected lines; in this case it&#8217;s all the context lines plus all addition lines.</p>
+
+<p>All the other lines are the actual changes themselves. A line prefixed with a + is an addition line, a line prefixed with a - is a subtraction line, and lines prefixed with a space are context lines. Context lines are used for aligning the changes in the document. They&#8217;re also useful for determining if the document has changed since the diff was created.</p>
+
+<p>In the context of SharpDiff, your Chunks collection contains an instance of a Chunk for every part in the diff that resembles the above. Each chunk has the range info for the original and new file, and a Lines collection of each line.</p>
+
+<h2>Early Days</h2>
+
+<p><strong>WARNING:</strong> SharpDiff is still in early development. I wouldn&#8217;t recommend using it in production code yet, as the parser is severely limited, and there&#8217;s next to no error handling.</p>
+
+<p>The biggest flaw is that it only supports the standard git-diff output, and doesn&#8217;t handle many special circumstances.</p>
+
+<p>It does support:</p>
+
+<ul>
+<li>Standard git-diff header</li>
+<li>Index extended header</li>
+<li>Chunk header</li>
+<li>Chunk lines (added, removed, and contextual)</li>
+<li>No newline at end of file</li>
+<li>Multiple chunks per diff</li>
+<li>Multiple diff per input string</li>
+</ul>
+
+
+<p>It doesn&#8217;t support:</p>
+
+<ul>
+<li>Other extended headers</li>
+<li>Formats other than git-diff</li>
+</ul>
+
+
+<h2>Example</h2>
+
+<p>As quick example of what you could use this library for, here&#8217;s a screenshot of a git-diff application:</p>
+
+<p><img src="/images/sharpdiff-1.png" alt="Stupidly basic GUI" /></p>
+
+<h2>Get Involved</h2>
+
+<p>You can find the source on my github account, in the <a href="http://github.com/jagregory/sharpdiff">sharpdiff repository</a>.</p>
+
+<p>If you&#8217;re interested in helping with SharpDiff, then let me know. All comments, suggestions, and contributions are welcome. Feel free to contact me either through github, or my e-mail.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-19T00:00:00+11:00" pubdate data-updated="true">Oct 19<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/console-colours-wrapper/">Console Colours Wrapper</a></h1>
+    <div class="entry">
+        <p>Continuing on from my post about an <a href="/writings/alternative-to-abusing-using/">alternative syntax for the non-disposable using statements</a>, here&#8217;s a class I&#8217;ve been using lately. It serves as a wrapper around changing the colours in a console window. It&#8217;s not a difficult thing to do, it&#8217;s just a bit awkward because you have to maintain the original colour in a variable while you do your business.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Start...&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">var</span> <span class="n">originalColour</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColour</span> <span class="p">=</span> <span class="n">ConsoleColor</span><span class="p">.</span><span class="n">Red</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;WARNING!&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColour</span> <span class="p">=</span> <span class="n">originalColour</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&#8217;s not too bad when you&#8217;re only doing it once, but when you start swapping colours all over the place, then it can become very noisy. So this is where my class comes into play. Using the same syntax I described in my previous post, I&#8217;ve wrapped up the colour changing in a helper method that takes an Action delegate. This allows you to write much more intention revealing code.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConsoleColours</span><span class="p">.</span><span class="n">Foreground</span><span class="p">(</span><span class="n">ConsoleColor</span><span class="p">.</span><span class="n">Yellow</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Different text&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I find this much cleaner and the blocks gives my console code some much needed separation.</p>
+
+<p>Here&#8217;s the full class code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ConsoleColours</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Foreground</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">action</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span> <span class="p">=</span> <span class="n">original</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Background</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">action</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span> <span class="p">=</span> <span class="n">original</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-07T00:00:00+11:00" pubdate data-updated="true">Oct 7<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/alternative-to-abusing-using/">Alternative to Abusing Using</a></h1>
+    <div class="entry">
+        <p>There&#8217;s been a bit of discussion of late about using statements, and how they&#8217;re more often being used for purposes other than just releasing resources. As always, there are those people who think it&#8217;s a flagrant abuse of a feature and shouldn&#8217;t be done, then there are those that like it. I&#8217;m in between. I do like what the using statement gives us, but I also think it is a bit of an abuse.</p>
+
+<p>The &#8220;traditional&#8221; usage of the using statement can be found quite often in the land of files and streams. Take the following example, which opens a file and then closes it when it drops out of the using scope.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="p">(</span><span class="n">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">OpenRead</span><span class="p">(</span><span class="s">&quot;myFile.txt&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">// do something with the file</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Examples of the alternative usage can be found all over the place, but Rhino Mocks is one that&#8217;s close to my heart. Here&#8217;s from the record/replay syntax, anything in the scope of the using is recorded, and once it drops out of scope it&#8217;s no longer in record mode.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">using</span> <span class="p">(</span><span class="n">mocks</span><span class="p">.</span><span class="n">Record</span><span class="p">())</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Expect</span><span class="p">.</span><span class="n">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">Return</span><span class="p">(</span><span class="s">&quot;123 Rester St&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, I do like what the using statement gives us outside of releasing resources (I&#8217;m not disputing it&#8217;s usefulness there). However, I think the using keyword itself adds noise and clouds intention.</p>
+
+<p>With the adoption of 3.5, I&#8217;ve started using an alternative syntax instead of usings. Actions and anonymous methods to the rescue.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Scope</span><span class="p">(()</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">// do something within this scope</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&#8217;s a little bit more noisy in the compiler satisfying department, but because you have full control over naming, you can reveal intention more. No more unclear &#8220;using&#8221;.</p>
+
+<p>So how does it work? Simple really, the method takes an Action delegate, which it the executes almost immediately. I say almost, because you can execute code before and after the execution. That gives you the benefits of the using statements wrapping ability.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">// do something before</span>
+</span><span class='line'>  <span class="n">action</span><span class="p">();</span>
+</span><span class='line'>  <span class="c1">// do something after</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Some more examples:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">File</span><span class="p">.</span><span class="n">OpenRead</span><span class="p">(</span><span class="s">&quot;myFile.txt&quot;</span><span class="p">,</span> <span class="n">file</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">// do something with the file</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">mocks</span><span class="p">.</span><span class="n">Record</span><span class="p">(()</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Expect</span><span class="p">.</span><span class="n">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">Return</span><span class="p">(</span><span class="s">&quot;123 Rester St&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I prefer this syntax over the using statement. Of course, it&#8217;s only valid for 3.5 projects.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-07T00:00:00+11:00" pubdate data-updated="true">Oct 7<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/empty-nhibernate-logs-and-poor-performance/">Empty NHibernate Logs and Poor Performance</a></h1>
+    <div class="entry">
+        <p>We had an issue recently where NHibernate was performing very poorly on our production server, but not on our developer machines or our test server. I investigated the issue and narrowed it down to two symptoms.</p>
+
+<p><strong>Symptom 1:</strong> Very poor performance. I&#8217;m talking 10+ seconds per page load, with no more than 5 queries being executed by NHibernate.</p>
+
+<p><strong>Symptom 2:</strong> Empty log files. None of our log files had any data in on the live server, but they did on our other systems.</p>
+
+<p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
+
+<p>Firstly, I noticed that our logging was set to <code>DEBUG</code>. Must&#8217;ve been a leftover from when we first deployed NHibernate, very sloppy, I know. So I reset that to <code>WARN</code>, but it had no effect.</p>
+
+<p>When files aren&#8217;t being written to, you should always check the directory permissions. Low and behold, it was a permissions problem. Our test server had different users allowed to write to the Logs directory than our production server. I granted the same users access, <code>NETWORK SERVICE</code> and <code>IUSR_MACHINENAME</code> in our case.</p>
+
+<p>After I recycled the IIS worker processes, we were flying again. We&#8217;re back to having &lt; 1sec page loads.</p>
+
+<p>This is pure speculation, but what I believe was happening is this: Logging was set to <code>DEBUG</code>, so it was logging <em>a lot</em>. With each log call, the logger was failing to get write access to the files and throwing an exception, that exception would probably have propagated a bit too. The combination of the sheer amount of data being written to the log, and an exception per log call, were responsible for the severe slowdown.</p>
+
+<p>So in short: Always make sure NHibernate has write access to its own log directory!</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-09-12T00:00:00+10:00" pubdate data-updated="true">Sep 12<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/brace-matching-and-your-language-service/">Brace Matching and Your Language Service</a></h1>
+    <div class="entry">
+        <p>I&#8217;ve been meaning to write up some of my experiences developing for Visual Studio while I&#8217;ve been working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>, but I can never seem to find the time; either that, or when I can I&#8217;m not confident enough in what I&#8217;m doing to put it out here as a valid resource.</p>
+
+<p>I&#8217;ll start small, here&#8217;s a quick guide to how I&#8217;ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
+
+<p><strong>What exactly is brace matching?</strong> Brace matching is where paired characters are highlighted when one or the other is selected in the editor.</p>
+
+<p><img src="/images/bracematching-1.png" alt="Brace matching" /></p>
+
+<p>There are a couple of things you need to consider when you implement brace matching.</p>
+
+<p>Firstly, there are different types of braces that can be matched (depending on your language). Taking C# as an example, the brace matching works with parentheses (<code>()</code>), box brackets (<code>[]</code>), braces (<code>{}</code>), and chevrons (<code>&lt;&gt;</code>). These all need to be paired independently, as to avoid matching an open parenthesis with a closing brace.</p>
+
+<p>Secondly, the matching has to work bi-directionally. The user can place their caret at either side of the bracket pair, and the highlighting should know where both sides are regardless.</p>
+
+<h2>LanguageService implementation</h2>
+
+<p>A lot of the legwork of implementing a language in Visual Studio is done in the LanguageService, and brace matching is no exception. You should already have a <code>ParseSource</code> method in your LanguageService; this is where we&#8217;re going to work.</p>
+
+<p>The <code>ParseSource</code> method has a <code>ParseRequest</code> parameter, which exposes a <code>Reason</code> property. When this property is set to <code>MatchBraces</code>, that&#8217;s when we need to do our processing.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// match braces here</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What needs to be done is pretty simple: Parse the open document and find the partner to the brace that the caret is on.</p>
+
+<p>In BooLangStudio I&#8217;ve implemented this in the following fashion:</p>
+
+<ul>
+<li>Run the document through a <code>BracketPairFinder</code>, which creates a list of bracket pairs in the document</li>
+<li>Get the index of the caret (baring in mind you have to translate between the Request&#8217;s Line and Column, and an actual string index)</li>
+<li>Find the pair that the caret is positioned at</li>
+<li>Get the opposite bracket from the pair</li>
+<li>Get the Line and Column of the opposite bracket</li>
+</ul>
+
+
+<p>It&#8217;s up to you how you implement the above steps, as long as you end up with the opposite bracket to the one you started with. I&#8217;ll illustrate using the BooLangStudio source.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// find all pairs</span>
+</span><span class='line'>    <span class="n">var</span> <span class="n">bracketFinder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BracketPairFinder</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">var</span> <span class="n">bracketPairs</span> <span class="p">=</span> <span class="n">bracketFinder</span><span class="p">.</span><span class="n">FindPairs</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Text</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// get index of caret from source text</span>
+</span><span class='line'>    <span class="n">Source</span> <span class="n">source</span> <span class="p">=</span> <span class="n">languageService</span><span class="p">.</span><span class="n">GetSource</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">View</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">indexOfCaret</span> <span class="p">=</span> <span class="n">source</span><span class="p">.</span><span class="n">GetPositionOfLineIndex</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// find the partner to the bracket at the caret</span>
+</span><span class='line'>    <span class="kt">int?</span> <span class="n">partner</span> <span class="p">=</span> <span class="n">bracketPairs</span><span class="p">.</span><span class="n">FindPartnerIndex</span><span class="p">(</span><span class="n">indexOfCaret</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// tell Visual Studio about the pair</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>The <code>Source</code> class has a helpful <code>GetPositionOfLineIndex</code> method, which translates between a Line and Column to a single string index. Very handy!</p></blockquote>
+
+<p>Once you&#8217;ve got your indices, we need to inform Visual Studio of our findings. You do that by setting the <code>request.Sink.FoundMatchingBrace</code> to <code>true</code>, then calling the <code>MatchPair</code> method on the Sink. You need to pass two <code>TextSpan</code> instances to the <code>MatchPair</code> method; the first is the left brace, and the second the right.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="p">...</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// tell Visual Studio about the pair</span>
+</span><span class='line'>      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="n">FoundMatchingBrace</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">nextLine</span><span class="p">,</span> <span class="n">nextCol</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">source</span><span class="p">.</span><span class="n">GetLineIndexOfPosition</span><span class="p">(</span><span class="n">partner</span><span class="p">.</span><span class="n">Value</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextLine</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextCol</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="n">MatchPair</span><span class="p">(</span>
+</span><span class='line'>        <span class="k">new</span> <span class="n">TextSpan</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="n">TextSpan</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">nextCol</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">nextCol</span> <span class="p">+</span> <span class="m">1</span>
+</span><span class='line'>        <span class="p">},</span> <span class="m">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">AuthoringScope</span><span class="p">();</span> <span class="c1">// replace with your implementation</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>The <code>Source</code> class has another helpful method: <code>GetLineIndexOfPosition</code> method, which translates back to Line and Column from a single string index.</p></blockquote>
+
+<p>Finally, just return an empty AuthoringScope, as it isn&#8217;t used as part of this parse request.</p>
+
+<p>That&#8217;s it! You should have now successfully implemented brace matching. You may need to tweak the TextSpan indexes depending on your parser implementation, but it shouldn&#8217;t be far wrong.</p>
+
+<h2>BooLangStudio implementation</h2>
+
+<p>If you&#8217;re interested in seeing how I handle the brace parsing, I may cover that in a future post. However, you can find all the source in my <a href="http://github.com/jagregory/boolangstudio/tree/master">github BooLangStudio fork</a>. Some interesting one&#8217;s in particular are:</p>
+
+<ul>
+<li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/ParseRequestProcessor.cs#L133">ParseRequestProcessor.HighlightBraces</a> - Delegated to from the LanguageService.ParseSource method.</li>
+<li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/BracketPairFinder.cs">BracketPairFinder</a> - Class which parses a document to get all the bracket pairs. Uses <a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/ExcludingStringLiteralsStringWalker.cs">ExcludingStringLiteralsStringWalker</a>.</li>
+<li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/StringWalker.cs">StringWalker</a> - A simple string parser used by the <code>BracketPairFinder</code>, which walks over a string maintaining a code-aware state. Basically, it lets you know whether it&#8217;s currently inside a bracket or string literal. Handy for not matching characters inside strings.</li>
+</ul>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-09-02T00:00:00+10:00" pubdate data-updated="true">Sep 2<span>nd</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/time-time-time/">Time, Time, Time</a></h1>
+    <div class="entry">
+        <p>Time is a funny thing, a day can drag out and feel like an eternity, but a year can pass in a blink of an eye.</p>
+
+<p>I&#8217;m about 8,395 days old today, that&#8217;s roughly 201,480 rotations of the hour hand of your clock. Remember how long it takes for that hour hand to drip by while you&#8217;re in yet another boring meeting? I&#8217;ve had over 201 thousand of them.</p>
+
+<p>That all equates to 23 years old, which isn&#8217;t too bad I suppose.</p>
+
+<p>It&#8217;s not often I talk about myself. I have a lot of opinions, but I generally keep me to myself. On this occasion I&#8217;m going to give myself a pat on the back.</p>
+
+<p><strong>I&#8217;m pretty proud of myself.</strong></p>
+
+<p>I have no qualifications, I have no A-levels, and only a few GCSEs. I am completely self-taught.</p>
+
+<p>One thing that I&#8217;ve learnt is that only you know yourself. If somebody says you can&#8217;t do something, fuck them. Who are they to tell you what you can and can&#8217;t do? Prove them wrong.</p>
+
+<p>I was told that programming is hard, and it&#8217;s not something you can learn in your bedroom any more. I was told I&#8217;d not be earning more than £14,000 by the time I was 20. I was told there was no chance I could get a job without any formal qualifications. Two jobs down the line, too many languages to list, and more money than sense - I think I proved them all wrong.</p>
+
+<p>The best thing you can do for yourself is to learn how to learn. It&#8217;s the one thing they don&#8217;t teach you in school. Since I learnt how to learn, I&#8217;ve gained so much knowledge.</p>
+
+<p>Don&#8217;t concern yourself with the details, learn the techniques, learn the principals. It can be mistaken for arrogance, but I&#8217;m so confident in my ability to <em>learn</em>, that I can safely say that I can use <strong>any programming language</strong>, any operating system, any technology, ever invented and ever to be invented.</p>
+
+<p>I am not scared of change, of new technologies, and I&#8217;m not afraid of being left behind. I can adapt, because I can learn.</p>
+
+<p>It&#8217;s been a crazy ride so far, I look forward to what the next few years bring.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-14T00:00:00+10:00" pubdate data-updated="true">Aug 14<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/introducing-fluent-nhibernate/">Introducing Fluent NHibernate</a></h1>
+    <div class="entry">
+        <blockquote><p>A couple of people have already covered this already, specifically <a href="http://www.IAmNotMyself.com/2008/08/07/SkinningTheCatWithFluentNHibernate.aspx">Bobby Johnson</a>, <a href="http://mhinze.com/fluent-nhibernate-project/">Matt Hinze</a>, and <a href="http://zachariahyoung.com/zy/post/2008/08/fluent-nhibernate-for-creating-entity-mapping-files.aspx">Zachariah Young</a>. I figure I should say something on it anyway.</p></blockquote>
+
+<p>I&#8217;ve adopted a project from <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a> that I think has the potential to be a really useful tool. It&#8217;s called <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and it&#8217;s primarily a fluent API for mapping classes with NHibernate.</p>
+
+<p>We&#8217;re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They&#8217;re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
+
+<h2>The API</h2>
+
+<p>Take the following simple hbm file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span>
+</span><span class='line'><span class="nt">&lt;hibernate-mapping</span> <span class="na">xmlns=</span><span class="s">&quot;urn:nhibernate-mapping-2.2&quot;</span> <span class="na">namespace=</span><span class="s">&quot;Eg&quot;</span> <span class="na">assembly=</span><span class="s">&quot;Eg&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Customer&quot;</span> <span class="na">table=</span><span class="s">&quot;Customers&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;ID&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/id&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Name&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Credit&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;bag</span> <span class="na">name=</span><span class="s">&quot;Products&quot;</span> <span class="na">table=</span><span class="s">&quot;Products&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;CustomerID&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;one-to-many</span> <span class="na">class=</span><span class="s">&quot;Eg.Product, Eg&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/bag&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">&quot;Address&quot;</span> <span class="na">class=</span><span class="s">&quot;Eg.Address, Eg&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;AddressLine1&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;AddressLine2&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;CityName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;CountryName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/component&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/class&gt;</span>
+</span><span class='line'><span class="nt">&lt;/hibernate-mapping&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then compare it to the same mapping, created using the fluent API:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="n">CustomerMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">CustomerMap</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ID</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Credit</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">HasMany</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Products</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AsBag</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">Component</span><span class="p">&lt;</span><span class="n">Address</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Address</span><span class="p">,</span> <span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine1</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine2</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CityName</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CountryName</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Firstly, you&#8217;ll note that there is a marginal reduction in lines of code, but that&#8217;s not what we&#8217;re particularly striving for. Instead we&#8217;re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code>id</code> element in the hbm file, you&#8217;re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int&#8217;s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
+
+<h2>Testability</h2>
+
+<p>Another one of our goals is to make your mappings more robust. I imagine most people have had the problem where you&#8217;ve renamed a property and not updated the mapping file; due to there being no compile time validation, the only way to catch these mistakes are at run time (hopefully you had tests to cover that!). With the way our API is designed, you use the actual properties on your classes to create the mapping, so there&#8217;s nothing to forget. If you rename a property, your IDE will either rename the property in the mapping, or fail at compilation.</p>
+
+<p>We also want to help you verify that your mappings are set up properly, not just syntactically valid. So to make your   integration tests a bit easier, we&#8217;re providing an API for testing your mappings.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">VerifyCustomerSaves</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">new</span> <span class="n">PersistenceSpecification</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;()</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="s">&quot;James Gregory&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Age</span><span class="p">,</span> <span class="m">22</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">VerifyTheMappings</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Behind the scenes the <code>PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code>CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It&#8217;s a fairly standard integration test, except we&#8217;ve taken the time to write all the wiring up that needs to be done, so you don&#8217;t have to.</p>
+
+<h2>The Framework</h2>
+
+<p>We&#8217;re working towards our first official release, which will have a fairly solid implementation of the API. Once that&#8217;s out in the wild, we&#8217;re going to focus on our Framework.</p>
+
+<p>Our framework is a layer that sits on-top of the API to provide an even better experience. We&#8217;re looking to integrate with your favorite container, which will reduce the code you need to write to integrate NHibernate into your system. Then we&#8217;re going to tackle extensible conventions, which will allow you to specify your own implied conventions for your application. For example, if you&#8217;re <strong>always</strong> going to call your identifier &#8220;ID&#8221;, then why should you have to specify it every time? <em>You shouldn&#8217;t!</em></p>
+
+<p>Development is progressing at a nice pace, and I expect we&#8217;ll be able to get our first release out within the next few weeks. The testing API hasn&#8217;t been kept quite as up to date as the main API, but we&#8217;re working on that too. It&#8217;s open-source, so suggestions and patches are welcome.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-08T00:00:00+10:00" pubdate data-updated="true">Aug 8<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/latest-on-boolangstudio/">Latest on BooLangStudio</a></h1>
+    <div class="entry">
+        <p>It&#8217;s been a long time since I&#8217;ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we&#8217;re steadily working towards our first release.</p>
+
+<p>To fill you in a bit on what&#8217;s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren&#8217;t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we&#8217;re free of this scenario!</p>
+
+<p><img src="/images/bls-1.png" alt="Syntax highlighting" /></p>
+
+<p><a href="http://www.justnbusiness.com/">Justin Chase</a> has been tackling various issues all over the place. Several related to the build process, specifically how the Boo binaries are located on your machine, which has been a bit of a problem when there&#8217;s multiple developers working on a project whom both have Boo installed in a different location. He&#8217;s also been spiffing up the interface by adding some much needed icons to the projects.</p>
+
+<p><img src="/images/bls-2.png" alt="Project view" /></p>
+
+<p><a href="http://www.codinginstinct.com/">Torkel Ödegaard</a> has been working various issues throughout the project. He&#8217;s created a properties dialog for the project which allows you to alter the usual settings for your project, assembly name, default namespace etc&#8230; He also managed to get debugging working, which is awesome.</p>
+
+<p>Then there&#8217;s me, I&#8217;ve been working on the intellisense capabilities. We&#8217;ve had intellisense support from day one, but it&#8217;s never been very extensive. For a long time it only worked on the current file you had open.</p>
+
+<p>The entire solution is now processed behind-the-scenes to provide intellisense. Import statements are now recognised and imported types appear in the local scope intellisense. Any assemblies or projects that are referenced have their top-level types and namespaces included in the intellisense too.</p>
+
+<p>Additionally I&#8217;ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code>StringBuilder().Append("Hello world").ToString().</code> for example).</p>
+
+<p><img src="/images/bls-3.png" alt="Code completion" /></p>
+
+<p>I believe that about covers what we&#8217;ve been upto lately. Our biggest problem currently is that most of these features are implemented in separate branches, and haven&#8217;t yet been merged into our central repository. We&#8217;re working on this, and I reckon once we&#8217;ve done that we&#8217;ll be looking at doing a release.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-07T00:00:00+10:00" pubdate data-updated="true">Aug 7<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/missed-out-on-something-big/">Missed Out on Something Big</a></h1>
+    <div class="entry">
+        <p>Ever get the feeling that you&#8217;ve missed out on something big? I never got to see Star Wars at the cinema. I missed out on the start of computers, the ASM, the BASIC hacking and what-not. I discovered most of my musical taste way after the bands were gone or going, so I never got to see them in show.</p>
+
+<p>None of those are my fault, of course, because they were all before my time; in fact, most were at least a decade before me. That still doesn&#8217;t stop me from ocasionally getting the feeling that I missed out on something big.</p>
+
+<p>One more. One that&#8217;s pertient to our industry: Smalltalk.</p>
+
+<p>Smalltalk is one of those languages, possibly the most prominent example, that has been idolised over time. It&#8217;s often touted as having an excellent programmer experience, properly object-oriented, the source of refactoring, great tools, and a solid virtual machine behind it. It&#8217;s one of those languages that people are proud to say they once worked with it. A language that people nosalgicly look back on. It&#8217;s also got an air of betamax about it (yeah, I missed that one too), people were sure it was better, but it still didn&#8217;t become mainstream.</p>
+
+<blockquote><p>&#8220;We Smalltalkers used to think the advantages of our language were so significant that it would take over the world. We had a huge productivity advantage over C coders. Then C++ came along and gave C coders just enough to let them improve their productivity and their ability to write larger more complex systems. It still wasn’t as good as Smalltalk, but it was better than C, and much more accessible to most programmers than Smalltalk.&#8221; - <a href="http://blog.hasmanythrough.com/2008/5/31/quick-railsconf-update">Josh Susser</a> via <a href="http://weblog.raganwald.com/2008/06/bit-of-history-and-interesting.html">Raganwald</a></p></blockquote>
+
+<p>So where am I going with this? Just like I can make myself feel a bit better by watching Star Wars on a large TV, or listening to the Rolling Stones live albums. I&#8217;d like to see what all the fuss was about with Smalltalk, by giving it a go.</p>
+
+<p>I&#8217;m not sure where to start on this, or how long it&#8217;s going to take, or even when I&#8217;m going to do it; however, one day in the not too distant future I&#8217;m going to do some programming with Smalltalk.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-01T00:00:00+10:00" pubdate data-updated="true">Jul 1<span>st</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/boo-visual-studio-plugin-progress/">Boo Visual Studio Plugin Progress</a></h1>
+    <div class="entry">
+        <p>Quick update on the <a href="/writings/boo-visual-studio-plug-in-1-complete/">Boo plugin I mentioned previously</a>. Jeff Olson announced the <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a> project a couple of days after I announced mine, and we&#8217;ve decided to join forces. I&#8217;ve begun merging our codebases, and we&#8217;re looking to get a release out in the not too distant future.</p>
+
+<p>Our combined code-bases have now got syntax highlighting, intellisense, single file and project support. Not bad going.</p>
+
+<p>We&#8217;ve now got a nice little team going as well, which is a big improvement from what was the one man band of my self. One of the contributors, <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">Torkel Ödegaard</a>, has written a <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">nice overview</a> of our progress and processes as-well.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-05-25T00:00:00+10:00" pubdate data-updated="true">May 25<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/4/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/6/" class="next">Next</a>
+    
+    <a href="/blog/archives" class="center">Blog Archives</a>
+</nav></div>
+	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>
