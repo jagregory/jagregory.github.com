@@ -1,0 +1,59 @@
+---
+layout: post
+title: Introducing Docu - Simple doc gen for .Net
+tags:
+- docu
+- Documentation
+- Sandcastle
+status: publish
+type: post
+published: true
+meta:
+  aktt_notify_twitter: 'no'
+  _edit_last: '2'
+---
+<p>Lets look at a recent Twitter conversation of mine:</p>
+
+<ul>
+<li>Anyone have any tips on generating html docs from XML comments? Used to do it years ago with NDoc <a href='http://twitter.com/jagregory/status/1312895270'>?</a></li>
+
+<li>Man, sandcastle is so overly complex <a href='http://twitter.com/jagregory/status/1313079815'>?</a></li>
+
+<li>Sandcastle examples don&#8217;t even work. This is shit. <a href='http://twitter.com/jagregory/status/1313167377'>?</a></li>
+
+<li>Why isn&#8217;t sandcastle just a console app that takes a list of dlls and spits out html/chm? What&#8217;s with all the batch files and XslTransforms? <a href='http://twitter.com/jagregory/status/1313112789'>?</a></li>
+
+<li>@AndrewNStewart Well Sandcastle requires chaining together several calls to 3+ applications before you get anything. <a href='http://twitter.com/jagregory/status/1315443964'>?</a></li>
+
+<li>Are these Sandcastle generated MSDN-style API docs actually useful to anyone? <a href='http://twitter.com/jagregory/status/1315364767'>?</a></li>
+
+<li>@pollingj It&#8217;s a dilemma. I don&#8217;t care about API docs, but people seem to want it, but I&#8217;m reluctant to generate msdn-like shit. Dilemma. <a href='http://twitter.com/jagregory/status/1315455082'>?</a></li>
+</ul>
+
+<p>So as you can see, dilemma. People want API documentation (for <a href='http://fluentnhibernate.org'>Fluent NHibernate</a> specifically), but I don&#8217;t want to associate myself with the awful MSDN-style documentation that&#8217;s produced by Sandcastle.</p>
+
+<blockquote>
+<p>Before you get all hot under the collar, if you like Sandcastle, or you like MSDN-style documentation, leave now. Use what works for you, it doesn&#8217;t work for me so I&#8217;m not using it, but I don&#8217;t want to stop you using it.</p>
+
+<p>I realise the market for this tool is probably pretty small, but it&#8217;s useful to me so it might be useful to you.</p>
+</blockquote>
+
+<p>Introducing <a href='http://docu.jagregory.com'>docu</a>, the simple documentation generator for .Net!</p>
+
+<p>Docu is a tool that produces an html site (or rather, a collection of html pages) from the doc-comments you include in your code. Given an assembly and the Visual Studio produced XML of the comments, docu will produce a completely static collection of pages that you can publish anywhere you like. You run it through one command-line tool, with one parameter. That&#8217;s it, nothing complicated.</p>
+
+<p><code style="background: #CCC;color: #000;padding: 2px;">docu your-assembly.dll</code></p>
+
+<p>You can see an example of the default style that&#8217;s provided in the Fluent NHibernate <a href='http://fluentnhibernate.org/api/index.htm'>API docs</a> (the colour scheme has been modified, but everything else is default).</p>
+
+<p>Docu is completely stand alone, no GAC deployed assemblies, no hard-coded paths, no nothing. This makes it trivial to use docu in your CI process for building up-to-the-second API docs for publishing or downloading.</p>
+
+<p>The templates that docu uses are created with the <a href='http://sparkviewengine.com'>Spark view engine</a> which means you have all the power of C# and it&#8217;s templating language at your finger-tips. If you&#8217;re particularly picky about appearance (like I am) then you can completely rewrite the templates to your heart&#8217;s content. There&#8217;s no imposed structure or style, it&#8217;s all customisable through the templates. You can read more about customising templates on the site: <a href='http://docu.jagregory.com/customising-templates'>customising templates</a>.</p>
+
+<p>An interesting little feature of the templating system is <em>special names</em> for directories and files, for example if you name a template <code>!namespace.spark</code>, a html page will be produced for a each namespace in your assembly using that template. This allows you to do things like create a directory for each namespace, with a page for each type in that namespace inside. Pretty powerful!</p>
+
+<p>The codebase is reasonably well structured, but the code itself is a bit untidy. Luckily it&#8217;s covered by nearly 200 unit tests (so far) and i&#8217;ll be leveraging them to improve the code quality over time. You can checkout the code from the <a href="http://github.com/jagregory/docu">docu github repo</a>.</p>
+
+<p>It's early days yet, there's very little customisation of the documentation process (the part that actually finds the types and members to document), and not all comment types are supported yet; however, it's used for Fluent NHibernate and works pretty well. It's only Alpha right now, so you shouldn't expect the world.</p>
+
+<p>So if this kind-of thing interests you, go have a read of the <a href='http://docu.jagregory.com'>docu website</a> and let me know how it works out for you.</p>
