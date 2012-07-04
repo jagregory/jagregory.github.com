@@ -72,7 +72,7 @@
 
 <p>I&#8217;ve been seeing some strange behaviour on the development environment for <a href="http://www.getonthegame.com.au">On the Game</a> recently. I&#8217;ve just spent an hour combing through every line of code that varies from a standard Rails app, and I&#8217;ve finally found the issue. I&#8217;m putting it here for posterity.</p>
 
-<p>Regardless of my configuration, Rails was always displaying the production page for 500 errors (<code>public/500.html</code>) even in development mode.</p>
+<p>Regardless of my configuration, Rails was always displaying the production page for 500 errors (e.g. <code>public/500.html</code>) even in development mode.</p>
 
 <p>I poked around for a while and eventually found it to be this:</p>
 
