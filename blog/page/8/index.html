@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Your Forms Are Killing Me Note: I have no particular dislike of the website in question, in fact I read it on a regular basis, but what I’m about to &hellip;">
+    <meta name="description" content="A Usability Moan About Adobe&#8217;s Website When recently performing a system-wide clean-out, I removed a long-expired Macromedia Flash 8 Studio &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,70 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/a-usability-moan-about-adobes-website/">A Usability Moan About Adobe&#8217;s Website</a></h1>
+    <div class="entry">
+        <p>When recently performing a system-wide clean-out, I removed a long-expired Macromedia Flash 8 Studio trial. Unknown to me at the time, it had taken it upon itself to remove the flash player as-well; because, of course, now that I don’t want to develop flash, I’ll never need it again!</p>
+
+<p>Anyway, a week or so later I discovered that I needed to re-install the player, so off I went to <a href="http://www.adobe.com">Adobe’s Website</a>. When I arrived, I was presented with a fairly reasonable page - in terms of design - but there was something on there that epitomises the lack of thought that goes into usability on the web. People, you have to remember it isn’t just about how you create your links (bad “click here”, no play-time for you!), it’s also about how your content is worded.</p>
+
+<p><img src="/images/adobe-flash-small.jpg" alt="Adobe's no-flash warning message" /></p>
+
+<p>What you can see in the screenshot is what you’re shown if you don’t have the flash player installed (or JavaScript enabled, I’m guessing).</p>
+
+<p>What’s wrong with this picture?</p>
+
+<p>It’s very misleading, that’s what.</p>
+
+<p>The heading is asking me “Can’t see this content?”, but I can, can’t I? I’m reading it! Oh, the word “this” isn’t associated to what I’m reading (as it should be), but rather what I’m <strong>not</strong> reading. Interesting.</p>
+
+<p>Misleading text has also found its way into the body content, once again, I am reading the content aren’t I? Another thing is that the content also implies that I have JavaScript disabled when I actually don’t. I believe you’re statistically more likely to have a user without flash installed, than without JavaScript enabled. So with that in mind, it would have been a better idea to ask if they have flash first then ask about JavaScript. Even better would be to do a check to see if JavaScript is enabled, if it is you don’t need to display that part of the message at all!</p>
+
+<p>One last thing, those controls at the bottom; what are they doing there? I know (now) that they’re there because the content that’s supposed to be showing is a movie, but prior to having that knowledge surely they just reinforce the feeling that I am seeing what I’m supposed to. I have content, I have play controls, hey why aren’t they working? They serve no purpose apart from to confuse the user.</p>
+
+<h2>A slightly better picture</h2>
+
+<p>I’ve modified the content to be - in my eyes - a bit more respectable. It still isn’t perfect, like I said above, some JavaScript detection would be nice. Here it is non-the-less though:</p>
+
+<p><img src="/images/adobe-flash-fixed.gif" alt="An improved version of Adobe's message" /></p>
+
+<p>“Reading this?”</p>
+
+<p>I most certainly am.</p>
+
+<p>“If you are reading this message, then you are unable to view our active content.”</p>
+
+<p>Oh dear, so that’s what this is all about. How do I fix it?</p>
+
+<p>“Please either download the latest version of the Macromedia Flash Player or enable JavaScript in your browser.”</p>
+
+<p>Will do, thanks for the help Mr. Usable Information Box.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-07-01T00:00:00+10:00" pubdate data-updated="true">Jul 1<span>st</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -576,155 +640,6 @@ before I came across this, bad James!</p>
 
 
 <time datetime="2006-04-26T00:00:00+10:00" pubdate data-updated="true">Apr 26<span>th</span>, 2006</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/the-problem-with-onload/">The Problem With Onload</a></h1>
-    <div class="entry">
-        <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
-
-<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
-
-<p>Perfect - clean semantic markup and real event handling.</p>
-
-<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
-<h2>Our Problem</h2>
-
-<p>The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the <a href="http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content">FOUC</a>, where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.</p>
-
-<p>If you had the following code in your header tag, the element <code>aTable</code> would be visible until the page has finished loading, at which point it would suddenly disappear.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="kd">function</span> <span class="nx">hideATable</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;aTable&#39;</span><span class="p">).</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;display&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Event</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">hideATable</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What we really need is an <code>onBodyRendered</code> event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.</p>
-
-<h2>The Solution</h2>
-
-<p>The only real solution to this problem, as there isn’t an <code>onBodyRendered</code> event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.</p>
-
-<p>The following code would hide the table before the page has finished rendering; exactly what we want.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">hideATable</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>My additions</h2>
-
-<p>The above method isn’t completely desirable, because it is still mixing code with markup and any code within the footer will not be cached. There isn’t much you can do about that really, but one thing that i’ve taken to doing in my websites is to make sure there is only ever one function call in that footer script block.</p>
-
-<p>My method of doing such a thing is to create a special object that represents all my pages and their individual footer script blocks. You can see below an example of such an object, there’s an wrapper object that allows for further extensions (such as Unload or Validation sections) and then the Load object that contains each pages onload function. Each page then has a single line script block like <code>Pages.Load.Home();</code></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Pages</span> <span class="o">=</span> <span class="p">{};</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">Home</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">highlightSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">saveCookies</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Portfolio</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">makeMeLookGood</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Contact</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">highlightFields</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So the above code is stored in an external js file and loaded in the usual way, thus being cached.</p>
-
-<h3>Before:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">highlightSomething</span><span class="p">();</span>
-</span><span class='line'>  <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>  <span class="nx">saveCookies</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>After:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span><span class="p">.</span><span class="nx">Home</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time></div>
         <div class="tags">
 
 </div>

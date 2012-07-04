@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Fluent NHibernate 1.0 RTM It&#8217;s here. For those of you that don&#8217;t know, Fluent NHibernate is for helping you map entities with NHibernate &hellip;">
+    <meta name="description" content="Git&#8217;s Guts: Branches, HEAD, and Fast-forwards Cross posted to Los Techies Lets get some learning done. There are a few questions that keep &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,162 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/gits-guts-branches-head-and-fast-forwards/">Git&#8217;s Guts: Branches, HEAD, and Fast-forwards</a></h1>
+    <div class="entry">
+        <blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2009/11/25/git-s-guts-branches-head-and-fast-forwards.aspx">Los Techies</a></blockquote>
+
+
+
+
+<p>Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I&#8217;d post some answers as a mini-series of blog posts. I&#8217;ll cover some fundamentals, while trying not to retread too much ground that the fantastic <a href="http://book.git-scm.com">Git community book</a> already covers so well. Instead I&#8217;m going to talk about things that should help you understand what you and Git are doing day-to-day.</p>
+
+
+
+
+<h3>What&#8217;s a branch?</h3>
+
+
+
+
+<p>I know what you&#8217;re thinking. <em>&#8220;C&#8217;mon, we know what a branch is&#8221;</em>. A branch is a copy of a source tree, that&#8217;s maintained separately from it&#8217;s parent; that&#8217;s what we perceive a branch to be, and that&#8217;s how we&#8217;re used to dealing with them. Sometimes they&#8217;re physical copies (VSS and TFS), other times they&#8217;re lightweight copies (SVN), but they&#8217;re copies non-the-less. Or are they?</p>
+
+
+
+
+<p>Lets look at it a different way. <em>The Git way</em>.</p>
+
+
+
+
+<p>Git works a little differently than most other version control systems. It doesn&#8217;t store changes using <a href="http://en.wikipedia.org/wiki/Delta_encoding">delta encoding</a>, where complete files are built up by stacking differences contained in each commit. Instead, in Git each commit stores a snapshot of how the repository looked when the commit occurred; a commit also contains a bit of meta-data, author, date, but more importantly a reference to the parent of the commit (the previous commit, usually).</p>
+
+
+
+
+<p>That&#8217;s a bit weird, I know, but bare with me.</p>
+
+
+
+
+<p>So what is a branch? Nothing more than a pointer to a commit (with a name). There&#8217;s nothing physical about it, nothing is created, moved, copied, nothing. A branch contains no history, and has no idea of what it consists of beyond the reference to a single commit.</p>
+
+
+
+
+<p>Given a stack of commits:</p>
+
+
+<p><img src="/images/GitGuts1_Figure1.png" alt="Figure 1" /></p>
+
+<p>The branch references the newest commit. If you were to make another commit in this branch, the branch&#8217;s reference would be updated to point at the new commit.</p>
+
+
+<p><img src="/images/GitGuts2_Figure2.png" alt="Figure 2" /></p>
+
+<p>The history is built up by recursing over the commits through each&#8217;s parent.</p>
+
+
+
+
+<h3>What&#8217;s HEAD?</h3>
+
+
+
+
+<p>Now that you know what a branch is, this one is easy. <code>HEAD</code> is a reference to the latest commit in the branch you&#8217;re in.</p>
+
+
+
+
+<p>Given these two branches:</p>
+
+
+<p><img src="/images/GitGuts1_Figure3.png" alt="Figure 3" /></p>
+
+<p>If you had master checked out, <code>HEAD</code> would reference <code>e34fa33</code>, the exact same commit that the master branch itself references. If you had feature checked out, <code>HEAD</code> would reference <code>dde3e1</code>. With that in mind, as both <code>HEAD</code> and a branch is just a reference to a commit, it is sometimes said that <code>HEAD</code> points to the current branch you&#8217;re on; while this is not strictly true, in most circumstances it&#8217;s close enough.</p>
+
+
+
+
+<h3>What&#8217;s a fast-forward?</h3>
+
+
+
+
+<p>A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.</p>
+
+
+
+
+<p>Given the following branch setup:</p>
+
+
+<p><img src="/images/GitGuts1_Figure4.png" alt="Figure 4" /></p>
+
+<p>You&#8217;ve got both branches referencing the same commit. They&#8217;ve both got exactly the same history. Now commit something to feature.</p>
+
+
+<p><img src="/images/GitGuts1_Figure5.png" alt="Figure 5" /></p>
+
+<p>The <code>master</code> branch is still referencing <code>7ddac6c</code>, while <code>feature</code> has advanced by two commits. The <code>feature</code> branch can now be considered ahead of <code>master</code>.</p>
+
+
+
+
+<p>It&#8217;s now quite easy to see what&#8217;ll happen when Git does a fast-forward. It simply updates the <code>master</code> branch to reference the same commit that <code>feature</code> does. No changes are made to the repository itself, as the commits from <code>feature</code> already contain all the necessary changes.</p>
+
+
+
+
+<p>Your repository history would now look like this:</p>
+
+
+<p><img src="/images/GitGuts1_Figure6.png" alt="Figure 6" /></p>
+
+<h3>When doesn&#8217;t a fast-forward happen?</h3>
+
+
+
+
+<p>Fast-forwards don&#8217;t happen in situations where changes have been made in the original branch and the new branch.</p>
+
+
+<p><img src="/images/GitGuts1_Figure7.png" alt="Figure 7" /></p>
+
+<p>If you were to merge or rebase <code>feature</code> onto <code>master</code>, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there&#8217;s no way for Git to get the commits from <code>feature</code> into <code>master</code> without changing their parent references.</p>
+
+
+
+
+<p>For more info on all this object malarky, I&#8217;d recommend reading the <a href="http://book.git-scm.com">Git community book</a>.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-11-25T00:00:00+11:00" pubdate data-updated="true">Nov 25<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -554,252 +710,6 @@ Those download numbers are probably not representative either as they&#8217;re o
 
 
 <time datetime="2009-03-19T00:00:00+11:00" pubdate data-updated="true">Mar 19<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-conventions-rewrite/">Fluent NHibernate: Conventions Rewrite</a></h1>
-    <div class="entry">
-        <p>I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I&#8217;ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
-
-
-
-
-<p><strong>So why have I rewritten conventions?</strong> Our original implementation was simple, but not really maintainable into the future. It was a single class that was a major violation of separation of concerns, and it just kept growing and growing. It didn&#8217;t gracefully degrade either; if we didn&#8217;t have the exact convention you needed it was tough luck, there was very little you could do short of modifying the code yourself.</p>
-
-
-
-
-<p>Our original design worked something like this:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">TableName</span> <span class="p">=</span> <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Table&quot;</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">DefaultLazy</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>As you can see, it&#8217;s a fairly simple design. Lambda functions were set that got called in various places throughout the mapping generation cycle. It was a good design for simple scenarios; however, when you start overriding more conventions, and introducing logic into them, it can quickly become a massive ball of mud. So while there was an initial simplicity to it, that simplicity was quickly lost if you were trying to do anything clever with it. This is another thing that the rewrite aims to solve.</p>
-
-
-
-
-<p><strong>So how have things changed?</strong> The ability to define conventions inline is gone, for starters. Instead what you have is a series of interfaces of varying degrees of granularity; any classes implementing any of the interfaces will be automagically hooked into the mapping generation cycle. What this equates to is you&#8217;ll have a folder/namespace in your projects dedicated to conventions, each class making an alteration to the conventions when it&#8217;s called. As each convention is an interface, it means you can implement multiples of them in a single class, which allows you to group common conventions into a single class if you desire.</p>
-
-
-
-
-<h2 id="example_customising_the_table_name">Example: Customising the table name</h2>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">TableNameConvention</span> <span class="p">:</span> <span class="n">IClassConvention</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Accept</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// apply to all mappings</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">Apply</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// will produce table names like: tbl_Customer, tbl_Product</span>
-</span><span class='line'>    <span class="n">classMap</span><span class="p">.</span><span class="n">WithTable</span><span class="p">(</span><span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">classMap</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>This is a simple implementation of the <code>IClassConvention</code> interface, which is applied to all class mappings (hence the <code>return true</code> in <code>Accept</code>) and simply prefixes the table name with <code>tbl_</code>.</p>
-
-
-
-
-<h2 id="example_adding_your_conventions">Example: Adding your conventions</h2>
-
-
-
-
-<p>There&#8217;s one thing you need to do to get Fluent NHibernate to use your conventions, and that&#8217;s to inform the convention discovery mechanism of where it&#8217;s to search for conventions. You do this using the <code>PersistenceModel</code>s <code>CovnentionFinder</code> property, or through the <code>ConventionDiscovery</code> property through <a href="http://wiki.fluentnhibernate.org/show/FluentConfiguration">Fluent Configuration</a>.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
-</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
-</span><span class='line'>      <span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;())</span>
-</span><span class='line'>  <span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>That&#8217;s all there is to it really, certainly from a users perspective anyway. The architecture is designed in such a way that you have a much greater control of the granularity of your conventions; if you need a convention we haven&#8217;t explicitly supplied, you can use the convention &#8220;above&#8221; the one you want, and implement it yourself. If you need a convention for just Bag collections (which we don&#8217;t have one for), you just need to create an implementation of <code>IHasManyConvention</code> and limit it to bags. Easy.</p>
-
-
-
-
-<h2 id="some_shortcuts">Some shortcuts</h2>
-
-
-
-
-<p>I realise that the new design is more verbose than it was originally, and if your scenario really is one that only uses one or two conventions, then the new design might be too much for you. To cater for you people, I&#8217;ve created some basic inline support. I really don&#8217;t recommend you use these unless you&#8217;re doing something <em>really</em> simple. Separation is always preferred.</p>
-
-
-
-
-<p>There&#8217;s the <code>ConventionBuilder</code> class which has several static properties (<code>Class</code> for example, there&#8217;s one for each convention) which allow you to create an inline convention.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">))</span>
-</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">When</span><span class="p">(</span>
-</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">PropertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span>
-</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Num&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>These can be used directly in the <code>ConventionDiscovery</code> property mentioned above; it has an <code>Add</code> method that can take a params array of conventions, there&#8217;s also a <code>Setup</code> method which can be used for multiple additions.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
-</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">)),</span>
-</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">c</span> <span class="p">=&gt;</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;();</span>
-</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)));</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>In addition to that, there&#8217;s a limited selection of very common conventions which can be used inline. Again, I don&#8217;t advocate using these for anything complicated. If you start having logic in your conventions, or even if the lambdas end up being multi-line, I&#8217;d suggest using the full conventions. These helpers live in the <code>FluentNHibernate.Conventions.Helpers</code> namespace.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Table</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">x</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span>
-</span><span class='line'><span class="n">PrimaryKey</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="n">DynamicUpdate</span><span class="p">.</span><span class="n">AlwaysTrue</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>These can be used in the same way as the <code>ConventionBuilder</code> above.</p>
-
-
-
-
-<h2 id="regarding_auto_mapping">Regarding auto mapping</h2>
-
-
-
-
-<p>The auto mapper uses a small subset of conventions to discover various parts of your mappings. It was originally the case that these special conventions were lumped in with the rest of the conventions, even though you couldn&#8217;t use them outside of the automapper. As the old style conventions have gone, the automapper now has a separate set of conventions (they&#8217;re the same ones, just moved) that it uses. So in addition to the <code>ConventionDiscovery</code> property, the auto mapper has a <code>WithSetup</code> method that you can use to configure the auto mapping specific ones (<code>IsBaseType</code> primarily).</p>
-
-
-
-
-<h2 id="further_reading">Further reading</h2>
-
-
-
-
-<p>So this post should have given you a basic introduction to the changes I&#8217;ve made. To go further, you&#8217;re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there&#8217;s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
-
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-11T00:00:00+11:00" pubdate data-updated="true">Mar 11<span>th</span>, 2009</time></div>
         <div class="tags">
 
 </div>

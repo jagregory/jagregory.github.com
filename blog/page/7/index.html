@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Data-binding Hierarchical Objects After my post about my ObjectField column, I thought I&#8217;d elaborate a bit on why it&#8217;s necessary. When &hellip;">
+    <meta name="description" content="ObjectField 1.1 I&#8217;ve updated the ObjectField to be considerably simpler than it was before. While writing my Data-binding hierarchical objects &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,131 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/objectfield-11/">ObjectField 1.1</a></h1>
+    <div class="entry">
+        <p>I&#8217;ve updated the <code>ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code>BoundField</code> implementation:</p>
+
+<blockquote><p>Using a <code>TypeDescriptor</code> to get the property&#8230; This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path.</p></blockquote>
+
+<p>Which is interesting, because I was using a <code>TypeDescriptor</code> in my <code>ObjectField</code> implementation!</p>
+
+<p>Originally, the <code>ObjectField</code> was using the method below to evaluate the hierarchical paths, which to be honest is a bit verbose.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">private</span> <span class="kt">object</span> <span class="nf">GetNestedValue</span><span class="p">(</span><span class="kt">object</span> <span class="n">component</span><span class="p">,</span> <span class="kt">string</span> <span class="n">field</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">string</span><span class="p">[]</span> <span class="n">properties</span> <span class="p">=</span> <span class="n">field</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="sc">&#39;.&#39;</span><span class="p">);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">foreach</span> <span class="p">(</span><span class="kt">string</span> <span class="n">property</span> <span class="k">in</span> <span class="n">properties</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">PropertyDescriptor</span> <span class="n">descriptor</span> <span class="p">=</span>
+</span><span class='line'>          <span class="n">TypeDescriptor</span><span class="p">.</span><span class="n">GetProperties</span><span class="p">(</span><span class="n">component</span><span class="p">).</span><span class="n">Find</span><span class="p">(</span><span class="n">property</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">descriptor</span> <span class="p">==</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">AllowNulls</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="c1">// no descriptor, and we&#39;re not allowing nulls so complain that</span>
+</span><span class='line'>          <span class="c1">// we can&#39;t find the object</span>
+</span><span class='line'>          <span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpException</span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="n">MissingFieldErrorMessage</span><span class="p">,</span>
+</span><span class='line'>              <span class="n">property</span><span class="p">));</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">descriptor</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="c1">// silently return, with the NullValue if present</span>
+</span><span class='line'>          <span class="n">component</span> <span class="p">=</span> <span class="n">NullValue</span><span class="p">;</span>
+</span><span class='line'>          <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="n">component</span> <span class="p">=</span> <span class="n">descriptor</span><span class="p">.</span><span class="n">GetValue</span><span class="p">(</span><span class="n">component</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">component</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>GetNestedValue</code> method was splitting the <code>DataField</code> value and then recursively evaluating each property.</p>
+
+<p>Here&#8217;s the same implementation using the <code>DataBinder</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="c1">// looking to bind against child-objects</span>
+</span><span class='line'><span class="kt">object</span> <span class="n">component</span> <span class="p">=</span> <span class="n">DataBinder</span><span class="p">.</span><span class="n">GetDataItem</span><span class="p">(</span><span class="n">controlContainer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span> <span class="n">DataBinder</span><span class="p">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">DataField</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Magic!</p>
+
+<p>As a side effect of this change, the <code>ObjectField</code> can now support everything regular data-binding does. So you can use indexers and such in your <code>DataField</code> now.</p>
+
+<p>A couple of other things you should know: the <code>AllowNulls</code> property has been removed because it&#8217;s no longer supported, and the <code>NullValue</code> field has also been removed because the <code>BoundField</code> already supported it in the form of <code>NullDisplayText</code>.</p>
+
+<h2>Downloads</h2>
+
+<p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
+
+<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/ObjectField-1.1-source.zip">Download Source</a>.
+You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/ObjectField-1.1.zip">Download Binary</a>.</p>
+
+<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/ObjectField/">http://jagregory.googlecode.com/svn/trunk/ObjectField/</a> (using user jagregory-read-only)</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1196,70 +1321,6 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 
 
 <time datetime="2007-07-17T00:00:00+10:00" pubdate data-updated="true">Jul 17<span>th</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/a-usability-moan-about-adobes-website/">A Usability Moan About Adobe&#8217;s Website</a></h1>
-    <div class="entry">
-        <p>When recently performing a system-wide clean-out, I removed a long-expired Macromedia Flash 8 Studio trial. Unknown to me at the time, it had taken it upon itself to remove the flash player as-well; because, of course, now that I don’t want to develop flash, I’ll never need it again!</p>
-
-<p>Anyway, a week or so later I discovered that I needed to re-install the player, so off I went to <a href="http://www.adobe.com">Adobe’s Website</a>. When I arrived, I was presented with a fairly reasonable page - in terms of design - but there was something on there that epitomises the lack of thought that goes into usability on the web. People, you have to remember it isn’t just about how you create your links (bad “click here”, no play-time for you!), it’s also about how your content is worded.</p>
-
-<p><img src="/images/adobe-flash-small.jpg" alt="Adobe's no-flash warning message" /></p>
-
-<p>What you can see in the screenshot is what you’re shown if you don’t have the flash player installed (or JavaScript enabled, I’m guessing).</p>
-
-<p>What’s wrong with this picture?</p>
-
-<p>It’s very misleading, that’s what.</p>
-
-<p>The heading is asking me “Can’t see this content?”, but I can, can’t I? I’m reading it! Oh, the word “this” isn’t associated to what I’m reading (as it should be), but rather what I’m <strong>not</strong> reading. Interesting.</p>
-
-<p>Misleading text has also found its way into the body content, once again, I am reading the content aren’t I? Another thing is that the content also implies that I have JavaScript disabled when I actually don’t. I believe you’re statistically more likely to have a user without flash installed, than without JavaScript enabled. So with that in mind, it would have been a better idea to ask if they have flash first then ask about JavaScript. Even better would be to do a check to see if JavaScript is enabled, if it is you don’t need to display that part of the message at all!</p>
-
-<p>One last thing, those controls at the bottom; what are they doing there? I know (now) that they’re there because the content that’s supposed to be showing is a movie, but prior to having that knowledge surely they just reinforce the feeling that I am seeing what I’m supposed to. I have content, I have play controls, hey why aren’t they working? They serve no purpose apart from to confuse the user.</p>
-
-<h2>A slightly better picture</h2>
-
-<p>I’ve modified the content to be - in my eyes - a bit more respectable. It still isn’t perfect, like I said above, some JavaScript detection would be nice. Here it is non-the-less though:</p>
-
-<p><img src="/images/adobe-flash-fixed.gif" alt="An improved version of Adobe's message" /></p>
-
-<p>“Reading this?”</p>
-
-<p>I most certainly am.</p>
-
-<p>“If you are reading this message, then you are unable to view our active content.”</p>
-
-<p>Oh dear, so that’s what this is all about. How do I fix it?</p>
-
-<p>“Please either download the latest version of the Macromedia Flash Player or enable JavaScript in your browser.”</p>
-
-<p>Will do, thanks for the help Mr. Usable Information Box.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2006-07-01T00:00:00+10:00" pubdate data-updated="true">Jul 1<span>st</span>, 2006</time></div>
         <div class="tags">
 
 </div>

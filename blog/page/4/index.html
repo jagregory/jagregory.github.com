@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Fluent NHibernate: Auto Mapping Entity Conventions Notice: The content in this post is out of date, please refer to the Auto Mapping page in the &hellip;">
+    <meta name="description" content="Fluent NHibernate: Auto Mapping Type Conventions Notice: The content in this post may be out of date, please refer to the Auto Mapping page in the &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,315 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions/">Fluent NHibernate: Auto Mapping Type Conventions</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
+
+<p>I&#8217;ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I&#8217;ll cover now.</p>
+
+
+
+
+<p>We&#8217;re going to use the same domain as before, but with a few extensions.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">ReplenishmentDay</span> <span class="n">ReplenishmentDay</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Shelf</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">Products</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDay</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Monday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;mon&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="cm">/* ... */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Sunday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;sun&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="kt">string</span> <span class="n">day</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="kt">string</span> <span class="n">day</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="n">day</span> <span class="p">=</span> <span class="n">day</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;ve extended our domain with a <code>Description</code> and a <code>ReplenishmentDay</code> for the <code>Product</code>; the replenishment day is represented by a type-safe enum (using the <a href='http://www.javacamp.org/designPattern/enum.html'>type-safe enum pattern</a>). Also there&#8217;s a <code>Description</code> against the <code>Shelf</code> too (not sure why you&#8217;d have a description of a shelf, but hey, that&#8217;s customers for you). These changes are mapped against the following schema:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">ProductId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">250</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Price</span> <span class="nb">decimal</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">RepOn</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Shelf_FK</span> <span class="nb">int</span> <span class="k">foreign</span> <span class="k">key</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">table</span> <span class="n">Shelf</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">ShelfId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Now, if you&#8217;ve been following along you&#8217;ll remember that we made all strings default to 250; and yet the new description columns are 2000 characters long. The customer has stipulated that all descriptions of anything in the domain will always be 2000 or less characters, so lets map that without affecting our other rule for strings.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// other conventions</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;re using the Fluent NHibernate&#8217;s <code>ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code>AddTypeConvention</code> method takes a <code>ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code>string</code> property, and only for ones that are called &#8220;Description&#8221;, lets see how the <code>DescriptionTypeConvention</code> is declared.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">DescriptionTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">propertyMapping</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">!=</span> <span class="s">&quot;Description&quot;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">propertyMapping</span><span class="p">.</span><span class="n">WithLengthOf</span><span class="p">(</span><span class="m">2000</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>It&#8217;s fairly expressive of what it does, but I&#8217;ll cover it for completeness. The <code>ITypeConvention</code> specifies two methods: <code>bool CanHandle(Type)</code> and <code>void AlterMap(IProperty)</code>. <code>CanHandle</code> should be implemented to return <code>true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it&#8217;s ancestry, but in our case we just check whether it&#8217;s a string. <code>AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code>CanHandle</code> returns <code>true</code> for. We&#8217;ve implemented <code>AlterMap</code> to firstly check if the property is called &#8220;Description&#8221; (if it isn&#8217;t, we do nothing) and then alter the length of the property. Simple really.</p>
+
+
+
+
+<p>With a simple implementation like this, we&#8217;re able to map every Description property (that&#8217;s a <code>string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
+
+
+
+
+<h2 id='iusertype_support'>IUserType support</h2>
+
+
+
+
+<p>The other alteration to our domain was the addition of the <code>ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it&#8217;s stored in an <code>int</code> column, which obviously doesn&#8217;t match our type; and secondly the column is called <code>RepOn</code>, which we mustn&#8217;t change. We&#8217;re going to utilise NHibernate&#8217;s <code>IUserType</code> to handle this column.</p>
+
+
+
+
+<blockquote>
+<p>For the sake of this example we&#8217;re going to assume you&#8217;ve got an <code>IUserType</code> called <code>ReplenishmentDayUserType</code>, but as it&#8217;s beyond the scope of this post I won&#8217;t actually show the implementation as it can be quite lengthy. It&#8217;s best to just assume that the <code>IUserType</code> reads an <code>int</code> from the database and can convert it to a <code>ReplenishmentDay</code> instance. There&#8217;s a <a href='http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx'>nice example of implementing <code>IUserType</code></a> on <a href='http://intellect.dk'>Jakob Andersen</a>&#8217;s blog.</p>
+</blockquote>
+
+
+
+
+<p>So how do we tell Fluent NHibernate to use an <code>IUserType</code> instead of the specified type? Easy, with another <code>ITypeConvention</code>.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">ReplenishmentDayTypeConvention</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// other conventions</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Here&#8217;s how our new <code>ReplenishmentDayTypeConvention</code> looks:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDayTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">ReplenishmentDay</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">propertyMapping</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">CustomTypeIs</span><span class="p">&lt;</span><span class="n">ReplenishmentDayUserType</span><span class="p">&gt;()</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">TheColumnNameIs</span><span class="p">(</span><span class="s">&quot;RepOn&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>As you can see, we handle any <code>ReplenishmentDay</code> types, and then supply a <code>IUserType</code> using the <code>CustomTypeIs<T>()</code> method, and override the column name with <code>TheColumnNameIs(string)</code>. Again, easy!</p>
+
+
+
+
+<p>So that&#8217;s it, with those conventions we&#8217;re able to keep our standard rule that all strings should be 250 characters or less, unless they&#8217;re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code>int</code> in the database, which also has a custom column name.</p>
+
+
+
+
+<p>Next time: How to override conventions on an entity-by-entity basis.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-11T00:00:00+11:00" pubdate data-updated="true">Jan 11<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1577,115 +1886,6 @@ I can&#8217;t believe I fell for a C# vs. VB argument.
 
 
 <time datetime="2008-10-22T00:00:00+11:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects/">Smart Indentation for Visual Studio Extensibility Projects</a></h1>
-    <div class="entry">
-        <p>I said previously in my <a href="/writings/brace-matching-and-your-language-service/">Brace Matching post</a> that I want to try to document some of my findings while working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Well this is my second post on the subject.</p>
-
-<p>When you&#8217;re implementing a custom language in Visual Studio, there&#8217;s a very good chance that you&#8217;re going to want to handle indentation slightly differently to the defaults. Every language has it&#8217;s own rules, after all.</p>
-
-<p>Most of the resources I found online we&#8217;re pretty poor for how to get this working. Most people we&#8217;re pointing to overriding <code>OnCommand</code> in your derived <code>Source</code> class, or implementing some interop interface (i.e. <code>IVsLanguageLineIndent</code>). I could get none of these working. <code>OnCommand</code> never got raised, and the interfaces we&#8217;re useless.</p>
-
-<p>I tried a few different methods for handling indentation, but none of them worked very well. I tried capturing the enter key press, but that didn&#8217;t work. Then I tried capturing alterations to the document, but those also got fired for navigating the document, so you&#8217;d press the up key and add a new line!</p>
-
-<p>It ended up being pretty simple to implement, once I finally found the correct way to do it. I&#8217;ll cover how I did this for BooLangStudio below.</p>
-
-<p>In your <code>LanguageService</code>, there&#8217;s a method you can override called <code>CreateViewFilter</code> which sets everything in motion.</p>
-
-<p>Create yourself a class that derives from <code>ViewFilter</code>, and then return an instance of it from the overridden <code>CreateViewFilter</code> method in your language service.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">BooViewFilter</span> <span class="p">:</span> <span class="n">ViewFilter</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">view</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">view</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">public</span> <span class="k">override</span> <span class="n">ViewFilter</span> <span class="nf">CreateViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">newView</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">newView</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<blockquote><p><strong>Note:</strong> You need to make sure your project is configured to use Smart Indentation. If your project is complete enough to allow the user to customise this, then you&#8217;re fine. However, if not you can hard code this value yourself. In your language service there&#8217;s a <code>GetLanguagePreferences</code> method that returns all the preferences for your project. In that method you can set <code>languagePreferences.IndentStyle = IdentingStyle.Smart</code>, which is what I&#8217;ve done in BooLangStudio.</p></blockquote>
-
-<p>You&#8217;ll kick yourself for how easy this is. Now override the <code>HandleSmartIndent</code> method in your derived <code>ViewFilter</code>. That&#8217;s it really, in there you can access the <code>Source</code> object and do as you wish with smart indentation.</p>
-
-<p>Taking BooLangStudio as an example, you can see in our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/BooViewFilter.cs">BooViewFilter.cs</a> that I delegate the work to a <code>HandleSmartIndentAction</code>. This is to make testing easier by having as little dependencies on Visual Studio as possible.</p>
-
-<p>The <code>Execute</code> method of our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/HandleSmartIndentAction.cs">HandleSmartIndentAction.cs</a> class gets the caret location and passes it to an instance of a <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/LineIndenter.cs">LineIndenter</a> class, which determines (based on the previous line to the caret) whether the next line should be indented, or outdented.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="kt">bool</span> <span class="nf">Execute</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">line</span><span class="p">,</span> <span class="n">col</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">view</span><span class="p">.</span><span class="n">GetCaretPos</span><span class="p">(</span><span class="k">out</span> <span class="n">line</span><span class="p">,</span> <span class="k">out</span> <span class="n">col</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">indenter</span><span class="p">.</span><span class="n">SetIndentationForNextLine</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='boo'><span class='line'><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">MethodName</span><span class="p">():</span> <span class="c1"># indent</span>
-</span><span class='line'>    <span class="k">return</span> <span class="c1"># outdent</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So that&#8217;s how to implement Smart Indentation in your Visual Studio Extensibility project, and a little bit of implementation details of BooLangStudio.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-19T00:00:00+11:00" pubdate data-updated="true">Oct 19<span>th</span>, 2008</time></div>
         <div class="tags">
 
 </div>

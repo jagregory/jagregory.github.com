@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Fluent NHibernate: Auto Mapping, Overrides and Alterations Notice: This is an excerpt from the Auto Mapping wiki page. It is recommended you refer &hellip;">
+    <meta name="description" content="Fluent NHibernate: Conventions Rewrite I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,252 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-conventions-rewrite/">Fluent NHibernate: Conventions Rewrite</a></h1>
+    <div class="entry">
+        <p>I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I&#8217;ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+
+
+
+
+<p><strong>So why have I rewritten conventions?</strong> Our original implementation was simple, but not really maintainable into the future. It was a single class that was a major violation of separation of concerns, and it just kept growing and growing. It didn&#8217;t gracefully degrade either; if we didn&#8217;t have the exact convention you needed it was tough luck, there was very little you could do short of modifying the code yourself.</p>
+
+
+
+
+<p>Our original design worked something like this:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">TableName</span> <span class="p">=</span> <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Table&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">conventions</span><span class="p">.</span><span class="n">DefaultLazy</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>As you can see, it&#8217;s a fairly simple design. Lambda functions were set that got called in various places throughout the mapping generation cycle. It was a good design for simple scenarios; however, when you start overriding more conventions, and introducing logic into them, it can quickly become a massive ball of mud. So while there was an initial simplicity to it, that simplicity was quickly lost if you were trying to do anything clever with it. This is another thing that the rewrite aims to solve.</p>
+
+
+
+
+<p><strong>So how have things changed?</strong> The ability to define conventions inline is gone, for starters. Instead what you have is a series of interfaces of varying degrees of granularity; any classes implementing any of the interfaces will be automagically hooked into the mapping generation cycle. What this equates to is you&#8217;ll have a folder/namespace in your projects dedicated to conventions, each class making an alteration to the conventions when it&#8217;s called. As each convention is an interface, it means you can implement multiples of them in a single class, which allows you to group common conventions into a single class if you desire.</p>
+
+
+
+
+<h2 id="example_customising_the_table_name">Example: Customising the table name</h2>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">TableNameConvention</span> <span class="p">:</span> <span class="n">IClassConvention</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Accept</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// apply to all mappings</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">Apply</span><span class="p">(</span><span class="n">IClassMap</span> <span class="n">classMap</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// will produce table names like: tbl_Customer, tbl_Product</span>
+</span><span class='line'>    <span class="n">classMap</span><span class="p">.</span><span class="n">WithTable</span><span class="p">(</span><span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">classMap</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>This is a simple implementation of the <code>IClassConvention</code> interface, which is applied to all class mappings (hence the <code>return true</code> in <code>Accept</code>) and simply prefixes the table name with <code>tbl_</code>.</p>
+
+
+
+
+<h2 id="example_adding_your_conventions">Example: Adding your conventions</h2>
+
+
+
+
+<p>There&#8217;s one thing you need to do to get Fluent NHibernate to use your conventions, and that&#8217;s to inform the convention discovery mechanism of where it&#8217;s to search for conventions. You do this using the <code>PersistenceModel</code>s <code>CovnentionFinder</code> property, or through the <code>ConventionDiscovery</code> property through <a href="http://wiki.fluentnhibernate.org/show/FluentConfiguration">Fluent Configuration</a>.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Fluently</span><span class="p">.</span><span class="n">Configure</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+</span><span class='line'>      <span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;())</span>
+</span><span class='line'>  <span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>That&#8217;s all there is to it really, certainly from a users perspective anyway. The architecture is designed in such a way that you have a much greater control of the granularity of your conventions; if you need a convention we haven&#8217;t explicitly supplied, you can use the convention &#8220;above&#8221; the one you want, and implement it yourself. If you need a convention for just Bag collections (which we don&#8217;t have one for), you just need to create an implementation of <code>IHasManyConvention</code> and limit it to bags. Easy.</p>
+
+
+
+
+<h2 id="some_shortcuts">Some shortcuts</h2>
+
+
+
+
+<p>I realise that the new design is more verbose than it was originally, and if your scenario really is one that only uses one or two conventions, then the new design might be too much for you. To cater for you people, I&#8217;ve created some basic inline support. I really don&#8217;t recommend you use these unless you&#8217;re doing something <em>really</em> simple. Separation is always preferred.</p>
+
+
+
+
+<p>There&#8217;s the <code>ConventionBuilder</code> class which has several static properties (<code>Class</code> for example, there&#8217;s one for each convention) which allow you to create an inline convention.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">When</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">PropertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;Num&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>These can be used directly in the <code>ConventionDiscovery</code> property mentioned above; it has an <code>Add</code> method that can take a params array of conventions, there&#8217;s also a <code>Setup</code> method which can be used for multiple additions.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">SetAttribute</span><span class="p">(</span><span class="s">&quot;something&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">)),</span>
+</span><span class='line'>  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">c</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;();</span>
+</span><span class='line'>  <span class="n">c</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="n">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ColumnName</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)));</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>In addition to that, there&#8217;s a limited selection of very common conventions which can be used inline. Again, I don&#8217;t advocate using these for anything complicated. If you start having logic in your conventions, or even if the lambdas end up being multi-line, I&#8217;d suggest using the full conventions. These helpers live in the <code>FluentNHibernate.Conventions.Helpers</code> namespace.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Table</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="s">&quot;tbl_&quot;</span> <span class="p">+</span> <span class="n">x</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span>
+</span><span class='line'><span class="n">PrimaryKey</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="n">Is</span><span class="p">(</span><span class="s">&quot;ID&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">DynamicUpdate</span><span class="p">.</span><span class="n">AlwaysTrue</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>These can be used in the same way as the <code>ConventionBuilder</code> above.</p>
+
+
+
+
+<h2 id="regarding_auto_mapping">Regarding auto mapping</h2>
+
+
+
+
+<p>The auto mapper uses a small subset of conventions to discover various parts of your mappings. It was originally the case that these special conventions were lumped in with the rest of the conventions, even though you couldn&#8217;t use them outside of the automapper. As the old style conventions have gone, the automapper now has a separate set of conventions (they&#8217;re the same ones, just moved) that it uses. So in addition to the <code>ConventionDiscovery</code> property, the auto mapper has a <code>WithSetup</code> method that you can use to configure the auto mapping specific ones (<code>IsBaseType</code> primarily).</p>
+
+
+
+
+<h2 id="further_reading">Further reading</h2>
+
+
+
+
+<p>So this post should have given you a basic introduction to the changes I&#8217;ve made. To go further, you&#8217;re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there&#8217;s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-11T00:00:00+11:00" pubdate data-updated="true">Mar 11<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1829,315 +2075,6 @@
 
 
 <time datetime="2009-01-13T00:00:00+11:00" pubdate data-updated="true">Jan 13<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions/">Fluent NHibernate: Auto Mapping Type Conventions</a></h1>
-    <div class="entry">
-        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
-
-<p>I&#8217;ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I&#8217;ll cover now.</p>
-
-
-
-
-<p>We&#8217;re going to use the same domain as before, but with a few extensions.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">ReplenishmentDay</span> <span class="n">ReplenishmentDay</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Shelf</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">Products</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDay</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Monday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;mon&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="cm">/* ... */</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Sunday</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ReplenishmentDay</span><span class="p">(</span><span class="s">&quot;sun&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">private</span> <span class="kt">string</span> <span class="n">day</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">private</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="kt">string</span> <span class="n">day</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="n">day</span> <span class="p">=</span> <span class="n">day</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>We&#8217;ve extended our domain with a <code>Description</code> and a <code>ReplenishmentDay</code> for the <code>Product</code>; the replenishment day is represented by a type-safe enum (using the <a href='http://www.javacamp.org/designPattern/enum.html'>type-safe enum pattern</a>). Also there&#8217;s a <code>Description</code> against the <code>Shelf</code> too (not sure why you&#8217;d have a description of a shelf, but hey, that&#8217;s customers for you). These changes are mapped against the following schema:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
-</span><span class='line'>  <span class="n">ProductId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">250</span><span class="p">),</span>
-</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span>
-</span><span class='line'>  <span class="n">Price</span> <span class="nb">decimal</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">RepOn</span> <span class="nb">int</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">Shelf_FK</span> <span class="nb">int</span> <span class="k">foreign</span> <span class="k">key</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">table</span> <span class="n">Shelf</span> <span class="p">(</span>
-</span><span class='line'>  <span class="n">ShelfId</span> <span class="nb">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">Description</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
-</span><span class='line'><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>Now, if you&#8217;ve been following along you&#8217;ll remember that we made all strings default to 250; and yet the new description columns are 2000 characters long. The customer has stipulated that all descriptions of anything in the domain will always be 2000 or less characters, so lets map that without affecting our other rule for strings.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// other conventions</span>
-</span><span class='line'>  <span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>We&#8217;re using the Fluent NHibernate&#8217;s <code>ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code>AddTypeConvention</code> method takes a <code>ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code>string</code> property, and only for ones that are called &#8220;Description&#8221;, lets see how the <code>DescriptionTypeConvention</code> is declared.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">DescriptionTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">propertyMapping</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">!=</span> <span class="s">&quot;Description&quot;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">propertyMapping</span><span class="p">.</span><span class="n">WithLengthOf</span><span class="p">(</span><span class="m">2000</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>It&#8217;s fairly expressive of what it does, but I&#8217;ll cover it for completeness. The <code>ITypeConvention</code> specifies two methods: <code>bool CanHandle(Type)</code> and <code>void AlterMap(IProperty)</code>. <code>CanHandle</code> should be implemented to return <code>true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it&#8217;s ancestry, but in our case we just check whether it&#8217;s a string. <code>AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code>CanHandle</code> returns <code>true</code> for. We&#8217;ve implemented <code>AlterMap</code> to firstly check if the property is called &#8220;Description&#8221; (if it isn&#8217;t, we do nothing) and then alter the length of the property. Simple really.</p>
-
-
-
-
-<p>With a simple implementation like this, we&#8217;re able to map every Description property (that&#8217;s a <code>string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
-
-
-
-
-<h2 id='iusertype_support'>IUserType support</h2>
-
-
-
-
-<p>The other alteration to our domain was the addition of the <code>ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it&#8217;s stored in an <code>int</code> column, which obviously doesn&#8217;t match our type; and secondly the column is called <code>RepOn</code>, which we mustn&#8217;t change. We&#8217;re going to utilise NHibernate&#8217;s <code>IUserType</code> to handle this column.</p>
-
-
-
-
-<blockquote>
-<p>For the sake of this example we&#8217;re going to assume you&#8217;ve got an <code>IUserType</code> called <code>ReplenishmentDayUserType</code>, but as it&#8217;s beyond the scope of this post I won&#8217;t actually show the implementation as it can be quite lengthy. It&#8217;s best to just assume that the <code>IUserType</code> reads an <code>int</code> from the database and can convert it to a <code>ReplenishmentDay</code> instance. There&#8217;s a <a href='http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx'>nice example of implementing <code>IUserType</code></a> on <a href='http://intellect.dk'>Jakob Andersen</a>&#8217;s blog.</p>
-</blockquote>
-
-
-
-
-<p>So how do we tell Fluent NHibernate to use an <code>IUserType</code> instead of the specified type? Easy, with another <code>ITypeConvention</code>.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">autoMappings</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">DescriptionTypeConvention</span><span class="p">());</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="n">ReplenishmentDayTypeConvention</span><span class="p">());</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// other conventions</span>
-</span><span class='line'>  <span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>Here&#8217;s how our new <code>ReplenishmentDayTypeConvention</code> looks:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDayTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">ReplenishmentDay</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">propertyMapping</span>
-</span><span class='line'>      <span class="p">.</span><span class="n">CustomTypeIs</span><span class="p">&lt;</span><span class="n">ReplenishmentDayUserType</span><span class="p">&gt;()</span>
-</span><span class='line'>      <span class="p">.</span><span class="n">TheColumnNameIs</span><span class="p">(</span><span class="s">&quot;RepOn&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>As you can see, we handle any <code>ReplenishmentDay</code> types, and then supply a <code>IUserType</code> using the <code>CustomTypeIs<T>()</code> method, and override the column name with <code>TheColumnNameIs(string)</code>. Again, easy!</p>
-
-
-
-
-<p>So that&#8217;s it, with those conventions we&#8217;re able to keep our standard rule that all strings should be 250 characters or less, unless they&#8217;re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code>int</code> in the database, which also has a custom column name.</p>
-
-
-
-
-<p>Next time: How to override conventions on an entity-by-entity basis.</p>
-
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-01-11T00:00:00+11:00" pubdate data-updated="true">Jan 11<span>th</span>, 2009</time></div>
         <div class="tags">
 
 </div>

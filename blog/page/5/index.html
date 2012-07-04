@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="SharpDiff - Diff Parsing in .NET About SharpDiff SharpDiff is a library for parsing the output of various diffing tools. It&#8217;s primary purpose &hellip;">
+    <meta name="description" content="Smart Indentation for Visual Studio Extensibility Projects I said previously in my Brace Matching post that I want to try to document some of my &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -63,6 +63,115 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects/">Smart Indentation for Visual Studio Extensibility Projects</a></h1>
+    <div class="entry">
+        <p>I said previously in my <a href="/writings/brace-matching-and-your-language-service/">Brace Matching post</a> that I want to try to document some of my findings while working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Well this is my second post on the subject.</p>
+
+<p>When you&#8217;re implementing a custom language in Visual Studio, there&#8217;s a very good chance that you&#8217;re going to want to handle indentation slightly differently to the defaults. Every language has it&#8217;s own rules, after all.</p>
+
+<p>Most of the resources I found online we&#8217;re pretty poor for how to get this working. Most people we&#8217;re pointing to overriding <code>OnCommand</code> in your derived <code>Source</code> class, or implementing some interop interface (i.e. <code>IVsLanguageLineIndent</code>). I could get none of these working. <code>OnCommand</code> never got raised, and the interfaces we&#8217;re useless.</p>
+
+<p>I tried a few different methods for handling indentation, but none of them worked very well. I tried capturing the enter key press, but that didn&#8217;t work. Then I tried capturing alterations to the document, but those also got fired for navigating the document, so you&#8217;d press the up key and add a new line!</p>
+
+<p>It ended up being pretty simple to implement, once I finally found the correct way to do it. I&#8217;ll cover how I did this for BooLangStudio below.</p>
+
+<p>In your <code>LanguageService</code>, there&#8217;s a method you can override called <code>CreateViewFilter</code> which sets everything in motion.</p>
+
+<p>Create yourself a class that derives from <code>ViewFilter</code>, and then return an instance of it from the overridden <code>CreateViewFilter</code> method in your language service.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">BooViewFilter</span> <span class="p">:</span> <span class="n">ViewFilter</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">view</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">view</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">override</span> <span class="n">ViewFilter</span> <span class="nf">CreateViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">newView</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">newView</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p><strong>Note:</strong> You need to make sure your project is configured to use Smart Indentation. If your project is complete enough to allow the user to customise this, then you&#8217;re fine. However, if not you can hard code this value yourself. In your language service there&#8217;s a <code>GetLanguagePreferences</code> method that returns all the preferences for your project. In that method you can set <code>languagePreferences.IndentStyle = IdentingStyle.Smart</code>, which is what I&#8217;ve done in BooLangStudio.</p></blockquote>
+
+<p>You&#8217;ll kick yourself for how easy this is. Now override the <code>HandleSmartIndent</code> method in your derived <code>ViewFilter</code>. That&#8217;s it really, in there you can access the <code>Source</code> object and do as you wish with smart indentation.</p>
+
+<p>Taking BooLangStudio as an example, you can see in our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/BooViewFilter.cs">BooViewFilter.cs</a> that I delegate the work to a <code>HandleSmartIndentAction</code>. This is to make testing easier by having as little dependencies on Visual Studio as possible.</p>
+
+<p>The <code>Execute</code> method of our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/HandleSmartIndentAction.cs">HandleSmartIndentAction.cs</a> class gets the caret location and passes it to an instance of a <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/LineIndenter.cs">LineIndenter</a> class, which determines (based on the previous line to the caret) whether the next line should be indented, or outdented.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="kt">bool</span> <span class="nf">Execute</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">line</span><span class="p">,</span> <span class="n">col</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">view</span><span class="p">.</span><span class="n">GetCaretPos</span><span class="p">(</span><span class="k">out</span> <span class="n">line</span><span class="p">,</span> <span class="k">out</span> <span class="n">col</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">indenter</span><span class="p">.</span><span class="n">SetIndentationForNextLine</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='boo'><span class='line'><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">MethodName</span><span class="p">():</span> <span class="c1"># indent</span>
+</span><span class='line'>    <span class="k">return</span> <span class="c1"># outdent</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So that&#8217;s how to implement Smart Indentation in your Visual Studio Extensibility project, and a little bit of implementation details of BooLangStudio.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-19T00:00:00+11:00" pubdate data-updated="true">Oct 19<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -977,40 +1086,6 @@
 
 
 <time datetime="2008-07-01T00:00:00+10:00" pubdate data-updated="true">Jul 1<span>st</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/boo-visual-studio-plugin-progress/">Boo Visual Studio Plugin Progress</a></h1>
-    <div class="entry">
-        <p>Quick update on the <a href="/writings/boo-visual-studio-plug-in-1-complete/">Boo plugin I mentioned previously</a>. Jeff Olson announced the <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a> project a couple of days after I announced mine, and we&#8217;ve decided to join forces. I&#8217;ve begun merging our codebases, and we&#8217;re looking to get a release out in the not too distant future.</p>
-
-<p>Our combined code-bases have now got syntax highlighting, intellisense, single file and project support. Not bad going.</p>
-
-<p>We&#8217;ve now got a nice little team going as well, which is a big improvement from what was the one man band of my self. One of the contributors, <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">Torkel Ödegaard</a>, has written a <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">nice overview</a> of our progress and processes as-well.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-05-25T00:00:00+10:00" pubdate data-updated="true">May 25<span>th</span>, 2008</time></div>
         <div class="tags">
 
 </div>
