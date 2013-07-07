@@ -15,6 +15,7 @@
     <link rel="canonical" href="">
     <link href="/favicon.png" rel="shortcut icon">
     <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    
     <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     
@@ -91,11 +92,11 @@
 
 
 
-<p>In C# 3 we were introduced to lambda expressions and Linq, and with them came the <code>Func<></code> and <code>Expression<></code> classes; these are the key to static reflection. The <code>Func<></code> set of classes allow you to use lambda expressions that return a value, while an <code>Expression<></code> can be used to programatically access the contents of a delegate.</p>
+<p><p>In C# 3 we were introduced to lambda expressions and Linq, and with them came the <code>Func&lt;></code> and <code>Expression&lt;></code> classes; these are the key to static reflection. The <code>Func&lt;></code> set of classes allow you to use lambda expressions that return a value, while an <code>Expression&lt;></code> can be used to programatically access the contents of a delegate.</p></p>
 
-<p>Combining <code>Func<></code> and <code>Expression<></code> can give us a very powerful way to statically retrieve <code>PropertyInfo</code> (and similar) instances from a lambda expression. For example <code>Expression<Func<Customer, object>></code> represents an expression that contains a delegate that returns a value (of type object), with a <code>Customer</code> parameter; I&#8217;ll illustrate:</p>
+<p><p>Combining <code>Func&lt;></code> and <code>Expression&lt;></code> can give us a very powerful way to statically retrieve <code>PropertyInfo</code> (and similar) instances from a lambda expression. For example <code>Expression&lt;Func&lt;Customer, object>></code> represents an expression that contains a delegate that returns a value (of type object), with a <code>Customer</code> parameter; I&#8217;ll illustrate:</p></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -105,17 +106,17 @@
 </span><span class='line'>
 </span><span class='line'><span class="c1">// usage</span>
 </span><span class='line'><span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;(</span><span class="n">customer</span> <span class="p">=&gt;</span> <span class="n">customer</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></p>
 
-<p>What this is actually doing is creating a lambda that returns a value, the value of <code>customer.Name</code> in this case. Here&#8217;s the trick, we don&#8217;t actually care about the value that&#8217;s returned! In-fact, we don&#8217;t even evaluate this expression at all.</p>
+<p><p>What this is actually doing is creating a lambda that returns a value, the value of <code>customer.Name</code> in this case. Here&#8217;s the trick, we don&#8217;t actually care about the value that&#8217;s returned! In-fact, we don&#8217;t even evaluate this expression at all.</p></p>
 
-<blockquote>
+<p><blockquote>
 <p>The reason we use <code>object</code> in the <code>Func</code> signature, rather than a more specific type, is because we want to allow <em>any</em> property to be used; however, if you were only interested in <code>string</code> properties, then you could restrict it by replacing this parameter.</p>
-</blockquote>
+</blockquote></p>
 
-<p>The <code>Expression</code> API itself is very in-depth, so I won&#8217;t go into the intricacies of it but here&#8217;s a very simple implementation of static reflection.</p>
+<p><p>The <code>Expression</code> API itself is very in-depth, so I won&#8217;t go into the intricacies of it but here&#8217;s a very simple implementation of static reflection.</p></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -133,18 +134,17 @@
 </span><span class='line'>
 </span><span class='line'>  <span class="k">return</span> <span class="n">memberExpression</span><span class="p">.</span><span class="n">Member</span> <span class="k">as</span> <span class="n">PropertyInfo</span><span class="p">;</span> <span class="c1">// Should account for FieldInfo too</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></p>
 
-<p>Stepping through this code, we start by getting the body of the expression which we cast to a <code>MemberExpression</code>; this is us grabbing the <code>customer.Name</code> part of our expression. Now we can get the member itself and cast it to a <code>PropertyInfo</code>, this is the <code>Name</code> part of the expression body. That&#8217;s it! We&#8217;ve not evaluated the expression, but we&#8217;ve inspected it and retrieved the property.</p>
+<p><p>Stepping through this code, we start by getting the body of the expression which we cast to a <code>MemberExpression</code>; this is us grabbing the <code>customer.Name</code> part of our expression. Now we can get the member itself and cast it to a <code>PropertyInfo</code>, this is the <code>Name</code> part of the expression body. That&#8217;s it! We&#8217;ve not evaluated the expression, but we&#8217;ve inspected it and retrieved the property.</p></p>
 
-<blockquote>
+<p><blockquote>
 <p>This example is for illustrative purposes, there are many different types of expressions which would be excluded by this. If you are to implement your own static reflection parser, you should cater for these other types of expressions.</p>
-</blockquote>
+</blockquote></p>
 
-<p>As this example shows, we&#8217;re able to use reflection without having to resort to strings. The great thing about this is that if you change the name of a member inside a lambda, you&#8217;ll get a compile error if you haven&#8217;t updated all the references! No more hidden bugs.</p>
+<p><p>As this example shows, we&#8217;re able to use reflection without having to resort to strings. The great thing about this is that if you change the name of a member inside a lambda, you&#8217;ll get a compile error if you haven&#8217;t updated all the references! No more hidden bugs.</p></p>
 
-<p>So that&#8217;s how the magic behind Fluent NHibernate (and others) works, simple when you know how!</p>
-
+<p><p>So that&#8217;s how the magic behind Fluent NHibernate (and others) works, simple when you know how!</p></p>
 </div>
     <div class="meta">
         <div class="date">
@@ -166,19 +166,9 @@
         
     </div>
 </article>
-<div class="share">
-	<div class="addthis_toolbox addthis_default_style ">
-	
-	
-	<a class="addthis_button_tweet"></a>
-	
-	
-	<a class="addthis_counter addthis_pill_style"></a>
-	</div>
-	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4eb4a0c47196e907"></script>
+
 </div>
-</div>
-	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
 	<script src="/javascripts/jquery.fancybox.pack.js"></script>
 <script src="/javascripts/slash.js"></script>
 

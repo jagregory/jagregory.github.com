@@ -467,11 +467,19 @@
         <lastmod>2012-07-05T00:33:21+10:00</lastmod>
     </url>
     <url>
+        <loc>http://www.jagregory.com/writings/go-slice-visualiser/</loc>
+        <lastmod>2013-07-07T16:37:25+10:00</lastmod>
+    </url>
+    <url>
         <loc>http://www.jagregory.com/blog/archives/</loc>
-        <lastmod>2012-07-05T00:33:21+10:00</lastmod>
+        <lastmod>2013-07-07T16:37:25+10:00</lastmod>
     </url>
     <url>
         <loc>http://www.jagregory.com/</loc>
-        <lastmod>2012-07-05T00:33:21+10:00</lastmod>
+        <lastmod>2013-07-07T16:37:25+10:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.jagregory.com/slices/</loc>
+        <lastmod>2013-07-07T16:12:54+10:00</lastmod>
     </url>
 </urlset>

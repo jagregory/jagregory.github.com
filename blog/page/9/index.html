@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="The Problem With Onload Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing &hellip;">
+    <meta name="description" content="ServerControlIDs Update I’ve created a small update for my ServerControlIDs control, which removes the problem caused by controls within Repeaters &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -15,6 +15,7 @@
     <link rel="canonical" href="">
     <link href="/favicon.png" rel="shortcut icon">
     <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    
     <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     
@@ -63,6 +64,42 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/servercontrolids-update/">ServerControlIDs Update</a></h1>
+    <div class="entry">
+        <p>I’ve created a small update for my ServerControlIDs control, which removes the problem caused by controls within Repeaters and DataGrid.</p>
+
+<p>If you had a repeater that for each item contained an Hyperlink control, you’d get a duplicate entry in the ClientIDs object for every record, to avoid this problem I simply don’t output any sub-controls from within repeater style objects.</p>
+
+<p>That may sound like a bit of a hack, maybe it is, but if you want to refer to multiple elements within another, you shouldn’t really be doing it by ID anyway.</p>
+
+<p>You can get the <a href="http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip">updated source here</a> or view the <a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/" title="ASP.Net ClientIDs and their JavaScript companion">full article here</a>.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-04-26T00:00:00+10:00" pubdate data-updated="true">Apr 26<span>th</span>, 2006</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -648,44 +685,6 @@
     </div>
 </article>
 
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/first-working-weekend/">First Working Weekend</a></h1>
-    <div class="entry">
-        <p>The weekend just past was my first that I’ve had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.</p>
-
-<p>The reason we had to work the weekend was down to us launching (re-launching actually) a product for the Swift Group’s extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.</p>
-
-<p>Something I wasn’t too happy about when I first inherited this project is that it was my sole responsibility. Slowly I came around to the idea though, it would be all my fault if everything went wrong, true, but it’d also be all down to me if everything went well; looks pretty good being responsible for a whole project only 10 months into a job.</p>
-
-<p>Anyway, this is now day 1 of the launch at an end and a few niggling things aside, everything went swimmingly. No show stopping bugs at all, only minor things that took barely more than a minute to fix. I can safely say I’m in the good books.</p>
-
-<p>Here’s to day 2 going as well as day 1.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2006-01-23T00:00:00+11:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2006</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
 <nav id="pagenavi">
     
         <a href="/blog/page/8/" class="prev">Prev</a>
@@ -695,7 +694,7 @@
     
     <a href="/blog/archives" class="center">Blog Archives</a>
 </nav></div>
-	<footer class="inner">Copyright &copy; 2012 James Gregory</footer>
+	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
 	<script src="/javascripts/jquery.fancybox.pack.js"></script>
 <script src="/javascripts/slash.js"></script>
 

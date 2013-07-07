@@ -1,0 +1,149 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Go Slice visualiser - James Gregory</title>
+    <meta name="author" content="James Gregory">
+
+    
+    <meta name="description" content="Go Slice Visualiser This introduction to Slices explains the concept
+well enough for me to not need to repeat it. This page is a tool to help you &hellip;">
+    
+    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    
+        <link href="/stylesheets/slices.css" rel="stylesheet" type="text/css" />
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:www.jagregory.com">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+
+</header>
+	
+	<div id="content" class="inner"><article class="page">
+    
+    <h1 class="title">Go Slice Visualiser</h1>
+    
+    <div class="entry"><p><a href="http://blog.golang.org/go-slices-usage-and-internals">This introduction to Slices</a> explains the concept
+well enough for me to not need to repeat it. This page is a tool to help you get your head
+around how the slice operations work <em>visually</em>. The ten boxes below represent an array that you&#8217;re creating
+slices of, the input below them is your slice operation, and the black box you&#8217;ll see is the resulting slice.</p>
+
+<div id="slice">
+  <div id="sliceOverlay"></div>
+  <div id="array"></div>
+  <p id="error"></p>
+  <p>slice[<input id="sliceInput" type="text" />]</p>
+  <p>// e.g. slice[0], slice[:3], slice[1:3]</p>
+</div>
+
+
+
+
+<script type="text/javascript">
+  var array = document.getElementById('array')
+  var overlay = document.getElementById('sliceOverlay')
+  var error = document.getElementById('error')
+
+  var slice = {
+    length: 10
+  }
+
+  for (var i = 0; i < slice.length; i++) {
+    var div = document.createElement('div')
+    div.innerText = '"' + String.fromCharCode(97 + i) + '"'
+    array.appendChild(div)
+  }
+
+  var repositionSlice = function(low, high) {
+    if (typeof low === 'undefined' || low === null) low = 0
+    if (typeof high === 'undefined' || high === null) high = slice.length
+    if (low < 0) throw 'invalid slice index ' + low + ' (index must be non-negative)'
+    if (high < 0) throw 'invalid slice index ' + high + ' (index must be non-negative)'
+    if (high < low) throw 'inverted slice index ' + low + ' > ' + high
+    if (slice.length < high) throw 'slice bounds out of range'
+
+    overlay.style.left = (low * 56) + 'px'
+    overlay.style.width = ((high - low) * 56) + 2 + 'px'
+    overlay.style.display = 'block'
+  }
+
+  var input = document.getElementById('sliceInput')
+  input.addEventListener('keyup', function() {
+    error.innerText = ''
+    overlay.style.display = 'none'
+
+    try {
+      if (input.value.indexOf(':') >= 0) {
+        var split = input.value.split(':')
+        var start = split[0] === '' ? null : parseInt(split[0])
+        var end = split[1] === '' ? null : parseInt(split[1])
+        repositionSlice(start, end)
+      } else {
+        repositionSlice(parseInt(input.value), parseInt(input.value) + 1)
+      }
+    } catch (ex) {
+      error.innerText = ex
+    }
+  })
+</script>
+
+</div>
+</article>
+
+</div>
+	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
+	<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+
+
+</body>
+</html>
