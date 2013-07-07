@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Go Slice Visualiser
-date: 2013-07-07 16:22
+date: 2013-07-07 16:30
 comments: true
 tags:
 - golang
