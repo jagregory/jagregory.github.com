@@ -4,7 +4,7 @@
   <title><![CDATA[James Gregory]]></title>
   <link href="http://www.jagregory.com/atom.xml" rel="self"/>
   <link href="http://www.jagregory.com/"/>
-  <updated>2013-07-07T16:42:22+10:00</updated>
+  <updated>2013-07-07T16:44:23+10:00</updated>
   <id>http://www.jagregory.com/</id>
   <author>
     <name><![CDATA[James Gregory]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Go Slice Visualiser]]></title>
     <link href="http://www.jagregory.com/writings/go-slice-visualiser/"/>
-    <updated>2013-07-07T16:22:00+10:00</updated>
+    <updated>2013-07-07T16:30:00+10:00</updated>
     <id>http://www.jagregory.com/writings/go-slice-visualiser</id>
     <content type="html"><![CDATA[<p>I&#8217;ve been learning <a href="http://golang.org">Go</a> recently; it&#8217;s been fun.</p>
 
