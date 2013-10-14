@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Getting Started With OMeta# Notice: I&#8217;m a novice at OMeta, and as such, you shouldn&#8217;t take my advice as best-practice. This is based on &hellip;">
+    <meta name="description" content="YaYAML: Yet Another YAML Parser I don&#8217;t want to make much ceremony around this, but I thought I&#8217;d mention it incase anybody else is &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -64,6 +64,85 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/yayaml-yet-another-yaml-parser/">YaYAML: Yet Another YAML Parser</a></h1>
+    <div class="entry">
+        <p>I don&#8217;t want to make much ceremony around this, but I thought I&#8217;d mention it incase anybody else is interested.</p>
+
+<p>As a part of a project I&#8217;m working on I needed a simple file to store some data in, and I didn&#8217;t want it to be XML (for no reason other than the verbosity). I could have used my own format, but instead I&#8217;ve gone for <a href="http://yaml.net">YAML</a>. If you&#8217;ve worked with Ruby on Rails at all, then you&#8217;ll be familiar with YAML. It&#8217;s a human readable (and writable) text format.</p>
+
+<p>Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my <a href="/writings/getting-started-with-ometa/">recent adventure with OMeta#</a>, I thought I&#8217;d hack on this too.</p>
+
+<h2>Introducing YaYAML: Yet another YAML parser.</h2>
+
+<p>Don&#8217;t get your hopes up, I&#8217;ve only implemented exactly what I needed out of the spec, which is very little indeed. However, it&#8217;s something I will carry on with when time permits. So what can you parse with YaYAML? Only documents containing a single flat sequence or mapping. <strong>No nesting, no multiple documents in a file, no variables.</strong></p>
+
+<p>It&#8217;s possible to parse these two example files:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">a list</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">of text</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">strings</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">a</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">mapping</span>
+</span><span class='line'><span class="l-Scalar-Plain">of</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">various</span>
+</span><span class='line'><span class="l-Scalar-Plain">key</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">and</span>
+</span><span class='line'><span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pairs</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">James</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">age</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">23</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Peter</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">age</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">34</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s it!</p>
+
+<p>You can find the source in my <a href="http://github.com/jagregory/yayaml">YaYAML github repository</a>.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-28T00:00:00+11:00" pubdate data-updated="true">Oct 28<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1469,56 +1548,6 @@
 
 
 <time datetime="2008-08-08T00:00:00+10:00" pubdate data-updated="true">Aug 8<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/latest-on-boolangstudio/">Latest on BooLangStudio</a></h1>
-    <div class="entry">
-        <p>It&#8217;s been a long time since I&#8217;ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we&#8217;re steadily working towards our first release.</p>
-
-<p>To fill you in a bit on what&#8217;s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren&#8217;t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we&#8217;re free of this scenario!</p>
-
-<p><img src="/images/bls-1.png" alt="Syntax highlighting" /></p>
-
-<p><a href="http://www.justnbusiness.com/">Justin Chase</a> has been tackling various issues all over the place. Several related to the build process, specifically how the Boo binaries are located on your machine, which has been a bit of a problem when there&#8217;s multiple developers working on a project whom both have Boo installed in a different location. He&#8217;s also been spiffing up the interface by adding some much needed icons to the projects.</p>
-
-<p><img src="/images/bls-2.png" alt="Project view" /></p>
-
-<p><a href="http://www.codinginstinct.com/">Torkel Ödegaard</a> has been working various issues throughout the project. He&#8217;s created a properties dialog for the project which allows you to alter the usual settings for your project, assembly name, default namespace etc&#8230; He also managed to get debugging working, which is awesome.</p>
-
-<p>Then there&#8217;s me, I&#8217;ve been working on the intellisense capabilities. We&#8217;ve had intellisense support from day one, but it&#8217;s never been very extensive. For a long time it only worked on the current file you had open.</p>
-
-<p>The entire solution is now processed behind-the-scenes to provide intellisense. Import statements are now recognised and imported types appear in the local scope intellisense. Any assemblies or projects that are referenced have their top-level types and namespaces included in the intellisense too.</p>
-
-<p>Additionally I&#8217;ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code>StringBuilder().Append("Hello world").ToString().</code> for example).</p>
-
-<p><img src="/images/bls-3.png" alt="Code completion" /></p>
-
-<p>I believe that about covers what we&#8217;ve been upto lately. Our biggest problem currently is that most of these features are implemented in separate branches, and haven&#8217;t yet been merged into our central repository. We&#8217;re working on this, and I reckon once we&#8217;ve done that we&#8217;ll be looking at doing a release.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-08-07T00:00:00+10:00" pubdate data-updated="true">Aug 7<span>th</span>, 2008</time></div>
         <div class="tags">
 
 </div>

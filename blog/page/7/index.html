@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Introducing the Filterable DeleGrid The DeleGrid is a paged GridView control that handles data-binding through the use of events and delegates &hellip;">
+    <meta name="description" content="Getfilename NAnt Task As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -64,6 +64,111 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/getfilename-nant-task/">Getfilename NAnt Task</a></h1>
+    <div class="entry">
+        <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn&#8217;t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
+
+<p>The <code>getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc&#8230;</p>
+
+<p>The attributes are as follows:</p>
+
+<table class="format-table">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>in</td>
+            <td>The directory to search</td>
+            <td>Yes</td>
+        </tr>
+        <tr class="alt">
+            <td>property</td>
+            <td>The property to push the filename into.</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>searchPattern</td>
+            <td>Wildcard search pattern for finding the file.</td>
+            <td>No</td>
+        </tr>
+        <tr class="alt">
+            <td>of</td>
+            <td>
+                The file to get the filename of.<br /><br />
+                <strong>NewestFile</strong> - The most recently created file<br />
+                <strong>OldestFile</strong> - The oldest file in the directory<br />
+                <strong>FirstModifiedFile</strong> - The file with the oldest last modified date<br />
+                <strong>LastModifiedFile</strong> - The most recently modified file<br />
+                <strong>FirstFile</strong> - The first file in the directory, using default sorting<br />
+                <strong>LastFile</strong> - The last file in the directory, using default sorting<br />
+            </td>
+            <td>No - Defaults to NewestFile</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>An example usage is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">&quot;Example&quot;</span> <span class="na">default=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;getfilename</span> <span class="na">of=</span><span class="s">&quot;NewestFile&quot;</span> <span class="na">in=</span><span class="s">&quot;C:\path\to\backups&quot;</span> <span class="na">searchPattern=</span><span class="s">&quot;*.bak&quot;</span> <span class="na">property=</span><span class="s">&quot;filename&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;echo</span> <span class="na">message=</span><span class="s">&quot;Filename: ${filename}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/target&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Foreseeable usage situations revolve around anything where you&#8217;d need to get the last modified, or newest file in a directory; backups, database scripts etc&#8230;</p>
+
+<h2>Downloads</h2>
+
+<p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_license">new BSD License</a>; read the license for what you’re allowed to do.</p>
+
+<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip">Download Source</a>.
+You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip">Download Binary</a>.</p>
+
+<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/">http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/</a> (using user jagregory-read-only)</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-03-12T00:00:00+11:00" pubdate data-updated="true">Mar 12<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1076,82 +1181,6 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 
 
 <time datetime="2007-07-21T00:00:00+10:00" pubdate data-updated="true">Jul 21<span>st</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/applying-a-bit-of-xp-to-hobby-projects/">Applying a Bit of XP to Hobby Projects</a></h1>
-    <div class="entry">
-        	<p>Hobby projects, everybody has one or two on the go. They&#8217;re fun little side-steps from the mundane routine of developing for a living. These projects usually get a fair bit of thought put into them, but precious little time&#8212;an unfortunate side-effect of having a life outside work.</p>
-
-
-	<p>We&#8217;re all used to working within limited time-frames, but the limitations are much more noticeable when you only have a few hours on a Sunday afternoon. This time is precious, but unfortunately we often find ourselves spending the time doing much less than we would like. That might be because you&#8217;ve hit a design aspect you can&#8217;t solve yet, or more often because your time is spent flitting between tasks. This lack of visible progress has a demoralising effect, next time you get some free time you may be less inclined to spend it on your project because you know you&#8217;ll not make much headway.</p>
-
-
-	<p>After spending what few spare minutes I have (aka. toilet breaks) reading <a href="http://www.xprogramming.com/">Ron Jeffries</a>&#8217; book <cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&#38;tag=jamegreg-21&#38;linkCode=as2&#38;camp=1634&#38;creative=6738&#38;creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, which by-the-way is an excellent read, one aspect stood out that might help reduce the feeling of futility. It&#8217;s a concept called User Stories<sup><a href="#xp-hobby-fn1">1</a></sup>.</p>
-
-
-	<blockquote>
-		<p>A User Story is a short description of the behavior of the system from the point of view of the Customer. They are in the format of about three sentences of text written in the Customer’s terminology without technical jargon. In simplistic terms, user stories are the response to, &#8220;Tell me the stories of what the system will do. Write down the name of the story and a paragraph or two.&#8221; 
-&#8212;<a href="http://www.mayford.ca/xp/stories.html">XP Practices &#8211; User Stories</a>, Mayford Technologies</p>
-	</blockquote>
-
-
-	<p>These stories describe how the customer wants the system to work, in manageable chunks.</p>
-
-
-Some examples would be:
-	<blockquote>
-		<p>After adding a new product, we should be shown the inventory with our new product highlighted.</p>
-	</blockquote>
-
-
-	<blockquote>
-		<p>When removing a product from the inventory a reason for the deletion should be supplied by the user, then an e-mail should be sent to the person who added the product with this reason.</p>
-	</blockquote>
-
-
-	<blockquote>
-		<p>Actions should be recorded, so on startup the most commonly used actions can be presented for quick access.</p>
-	</blockquote>
-
-
-	<p>By hijacking this concept, we can improve our morale by giving us some feeling of progress in our project. Next time you&#8217;re daydreaming about your hobby project, break down your thoughts and write little stories about the functionality, nothing more than a couple of sentences. Once you&#8217;ve got a few stories together, prioritise the stories in whatever fashion suits you best.</p>
-
-
-	<p>Armed with your collection of stories, the next time you sit down for some hobby time, focus only on the first story. When your time is up, if you&#8217;ve managed to complete the story, cross it off the list. Then when you&#8217;re wrapping up, take a look at that list, doesn&#8217;t it feel nice to actually see some progress? You&#8217;ve reduced your list by one. That&#8217;s substantially more noticeable than just the buckshot effect we&#8217;re used to. You&#8217;ve actually implemented a new feature!</p>
-
-
-	<p>If you repeat this process whenever you get to do some development, you&#8217;ll start making some very visible progress, which is certainly a good feeling. I&#8217;ve found that this feeling makes me want to spend more time developing, definitely an improvement over the common feelings of futility.</p>
-
-
-	<p>Give it a try, see how it suits you.</p>
-
-
-	<p id="xp-hobby-fn1"><sup>1</sup> <a href="http://www.extremeprogramming.org/rules/userstories.html">User Stories</a>, ExtremeProgramming.org</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2007-07-18T00:00:00+10:00" pubdate data-updated="true">Jul 18<span>th</span>, 2007</time></div>
         <div class="tags">
 
 </div>

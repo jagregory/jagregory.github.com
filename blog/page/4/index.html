@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Fluent NHibernate: Mapping Private and Protected Properties Notice: The content in this post may be out of date, please refer to the Fluent Mapping &hellip;">
+    <meta name="description" content="Fluent NHibernate: Auto Mapping Components Notice: The content in this post may be out of date, please refer to the Auto Mapping page in the Fluent &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -64,6 +64,223 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-components/">Fluent NHibernate: Auto Mapping Components</a></h1>
+    <div class="entry">
+        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></p></blockquote>
+
+<p>I&#8217;ve just committed a change that should allow automatic mapping of simple components; by simple, I mean components that just map properties, nothing fancy. I&#8217;ll be looking to expand this functionality in the future, but for the time being any kind of relationships aren&#8217;t supported within components. With that in mind, I&#8217;ll walk through how to automap your components.</p>
+
+
+
+
+<p>Lets imagine this database structure:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">table</span> <span class="n">Person</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">Id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Address_Number</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">Address_Street</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+</span><span class='line'>  <span class="n">Address_PostCode</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We want to map that to the following model:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Domain</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="n">Address</span> <span class="n">Address</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">namespace</span> <span class="nn">Domain.Components</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Address</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">int</span> <span class="n">Number</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Street</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">PostCode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>With this design, <code>Address</code> is actually a component, which isn&#8217;t a full entity, more of a way of providing a clean model to a normalised database structure. I&#8217;ll get started by setting up the auto-mapper.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Domain&quot;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>That&#8217;s our auto mappings integrated with NHibernate. Next we need to instruct the auto mapper in how to identify components; after the <code>Where</code> call, we can add a call to <code>WithConvention</code> which is where we&#8217;ll give it a hand.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">IsComponentType</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span><span class="p">.</span><span class="n">EndsWith</span><span class="p">(</span><span class="s">&quot;Domain.Components&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The <code>IsComponentType</code> convention is what Fluent NHibernate uses to determine whether a type is one that will be mapped as a component, rather than a full entity.</p>
+
+
+
+
+<p>There are two things you need to know about this convention:</p>
+
+
+
+
+<ol>
+<li>You can only set this convention once, so you&#8217;ll need to use it in a way that allows you to identify multiple component types with it; there are several options to this, including using the namespace (the above example), or checking a suffix on the type name (anything that ends in &#8220;Component&#8221;, for example).</li>
+
+<li>This is not an exclusive call, so you need to segregate your component types from your standard entity types (so they&#8217;ll be excluded by the <code>Where</code> call), otherwise they&#8217;ll be auto-mapped as full entities as well as components - <em>not good</em>. I&#8217;ve done that in this example by separating components into their own namespace.</li>
+</ol>
+
+
+
+
+<p>With that, the <code>Address</code> should now be automatically mapped as a component; the auto mapper will pick up the three properties and map them as properties on the component.</p>
+
+
+
+
+<p>There&#8217;s one more thing, for illustrative purposes I&#8217;ve deliberately gone against Fluent NHibernate&#8217;s inbuilt convention for naming columns. By default any columns mapped in a convention will be prefixed with their property name, so <code>person.HomeAddress.Street</code> would be mapped against a column called <code>HomeAddressStreet</code>; this is my personal preference, but not what our database contains! We can control how our columns are named by altering the <code>GetComponentColumnPrefix</code> convention, like so:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">IsComponentType</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Address</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">convention</span><span class="p">.</span><span class="n">GetComponentColumnPrefix</span> <span class="p">=</span>
+</span><span class='line'>    <span class="n">property</span> <span class="p">=&gt;</span> <span class="n">property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">&quot;_&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>The convention now specifies that columns should be named ComponentPropertyName_PropertyName, so <code>person.Address.Street</code> is now correctly mapped against <code>Address_Street</code>.</p>
+
+
+
+
+<p>Magic.</p>
+
+
+
+
+<h4>Update:</h4>
+
+
+<p>I&#8217;ve updated this post to reflect some recent changes whereby the <code>GetComponentColumnPrefix</code> convention was updated to use the component property instead of the component type. This is to allow for multiple component properties on an entity that are of the same type. If you still need to use the type you can access it through the <code>PropertyInfo</code> parameter.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-19T00:00:00+11:00" pubdate data-updated="true">Jan 19<span>th</span>, 2009</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -1567,85 +1784,6 @@ I can&#8217;t believe I fell for a C# vs. VB argument.
 
 
 <time datetime="2008-11-12T00:00:00+11:00" pubdate data-updated="true">Nov 12<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/yayaml-yet-another-yaml-parser/">YaYAML: Yet Another YAML Parser</a></h1>
-    <div class="entry">
-        <p>I don&#8217;t want to make much ceremony around this, but I thought I&#8217;d mention it incase anybody else is interested.</p>
-
-<p>As a part of a project I&#8217;m working on I needed a simple file to store some data in, and I didn&#8217;t want it to be XML (for no reason other than the verbosity). I could have used my own format, but instead I&#8217;ve gone for <a href="http://yaml.net">YAML</a>. If you&#8217;ve worked with Ruby on Rails at all, then you&#8217;ll be familiar with YAML. It&#8217;s a human readable (and writable) text format.</p>
-
-<p>Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my <a href="/writings/getting-started-with-ometa/">recent adventure with OMeta#</a>, I thought I&#8217;d hack on this too.</p>
-
-<h2>Introducing YaYAML: Yet another YAML parser.</h2>
-
-<p>Don&#8217;t get your hopes up, I&#8217;ve only implemented exactly what I needed out of the spec, which is very little indeed. However, it&#8217;s something I will carry on with when time permits. So what can you parse with YaYAML? Only documents containing a single flat sequence or mapping. <strong>No nesting, no multiple documents in a file, no variables.</strong></p>
-
-<p>It&#8217;s possible to parse these two example files:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">a list</span>
-</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">of text</span>
-</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">strings</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">a</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">mapping</span>
-</span><span class='line'><span class="l-Scalar-Plain">of</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">various</span>
-</span><span class='line'><span class="l-Scalar-Plain">key</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">and</span>
-</span><span class='line'><span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pairs</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">James</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">age</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">23</span>
-</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Peter</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">age</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">34</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That&#8217;s it!</p>
-
-<p>You can find the source in my <a href="http://github.com/jagregory/yayaml">YaYAML github repository</a>.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-28T00:00:00+11:00" pubdate data-updated="true">Oct 28<span>th</span>, 2008</time></div>
         <div class="tags">
 
 </div>

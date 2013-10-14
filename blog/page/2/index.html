@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Git&#8217;s Guts: Merging and Rebasing Cross posted to Los Techies Here we go again, explaining the internals of Git with the intention of helping &hellip;">
+    <meta name="description" content="Behaviours in MSpec Cross posted to Los Techies MSpec is awesome, I think it&#8217;s praised by myself and others enough for that particular point &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -64,6 +64,339 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/behaviours-in-mspec/">Behaviours in MSpec</a></h1>
+    <div class="entry">
+        <blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2010/01/18/behaviours-in-mspec.aspx">Los Techies</a></blockquote>
+
+
+
+
+<p><a href="http://github.com/machine/machine.specifications">MSpec</a> is awesome, I think it&#8217;s praised by myself and others enough for that particular point to not need any expansion; however, there is a particular feature I would like to highlight that hasn&#8217;t really got a lot of press: behaviours.</p>
+
+
+
+
+<p>Behaviours define reusable specs that encapsulate a particular set of, you guessed it, behaviours; you&#8217;re then able to include these specs in any context that exhibits a particular behaviour.</p>
+
+
+
+
+<p>Lets go with the cliche&#8217;d Vehicle example. Given an <code>IVehicle</code> interface, with <code>Car</code> and <code>Motorbike</code> implementations; these all expose a <code>StartEngine</code> method and some properties reflecting the state of the vehicle. We&#8217;ll start the engine and verify that it is actually started, whether it&#8217;s got anything on the rev counter, and whether it&#8217;s killing our planet in the process (zing!).</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IVehicle</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">();</span>
+</span><span class='line'>  <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="kt">bool</span> <span class="n">IsPolluting</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">RevCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Car</span> <span class="p">:</span> <span class="n">IVehicle</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// use your imagination...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Motorbike</span> <span class="p">:</span> <span class="n">IVehicle</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// use your imagination...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Those are our classes, if rather contrived, but they&#8217;ll do. Now what we need to do is write some specs for them.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_car_is_started</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Car</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">StartEngine</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="n">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">static</span> <span class="n">Car</span> <span class="n">vehicle</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_motorbike_is_started</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Motorbike</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">StartEngine</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="n">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">static</span> <span class="n">Motorbike</span> <span class="n">vehicle</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>Those are our specs, there&#8217;s not much in there but already you can see that we&#8217;ve got duplication. Our two contexts contain identical specs, they&#8217;re the same in what they&#8217;re verifying, the only difference is the vehicle instance. This is where behaviours can come in handy.</p>
+
+
+
+
+<p>With behaviours we can extract the specs and make them reusable. Lets do that.</p>
+
+
+
+
+<p>Create a class for your behaviour and adorn it with the <code>Behaviors</code> attribute &mdash; this ensures MSpec recognises your class as a behaviour definition and not just any old class &mdash; then move your specs into it.</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Behaviors]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">VehicleThatHasBeenStartedBehaviors</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">static</span> <span class="n">IVehicle</span> <span class="n">vehicle</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="n">ShouldBeTrue</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="n">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;ve now got our specs in the behaviour, and have defined a field for the vehicle instance itself (it won&#8217;t compile otherwise). This is our behaviour complete, it defines a set of specifications that verify that a particular behaviour.</p>
+
+
+
+
+<p>Lets hook that behaviour into our contexts from before:</p>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_car_is_started</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Car</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">StartEngine</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Behaves_like</span><span class="p">&lt;</span><span class="n">VehicleThatHasBeenStartedBehaviors</span><span class="p">&gt;</span> <span class="n">a_started_vehicle</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">static</span> <span class="n">Car</span> <span class="n">vehicle</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_motorbike_is_started</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Motorbike</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+</span><span class='line'>    <span class="n">vehicle</span><span class="p">.</span><span class="n">StartEngine</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Behaves_like</span><span class="p">&lt;</span><span class="n">VehicleThatHasBeenStartedBehaviors</span><span class="p">&gt;</span> <span class="n">a_started_vehicle</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">static</span> <span class="n">Motorbike</span> <span class="n">vehicle</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p>We&#8217;ve now put to use the <code>Behaves_like</code> feature, which references our behaviour class and imports the specs into the current context. Now when you run your specs, the specs from our behaviour are imported and run in each context. We don&#8217;t need to assign anything to that field, just defining it is enough; the name you choose for the field is what&#8217;s used by MSpec as the description for what your class is behaving like. In our case this is translated roughly to <em>&#8220;when a motorbike is started it behaves like a started vehicle&#8221;</em>.</p>
+
+
+
+
+<p>There are a couple of things you need to be aware of to get this to work: your fields must be <code>protected</code>, both in the behaviour and the contexts; and the fields must have identical names. If you don&#8217;t get these two correct your behaviour won&#8217;t be hooked up properly. It&#8217;s also good to know that the fields <strong>do not</strong> need to have the same type, as long as the value from your context is assignable to the field in the behaviour then you&#8217;re good; this is key to defining reusable specs for classes that share a sub-set of functionality.</p>
+
+
+
+
+<p>In short, behaviours are an excellent way of creating reusable specs for shared functionality, without the need to create complex inheritance structures. It&#8217;s not a feature you should use lightly, as it can greatly reduce the readability of your specs, but it is a good feature if you&#8217;ve got a budding spec explosion nightmare on your hands.</p>
+
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-22T00:00:00+11:00" pubdate data-updated="true">Jan 22<span>nd</span>, 2010</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -809,42 +1142,6 @@ You can find my blog at: <a href="http://jagregory.lostechies.com">jagregory.los
 Something else that&#8217;s interesting is of those 5,500 visitors/13,000 page views, 66% are coming directly from google, 4% directly, then the other 30% from referrers. Those referrers are broken down into (from highest to lowest): <a href="http://stackoverflow.com">Stack Overflow</a>, <a href="http://blog.jagregory.com">my blog</a>, <a href="http://pnpguidance.net">pnpguidance.net</a>, <a href="http://nhforge.org">nhforge</a>, then quite a few other sites forming the lower percentages. I&#8217;m surprised at how high Stack Overflow is, I guess it pays that I pay attention to questions asked about Fluent on there.
 
 Those download numbers are probably not representative either as they&#8217;re only of the zip files, while I believe the vast majority of people run off the trunk through Subversion, so it&#8217;s hard to count them.
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-21T00:00:00+11:00" pubdate data-updated="true">Mar 21<span>st</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/docu-2-days/">Docu + 2 Days</a></h1>
-    <div class="entry">
-        <p>It&#8217;s been two days since I <a href="/writings/introducing-docu-simple-doc-gen-for-net/">announced</a> <a href="http://docu.jagregory.com">docu</a>, my simple documentation generator for .Net apps.</p>
-
-<p>The reception it&#8217;s received has been positive, I never expected it to have a surge of popularity because it&#8217;s not that kind of tool, so it hasn&#8217;t come as much of a surprise that people haven&#8217;t been jumping all over it. Having said that though, I have had some good feedback and already someone has contributed a patch. Additionally, there hasn&#8217;t been one question as to why I&#8217;ve created it; now this has come as a surprise, I guess I&#8217;m <strong>not</strong> the only one that feels Sandcastle is bloated and overcomplicated. Yay!</p>
-
-<p>I&#8217;ve just pushed out some changes to the <a href="http://github.com/jagregory/docu">github repos</a> and released an updated alpha (v0.1.0.2) on the <a href="http://docu.jagregory.com/downloads">downloads page</a>. The biggest changes so far are the inclusion of events and fields in the parsing, which now means docu has <code>&lt;summary /&gt;</code> support for all documentable members. The rest of the changes are mainly refactorings and some battle-hardening.</p>
-
-<p>I&#8217;ve got some more changes and several issues lined up, so keep an eye out.</p>
 
         
         

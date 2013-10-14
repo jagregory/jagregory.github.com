@@ -7,7 +7,7 @@
     <meta name="author" content="James Gregory">
 
     
-    <meta name="description" content="Missed Out on Something Big Ever get the feeling that you&#8217;ve missed out on something big? I never got to see Star Wars at the cinema. I missed &hellip;">
+    <meta name="description" content="Latest on BooLangStudio It&#8217;s been a long time since I&#8217;ve written anything about BooLangStudio. Let me assure you that the development is &hellip;">
     
     <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
 
@@ -64,6 +64,56 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/writings/latest-on-boolangstudio/">Latest on BooLangStudio</a></h1>
+    <div class="entry">
+        <p>It&#8217;s been a long time since I&#8217;ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we&#8217;re steadily working towards our first release.</p>
+
+<p>To fill you in a bit on what&#8217;s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren&#8217;t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we&#8217;re free of this scenario!</p>
+
+<p><img src="/images/bls-1.png" alt="Syntax highlighting" /></p>
+
+<p><a href="http://www.justnbusiness.com/">Justin Chase</a> has been tackling various issues all over the place. Several related to the build process, specifically how the Boo binaries are located on your machine, which has been a bit of a problem when there&#8217;s multiple developers working on a project whom both have Boo installed in a different location. He&#8217;s also been spiffing up the interface by adding some much needed icons to the projects.</p>
+
+<p><img src="/images/bls-2.png" alt="Project view" /></p>
+
+<p><a href="http://www.codinginstinct.com/">Torkel Ödegaard</a> has been working various issues throughout the project. He&#8217;s created a properties dialog for the project which allows you to alter the usual settings for your project, assembly name, default namespace etc&#8230; He also managed to get debugging working, which is awesome.</p>
+
+<p>Then there&#8217;s me, I&#8217;ve been working on the intellisense capabilities. We&#8217;ve had intellisense support from day one, but it&#8217;s never been very extensive. For a long time it only worked on the current file you had open.</p>
+
+<p>The entire solution is now processed behind-the-scenes to provide intellisense. Import statements are now recognised and imported types appear in the local scope intellisense. Any assemblies or projects that are referenced have their top-level types and namespaces included in the intellisense too.</p>
+
+<p>Additionally I&#8217;ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code>StringBuilder().Append("Hello world").ToString().</code> for example).</p>
+
+<p><img src="/images/bls-3.png" alt="Code completion" /></p>
+
+<p>I believe that about covers what we&#8217;ve been upto lately. Our biggest problem currently is that most of these features are implemented in separate branches, and haven&#8217;t yet been merged into our central repository. We&#8217;re working on this, and I reckon once we&#8217;ve done that we&#8217;ll be looking at doing a release.</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-07T00:00:00+10:00" pubdate data-updated="true">Aug 7<span>th</span>, 2008</time></div>
+        <div class="tags">
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -916,111 +966,6 @@
 
 
 <time datetime="2008-03-28T00:00:00+11:00" pubdate data-updated="true">Mar 28<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/getfilename-nant-task/">Getfilename NAnt Task</a></h1>
-    <div class="entry">
-        <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn&#8217;t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
-
-<p>The <code>getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc&#8230;</p>
-
-<p>The attributes are as follows:</p>
-
-<table class="format-table">
-    <thead>
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-            <th>Required</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>in</td>
-            <td>The directory to search</td>
-            <td>Yes</td>
-        </tr>
-        <tr class="alt">
-            <td>property</td>
-            <td>The property to push the filename into.</td>
-            <td>Yes</td>
-        </tr>
-        <tr>
-            <td>searchPattern</td>
-            <td>Wildcard search pattern for finding the file.</td>
-            <td>No</td>
-        </tr>
-        <tr class="alt">
-            <td>of</td>
-            <td>
-                The file to get the filename of.<br /><br />
-                <strong>NewestFile</strong> - The most recently created file<br />
-                <strong>OldestFile</strong> - The oldest file in the directory<br />
-                <strong>FirstModifiedFile</strong> - The file with the oldest last modified date<br />
-                <strong>LastModifiedFile</strong> - The most recently modified file<br />
-                <strong>FirstFile</strong> - The first file in the directory, using default sorting<br />
-                <strong>LastFile</strong> - The last file in the directory, using default sorting<br />
-            </td>
-            <td>No - Defaults to NewestFile</td>
-        </tr>
-    </tbody>
-</table>
-
-
-<p>An example usage is:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">&quot;Example&quot;</span> <span class="na">default=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;getfilename</span> <span class="na">of=</span><span class="s">&quot;NewestFile&quot;</span> <span class="na">in=</span><span class="s">&quot;C:\path\to\backups&quot;</span> <span class="na">searchPattern=</span><span class="s">&quot;*.bak&quot;</span> <span class="na">property=</span><span class="s">&quot;filename&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;echo</span> <span class="na">message=</span><span class="s">&quot;Filename: ${filename}&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/target&gt;</span>
-</span><span class='line'><span class="nt">&lt;/project&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Foreseeable usage situations revolve around anything where you&#8217;d need to get the last modified, or newest file in a directory; backups, database scripts etc&#8230;</p>
-
-<h2>Downloads</h2>
-
-<p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_license">new BSD License</a>; read the license for what you’re allowed to do.</p>
-
-<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip">Download Source</a>.
-You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip">Download Binary</a>.</p>
-
-<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/">http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/</a> (using user jagregory-read-only)</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-03-12T00:00:00+11:00" pubdate data-updated="true">Mar 12<span>th</span>, 2008</time></div>
         <div class="tags">
 
 </div>

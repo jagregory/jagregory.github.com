@@ -4,7 +4,7 @@
   <title><![CDATA[James Gregory]]></title>
   <link href="http://www.jagregory.com/atom.xml" rel="self"/>
   <link href="http://www.jagregory.com/"/>
-  <updated>2013-07-07T16:44:23+10:00</updated>
+  <updated>2013-10-14T16:14:19+11:00</updated>
   <id>http://www.jagregory.com/</id>
   <author>
     <name><![CDATA[James Gregory]]></name>
@@ -12,6 +12,170 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Compiled Templates for Go]]></title>
+    <link href="http://www.jagregory.com/writings/compiled-templates-for-go/"/>
+    <updated>2013-10-14T16:12:00+11:00</updated>
+    <id>http://www.jagregory.com/writings/compiled-templates-for-go</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/jagregory/cote">Cote</a> is a compiled templating language for <a href="http://golang.org">Go</a>.</p>
+
+<!-- more -->
+
+
+<p>Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don&#8217;t care. <a href="https://github.com/jagregory/cote">Cote</a> falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Custom code?</th>
+      <th>Custom markup?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ERB</td>
+      <td>No</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>HAML</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Jade</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Go html/template</td>
+      <td>Yes</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>_.template</td>
+      <td>No</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>Cote</td>
+      <td>No</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<p>Cote uses the same tokens as ERB and ASP.Net (and I imagine quite a few other languages), specificically <code>&lt;%= %&gt;</code> for any code which should write to the output stream and <code>&lt;% %&gt;</code> for code which doesn&#8217;t. Inside a code block you can write any valid Go code, outside can be anything.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="x">&lt;html&gt;</span>
+</span><span class='line'><span class="x">  &lt;head&gt;</span>
+</span><span class='line'><span class="x">    &lt;title&gt;</span><span class="cp">&lt;%=</span> <span class="n">locals</span><span class="o">.</span><span class="n">Title</span> <span class="cp">%&gt;</span><span class="x">&lt;/title&gt;</span>
+</span><span class='line'><span class="x">  &lt;/head&gt;</span>
+</span><span class='line'><span class="x">  &lt;body&gt;</span>
+</span><span class='line'><span class="x">    &lt;h1&gt;Products&lt;/h1&gt;</span>
+</span><span class='line'><span class="x">    &lt;ul&gt;</span>
+</span><span class='line'><span class="x">      </span><span class="cp">&lt;%</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="nb">p</span> <span class="p">:</span><span class="o">=</span> <span class="n">range</span> <span class="n">locals</span><span class="o">.</span><span class="n">Products</span> <span class="p">{</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span><span class='line'><span class="x">        &lt;li&gt;</span><span class="cp">&lt;%=</span> <span class="nb">p</span><span class="o">.</span><span class="n">Name</span> <span class="cp">%&gt;</span><span class="x">&lt;/li&gt;</span>
+</span><span class='line'><span class="x">      </span><span class="cp">&lt;%</span> <span class="p">}</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span><span class='line'><span class="x">    &lt;/ul&gt;</span>
+</span><span class='line'><span class="x">  &lt;/body&gt;</span>
+</span><span class='line'><span class="x">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As mentioned previously, Cote templates are compiled. A template is converted into pure Go and compiled into your package. No dependency on Cote is needed outside of your build pipeline. This adds some overhead to development (a template change requires a recompile), but it makes the impact on runtime as minimal as possible.</p>
+
+<p>There&#8217;s an executable (aptly named <code>cote</code>) which will take a template and spit out a Go function which can be called to render the template. Cote uses a very simplistic form of code generation to build your templates. It&#8217;s really simple.</p>
+
+<p>Given the above template, <code>cote</code> would produce a Go file roughly like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">templates</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">func</span> <span class="nx">Products</span><span class="p">(</span><span class="nx">locals</span> <span class="nx">ProductsLocals</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ... snip ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">locals</span><span class="p">.</span><span class="nx">Title</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;Products&lt;/h1&gt;&lt;ul&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">p</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">locals</span><span class="p">.</span><span class="nx">Products</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;&lt;li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprint</span><span class="p">(</span><span class="s">&quot;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// ... snip ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Brute force. Ugly. Fast, very fast.</p>
+
+<p>Each template produces a <code>[]byte</code> which can easily be written to your HTTP response.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">import</span> <span class="s">&quot;templates&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">html</span> <span class="o">:=</span> <span class="nx">templates</span><span class="p">.</span><span class="nx">Products</span><span class="p">(</span><span class="nx">ProductsLocals</span><span class="p">{</span>
+</span><span class='line'>    <span class="nx">Title</span><span class="p">:</span> <span class="s">&quot;Products listing&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">Products</span><span class="p">:</span> <span class="nx">products</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">w</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To learn more about Cote, take a look at the README on Github: <a href="https://github.com/jagregory/cote">https://github.com/jagregory/cote</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Go Slice Visualiser]]></title>
@@ -1463,21 +1627,6 @@ You can find my blog at: <a href="http://jagregory.lostechies.com">jagregory.los
 Something else that&#8217;s interesting is of those 5,500 visitors/13,000 page views, 66% are coming directly from google, 4% directly, then the other 30% from referrers. Those referrers are broken down into (from highest to lowest): <a href="http://stackoverflow.com">Stack Overflow</a>, <a href="http://blog.jagregory.com">my blog</a>, <a href="http://pnpguidance.net">pnpguidance.net</a>, <a href="http://nhforge.org">nhforge</a>, then quite a few other sites forming the lower percentages. I&#8217;m surprised at how high Stack Overflow is, I guess it pays that I pay attention to questions asked about Fluent on there.
 
 Those download numbers are probably not representative either as they&#8217;re only of the zip files, while I believe the vast majority of people run off the trunk through Subversion, so it&#8217;s hard to count them.
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Docu + 2 days]]></title>
-    <link href="http://www.jagregory.com/writings/docu-2-days/"/>
-    <updated>2009-03-21T00:00:00+11:00</updated>
-    <id>http://www.jagregory.com/writings/docu-2-days</id>
-    <content type="html"><![CDATA[<p>It&#8217;s been two days since I <a href="http://www.jagregory.com/writings/introducing-docu-simple-doc-gen-for-net/">announced</a> <a href="http://docu.jagregory.com">docu</a>, my simple documentation generator for .Net apps.</p>
-
-<p>The reception it&#8217;s received has been positive, I never expected it to have a surge of popularity because it&#8217;s not that kind of tool, so it hasn&#8217;t come as much of a surprise that people haven&#8217;t been jumping all over it. Having said that though, I have had some good feedback and already someone has contributed a patch. Additionally, there hasn&#8217;t been one question as to why I&#8217;ve created it; now this has come as a surprise, I guess I&#8217;m <strong>not</strong> the only one that feels Sandcastle is bloated and overcomplicated. Yay!</p>
-
-<p>I&#8217;ve just pushed out some changes to the <a href="http://github.com/jagregory/docu">github repos</a> and released an updated alpha (v0.1.0.2) on the <a href="http://docu.jagregory.com/downloads">downloads page</a>. The biggest changes so far are the inclusion of events and fields in the parsing, which now means docu has <code>&lt;summary /&gt;</code> support for all documentable members. The rest of the changes are mainly refactorings and some battle-hardening.</p>
-
-<p>I&#8217;ve got some more changes and several issues lined up, so keep an eye out.</p>
 ]]></content>
   </entry>
   
