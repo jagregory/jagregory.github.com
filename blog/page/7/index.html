@@ -1,25 +1,36 @@
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <title>James Gregory</title>
-    <meta name="author" content="James Gregory">
+  <meta charset="utf-8">
+  <title>James Gregory</title>
+  <meta name="author" content="James Gregory">
 
-    
-    <meta name="description" content="Getfilename NAnt Task As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from &hellip;">
-    
-    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+  
+  <meta name="description" content="Jeff Atwood (of Coding Horror) tweeted earlier: &#8220;On Firefox: &#8216;add-ons aren&#8217;t a big draw for me &#8211; I just need a browser, not a &hellip;">
+  
 
-    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-    <link rel="canonical" href="">
-    <link href="/favicon.png" rel="shortcut icon">
-    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-    
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    
-    
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jagregory.com/blog/page/7">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+  
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-3186192-1']);
@@ -34,42 +45,132 @@
 
 
 </head>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<logo>
 
-<body>
-	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
-<nav class="menu left"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
-</ul>
-</nav>
-<div class="right">
-	<form class="search right" action="http://google.com/search" method="get">
-		<input class="left" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:www.jagregory.com">
-	</form>
-	<div class="social right">
-		
-		
-		
-		
-		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
-		
-		
-		
-		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-</div>
+<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
+</logo>
+
+
+
+<body >
+  <header role="banner"><hgroup>
+  <h1><a href="/">James Gregory</a></h1>
+  
+</hgroup>
 
 </header>
-	
-	<div id="content" class="inner">
+  <nav role="navigation"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+<br>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jagregory.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<!--
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/plug-ins-and-browsers/">Plug-in&#8217;s and Browsers</a></h1>
+    
+    
+      <p class="meta">
+        
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/getfilename-nant-task/">Getfilename NAnt Task</a></h1>
-    <div class="entry">
-        <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn&#8217;t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-03-28T00:00:00+11:00" pubdate data-updated="true">Mar 28<span>th</span>, 2008</time>
+        
+           | <a href="/writings/plug-ins-and-browsers/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/plug-ins-and-browsers/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Jeff Atwood (of <a href="http://www.codinghorror.com">Coding Horror</a>) <a href="http://twitter.com/codinghorror/statuses/778279263">tweeted earlier</a>: &#8220;On Firefox: &#8216;add-ons aren&#8217;t a big draw for me &#8211; I just need a browser, not a circus.&#8217;&#8221;. I don&#8217;t know whether this was a quotation of himself, or someone else; but it&#8217;s something that I&#8217;ve heard mentioned before.</p>
+
+<p>Just because they&#8217;re there, doesn&#8217;t mean you have to install them.</p>
+
+<p>A plug-in model in your browser allows you to install as many, or as few, plug-ins as you need. A lot of them are useless, but if there&#8217;s one that can boost your productivity, isn&#8217;t that worth it? I&#8217;d rather have a browser with a plug-in model, and one really useful plug-in, than a browser without both.</p>
+
+<p>A prime example is FireBug, I couldn&#8217;t live without that plug-in. I feel stranded in IE or Safari when it comes to interrogating pages.</p>
+
+<p>FireBug possibly highlights a hole in the developer support from the Firefox development team itself, but with a plug-in model you can fill that hole yourself rather than relying on their team; like we&#8217;ve had to do for years with Microsoft and Internet Explorer.</p>
+
+<p>/rant off</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/getfilename-nant-task/">Getfilename NAnt Task</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-03-12T00:00:00+11:00" pubdate data-updated="true">Mar 12<span>th</span>, 2008</time>
+        
+           | <a href="/writings/getfilename-nant-task/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/getfilename-nant-task/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn&#8217;t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
 
 <p>The <code>getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc&#8230;</p>
 
@@ -145,12 +246,23 @@
 You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip">Download Binary</a>.</p>
 
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/">http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/</a> (using user jagregory-read-only)</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/introducing-the-filterable-delegrid/">Introducing the Filterable DeleGrid</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -162,19 +274,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2008-03-12T00:00:00+11:00" pubdate data-updated="true">Mar 12<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2008-03-05T00:00:00+11:00" pubdate data-updated="true">Mar 5<span>th</span>, 2008</time>
         
-    </div>
-</article>
+           | <a href="/writings/introducing-the-filterable-delegrid/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/introducing-the-filterable-delegrid/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/introducing-the-filterable-delegrid/">Introducing the Filterable DeleGrid</a></h1>
-    <div class="entry">
-        <p>The DeleGrid is a paged GridView control that handles data-binding through the use of events and delegates rather than with a traditional collection.</p>
+  <div class="entry-content"><p>The DeleGrid is a paged GridView control that handles data-binding through the use of events and delegates rather than with a traditional collection.</p>
 
 <p>What this means is that you have full control over the data that is shown in the currently displayed page. Traditionally you&#8217;d retrieve the whole recordset then page it locally, but with the DeleGrid you can utilise your database/ORMs paging features.</p>
 
@@ -466,12 +576,23 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 You can download the example project here: <a href="http://jagregory.googlecode.com/files/DeleGridExample.zip">Download Example</a>.</p>
 
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/objectfield-11/">ObjectField 1.1</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -483,19 +604,17 @@ You can download the example project here: <a href="http://jagregory.googlecode.
   
 
 
-<time datetime="2008-03-05T00:00:00+11:00" pubdate data-updated="true">Mar 5<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time>
         
-    </div>
-</article>
+           | <a href="/writings/objectfield-11/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/objectfield-11/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/objectfield-11/">ObjectField 1.1</a></h1>
-    <div class="entry">
-        <p>I&#8217;ve updated the <code>ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code>BoundField</code> implementation:</p>
+  <div class="entry-content"><p>I&#8217;ve updated the <code>ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code>BoundField</code> implementation:</p>
 
 <blockquote><p>Using a <code>TypeDescriptor</code> to get the property&#8230; This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path.</p></blockquote>
 
@@ -591,12 +710,23 @@ You can download the example project here: <a href="http://jagregory.googlecode.
 You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/ObjectField-1.1.zip">Download Binary</a>.</p>
 
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/ObjectField/">http://jagregory.googlecode.com/svn/trunk/ObjectField/</a> (using user jagregory-read-only)</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/data-binding-hierarchical-objects/">Data-binding Hierarchical Objects</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -608,19 +738,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time>
         
-    </div>
-</article>
+           | <a href="/writings/data-binding-hierarchical-objects/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/data-binding-hierarchical-objects/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/data-binding-hierarchical-objects/">Data-binding Hierarchical Objects</a></h1>
-    <div class="entry">
-        <p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I&#8217;d elaborate a bit on why it&#8217;s necessary.</p>
+  <div class="entry-content"><p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I&#8217;d elaborate a bit on why it&#8217;s necessary.</p>
 
 <p>When you&#8217;re data binding against an object that isn&#8217;t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code>BoundField</code> incorrectly handling a hierarchical object path.</p>
 
@@ -709,12 +837,23 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <p>Hopefully one of those solutions will suit you. Personally I&#8217;d prefer to see the <code>ObjectField</code>, or other derived field, instead of the nasty <code>TemplateField</code> usage.</p>
 
 <p><em>This is a follow up to my ObjectField post, because a few people have been hitting that page in search of the exception, which it doesn&#8217;t really cover.</em></p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/objectfield/">ObjectField - a GridView Field</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -726,19 +865,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2008-02-21T00:00:00+11:00" pubdate data-updated="true">Feb 21<span>st</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2008-02-17T00:00:00+11:00" pubdate data-updated="true">Feb 17<span>th</span>, 2008</time>
         
-    </div>
-</article>
+           | <a href="/writings/objectfield/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/objectfield/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/objectfield/">ObjectField - a GridView Field</a></h1>
-    <div class="entry">
-        <blockquote><p>The version of the ObjectField that this post refers to is now out of date. Please go to the <a href="/writings/objectfield-11/">ObjectField 1.1</a> post for the latest version.</p></blockquote>
+  <div class="entry-content"><blockquote><p>The version of the ObjectField that this post refers to is now out of date. Please go to the <a href="/writings/objectfield-11/">ObjectField 1.1</a> post for the latest version.</p></blockquote>
 
 <p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn&#8217;t support specifying a nested value in it&#8217;s DataField property. So if you have a list of Customer&#8217;s, and want to display the TelephoneNumber property from inside the customer&#8217;s ContactDetails property, you&#8217;re out of luck.</p>
 
@@ -774,12 +911,23 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <h2>Downloads</h2>
 
 <p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/nhibernate-and-the-sqltypeexception/">NHibernate and the SqlTypeException</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -791,19 +939,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2008-02-17T00:00:00+11:00" pubdate data-updated="true">Feb 17<span>th</span>, 2008</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2007-12-18T00:00:00+11:00" pubdate data-updated="true">Dec 18<span>th</span>, 2007</time>
         
-    </div>
-</article>
+           | <a href="/writings/nhibernate-and-the-sqltypeexception/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/nhibernate-and-the-sqltypeexception/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/nhibernate-and-the-sqltypeexception/">NHibernate and the SqlTypeException</a></h1>
-    <div class="entry">
-        <p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I&#8217;ve had trouble it&#8217;s actually ended up being my own fault. <em>This is one of those times.</em></p>
+  <div class="entry-content"><p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I&#8217;ve had trouble it&#8217;s actually ended up being my own fault. <em>This is one of those times.</em></p>
 
 <p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
 
@@ -832,12 +978,23 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <p>So the fix was simply to make the <code>DateTime</code> in the object a <code>DateTime?</code>, a nullable <code>DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
 
 <p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/percieved-value-and-developer-education/">Percieved Value and Developer Education</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -849,31 +1006,40 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2007-12-18T00:00:00+11:00" pubdate data-updated="true">Dec 18<span>th</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2007-12-12T00:00:00+11:00" pubdate data-updated="true">Dec 12<span>th</span>, 2007</time>
         
-    </div>
-</article>
+           | <a href="/writings/percieved-value-and-developer-education/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/percieved-value-and-developer-education/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/percieved-value-and-developer-education/">Percieved Value and Developer Education</a></h1>
-    <div class="entry">
-        <p>A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller&#8217;s blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.</p>
+  <div class="entry-content"><p>A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller&#8217;s blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.</p>
 
 <p>He makes a fair point really, we use tools because they solve a problem for us, if we haven&#8217;t actually experienced what they&#8217;re solving then their value is appears to be much less than what it is. Similarly, the value of such tools and methodologies is nil when there is a lack of recognition of a problem even existing.</p>
 
 <p>However, I don&#8217;t think the solution is to have developers learn &#8220;the hard way&#8221;. To discover the problem before using the solution is a problem in its-self. If we were to all learn from our own mistakes, and not from each-others, then we&#8217;re not going to make much progress as we&#8217;re all going to be solving the same problems.</p>
 
 <p>Most people will have struggled with whatever problem has necessitated the creation of these tools/methodologies, so I think it&#8217;s more a case of helping the developers connect the dots; &#8220;You remember such and such a problem? Well that&#8217;s easily solved using methodology/technology x!&#8221;, rather than making them retrace the steps of every developer before them.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/on-testing-implementation/">On Testing Implementation</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -885,19 +1051,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2007-12-12T00:00:00+11:00" pubdate data-updated="true">Dec 12<span>th</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2007-12-10T00:00:00+11:00" pubdate data-updated="true">Dec 10<span>th</span>, 2007</time>
         
-    </div>
-</article>
+           | <a href="/writings/on-testing-implementation/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/on-testing-implementation/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/on-testing-implementation/">On Testing Implementation</a></h1>
-    <div class="entry">
-        <p>I&#8217;ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what&#8217;s more concerning is I&#8217;ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it&#8217;s supposed to.</p>
+  <div class="entry-content"><p>I&#8217;ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what&#8217;s more concerning is I&#8217;ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it&#8217;s supposed to.</p>
 
 <p>There are a few problems with falling into this trap. Firstly, it&#8217;s very brittle. Secondly, you shouldn&#8217;t be concerned with the internals. Thirdly, it&#8217;s very time consuming.</p>
 
@@ -910,12 +1074,23 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <p>Finally, it&#8217;s time consuming simply because you&#8217;re duplicating most of your work. All the time you spent writing the method (or the test, if done first) is then duplicated writing the tests (or code&#8230;). This is a pain, because as mentioned above, you&#8217;ll keep doing this work every time you change the method.</p>
 
 <p>The hardest part is learning how to not do this kind thing blindly. There are plenty of times when you&#8217;ll need this kind of testing, but don&#8217;t make it your default! Test expectations, not implementations.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/delegrid/">DeleGrid - a Paged GridView Control</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -927,19 +1102,17 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
   
 
 
-<time datetime="2007-12-10T00:00:00+11:00" pubdate data-updated="true">Dec 10<span>th</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2007-12-09T00:00:00+11:00" pubdate data-updated="true">Dec 9<span>th</span>, 2007</time>
         
-    </div>
-</article>
+           | <a href="/writings/delegrid/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/delegrid/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/delegrid/">DeleGrid - a Paged GridView Control</a></h1>
-    <div class="entry">
-        <h2>Introducing the DeleGrid</h2>
+  <div class="entry-content"><h2>Introducing the DeleGrid</h2>
 
 <p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
 
@@ -1096,111 +1269,33 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
 
 <p><strong>All patches are welcomed with open arms!</strong></p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
+</div>
+  
   
 
 
-<time datetime="2007-12-09T00:00:00+11:00" pubdate data-updated="true">Dec 9<span>th</span>, 2007</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/test-drive-properly-test-fully/">Test-drive Properly, Test Fully</a></h1>
-    <div class="entry">
-        <p>I started writing this as a comment, but I felt it’s own post was deserved.</p>
-
-<p><a href="http://rickyclarkson.blogspot.com/">Ricky Clarkson</a> left me a link in a comment to one of <a href="http://rickyclarkson.blogspot.com/2007/05/you-dont-need-tdd-you-need-repl.html">his posts</a> that ties in quite nicely to my recent <a href="http://blog.jagregory.com/2007/07/17/getting-with-it-test-driven-development/">Getting with it: Test Driven Development</a> post.</p>
-
-<p>Ricky makes the point that <span class="caps">TDD</span> can be dangerous, and can lull you into a false sense of security. <em>I agree.</em></p>
-
-<p>As with any technology, when used incorrectly it can cause more damage than not using it at all.</p>
-
-<p>Ricky’s example should serve as a double-barreled warning. You can’t be test-driven only when it’s convenient, and you need to have good test coverage.</p>
-
-<h2>Being Test-Driven isn’t being Convenience-Driven</h2>
-
-<p>Just by being in a car with seat-belts doesn’t mean they’ll save you when you crash, you need to actually wear them.</p>
-
-<p>You can’t pick and choose which parts of <span class="caps">TDD</span> you want to use, then be surprised when it lets you down.</p>
-
-<p>If your boss comes storming in demanding a copy of the system, tell him to wait. Remember, it’s your hide on the line, if you give him a broken system you’ll be the one to pay. If he doesn’t understand testing, lie, tell him it’s building or something similar, it doesn’t exist until it’s finished.</p>
-
-<h2>Test coverage</h2>
-
-<p>There’s very little more important than good test coverage, without it you’re leaving yourself wide open for problems.</p>
-
-<p>In Ricky’s example, he’s fallen into a common problem with test design. <em>He’s only testing the expected outcome of his method.</em> We’ve all fallen into this trap at some point, but it’s a dangerous place to be. Without full coverage, just as Ricky said, you end up with a false sense of security.</p>
-
-<p>For full test coverage of a method, you really need to test it’s expected outcome, how it handles edge-cases, and how it handles bad data.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scheme'><span class='line'><span class="p">(</span><span class="nf">assert</span> <span class="p">(</span><span class="nf">equal</span> <span class="p">(</span><span class="nf">point+</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">999</span> <span class="mi">987</span><span class="p">)</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">789</span> <span class="mi">998</span><span class="p">))</span> <span class="p">(</span><span class="nf">point</span> <span class="mi">1788</span> <span class="mi">1985</span><span class="p">)))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Had Ricky’s test suite included the above edge-case test, it would have caught the flaw in his method’s design, and been able to correct it. A few more like the above, to cover minus numbers and very low values, and his situation would have been greatly different.</p>
-
-<p>If there’s a way you can improve testing, it’s to write more unit tests. Only leave those bits you really can’t test to integration. Everything else should be adequately covered.</p>
-
-<h2>In parting</h2>
-
-<p>Remember, using <span class="caps">TDD</span> isn’t an excuse to leave your common sense at the door. If you’re writing a method which you know is going to be used in several places, test those several places, give it very good coverage. If you’re writing a sum function like Ricky, you know how it’s going to be used, don’t just write if statements to cover all your input data, that’s using coding to make a test pass an excuse to write bad code.</p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
+    </article>
   
-
-
-<time datetime="2007-07-21T00:00:00+10:00" pubdate data-updated="true">Jul 21<span>st</span>, 2007</time></div>
-        <div class="tags">
-
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/8/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/6/">Newer &rarr;</a>
+    
+  </div>
 </div>
-        
+
     </div>
-</article>
+  </div>
+  <footer role="contentinfo"><p>
+  Website copyright &copy; 2014 - James Gregory |
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
+</p>
 
-<nav id="pagenavi">
-    
-        <a href="/blog/page/6/" class="prev">Prev</a>
-    
-    
-        <a href="/blog/page/8/" class="next">Next</a>
-    
-    <a href="/blog/archives" class="center">Blog Archives</a>
-</nav></div>
-	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
-	<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script src="/javascripts/slash.js"></script>
-
+</footer>
+  
 
 <script type="text/javascript">
       var disqus_shortname = 'jagregory';
@@ -1210,10 +1305,18 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
+
+
+
+
+
+
+
+
 
 
 

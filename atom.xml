@@ -4,7 +4,7 @@
   <title><![CDATA[James Gregory]]></title>
   <link href="http://www.jagregory.com/atom.xml" rel="self"/>
   <link href="http://www.jagregory.com/"/>
-  <updated>2013-10-14T16:14:19+11:00</updated>
+  <updated>2014-01-20T11:43:18+11:00</updated>
   <id>http://www.jagregory.com/</id>
   <author>
     <name><![CDATA[James Gregory]]></name>
@@ -12,6 +12,68 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Michael Abrash's Graphics Programming Black Book]]></title>
+    <link href="http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book/"/>
+    <updated>2014-01-20T06:45:00+11:00</updated>
+    <id>http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book</id>
+    <content type="html"><![CDATA[<p>It started out as an attempt to read Michael Abrash&#8217;s Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code>grep</code>, <code>sed</code>, and <code>awk</code>, and a few blisters.</p>
+
+<!-- more -->
+
+
+<p>But first&#8230;</p>
+
+<h2>A brief history of 3D gaming</h2>
+
+<p>The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like Wolfenstein 3D, to hardware accelerated full 3D multi-player online games like Quake III Arena. That&#8217;s progress for you.</p>
+
+<p>In 1992 id Software released Wolfenstein 3D.</p>
+
+<p><img src="http://www.jagregory.com/images/abrash-black-book-1.png" alt="" /></p>
+
+<p>In 1993 id Software released Doom.</p>
+
+<p><img src="http://www.jagregory.com/images/abrash-black-book-2.jpg" alt="" /></p>
+
+<p>The team at were now furiously working on shipping a sequel to Doom reusing the same engine; everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time colour lighting. 3D particle effects. Portals. Water. It was going to amaze.</p>
+
+<p>This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was done.</p>
+
+<p>In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.</p>
+
+<p><img src="http://www.jagregory.com/images/abrash-black-book-3.png" alt="" /></p>
+
+<h2>What&#8217;s this all about then?</h2>
+
+<p>In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly, blogging before blogging was a thing. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. <a href="http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html">Jeff Atwood wrote a lovely little tribute</a> to this book a few years ago.</p>
+
+<blockquote><p>I know what you&#8217;re thinking. &#8220;This book is about graphics. And assembly language. Plus it&#8217;s from, like, 1996, which is approximately 1928 in computer years. It&#8217;s of no interest to me as a programmer.&#8221; Admit it. You are. But you know what you&#8217;re going to do? You&#8217;re going to click through anyway and read some of it. Just like in college, <strong>the class topic doesn&#8217;t matter when the instructor is a brilliant teacher</strong>. And that&#8217;s exactly what Abrash is.</p></blockquote>
+
+<p><img src="http://www.jagregory.com/images/abrash-black-book-4.png" alt="" /></p>
+
+<p>Come Christmas 2013 and I&#8217;d entered my annual contemplation on course correcting towards building video games, a desire I&#8217;ve had ever since I got the shareware version of Wolfenstein 3D back in the early 90s. As usual, this lead me to reading a bunch on game development and rendering engines in particular. Mostly indulgent. It was Christmas, after all.</p>
+
+<p>One of the articles I was reading, I can&#8217;t remember which now, referenced Michael Abrash&#8217;s Graphics Programming Black Book. And a flood of memories came back. I&#8217;d tried to read this book once before, I&#8217;d even owned it at one point. &#8220;I should read it again&#8221;, my brain said.</p>
+
+<p>My physical copy of the book was long gone. I turned to the Internet to try to buy it, out of print and over $200 on ebay. Even if I were willing to pay that, by the time it arrived my Christmas would be over (and probably my annual game developing desire too). &#8220;Ebooks, they&#8217;re a thing now!&#8221; Sadly, the publisher had shut down a few years ago, so they&#8217;ve been struggling to keep up with the times. Thankfully, in 2001, Michael and Dr. Dobbs <a href="http://www.drdobbs.com/parallel/graphics-programming-black-book/184404919">released a PDF version of the book online</a> for free. Gotta love these nerdy types, always giving their stuff away.</p>
+
+<p>Unfortunately, and we&#8217;re heading firmly into first-world problems here, the PDFs weren&#8217;t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren&#8217;t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grepped, and I awk&#8217;d, and I sed&#8217;d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.</p>
+
+<p>As with any Yak shaving exercise, I missed the exit for Good Enough by a long margin. I invested more time than I&#8217;d originally planned. I think I was up to two days, casually, now. At this point I&#8217;d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.</p>
+
+<blockquote><p>It does make me a little sad, and I suppose that&#8217;s part of why I did this, that something such as this book&#8211;although there are many other examples&#8211;which influenced so many can so easily fall away and be forgotten. Not just forgotten, but lost.</p></blockquote>
+
+<p>I contacted Michael about the work I&#8217;ve been doing on his book, and asked him if he&#8217;d have any issue with me releasing it on Github. His reaction was obvious, in hind sight, &#8220;The more people can read it, the better!&#8221;.</p>
+
+<p>You can find the Markdown source to the book here: <a href="https://github.com/jagregory/abrash-black-book">Github source</a> and <a href="https://github.com/jagregory/abrash-black-book/releases">each release</a> has a download in ePub and Mobi format. The source has a <code>Makefile</code> for compiling your own ePub and Mobi&#8217;s, if you&#8217;ve got <a href="http://johnmacfarlane.net/pandoc/">pandoc</a> installed.</p>
+
+<p>If you spot any issues whilst reading the book, please raise an issue on Github or send a Pull Request.</p>
+
+<p>All rights, of course, still belong to Michael Abrash. Any errors are probably down to me.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Compiled Templates for Go]]></title>
@@ -258,7 +320,7 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Rails production 500 error page showing in dev]]></title>
+    <title type="html"><![CDATA[Rails Production 500 Error Page Showing in Dev]]></title>
     <link href="http://www.jagregory.com/writings/rails-500-error-showing-in-dev/"/>
     <updated>2012-07-05T00:00:00+10:00</updated>
     <id>http://www.jagregory.com/writings/rails-500-error-showing-in-dev</id>
@@ -279,7 +341,7 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Learning. It ain't hard.]]></title>
+    <title type="html"><![CDATA[Learning. It Ain't Hard.]]></title>
     <link href="http://www.jagregory.com/writings/learning-it-aint-hard"/>
     <updated>2011-07-06T00:00:00+10:00</updated>
     <id>http://www.jagregory.com/writings/learning-it-aint-hard</id>
@@ -573,7 +635,7 @@ NDC 2011 will be next year, and it&#8217;s looking like it&#8217;ll be in May th
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Speaking engagements in 2010]]></title>
+    <title type="html"><![CDATA[Speaking Engagements in 2010]]></title>
     <link href="http://www.jagregory.com/writings/speaking-engagements-2010/"/>
     <updated>2010-03-31T00:00:00+11:00</updated>
     <id>http://www.jagregory.com/writings/speaking-engagements-2010</id>
@@ -600,7 +662,7 @@ An introduction to distributed version control using Git, and how your VCS shoul
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Git E-VAN recording]]></title>
+    <title type="html"><![CDATA[Git E-VAN Recording]]></title>
     <link href="http://www.jagregory.com/writings/git-e-van-recording/"/>
     <updated>2010-02-17T00:00:00+11:00</updated>
     <id>http://www.jagregory.com/writings/git-e-van-recording</id>
@@ -631,7 +693,7 @@ An introduction to distributed version control using Git, and how your VCS shoul
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Git: Remotes, contributions, and the letter N]]></title>
+    <title type="html"><![CDATA[Git: Remotes, Contributions, and the Letter N]]></title>
     <link href="http://www.jagregory.com/writings/git-remotes-contributions-and-the-letter-n/"/>
     <updated>2010-02-07T00:00:00+11:00</updated>
     <id>http://www.jagregory.com/writings/git-remotes-contributions-and-the-letter-n</id>
@@ -1051,7 +1113,7 @@ git pull origin</pre>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Git's guts: Merging and rebasing]]></title>
+    <title type="html"><![CDATA[Git's Guts: Merging and Rebasing]]></title>
     <link href="http://www.jagregory.com/writings/gits-guts-merging-and-rebasing/"/>
     <updated>2009-11-27T00:00:00+11:00</updated>
     <id>http://www.jagregory.com/writings/gits-guts-merging-and-rebasing</id>
@@ -1256,7 +1318,7 @@ git pull origin</pre>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Git's guts: Branches, HEAD, and fast-forwards]]></title>
+    <title type="html"><![CDATA[Git's Guts: Branches, HEAD, and Fast-forwards]]></title>
     <link href="http://www.jagregory.com/writings/gits-guts-branches-head-and-fast-forwards/"/>
     <updated>2009-11-25T00:00:00+11:00</updated>
     <id>http://www.jagregory.com/writings/gits-guts-branches-head-and-fast-forwards</id>
@@ -1414,7 +1476,7 @@ git pull origin</pre>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Preventing debugger property evaluation for side-effect laden properties]]></title>
+    <title type="html"><![CDATA[Preventing Debugger Property Evaluation for Side-effect Laden Properties]]></title>
     <link href="http://www.jagregory.com/writings/preventing-debugger-property-evaluation-side-effects/"/>
     <updated>2009-08-18T00:00:00+10:00</updated>
     <id>http://www.jagregory.com/writings/preventing-debugger-property-evaluation-side-effects</id>
@@ -1526,7 +1588,7 @@ git pull origin</pre>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Git and command-line fear]]></title>
+    <title type="html"><![CDATA[Git and Command-line Fear]]></title>
     <link href="http://www.jagregory.com/writings/git-and-command-line-fear/"/>
     <updated>2009-07-20T00:00:00+10:00</updated>
     <id>http://www.jagregory.com/writings/git-and-command-line-fear</id>
@@ -1543,7 +1605,7 @@ git pull origin</pre>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[What's been happening in Fluent NHibernate land?]]></title>
+    <title type="html"><![CDATA[What's Been Happening in Fluent NHibernate Land?]]></title>
     <link href="http://www.jagregory.com/writings/whats-been-happening-in-fluent-nhibernate-land/"/>
     <updated>2009-04-28T00:00:00+10:00</updated>
     <id>http://www.jagregory.com/writings/whats-been-happening-in-fluent-nhibernate-land</id>
@@ -1590,43 +1652,6 @@ git pull origin</pre>
     <content type="html"><![CDATA[Just to let anyone know that hasn&#8217;t heard by other means, I&#8217;m now blogging at <a href="http://lostechies.com">Los Techies</a>. I&#8217;m going to cross-post between these two blogs, so there&#8217;s no need to update your feeds if you&#8217;re too lazy; but if you&#8217;re already subscribing to the Los Techies general feed then you&#8217;ll now get me too.
 
 You can find my blog at: <a href="http://jagregory.lostechies.com">jagregory.lostechies.com</a>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Fluent NHibernate usage stats]]></title>
-    <link href="http://www.jagregory.com/writings/fluent-nhibernate-usage-stats/"/>
-    <updated>2009-03-21T00:00:00+11:00</updated>
-    <id>http://www.jagregory.com/writings/fluent-nhibernate-usage-stats</id>
-    <content type="html"><![CDATA[Just been totting up some figures on how <a href="http://fluentnhibernate.org">Fluent NHibernate</a> is doing, thought I&#8217;d share them with anyone that&#8217;s interested.
-
-<blockquote>These are very rough figures, generated with no scientific consistency, some are cumulative and others are based just on the last full month. They&#8217;re more just to satisfy my curiosity than to be rigorously accurate.</blockquote>
-
-<table>
-  <tr>
-    <td>Downloads</td>
-    <td>1,800 per month</td>
-  </tr>
-  <tr>
-    <td>Unique visitors</td>
-    <td>5,500 per month</td>
-  </tr>
-  <tr>
-    <td>Page views</td>
-    <td>13,000 per month</td>
-  </tr>
-  <tr>
-    <td>Mailing list messages</td>
-    <td>450 per month</td>
-  <tr>
-    <td>Commits</td>
-    <td>45 per month</td>
-  </tr>
-</table>
-
-Something else that&#8217;s interesting is of those 5,500 visitors/13,000 page views, 66% are coming directly from google, 4% directly, then the other 30% from referrers. Those referrers are broken down into (from highest to lowest): <a href="http://stackoverflow.com">Stack Overflow</a>, <a href="http://blog.jagregory.com">my blog</a>, <a href="http://pnpguidance.net">pnpguidance.net</a>, <a href="http://nhforge.org">nhforge</a>, then quite a few other sites forming the lower percentages. I&#8217;m surprised at how high Stack Overflow is, I guess it pays that I pay attention to questions asked about Fluent on there.
-
-Those download numbers are probably not representative either as they&#8217;re only of the zip files, while I believe the vast majority of people run off the trunk through Subversion, so it&#8217;s hard to count them.
 ]]></content>
   </entry>
   

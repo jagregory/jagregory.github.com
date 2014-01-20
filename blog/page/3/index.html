@@ -1,25 +1,36 @@
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <title>James Gregory</title>
-    <meta name="author" content="James Gregory">
+  <meta charset="utf-8">
+  <title>James Gregory</title>
+  <meta name="author" content="James Gregory">
 
-    
-    <meta name="description" content="Docu + 2 Days It&#8217;s been two days since I announced docu, my simple documentation generator for .Net apps. The reception it&#8217;s received &hellip;">
-    
-    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+  
+  <meta name="description" content="Just been totting up some figures on how Fluent NHibernate is doing, thought I&#8217;d share them with anyone that&#8217;s interested. These are very &hellip;">
+  
 
-    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-    <link rel="canonical" href="">
-    <link href="/favicon.png" rel="shortcut icon">
-    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-    
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    
-    
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jagregory.com/blog/page/3">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+  
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-3186192-1']);
@@ -34,54 +45,61 @@
 
 
 </head>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<logo>
 
-<body>
-	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
-<nav class="menu left"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
-</ul>
-</nav>
-<div class="right">
-	<form class="search right" action="http://google.com/search" method="get">
-		<input class="left" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:www.jagregory.com">
-	</form>
-	<div class="social right">
-		
-		
-		
-		
-		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
-		
-		
-		
-		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-</div>
+<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
+</logo>
+
+
+
+<body >
+  <header role="banner"><hgroup>
+  <h1><a href="/">James Gregory</a></h1>
+  
+</hgroup>
 
 </header>
-	
-	<div id="content" class="inner">
+  <nav role="navigation"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
 
+<br>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jagregory.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<!--
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/docu-2-days/">Docu + 2 Days</a></h1>
-    <div class="entry">
-        <p>It&#8217;s been two days since I <a href="/writings/introducing-docu-simple-doc-gen-for-net/">announced</a> <a href="http://docu.jagregory.com">docu</a>, my simple documentation generator for .Net apps.</p>
-
-<p>The reception it&#8217;s received has been positive, I never expected it to have a surge of popularity because it&#8217;s not that kind of tool, so it hasn&#8217;t come as much of a surprise that people haven&#8217;t been jumping all over it. Having said that though, I have had some good feedback and already someone has contributed a patch. Additionally, there hasn&#8217;t been one question as to why I&#8217;ve created it; now this has come as a surprise, I guess I&#8217;m <strong>not</strong> the only one that feels Sandcastle is bloated and overcomplicated. Yay!</p>
-
-<p>I&#8217;ve just pushed out some changes to the <a href="http://github.com/jagregory/docu">github repos</a> and released an updated alpha (v0.1.0.2) on the <a href="http://docu.jagregory.com/downloads">downloads page</a>. The biggest changes so far are the inclusion of events and fields in the parsing, which now means docu has <code>&lt;summary /&gt;</code> support for all documentable members. The rest of the changes are mainly refactorings and some battle-hardening.</p>
-
-<p>I&#8217;ve got some more changes and several issues lined up, so keep an eye out.</p>
-
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-nhibernate-usage-stats/">Fluent NHibernate Usage Stats</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -93,19 +111,129 @@
   
 
 
-<time datetime="2009-03-21T00:00:00+11:00" pubdate data-updated="true">Mar 21<span>st</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-03-21T00:00:00+11:00" pubdate data-updated="true">Mar 21<span>st</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-nhibernate-usage-stats/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-nhibernate-usage-stats/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/introducing-docu-simple-doc-gen-for-net/">Introducing Docu - Simple Doc Gen for .Net</a></h1>
-    <div class="entry">
-        <p>Lets look at a recent Twitter conversation of mine:</p>
+  <div class="entry-content">Just been totting up some figures on how <a href="http://fluentnhibernate.org">Fluent NHibernate</a> is doing, thought I&#8217;d share them with anyone that&#8217;s interested.
+
+<blockquote>These are very rough figures, generated with no scientific consistency, some are cumulative and others are based just on the last full month. They&#8217;re more just to satisfy my curiosity than to be rigorously accurate.</blockquote>
+
+<table>
+  <tr>
+    <td>Downloads</td>
+    <td>1,800 per month</td>
+  </tr>
+  <tr>
+    <td>Unique visitors</td>
+    <td>5,500 per month</td>
+  </tr>
+  <tr>
+    <td>Page views</td>
+    <td>13,000 per month</td>
+  </tr>
+  <tr>
+    <td>Mailing list messages</td>
+    <td>450 per month</td>
+  <tr>
+    <td>Commits</td>
+    <td>45 per month</td>
+  </tr>
+</table>
+
+Something else that&#8217;s interesting is of those 5,500 visitors/13,000 page views, 66% are coming directly from google, 4% directly, then the other 30% from referrers. Those referrers are broken down into (from highest to lowest): <a href="http://stackoverflow.com">Stack Overflow</a>, <a href="http://blog.jagregory.com">my blog</a>, <a href="http://pnpguidance.net">pnpguidance.net</a>, <a href="http://nhforge.org">nhforge</a>, then quite a few other sites forming the lower percentages. I&#8217;m surprised at how high Stack Overflow is, I guess it pays that I pay attention to questions asked about Fluent on there.
+
+Those download numbers are probably not representative either as they&#8217;re only of the zip files, while I believe the vast majority of people run off the trunk through Subversion, so it&#8217;s hard to count them.
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/docu-2-days/">Docu + 2 Days</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-21T00:00:00+11:00" pubdate data-updated="true">Mar 21<span>st</span>, 2009</time>
+        
+           | <a href="/writings/docu-2-days/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/docu-2-days/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>It&#8217;s been two days since I <a href="/writings/introducing-docu-simple-doc-gen-for-net/">announced</a> <a href="http://docu.jagregory.com">docu</a>, my simple documentation generator for .Net apps.</p>
+
+<p>The reception it&#8217;s received has been positive, I never expected it to have a surge of popularity because it&#8217;s not that kind of tool, so it hasn&#8217;t come as much of a surprise that people haven&#8217;t been jumping all over it. Having said that though, I have had some good feedback and already someone has contributed a patch. Additionally, there hasn&#8217;t been one question as to why I&#8217;ve created it; now this has come as a surprise, I guess I&#8217;m <strong>not</strong> the only one that feels Sandcastle is bloated and overcomplicated. Yay!</p>
+
+<p>I&#8217;ve just pushed out some changes to the <a href="http://github.com/jagregory/docu">github repos</a> and released an updated alpha (v0.1.0.2) on the <a href="http://docu.jagregory.com/downloads">downloads page</a>. The biggest changes so far are the inclusion of events and fields in the parsing, which now means docu has <code>&lt;summary /&gt;</code> support for all documentable members. The rest of the changes are mainly refactorings and some battle-hardening.</p>
+
+<p>I&#8217;ve got some more changes and several issues lined up, so keep an eye out.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/introducing-docu-simple-doc-gen-for-net/">Introducing Docu - Simple Doc Gen for .Net</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-19T00:00:00+11:00" pubdate data-updated="true">Mar 19<span>th</span>, 2009</time>
+        
+           | <a href="/writings/introducing-docu-simple-doc-gen-for-net/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/introducing-docu-simple-doc-gen-for-net/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Lets look at a recent Twitter conversation of mine:</p>
 
 <ul>
 <li>Anyone have any tips on generating html docs from XML comments? Used to do it years ago with NDoc <a href='http://twitter.com/jagregory/status/1312895270'>?</a></li>
@@ -150,12 +278,23 @@
 <p>It&#8217;s early days yet, there&#8217;s very little customisation of the documentation process (the part that actually finds the types and members to document), and not all comment types are supported yet; however, it&#8217;s used for Fluent NHibernate and works pretty well. It&#8217;s only Alpha right now, so you shouldn&#8217;t expect the world.</p>
 
 <p>So if this kind-of thing interests you, go have a read of the <a href='http://docu.jagregory.com'>docu website</a> and let me know how it works out for you.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-nhibernate-conventions-rewrite/">Fluent NHibernate: Conventions Rewrite</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -167,19 +306,17 @@
   
 
 
-<time datetime="2009-03-19T00:00:00+11:00" pubdate data-updated="true">Mar 19<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-03-11T00:00:00+11:00" pubdate data-updated="true">Mar 11<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-nhibernate-conventions-rewrite/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-nhibernate-conventions-rewrite/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-conventions-rewrite/">Fluent NHibernate: Conventions Rewrite</a></h1>
-    <div class="entry">
-        <p>I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I&#8217;ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+  <div class="entry-content"><p>I&#8217;ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I&#8217;ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
 
 
 
@@ -396,12 +533,23 @@
 
 <p>So this post should have given you a basic introduction to the changes I&#8217;ve made. To go further, you&#8217;re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there&#8217;s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
 
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations/">Fluent NHibernate: Auto Mapping, Overrides and Alterations</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -413,19 +561,17 @@
   
 
 
-<time datetime="2009-03-11T00:00:00+11:00" pubdate data-updated="true">Mar 11<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-02-10T00:00:00+11:00" pubdate data-updated="true">Feb 10<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations/">Fluent NHibernate: Auto Mapping, Overrides and Alterations</a></h1>
-    <div class="entry">
-        <blockquote><p><strong>Notice:</strong> This is an excerpt from the <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping'>Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p></blockquote>
+  <div class="entry-content"><blockquote><p><strong>Notice:</strong> This is an excerpt from the <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping'>Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p></blockquote>
 
 <p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href='https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping'>Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you&#8217;re having to alter many entities.</p>
 
@@ -547,12 +693,23 @@
 
 <p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There&#8217;s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
 
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-nhibernate-the-official-website/">Fluent NHibernate - the Official Website</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -564,19 +721,17 @@
   
 
 
-<time datetime="2009-02-10T00:00:00+11:00" pubdate data-updated="true">Feb 10<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-nhibernate-the-official-website/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-nhibernate-the-official-website/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-the-official-website/">Fluent NHibernate - the Official Website</a></h1>
-    <div class="entry">
-        <p>&#8220;Documentation? What documentation!&#8221; I hear you say. Yes, Fluent NHibernate is not best known for it&#8217;s abundance of documentation. I know.</p>
+  <div class="entry-content"><p>&#8220;Documentation? What documentation!&#8221; I hear you say. Yes, Fluent NHibernate is not best known for it&#8217;s abundance of documentation. I know.</p>
 
 
 
@@ -603,12 +758,23 @@
 
 <p>As with any wiki, the content is not final, and not exhaustive. I&#8217;m working on it.</p>
 
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-green-and-brown/">Fluent Green and Brown</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -620,19 +786,17 @@
   
 
 
-<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-green-and-brown/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-green-and-brown/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-green-and-brown/">Fluent Green and Brown</a></h1>
-    <div class="entry">
-        <p>To paint a very black-and-white picture, there are two camps of applications: greenfield and brownfield. Greenfield are generally nice, they have good separation of concerns, probably an IoC container, they may even be covered by unit tests. Brownfield apps are not. They generally don&#8217;t have great separation of concerns (they&#8217;re usually pretty concerned about everything), they definitely don&#8217;t have great unit test coverage (but you&#8217;re working on it!), and they don&#8217;t have IoC containers.</p>
+  <div class="entry-content"><p>To paint a very black-and-white picture, there are two camps of applications: greenfield and brownfield. Greenfield are generally nice, they have good separation of concerns, probably an IoC container, they may even be covered by unit tests. Brownfield apps are not. They generally don&#8217;t have great separation of concerns (they&#8217;re usually pretty concerned about everything), they definitely don&#8217;t have great unit test coverage (but you&#8217;re working on it!), and they don&#8217;t have IoC containers.</p>
 
 <p>If you&#8217;re designing a framework you need to cater for both these markets. Unfortunately, they&#8217;re both at odds with each other. A design that caters for inversion of control can sometimes be too verbose or &#8220;bitty&#8221; to use easily without a container. Similarly, if designed without a container in mind it will fall short for use with one; it&#8217;ll be too tightly nit, too hard to break apart.</p>
 
@@ -641,12 +805,23 @@
 <p>I&#8217;m not apologising, because nobody has complained, but considerations need to be made for the other half. I still very much believe that Fluent NHibernate is heading in the right direction, we want to make life easier for those people who&#8217;s lives are pretty damn hard (those greenfield guys have it easy anyway); however, I do believe considerations need to be made to allow Fluent NHibernate to be more accessible for those of us who have the pleasure of working in a well designed system.</p>
 
 <p><strong>What does the future hold for Fluent NHibernate?</strong> Supporting all of NHibernate&#8217;s mapping options, making the automapper a lot more powerful, improving testability even more, and finally&#8230; giving some love to the PersistenceModel and SessionSource that the greenfield guys need.</p>
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/fluent-nhibernate-configuring-your-application/">Fluent NHibernate: Configuring Your Application</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -658,19 +833,17 @@
   
 
 
-<time datetime="2009-02-04T00:00:00+11:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-02-03T00:00:00+11:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/fluent-nhibernate-configuring-your-application/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/fluent-nhibernate-configuring-your-application/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-configuring-your-application/">Fluent NHibernate: Configuring Your Application</a></h1>
-    <div class="entry">
-        <blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
+  <div class="entry-content"><blockquote><p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p></blockquote>
 
 <p>There&#8217;s been a grey area of how to actually configure your application to use <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
 
@@ -1037,12 +1210,23 @@
 
 <p>That&#8217;s it for now, I hope this helps to make configuring your application a little clearer.</p>
 
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir/">I Think You Mean a Many-to-one, Sir</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -1054,19 +1238,17 @@
   
 
 
-<time datetime="2009-02-03T00:00:00+11:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-01-27T00:00:00+11:00" pubdate data-updated="true">Jan 27<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/i-think-you-mean-a-many-to-one-sir/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/i-think-you-mean-a-many-to-one-sir/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/i-think-you-mean-a-many-to-one-sir/">I Think You Mean a Many-to-one, Sir</a></h1>
-    <div class="entry">
-        <blockquote>
+  <div class="entry-content"><blockquote>
 <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a> and <a href='http://groups.google.com/group/nhusers'>NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn&#8217;t working, what&#8217;s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
 </blockquote>
 
@@ -1262,12 +1444,23 @@
 
 <p>So just remember this: <strong>if you think you&#8217;re mapping a one-to-one, you probably aren&#8217;t!</strong> It&#8217;s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it&#8217;ll be a many-to-one you need.</p>
 
+</div>
+  
+  
 
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/introduction-to-static-reflection/">Introduction to Static Reflection</a></h1>
+    
+    
+      <p class="meta">
         
-        
-    </div>
-    <div class="meta">
-        <div class="date">
 
 
 
@@ -1279,19 +1472,17 @@
   
 
 
-<time datetime="2009-01-27T00:00:00+11:00" pubdate data-updated="true">Jan 27<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
+<time datetime="2009-01-26T00:00:00+11:00" pubdate data-updated="true">Jan 26<span>th</span>, 2009</time>
         
-    </div>
-</article>
+           | <a href="/writings/introduction-to-static-reflection/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/introduction-to-static-reflection/">Comments</a>
+        
+      </p>
+    
+  </header>
 
 
-    <article class="post">
-    <h1 class="title"><a href="/writings/introduction-to-static-reflection/">Introduction to Static Reflection</a></h1>
-    <div class="entry">
-        <blockquote>This post could&#8217;ve also been called &#8220;Fluent NHibernate secrets exposed!&#8221; but it sounded a bit sensationalist.</blockquote>
+  <div class="entry-content"><blockquote>This post could&#8217;ve also been called &#8220;Fluent NHibernate secrets exposed!&#8221; but it sounded a bit sensationalist.</blockquote>
 
 
 
@@ -1371,390 +1562,33 @@
 <p><p>As this example shows, we&#8217;re able to use reflection without having to resort to strings. The great thing about this is that if you change the name of a member inside a lambda, you&#8217;ll get a compile error if you haven&#8217;t updated all the references! No more hidden bugs.</p></p>
 
 <p><p>So that&#8217;s how the magic behind Fluent NHibernate (and others) works, simple when you know how!</p></p>
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
+</div>
+  
   
 
 
-<time datetime="2009-01-26T00:00:00+11:00" pubdate data-updated="true">Jan 26<span>th</span>, 2009</time></div>
-        <div class="tags">
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/writings/fluent-nhibernate-auto-mapping-and-base-classes/">Fluent NHibernate: Auto Mapping and Base-classes</a></h1>
-    <div class="entry">
-        <p>Carrying on with the <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a> Auto Mapping theme, I&#8217;ll now demonstrate how to map inheritance hierarchies.</p>
-
-
-
-
-<p>There are two main things that you&#8217;d want to do with inherited classes, either ignore the base class all together, or map them using an inheritance strategy. I&#8217;m going to start with the former, then move on to the latter.</p>
-
-
-
-
-<h2 id='ignoring_basetypes'>Ignoring base-types</h2>
-
-
-
-
-<p>This scenario is where you may have a base class in your domain that you use to simplify your entities, you&#8217;ve moved common properties into it so you don&#8217;t have to recreate them on every entity; typically this would be the Id and perhaps some audit information. So lets start with a model that has a base class we&#8217;d like to ignore.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Entities</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Entity</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span> <span class="p">:</span> <span class="n">Entity</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Animal</span> <span class="p">:</span> <span class="n">Entity</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Species</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>Relatively simple model here, we&#8217;ve got an <code>Entity</code> base class that defines the <code>Id</code>, then the <code>Person</code> and <code>Animal</code> entities. We have no desire to have <code>Entity</code> mapped by NHibernate, so we need a way to tell the auto mapper to ignore it.</p>
-
-
-
-
-<p>For those individuals from traditional XML mapping land, this is what we&#8217;re going to be recreating:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Person&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;FirstName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;LastName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'><span class="nt">&lt;/class&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Animal&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Species&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'><span class="nt">&lt;/class&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>We need to initialise the NHibernate configuration, and supply it with any auto mappings we&#8217;re going to create:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>The first section is the configuration of Fluent NHibernate, which we&#8217;re telling to map anything in the <code>Entities</code> namespace from the assembly that contains our <code>Entity</code> base-class; then we configure NHibernate and inject our auto mappings.</p>
-
-
-
-
-<p>If we were to run this now, we wouldn&#8217;t get the mapping we desire. Fluent NHibernate would see <code>Entity</code> as an actual entity and map it with <code>Animal</code> and <code>Person</code> as subclasses; this is not what we desire, so we need to modify our auto mapping configuration to reflect that.</p>
-
-
-
-
-<p>After <code>MapEntitiesFromAssemblyOf<Entity>()</code> we need to alter the conventions that the auto mapper is using so it can identify our base-class.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">convention</span><span class="p">.</span><span class="n">IsBaseType</span> <span class="p">=</span>
-</span><span class='line'>      <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Entity</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">})</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>We&#8217;ve added the <code>WithConventions</code> call in which we replace the <code>IsBaseType</code> convention with our own. This convention is used to identify whether a type is simply a base-type for abstraction purposes, or a legitimate storage requirement. In our case we&#8217;ve set it to return <code>true</code> if the type is an <code>Entity</code>.</p>
-
-
-
-
-<p>With this change, we now get our desired mapping. <code>Entity</code> is ignored as far is Fluent NHibernate is concerned, and all the properties (<code>Id</code> in our case) are treated as if they were on the specific subclasses.</p>
-
-
-
-
-<h2 id='basetype_as_an_inheritance_strategy'>Base-type as an inheritance strategy</h2>
-
-
-
-
-<p>What we&#8217;re going to do is create a simple model that we&#8217;ll map as a <a href='http://www.hibernate.org/hib_docs/nhibernate/html/inheritance.html'>table-per-subclass</a> inheritance strategy, which is the equivalent of the NHibernate <code>joined-subclass</code> mapping.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">Entities</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Employee</span> <span class="p">:</span> <span class="n">Person</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="n">DateTime</span> <span class="n">StartDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Guest</span> <span class="p">:</span> <span class="n">Person</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GuestPassId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>Relatively simple model here, we&#8217;ve got an <code>Person</code> class that defines the <code>Id</code> and name properties, then the <code>Employee</code> and <code>Guest</code> subclass entities.</p>
-
-
-
-
-<p>The XML equivalent is as follows:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Person&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;Id&quot;</span> <span class="na">type=</span><span class="s">&quot;Int32&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/id&gt;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;FirstName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;LastName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">&quot;Employee&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;PersonId&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;StartDate&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/joined-subclass&gt;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">&quot;Guest&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;PersonId&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;GuestPassId&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/joined-subclass&gt;</span>
-</span><span class='line'><span class="nt">&lt;/class&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>Again we configure NHibernate session factory to integrate with the auto mapping:</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<p>This is the same configuration that I used in the first example, except that if you recall the reason we had to change the last example was because it was mapping it as a joined-subclass - that&#8217;s right, we don&#8217;t need to do anything now! Our mapping is complete, Fluent NHibernate automatically assumes that any inherited classes (that haven&#8217;t had their base-type excluded by the <code>IsBaseType</code> convention) should be mapped as joined-subclasses.</p>
-
-
-
-
-<p>That&#8217;s how to deal with base-classes with Fluent NHibernate&#8217;s auto mapping.</p>
-
-
-        
-        
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
+    </article>
   
-
-
-<time datetime="2009-01-26T00:00:00+11:00" pubdate data-updated="true">Jan 26<span>th</span>, 2009</time></div>
-        <div class="tags">
-
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
 </div>
-        
+
     </div>
-</article>
+  </div>
+  <footer role="contentinfo"><p>
+  Website copyright &copy; 2014 - James Gregory |
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
+</p>
 
-<nav id="pagenavi">
-    
-        <a href="/blog/page/2/" class="prev">Prev</a>
-    
-    
-        <a href="/blog/page/4/" class="next">Next</a>
-    
-    <a href="/blog/archives" class="center">Blog Archives</a>
-</nav></div>
-	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
-	<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script src="/javascripts/slash.js"></script>
-
+</footer>
+  
 
 <script type="text/javascript">
       var disqus_shortname = 'jagregory';
@@ -1764,10 +1598,18 @@
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
+
+
+
+
+
+
+
+
 
 
 

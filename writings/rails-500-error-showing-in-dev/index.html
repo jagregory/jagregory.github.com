@@ -1,25 +1,36 @@
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <title>Rails production 500 error page showing in dev - James Gregory</title>
-    <meta name="author" content="James Gregory">
+  <meta charset="utf-8">
+  <title>Rails Production 500 Error Page Showing in Dev - James Gregory</title>
+  <meta name="author" content="James Gregory">
 
-    
-    <meta name="description" content="Rails Production 500 Error Page Showing in Dev We&#8217;re sorry, but something went wrong! I&#8217;ve been seeing some strange behaviour on the &hellip;">
-    
-    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+  
+  <meta name="description" content="We&#8217;re sorry, but something went wrong! I&#8217;ve been seeing some strange behaviour on the development environment for On the Game recently. I &hellip;">
+  
 
-    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-    <link rel="canonical" href="">
-    <link href="/favicon.png" rel="shortcut icon">
-    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-    
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    
-    
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jagregory.com/writings/rails-500-error-showing-in-dev">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+  
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-3186192-1']);
@@ -34,38 +45,80 @@
 
 
 </head>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<logo>
 
-<body>
-	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
-<nav class="menu left"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
-</ul>
-</nav>
-<div class="right">
-	<form class="search right" action="http://google.com/search" method="get">
-		<input class="left" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:www.jagregory.com">
-	</form>
-	<div class="social right">
-		
-		
-		
-		
-		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
-		
-		
-		
-		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-</div>
+<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
+</logo>
+
+
+
+<body >
+  <header role="banner"><hgroup>
+  <h1><a href="/">James Gregory</a></h1>
+  
+</hgroup>
 
 </header>
-	
-	<div id="content" class="inner"><article class="post">
-    <h1 class="title">Rails Production 500 Error Page Showing in Dev</h1>
-    <div class="entry"><blockquote><p>We&#8217;re sorry, but something went wrong!</p></blockquote>
+  <nav role="navigation"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+<br>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jagregory.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<!--
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails Production 500 Error Page Showing in Dev</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+10:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>We&#8217;re sorry, but something went wrong!</p></blockquote>
 
 <p>I&#8217;ve been seeing some strange behaviour on the development environment for <a href="http://www.getonthegame.com.au">On the Game</a> recently. I&#8217;ve just spent an hour combing through every line of code that varies from a standard Rails app, and I&#8217;ve finally found the issue. I&#8217;m putting it here for posterity.</p>
 
@@ -79,32 +132,50 @@
 
 <p>Moral of the story: If you&#8217;re seeing this behaviour, check you haven&#8217;t (badly) monkey patched something that the error page is using.</p>
 </div>
-    <div class="meta">
-        <div class="date">
 
 
+  <footer>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
 
-
-
-
-
-
+    
+    <p class="meta">
+      
   
 
+<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
 
-<time datetime="2012-07-05T00:00:00+10:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time></div>
-        <div class="tags">
 
-</div>
-        
-    </div>
+      
+
+
+    </p>
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/writings/learning-it-aint-hard" title="Previous Post: Learning. It ain't hard.">&laquo; Learning. It ain't hard.</a>
+      
+      
+        <a class="basic-alignment right" href="/writings/go-slice-visualiser/" title="Next Post: Go Slice Visualiser">Go Slice Visualiser &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
 
 </div>
-	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
-	<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script src="/javascripts/slash.js"></script>
 
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Website copyright &copy; 2014 - James Gregory |
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
+</p>
+
+</footer>
+  
 
 <script type="text/javascript">
       var disqus_shortname = 'jagregory';
@@ -114,10 +185,18 @@
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
+
+
+
+
+
+
+
+
 
 
 

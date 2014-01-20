@@ -1,25 +1,36 @@
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
-    <meta charset="utf-8">
-    <title>The problem with onload - James Gregory</title>
-    <meta name="author" content="James Gregory">
+  <meta charset="utf-8">
+  <title>The Problem With Onload - James Gregory</title>
+  <meta name="author" content="James Gregory">
 
-    
-    <meta name="description" content="The Problem With Onload Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing &hellip;">
-    
-    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+  
+  <meta name="description" content="Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. &hellip;">
+  
 
-    <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-    <link rel="canonical" href="">
-    <link href="/favicon.png" rel="shortcut icon">
-    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-    
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    
-    
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jagregory.com/writings/the-problem-with-onload">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+  
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-3186192-1']);
@@ -34,38 +45,80 @@
 
 
 </head>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<logo>
 
-<body>
-	<header class="inner"><h1 class="left"><a href="/">James Gregory</a></h1>
-<nav class="menu left"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
-</ul>
-</nav>
-<div class="right">
-	<form class="search right" action="http://google.com/search" method="get">
-		<input class="left" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:www.jagregory.com">
-	</form>
-	<div class="social right">
-		
-		
-		
-		
-		<a class="github" href="https://github.com/jagregory" title="GitHub">GitHub</a>
-		
-		
-		
-		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-</div>
+<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
+</logo>
+
+
+
+<body >
+  <header role="banner"><hgroup>
+  <h1><a href="/">James Gregory</a></h1>
+  
+</hgroup>
 
 </header>
-	
-	<div id="content" class="inner"><article class="post">
-    <h1 class="title">The Problem With Onload</h1>
-    <div class="entry"><p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
+  <nav role="navigation"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+<br>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jagregory.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<!--
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">The Problem With Onload</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
 
 <p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
 
@@ -186,32 +239,50 @@
 </span></code></pre></td></tr></table></div></figure>
 
 </div>
-    <div class="meta">
-        <div class="date">
 
 
+  <footer>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
 
-
-
-
-
-
+    
+    <p class="meta">
+      
   
 
+<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
 
-<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time></div>
-        <div class="tags">
 
-</div>
-        
-    </div>
+      
+
+
+    </p>
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/" title="Previous Post: How-to use ClientIDs in JavaScript without the ugliness">&laquo; How-to use ClientIDs in JavaScript without the ugliness</a>
+      
+      
+        <a class="basic-alignment right" href="/writings/servercontrolids-update/" title="Next Post: ServerControlIDs Update">ServerControlIDs Update &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
 
 </div>
-	<footer class="inner">Copyright &copy; 2013 James Gregory</footer>
-	<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script src="/javascripts/slash.js"></script>
 
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Website copyright &copy; 2014 - James Gregory |
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
+</p>
+
+</footer>
+  
 
 <script type="text/javascript">
       var disqus_shortname = 'jagregory';
@@ -221,10 +292,18 @@
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
+
+
+
+
+
+
+
+
 
 
 
