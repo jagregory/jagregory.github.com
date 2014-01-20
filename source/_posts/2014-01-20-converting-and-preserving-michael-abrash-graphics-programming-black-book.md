@@ -9,7 +9,7 @@ type: post
 published: true
 ---
 
-> **tl;dr** The Markdown source of Michael Abrash's Graphics Programming Black Book is available [on Github](https://github.com/jagregory/abrash-black-book) and you can read an online copy of the book [on my website](http://www.jagregory.com/abrash-black-book/).
+> **tl;dr** The Markdown source of Michael Abrash's Graphics Programming Black Book is available [on Github](https://github.com/jagregory/abrash-black-book), there are Epub and Mobi versions on the [Github Releases list](https://github.com/jagregory/abrash-black-book/releases), and you can read an online copy of the book [on my website](http://www.jagregory.com/abrash-black-book/).
 
 It started out as an attempt to read [Michael Abrash's](http://en.wikipedia.org/wiki/Michael_Abrash) Graphics Programming Black Book over the Christmas period. It turned into a epic mission of `grep`, `sed`, and `awk`, and a few blisters.
 
