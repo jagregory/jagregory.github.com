@@ -19,23 +19,25 @@ But first...
 
 ## A brief history of 3D gaming
 
-The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like Wolfenstein 3D, to hardware accelerated full 3D multi-player online games like Quake III Arena. That's progress for you.
+The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like [Wolfenstein 3D](http://en.wikipedia.org/wiki/Wolfenstein_3D), to hardware accelerated full 3D multi-player online games like [Quake III Arena](http://en.wikipedia.org/wiki/Quake_III_Arena). That's progress for you.
 
-In 1992 id Software released Wolfenstein 3D.
+In 1992 [id Software](http://en.wikipedia.org/wiki/Id_Software) released Wolfenstein 3D.
 
 ![](/images/abrash-black-book-1.png)
 
-In 1993 id Software released Doom.
+Then a year later in 1993 came [Doom](http://en.wikipedia.org/wiki/Doom_\(video_game\)).
 
 ![](/images/abrash-black-book-2.jpg)
 
-The team at were now furiously working on shipping a sequel to Doom reusing the same engine; everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time colour lighting. 3D particle effects. Portals. Water. It was going to amaze.
+The team at id Software were now furiously working on a sequel to Doom reusing the same engine. Everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time lighting. 3D particle effects. Portals. Water. It was going to amaze.
 
-This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was done. 
+This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was finished. 
 
 In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.
 
 ![](/images/abrash-black-book-3.png)
+
+If you're interested in learning more this period in gaming, you must read [Masters of Doom](http://en.wikipedia.org/wiki/Masters_of_Doom) by David Kushner.
 
 ## What's this all about then?
 
