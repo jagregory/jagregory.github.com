@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Michael Abrash's Graphics Programming Black Book"
+title: "Converting and preserving Michael Abrash's Graphics Programming Black Book"
 date: 2014-01-20 06:45
 comments: true
 tags:
@@ -11,7 +11,7 @@ published: true
 
 > **tl;dr** The Markdown source of Michael Abrash's Graphics Programming Black Book is available [on Github](https://github.com/jagregory/abrash-black-book) and you can read an online copy of the book [on my website](http://www.jagregory.com/abrash-black-book/).
 
-It started out as an attempt to read Michael Abrash's Graphics Programming Black Book over the Christmas period. It turned into a epic mission of `grep`, `sed`, and `awk`, and a few blisters.
+It started out as an attempt to read [Michael Abrash's](http://en.wikipedia.org/wiki/Michael_Abrash) Graphics Programming Black Book over the Christmas period. It turned into a epic mission of `grep`, `sed`, and `awk`, and a few blisters.
 
 <!-- more -->
 
@@ -39,7 +39,7 @@ In 1996 id Software released Quake. PC gaming had truely entered the forefront o
 
 ## What's this all about then?
 
-In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly, blogging before blogging was a thing. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. [Jeff Atwood wrote a lovely little tribute](http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html) to this book a few years ago.
+In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly--blogging before blogging was a thing--and other parts were wrote about his work on Quake. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. [Jeff Atwood wrote a lovely little tribute](http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html) to this book a few years ago.
 
 > I know what you're thinking. "This book is about graphics. And assembly language. Plus it's from, like, 1996, which is approximately 1928 in computer years. It's of no interest to me as a programmer." Admit it. You are. But you know what you're going to do? You're going to click through anyway and read some of it. Just like in college, **the class topic doesn't matter when the instructor is a brilliant teacher**. And that's exactly what Abrash is.
 
