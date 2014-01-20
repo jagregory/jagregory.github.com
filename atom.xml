@@ -4,7 +4,7 @@
   <title><![CDATA[James Gregory]]></title>
   <link href="http://www.jagregory.com/atom.xml" rel="self"/>
   <link href="http://www.jagregory.com/"/>
-  <updated>2014-01-20T11:56:49+11:00</updated>
+  <updated>2014-01-20T15:56:49+11:00</updated>
   <id>http://www.jagregory.com/</id>
   <author>
     <name><![CDATA[James Gregory]]></name>
@@ -61,11 +61,13 @@
 
 <p>My physical copy of the book was long gone. I turned to the Internet to try to buy it, out of print and over $200 on ebay. Even if I were willing to pay that, by the time it arrived my Christmas would be over (and probably my annual game developing desire too). &#8220;Ebooks, they&#8217;re a thing now!&#8221; Sadly, the publisher had shut down a few years ago, so they&#8217;ve been struggling to keep up with the times. Thankfully, in 2001, Michael and Dr. Dobbs <a href="http://www.drdobbs.com/parallel/graphics-programming-black-book/184404919">released a PDF version of the book online</a> for free. Gotta love these nerdy types, always giving their stuff away.</p>
 
-<p>Unfortunately, and we&#8217;re heading firmly into first-world problems here, the PDFs weren&#8217;t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren&#8217;t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grepped, and I awk&#8217;d, and I sed&#8217;d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.</p>
+<p>Unfortunately&#8211;and we&#8217;re heading firmly into first-world problems here&#8211;the PDFs weren&#8217;t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren&#8217;t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grep&#8217;d, and I awk&#8217;d, and I sed&#8217;d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.</p>
 
-<p>As with any Yak shaving exercise, I missed the exit for Good Enough by a long margin. I invested more time than I&#8217;d originally planned. I think I was up to two days, casually, now. At this point I&#8217;d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.</p>
+<p>As with any yak shaving exercise, I missed the exit for <em>Good Enough</em> by a long margin. I invested more time than I&#8217;d originally planned. I think I was up to two days, casually, now. At this point I&#8217;d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.</p>
 
-<blockquote><p>It does make me a little sad, and I suppose that&#8217;s part of why I did this, that something such as this book&#8211;although there are many other examples&#8211;which influenced so many can so easily fall away and be forgotten. Not just forgotten, but lost.</p></blockquote>
+<blockquote><p>It does make me a little sad that books and online works like this&#8211;which influenced so many&#8211;can so easily fall away and be forgotten. Not just forgotten, but lost.</p></blockquote>
+
+<p>What I&#8217;ve ended up with is the book converted into Markdown, in a style which lends itself to ebook publishing. It wasn&#8217;t my intention to preserve the layout or style of the book, just the content. In theory, you could read the pure Markdown files and get a quite enjoyable experience. If you choose to read the prepared versions, you benefit from a web-browser and e-reader compatible layout and some modern tweaks like syntax highlighting.</p>
 
 <p>I contacted Michael about the work I&#8217;ve been doing on his book, and asked him if he&#8217;d have any issue with me releasing it on Github. His reaction was obvious, in hind sight, &#8220;The more people can read it, the better!&#8221;.</p>
 
