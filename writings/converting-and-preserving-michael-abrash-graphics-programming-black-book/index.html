@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Michael Abrash's Graphics Programming Black Book - James Gregory</title>
+  <title>Converting and Preserving Michael Abrash's Graphics Programming Black Book - James Gregory</title>
   <meta name="author" content="James Gregory">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book">
+  <link rel="canonical" href="http://www.jagregory.com/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
@@ -85,7 +85,7 @@
   
   <header>
     
-      <h1 class="entry-title">Michael Abrash's Graphics Programming Black Book</h1>
+      <h1 class="entry-title">Converting and Preserving Michael Abrash's Graphics Programming Black Book</h1>
     
     
       <p class="meta">
@@ -113,7 +113,7 @@
 
 <div class="entry-content"><blockquote><p><strong>tl;dr</strong> The Markdown source of Michael Abrash&#8217;s Graphics Programming Black Book is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a> and you can read an online copy of the book <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</p></blockquote>
 
-<p>It started out as an attempt to read Michael Abrash&#8217;s Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code>grep</code>, <code>sed</code>, and <code>awk</code>, and a few blisters.</p>
+<p>It started out as an attempt to read <a href="http://en.wikipedia.org/wiki/Michael_Abrash">Michael Abrash&#8217;s</a> Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code>grep</code>, <code>sed</code>, and <code>awk</code>, and a few blisters.</p>
 
 <!-- more -->
 
@@ -122,27 +122,29 @@
 
 <h2>A brief history of 3D gaming</h2>
 
-<p>The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like Wolfenstein 3D, to hardware accelerated full 3D multi-player online games like Quake III Arena. That&#8217;s progress for you.</p>
+<p>The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like <a href="http://en.wikipedia.org/wiki/Wolfenstein_3D">Wolfenstein 3D</a>, to hardware accelerated full 3D multi-player online games like <a href="http://en.wikipedia.org/wiki/Quake_III_Arena">Quake III Arena</a>. That&#8217;s progress for you.</p>
 
-<p>In 1992 id Software released Wolfenstein 3D.</p>
+<p>In 1992 <a href="http://en.wikipedia.org/wiki/Id_Software">id Software</a> released Wolfenstein 3D.</p>
 
 <p><img src="/images/abrash-black-book-1.png" alt="" /></p>
 
-<p>In 1993 id Software released Doom.</p>
+<p>Then a year later in 1993 came <a href="http://en.wikipedia.org/wiki/Doom_(video_game)">Doom</a>.</p>
 
 <p><img src="/images/abrash-black-book-2.jpg" alt="" /></p>
 
-<p>The team at were now furiously working on shipping a sequel to Doom reusing the same engine; everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time colour lighting. 3D particle effects. Portals. Water. It was going to amaze.</p>
+<p>The team at id Software were now furiously working on a sequel to Doom reusing the same engine. Everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time lighting. 3D particle effects. Portals. Water. It was going to amaze.</p>
 
-<p>This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was done.</p>
+<p>This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was finished.</p>
 
 <p>In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.</p>
 
 <p><img src="/images/abrash-black-book-3.png" alt="" /></p>
 
+<p>If you&#8217;re interested in learning more this period in gaming, you must read <a href="http://en.wikipedia.org/wiki/Masters_of_Doom">Masters of Doom</a> by David Kushner.</p>
+
 <h2>What&#8217;s this all about then?</h2>
 
-<p>In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly, blogging before blogging was a thing. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. <a href="http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html">Jeff Atwood wrote a lovely little tribute</a> to this book a few years ago.</p>
+<p>In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly&#8211;blogging before blogging was a thing&#8211;and other parts were wrote about his work on Quake. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. <a href="http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html">Jeff Atwood wrote a lovely little tribute</a> to this book a few years ago.</p>
 
 <blockquote><p>I know what you&#8217;re thinking. &#8220;This book is about graphics. And assembly language. Plus it&#8217;s from, like, 1996, which is approximately 1928 in computer years. It&#8217;s of no interest to me as a programmer.&#8221; Admit it. You are. But you know what you&#8217;re going to do? You&#8217;re going to click through anyway and read some of it. Just like in college, <strong>the class topic doesn&#8217;t matter when the instructor is a brilliant teacher</strong>. And that&#8217;s exactly what Abrash is.</p></blockquote>
 
@@ -232,8 +234,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book/';
-        var disqus_url = 'http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book/';
+        var disqus_identifier = 'http://www.jagregory.com/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book/';
+        var disqus_url = 'http://www.jagregory.com/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book/';
         var disqus_script = 'embed.js';
       
     (function () {
