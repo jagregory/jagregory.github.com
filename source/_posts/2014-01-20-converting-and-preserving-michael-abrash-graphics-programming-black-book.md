@@ -35,7 +35,7 @@ This is when Michael Abrash joined id Software. Together, Michael and John built
 
 In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.
 
-![](/images/abrash-black-book-3.png)
+![](/images/abrash-black-book-3.jpg)
 
 If you're interested in learning more this period in gaming, you must read [Masters of Doom](http://en.wikipedia.org/wiki/Masters_of_Doom) by David Kushner.
 
