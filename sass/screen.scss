@@ -1,5 +1,10 @@
 @import "compass";
+@include global-reset;
 
+@import "custom/colors";
+@import "custom/fonts";
+@import "custom/layout";
 @import "base";
-@import "parts";
-@import "plugin";
+@import "partials";
+@import "plugins/_plugins";
+@import "custom/styles";

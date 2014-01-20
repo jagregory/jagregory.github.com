@@ -1,52 +1,57 @@
 body > nav {
   position: relative;
   background-color: $nav-bg;
-  @include background($nav-bg-front, $nav-bg-back);
-  border: {
-    top: 1px solid $nav-border-top;
-    bottom: 1px solid $nav-border-bottom; }
+  @include background($nav-bg);
   padding-top: .35em;
   padding-bottom: .35em;
+  text-align:center;
+/*
+  margin-left:35%;
+  margin-right:35%;
+*/
+
   form {
     @include background-clip(padding-box);
     margin: 0; padding: 0;
+    color: #333;
     .search {
+      text-align: center;
       padding: .3em .5em 0;
       font-size: .85em;
-      @extend .sans;
+      font-family: $serif;
       line-height: 1.1em;
       width: 95%;
       @include border-radius(.5em);
       @include background-clip(padding-box);
       @include box-shadow(lighten($nav-bg, 2) 0 1px);
-      background-color: lighten($nav-bg, 15);
+      background-color: $nav-bg;
       border: 1px solid $nav-border;
-      color: #888;
+      color: #aaa;
       &:focus {
-        color: #444;
+        color: #aaa;
+/*
         border-color: #80b1df;
         @include box-shadow(#80b1df 0 0 4px, #80b1df 0 0 3px inset);
+*/
         background-color: #fff;
         outline: none;
       }
     }
   }
-  fieldset[role=search]{ float: right; width: 48%; }
-  fieldset.mobile-nav{ float: left; width: 48%;
+  fieldset[role=search]{ width: 48%;}
+  fieldset.mobile-nav{ width: 48%;
     select{ width: 100%; font-size: .8em; border: 1px solid #888;}
   }
   ul { display: none; }
   @media only screen and (min-width: 550px) {
-    font-size: .9em;
+    font-size: .95em;
     ul {
       @include horizontal-list(0);
-      float: left;
-      display: block;
+      display: inline-block;
       padding-top: .15em;
     }
     ul.subscription {
       margin-left: .8em;
-      float: right;
       li:last-child a { padding-right: 0; }
     }
     ul li {
@@ -54,27 +59,23 @@ body > nav {
     }
     a {
       @include link-colors($nav-color, $nav-color-hover, $visited: $nav-color);
-      @extend .sans;
+      font-family: $serif;
       text-shadow: lighten($nav-bg, 12) 0 1px;
-      float: left;
       text-decoration: none;
       font-size: 1.1em;
       padding: .1em 0;
       line-height: 1.5em;
     }
     li + li {
-      border-left: 1px solid $nav-border-left;
-      margin-left: .8em;
+      margin-left: 0.5em;
       a {
-        padding-left: .8em;
-        border-left: 1px solid $nav-border-right;
+        padding-left: .5em;
       }
     }
     form {
-      float: right;
-      text-align: left;
-      padding-left: .8em;
-      width: $sidebar-width-medium - $pad-medium*2 - $sidebar-pad-medium + 20px;
+      display: inline-block;
+      text-align: center;
+      width: 250px; // chr
       .search {
         width: 93%;
         font-size: .95em;
@@ -82,7 +83,7 @@ body > nav {
       }
     }
     ul[data-subscription$=email] + form {
-      width: $sidebar-width-medium - $pad-medium*2 - $sidebar-pad-medium - 58px;
+      width: 258px; // chr
       .search { width: 91%; }
     }
     fieldset.mobile-nav { display: none; }
@@ -90,10 +91,10 @@ body > nav {
   }
   @media only screen and (min-width: 992px) {
     form {
-      width: $sidebar-width-wide - $pad-wide - $sidebar-pad-wide*2 + 10px;
+      width: 250px; // chr
     }
     ul[data-subscription$=email] + form {
-      width: $sidebar-width-wide - $pad-wide - $sidebar-pad-wide*2 - 58px;
+      width: 258px; // chr
     }
   }
 }
@@ -121,12 +122,12 @@ body > nav {
   body > nav {
     @media only screen and (min-width: 550px) {
       ul[data-subscription$=email] + form {
-        width: $sidebar-width-medium - $pad-medium*2 - $sidebar-pad-medium - 32px;
+        width: 232px; // chr
       }
     }
     @media only screen and (min-width: 992px) {
       ul[data-subscription$=email] + form {
-        width: $sidebar-width-wide - $pad-wide - $sidebar-pad-wide*2 - 32px;
+        width: 232px; // chr
       }
     }
   }
@@ -134,3 +135,4 @@ body > nav {
   a[rel=subscribe-rss]{ @include mask-subscription-nav('rss.png'); }
   a[rel=subscribe-email]{ @include mask-subscription-nav('email.png'); }
 }
+

@@ -1,25 +1,30 @@
 article {
-  padding-top: 1em;
+  padding-top: 2.5em;
   a { @extend .force-wrap; }
   header {
+    border-top: 1px solid lighten($link-color, 16);
     position: relative;
-    padding-top: 2em;
+    padding-top: 3.5em;
     padding-bottom: 1em;
     margin-bottom: 1em;
+    text-align: center;
     background: $img-border bottom left repeat-x;
     h1 {
       margin: 0;
       a { text-decoration: none;
-        &:hover { text-decoration: underline; } }
+        &:hover { text-decoration: none; } }
     }
     p {
-      font-size: .9em;
-      color: $text-color-light;
+      font-size: 1em;
+      color: $text-color;
       margin: 0;
       &.meta {
-        @extend .sans;
-        text-transform: uppercase;
-        position: absolute; top: 0;
+        text-transform: none;
+        position: relative; 
+        top: 1em;
+        left: 0;
+        right:0;
+        margin-bottom: 1.5em;
       }
     }
     @media only screen and (min-width: 768px) {
@@ -31,6 +36,7 @@ article {
   h2 {
     padding-top: 0.8em;
     background: $img-border top left repeat-x;
+    text-align: center;
   }
   .entry-content & h2:first-child, header + h2 { padding-top: 0; }
   h2:first-child, header + h2 { background: none; }
@@ -68,9 +74,9 @@ article {
   }
   > footer {
     padding-bottom: 2.5em;
-    margin-top: 2em;
-    @extend .sans;
+    margin-top: 3em;
     p.meta {
+      text-align: center;
       margin-bottom: .8em;
       font-size: .85em;
       clear: both;
@@ -88,11 +94,10 @@ article + article {
   }
 }
 #content .blog-index {
-  padding: { top: 0; bottom: 0; }
-  article { padding-top: 2em; }
-  article header { background: none; padding-bottom: 0; }
+  article { padding-top: 2.5em; }
+  article header { background: none; }
   article h1 {
-    font-size: 2.2em;
+    font-size: 1.9em;
     a { color: inherit; &:hover { color: $link-color-hover; } }
   }
   a[rel=full-article] {
@@ -111,7 +116,6 @@ article + article {
     }
   }
   footer {
-    @extend .sans;
     margin-top: 1em;
   }
 }
@@ -138,4 +142,9 @@ article + article {
       &:before, &:after { content: '\2014'; padding: 0 .3em; }
     }
   }
+}
+
+logo {
+float: right;
+padding: 8px;
 }
