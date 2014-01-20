@@ -4,7 +4,7 @@
   <title><![CDATA[James Gregory]]></title>
   <link href="http://www.jagregory.com/atom.xml" rel="self"/>
   <link href="http://www.jagregory.com/"/>
-  <updated>2014-01-20T20:18:29+11:00</updated>
+  <updated>2014-01-20T20:29:29+11:00</updated>
   <id>http://www.jagregory.com/</id>
   <author>
     <name><![CDATA[James Gregory]]></name>
@@ -18,7 +18,7 @@
     <link href="http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book/"/>
     <updated>2014-01-20T06:45:00+11:00</updated>
     <id>http://www.jagregory.com/writings/michael-abrash-graphics-programming-black-book</id>
-    <content type="html"><![CDATA[<blockquote><p><strong>tl;dr</strong> The Markdown source of Michael Abrash&#8217;s Graphics Programming Black Book is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a>.</p></blockquote>
+    <content type="html"><![CDATA[<blockquote><p><strong>tl;dr</strong> The Markdown source of Michael Abrash&#8217;s Graphics Programming Black Book is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a> and you can read an online copy of the book <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</p></blockquote>
 
 <p>It started out as an attempt to read Michael Abrash&#8217;s Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code>grep</code>, <code>sed</code>, and <code>awk</code>, and a few blisters.</p>
 
@@ -74,8 +74,9 @@
 <h2>Getting your hands on it</h2>
 
 <ul>
-<li>Markdown source is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a></li>
+<li>Markdown source is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a>.</li>
 <li><a href="https://github.com/jagregory/abrash-black-book/releases">Each Github release</a> has a download in ePub and Mobi format.</li>
+<li>There&#8217;s a mirror of the current HTML version over <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</li>
 <li>The source has a <code>Makefile</code> for compiling your own ePub and Mobi&#8217;s, if you&#8217;ve got <a href="http://johnmacfarlane.net/pandoc/">pandoc</a> installed.</li>
 </ul>
 
