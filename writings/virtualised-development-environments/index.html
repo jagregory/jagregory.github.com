@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Ever Evolving Development Virutalisation Situation - James Gregory</title>
+  <meta name="author" content="James Gregory">
+
+  
+  <meta name="description" content="Over the past few years I&#8217;ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jagregory.com/writings/virtualised-development-environments">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-3186192-13']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<logo>
+
+<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
+</logo>
+
+
+
+<body >
+  <header role="banner"><hgroup>
+  <h1><a href="/">James Gregory</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+<br>
+  
+<!--
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">My Ever Evolving Development Virutalisation Situation</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-12T23:15:00+11:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Over the past few years I&#8217;ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows whilst using a Mac, continued when I refused to sully my machine with some godforsaken Oracle product, and has now reached completion with the arrival of a new laptop and an unwillingness to install RVM again.</p>
+
+<!-- more -->
+
+
+<p>The first attempt used <a href="http://www.vagrantup.com/">Vagrant</a> to create a simple Virtual Machine which acted as a surrogate development environment. All my current project&#8217;s development dependencies would be installed on the box, and I&#8217;d SSH into it to start servers or run tests etc&#8230;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span> <span class="s1">&#39;2&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">&#39;CentOS-6.4-x86_64-v20130731&#39;</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[java]&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[nodejs::install_from_package]&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[postgresql]&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[rvm::system]&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It had its perks such as developing on an OS which would be used for the production servers and the obvious protecting my host machine from project specific software; nevertheless, doing everything on the VM itself quickly became painful. LiveReload? <em>No.</em> Customised Sublime Text? <em>Nope.</em> Photoshop? <em>No way.</em></p>
+
+<p>Vagrant&#8217;s <a href="http://docs.vagrantup.com/v2/synced-folders/basic_usage.html"><code>synched_folder</code></a> feature allows you to share a directory from your host and expose it in the VMs file system, acting much like a regular symlink. By adding this I had my source code on my host system and could use my native editors all while still executing the code within the VM. The best of both worlds.</p>
+
+<pre><code>config.vm.synced_folder "/Users/jagregory/dev/myclient", "/home/vagrant/workspace"
+</code></pre>
+
+<p>Another optimisation was using <a href="http://docs.vagrantup.com/v2/vagrantfile/ssh_settings.html"><code>forward_agent</code></a>, which forwards the VM&#8217;s SSH via your host ssh-agent. You can use your ssh keys from your host box within the VM without doing any <code>cp ~/.ssh</code> nastiness. This means I can push and pull with git whether I&#8217;m inside or outside my VM. It doesn&#8217;t sound all that amazing until you&#8217;ve failed at running <code>git pull</code> for the tenth time from within your VM.</p>
+
+<pre><code>config.ssh.forward_agent = true
+</code></pre>
+
+<p>Other than that, all this is really doing is spinning up a VM and installing all the dependencies. The up side is those dependencies are no longer on my host, so I can just bin the VM when I leave a client.</p>
+
+<p>I liked the idea of working in a more ever-so-slightly more production like environment too. This stuck with me.</p>
+
+<h2>It grows</h2>
+
+<p>What I didn&#8217;t like about that setup was I still had my database installed right next to my app. That&#8217;s nothing like how it would be running when deployed, so why should it be like that in development?</p>
+
+<p>And so my Vagrantfile grew.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span> <span class="s1">&#39;2&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">&#39;CentOS-6.4-x86_64-v20130731&#39;</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">forward_agent</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">&quot;/Users/jagregory/dev/myclient&quot;</span><span class="p">,</span> <span class="s2">&quot;/home/vagrant/workspace&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="s1">&#39;app&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>        <span class="s1">&#39;recipe[java]&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;recipe[nodejs::install_from_package]&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;recipe[rvm::system]&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="o">]</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="s1">&#39;db&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>        <span class="s1">&#39;recipe[postgresql]&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="o">]</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then there were two. I had a VM for my app and a VM for the database. My development environment had acquired some of the qualities of &#8220;real&#8221; environments through the forced separation of app and database. This had the added benefit of pushing some considerations of service resolution and dealing with different environments into development space-and-time.</p>
+
+<p>And then it grew again.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="s1">&#39;smtp-stub&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[java]&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And again.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="s1">&#39;admin-app&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[nodejs::install_from_package]&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And again.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="s1">&#39;reverse-proxy&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="s1">&#39;recipe[nginx]&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>My virtualised development environment was now complete. The Vagrantfile resembles a production-like environment&#8211;warts and all&#8211;whilst maintaining the ability to develop on it. Separate VMs for each application, configured only with the languages and tools needed for that particular application. Services were localised which had only existed as shared resources, and others split out when they&#8217;d been lumped in with the main application for convenience. Other hidden bits of infrastructure started making their way into VMs too, such as the mysterious <code>reverse-proxy</code> box which had never made an appearance in development until now. The Chef cookbooks which were creating these development VMs were also now being used to provision our other &#8220;real&#8221; environments, and vice-versa.</p>
+
+<p>This is by no means a simple setup, it has a lot of moving parts, and its more complex to maintain; but guess what? That&#8217;s because the app has a lot of moving parts and is quite complex!</p>
+
+<p>It&#8217;s nice to not live in isolated developer-la-la-land for a change. I thoroughly encourage you to experiment with this setup, especially if you&#8217;re developing on a OSX or Windows machine. As a developer setup it&#8217;s closer to a realistic deployment environment than I&#8217;ve had before. I can encounter and fix infrastructure related issues way before changes hit an end-to-end build, and it forces you to understand how your application will be deployed and run. Dev meet Ops, Ops meet Dev.</p>
+
+<p>It&#8217;s also quite cathartic to delete a VM when I&#8217;m done with a project. Not seeing the Java Updater pop-up ever again isn&#8217;t too bad either.</p>
+</div>
+
+
+  <footer>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
+
+
+      
+
+
+    </p>
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book/" title="Previous Post: Converting and preserving Michael Abrash's Graphics Programming Black Book">&laquo; Converting and preserving Michael Abrash's Graphics Programming Black Book</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Website copyright &copy; 2014 - James Gregory |
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jagregory';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.jagregory.com/writings/virtualised-development-environments/';
+        var disqus_url = 'http://www.jagregory.com/writings/virtualised-development-environments/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

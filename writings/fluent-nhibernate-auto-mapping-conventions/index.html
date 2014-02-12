@@ -217,7 +217,7 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="p">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">Storefront</span><span class="p">.</span><span class="n">Entities</span><span class="p">&amp;</span><span class="n">quot</span><span class="p">;);</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -238,7 +238,7 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="p">&amp;</span><span class="n">quot</span><span class="p">;</span><span class="n">Storefront</span><span class="p">.</span><span class="n">Entities</span><span class="p">&amp;</span><span class="n">quot</span><span class="p">;)</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>

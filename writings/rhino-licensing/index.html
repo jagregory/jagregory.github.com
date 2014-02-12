@@ -206,7 +206,7 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">rsa</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RSACryptoServiceProvider</span><span class="p">(</span><span class="m">1024</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">rsa</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RSACryptoServiceProvider</span><span class="p">(</span><span class="m">1024</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="n">ToXmlString</span><span class="p">(</span><span class="k">false</span><span class="p">));</span>
 </span><span class='line'>    <span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="n">ToXmlString</span><span class="p">(</span><span class="k">true</span><span class="p">));</span>
@@ -245,7 +245,7 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">publicKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">publicKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">new</span> <span class="nf">LicenseValidator</span><span class="p">(</span><span class="n">publicKey</span><span class="p">,</span> <span class="s">&quot;license.xml&quot;</span><span class="p">)</span>
 </span><span class='line'>      <span class="p">.</span><span class="n">AssertValidLicense</span><span class="p">();</span>
@@ -297,22 +297,22 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">privateKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">privateKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="n">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">generator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LicenseGenerator</span><span class="p">(</span><span class="n">private_key</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">();</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">generator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LicenseGenerator</span><span class="p">(</span><span class="n">private_key</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Name: &quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">name</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">name</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Date: &quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">expirationDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">expirationDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Type: &quot;</span><span class="p">);</span>
 </span><span class='line'>    <span class="n">LicenseType</span> <span class="n">licenseType</span> <span class="p">=</span> <span class="p">(</span><span class="n">LicenseType</span><span class="p">)</span><span class="n">Enum</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">LicenseType</span><span class="p">),</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="c1">// generate the license</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">license</span> <span class="p">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">Generate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">expirationDate</span><span class="p">,</span> <span class="n">licenseType</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">license</span> <span class="p">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">Generate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">expirationDate</span><span class="p">,</span> <span class="n">licenseType</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">license</span><span class="p">);</span>

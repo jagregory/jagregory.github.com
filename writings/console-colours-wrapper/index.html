@@ -124,7 +124,7 @@
 <span class='line-number'>8</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Start...&quot;</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">var</span> <span class="n">originalColour</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">originalColour</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
 </span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColour</span> <span class="p">=</span> <span class="n">ConsoleColor</span><span class="p">.</span><span class="n">Red</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;WARNING!&quot;</span><span class="p">);</span>
@@ -176,7 +176,7 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Foreground</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">action</span><span class="p">();</span>
@@ -186,7 +186,7 @@
 </span><span class='line'>
 </span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Background</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span><span class="p">;</span>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">action</span><span class="p">();</span>

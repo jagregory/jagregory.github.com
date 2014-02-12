@@ -9,7 +9,7 @@
   <meta name="author" content="James Gregory">
 
   
-  <meta name="description" content="Jeff Atwood (of Coding Horror) tweeted earlier: &#8220;On Firefox: &#8216;add-ons aren&#8217;t a big draw for me &#8211; I just need a browser, not a &hellip;">
+  <meta name="description" content="I dislike static methods, there I said it. Like everything, they have their place; but as the old analogy says, when you have a hammer everything &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -83,6 +83,125 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/static-method-abuse/">Static Method Abuse</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-03-28T00:00:00+11:00" pubdate data-updated="true">Mar 28<span>th</span>, 2008</time>
+        
+           | <a href="/writings/static-method-abuse/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/static-method-abuse/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I dislike static methods, there I said it.</p>
+
+<p>Like everything, they have their place; but as the old analogy says, when you have a hammer everything looks like a nail. <strong>Static methods are being abused.</strong></p>
+
+<h2>Don&#8217;t make me instantiate</h2>
+
+<p>For some reason programmers seem to be allergic to instantiating objects, to the point of where half the functionality is implemented in static classes and methods. You can go for days without seeing an instance in my current project&#8217;s code-base.</p>
+
+<p>I think it&#8217;s symptomatic of a bigger problem. If you think creating instances is wasteful, maybe you&#8217;re creating too many. You&#8217;re most likely violating the Single Responsibility Principal (SRP) or Separation of Concerns (SoC). Too many dependencies usually means your class is trying to do too much, get it spit-up, and get it clean.</p>
+
+<h2>State vs. stateless</h2>
+
+<p>One justification for using static methods that is often touted around is that if a method doesn&#8217;t have any state, then it should be static. To me this is a fallacy, because state isn&#8217;t everything. Take the following repository example:</p>
+
+<h3>Using static methods</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">Customer</span> <span class="n">customer</span> <span class="p">=</span> <span class="n">Repository</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;.</span><span class="n">FindByID</span><span class="p">(</span><span class="m">102</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">customer</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="s">&quot;James&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Repository</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;.</span><span class="n">Save</span><span class="p">(</span><span class="n">customer</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Using an instance</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">IRepository</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Repository</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Customer</span> <span class="n">customer</span> <span class="p">=</span> <span class="n">repos</span><span class="p">.</span><span class="n">FindByID</span><span class="p">(</span><span class="m">102</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">customer</span><span class="p">.</span><span class="n">Name</span> <span class="p">=</span> <span class="s">&quot;James&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">repos</span><span class="p">.</span><span class="n">Save</span><span class="p">(</span><span class="n">customer</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Noticably the first example is one line less than the second. However, it&#8217;s compromising readability in removing that line. Instead of using the <code>repos</code> instance, you&#8217;re forced to fully-qualify every method call with <code>Repository<Customer></code>, which is introducing more noise per-line.</p>
+
+<p>Even though the methods <code>FindByID</code> and <code>Save</code> don&#8217;t have any shared state, they both form a part of the encapsulation of data-access (in this case).</p>
+
+<blockquote><p>If a method forms a key part of an encapsulation, then it shouldn&#8217;t be static.</p></blockquote>
+
+<p>When you make the decision of creating a static method due to it being stateless, you&#8217;re revealing more implementation details than necessary. A big part of encapsulation is hiding implementation details from the consumer.</p>
+
+<p>While the methods are stateless, they might not always be that way; perhaps the repository could share a session between calls in the future. With an instance based design, you won&#8217;t have any problems. Try introducing state into a static method, and things either get very messy, or you end up converting everything to instances and having to rewrite any usages.</p>
+
+<blockquote><p>Static methods tie you in at an early stage to a specific design, making it very difficult to refactor out later.</p></blockquote>
+
+<h2>Not all bad</h2>
+
+<p>So where are the good static methods? <em>The <code>Math</code> class is a good example</em>. It contains a set of functions that are only loosely related (apart from being mathematical), that are guaranteed to be stateless, and most importantly are simple. Architecturally the methods in the <code>Math</code> class could be applied to a wide swath of objects (<code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> etc&#8230;) and to have them as instance methods would complicate the class hierarchy more than it would benefit it.</p>
+
+<blockquote><p>Static methods should be fire-and-forget, disposable, simple, and effective.</p></blockquote>
+
+<h2>Object-orientation</h2>
+
+<p>Static methods aren&#8217;t associated with an object, they&#8217;re tied to a type. This is a big distinction. People are under the belief that because statics sit in the same class definition as instance methods, that it makes them object-oriented.</p>
+
+<p>Two key points of object-oriented design that static methods violate are inheritance and polymorphism. The inability to substitute a method with an implementation in a derived class is pretty unforgivable, and heavily restricting.</p>
+
+<h2>Finally, testing</h2>
+
+<p>The argument that you&#8217;re most likely to encounter against using static methods is that of testing. It&#8217;s certainly one that I agree with, I just didn&#8217;t want it to seem like that&#8217;s the main reason of my argument.</p>
+
+<p>Statics are bad for testing because they can&#8217;t be substituted easily. A major part of unit testing is being able to isolate what you&#8217;re testing from it&#8217;s dependencies; isolation allows you to verify one part of the system at a time. Static methods aren&#8217;t overridable in a sub-class, and so they aren&#8217;t mockable either (without the use of TypeMock).</p>
+
+<p>Of the two examples used above, in the first example it would be very hard to test that code without actually going to the database, because of the ties to the static methods. The second example could be refactored so the IRepository dependency is injected, and thus replaceable at test time.</p>
+
+<p>Not being able to test in isolation is the final nail in the coffin for static methods and me.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1068,201 +1187,6 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
 <p>Finally, it&#8217;s time consuming simply because you&#8217;re duplicating most of your work. All the time you spent writing the method (or the test, if done first) is then duplicated writing the tests (or code&#8230;). This is a pain, because as mentioned above, you&#8217;ll keep doing this work every time you change the method.</p>
 
 <p>The hardest part is learning how to not do this kind thing blindly. There are plenty of times when you&#8217;ll need this kind of testing, but don&#8217;t make it your default! Test expectations, not implementations.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/writings/delegrid/">DeleGrid - a Paged GridView Control</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2007-12-09T00:00:00+11:00" pubdate data-updated="true">Dec 9<span>th</span>, 2007</time>
-        
-           | <a href="/writings/delegrid/#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com/writings/delegrid/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Introducing the DeleGrid</h2>
-
-<p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
-
-<h3>Why the DeleGrid?</h3>
-
-<p>It came about because I wanted a nice way of implementing paging using NHibernate without having the grid know about it. I really didn&#8217;t want NHibernate to leave my data layer, so I needed a nice way of the grid calling my DAL with the paging parameters.</p>
-
-<p>I didn&#8217;t want to utilise the ObjectDataSource because honestly, it made me feel dirty. I&#8217;m all for delegation and composition, but not when it means creating a control in my HTML that acts as a DAL. Additionally, I didn&#8217;t feel the ObjectDataSource was very type-safe, or refactor-friendly, with the method names and types exposed in the HTML. Granted, the IDE would probably pick it up, but I don&#8217;t want to risk a runtime failure on it.</p>
-
-<h2>Using the DeleGrid (aka The Example)</h2>
-
-<p>After getting the source or assembly and doing the usual song-and-dance, add a reference to the control to your page:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;%@</span> <span class="n">Register</span> <span class="n">Assembly</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls.DeleGrid&quot;</span> <span class="n">Namespace</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls&quot;</span> <span class="n">TagPrefix</span><span class="p">=</span><span class="s">&quot;jag&quot;</span> <span class="nt">%&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then create an instance of the control, turning the paging on and setting the correct page size:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;jag:DeleGrid</span> <span class="na">ID=</span><span class="s">&quot;grid&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">AllowPaging=</span><span class="s">&quot;true&quot;</span> <span class="na">PageSize=</span><span class="s">&quot;4&quot;</span> <span class="nt">/&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now you have a control set up, however it sill won&#8217;t bind correctly. So, you need to attach the event handlers in the code-behind.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// code to get total</span>
-</span><span class='line'>  <span class="p">};</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Starting with the TotalRecordCountRequest, this event is raised when the grid needs to know how many records in total your grid is going to be displaying. This number is the cumulative count of all the pages. I&#8217;m going to use a simple repository pattern to factor away my DAL logic.</p>
-
-<p>The OnInit method is now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">};</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now your grid knows how many records it has overall, however we still haven&#8217;t told it how to actually get the data. So now to put the code in the PageDataRequest handler. This event is raised when the grid is needing a new page of data, this will get called once on initial data-bind, then again every time you change the page (or sorting etc&#8230;).</p>
-
-<p>The OnInit method is now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">};</span>
-</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">PageDataRequest</span> <span class="p">+=</span> <span class="k">delegate</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">DataRequestEventArgs</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetRange</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">Start</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">Size</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">};</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The event-handler receives an instance of DataRequestEventArgs, which contains the start index of the current page of data, and the number of records in a page. It also contains a SortField and SortDirection, for when sorting is enabled on the grid; however, we aren&#8217;t utilising them in this example.</p>
-
-<p>Finally we just need to bind the grid on page load. We don&#8217;t re-bind the grid on post-back, due to that being handled internally in the DeleGrid.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnLoad</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnLoad</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(!</span><span class="n">IsPostBack</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">grid</span><span class="p">.</span><span class="n">DataBind</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That&#8217;s all there is to it!</p>
-
-<p>You don&#8217;t need to use delegates, the normal event-handler syntax is fine (and probably preferred for larger examples). I just did it this way for brevity&#8217;s sake.</p>
-
-<h2>Further reading&#8230;</h2>
-
-<h3>Testing</h3>
-
-<p>I&#8217;ve written a small number of tests that cover the implementation of the grid as best I can. There was only so-far I was willing to go to test the control, as it&#8217;s heavily tied to the ASP.Net implementation; which can get pretty messy for testing without using something like NUnitASP, which was a bit much for one control.. I&#8217;ve got coverage of about 85% of the code, which I&#8217;d say is pretty reasonable anyway.</p>
-
-<h3>Sorting</h3>
-
-<p>As mentioned above, you can implement sorting in your handlers by accessing the SortField and SortDirection properties of the event arguments.</p>
-
-<h3>DeleGrid.AlwaysRequestTotal</h3>
-
-<p>By default the DeleGrid only requests the total number of records on the initial data-bind, however if you see this as being a problem (such as with rapidly changing data-sets), you may want to set this property to true so it refreshes the total on every data-bind.</p>
-
-<h2>Downloads</h2>
-
-<p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you&#8217;re allowed to do.</p>
-
-<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0-source.zip">Download Source</a>.</p>
-
-<p>You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0.zip">Download Binary</a>.</p>
-
-<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
-
-<p><strong>All patches are welcomed with open arms!</strong></p>
 </div>
   
   

@@ -180,8 +180,8 @@
 <span class='line-number'>12</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">RebuildGitNumstatParser</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">contents</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">@&quot;..\..\..\SharpDiff\Parsers\GitNumstatParser.ometacs&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Grammars</span><span class="p">.</span><span class="n">ParseGrammarThenOptimizeThenTranslate</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">contents</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">@&quot;..\..\..\SharpDiff\Parsers\GitNumstatParser.ometacs&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Grammars</span><span class="p">.</span><span class="n">ParseGrammarThenOptimizeThenTranslate</span>
 </span><span class='line'>    <span class="p">&lt;</span><span class="n">OMetaParser</span><span class="p">,</span> <span class="n">OMetaOptimizer</span><span class="p">,</span> <span class="n">OMetaTranslator</span><span class="p">&gt;</span>
 </span><span class='line'>    <span class="p">(</span><span class="n">contents</span><span class="p">,</span>
 </span><span class='line'>     <span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Grammar</span><span class="p">,</span>
@@ -233,7 +233,7 @@
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
 </span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ParsesNumber</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;(</span><span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Number</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;(</span><span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Number</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="m">1</span><span class="p">));</span>
 </span><span class='line'><span class="p">}</span>
@@ -270,7 +270,7 @@
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
 </span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ParsesAdditionsAndSubtractionValues</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span><span class="s">&quot;3\t8\tmyFile.txt\r\n&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Number</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span><span class="s">&quot;3\t8\tmyFile.txt\r\n&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Number</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Additions</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="m">3</span><span class="p">));</span>
 </span><span class='line'>    <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Subtractions</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="m">8</span><span class="p">));</span>
@@ -359,7 +359,7 @@
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
 </span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ParsesFilename</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">&quot;anotherFile.txt&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Filename</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">&quot;anotherFile.txt&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Filename</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="s">&quot;anotherFile.txt&quot;</span><span class="p">));</span>
 </span><span class='line'><span class="p">}</span>
@@ -409,7 +409,7 @@
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
 </span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">ParsesFullFileLine</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span><span class="s">&quot;3\t8\tmyFile.txt\r\n&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">FileStats</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Parse</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span><span class="s">&quot;3\t8\tmyFile.txt\r\n&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">FileStats</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Additions</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="m">3</span><span class="p">));</span>
 </span><span class='line'>  <span class="n">Assert</span><span class="p">.</span><span class="n">That</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Subtractions</span><span class="p">,</span> <span class="n">Is</span><span class="p">.</span><span class="n">EqualTo</span><span class="p">(</span><span class="m">8</span><span class="p">));</span>
@@ -500,7 +500,7 @@
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
 </span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">CanParseMultipleLines</span><span class="p">()</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">ParseList</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">ParseList</span><span class="p">&lt;</span><span class="n">FileStats</span><span class="p">&gt;(</span>
 </span><span class='line'>    <span class="s">&quot;3\t8\tfile.txt\r\n&quot;</span> <span class="p">+</span>
 </span><span class='line'>    <span class="s">&quot;5\t1\tanotherFile.txt\r\n&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">FullFile</span><span class="p">);</span>
 </span><span class='line'>

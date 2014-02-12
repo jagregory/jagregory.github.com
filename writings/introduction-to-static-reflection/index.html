@@ -174,7 +174,7 @@
 <span class='line-number'>9</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="n">PropertyInfo</span> <span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">&gt;(</span><span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">expression</span><span class="p">)</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">var</span> <span class="n">memberExpression</span> <span class="p">=</span> <span class="n">expression</span><span class="p">.</span><span class="n">Body</span> <span class="k">as</span> <span class="n">MemberExpression</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">var</span> <span class="n">memberExpression</span> <span class="p">=</span> <span class="n">expression</span><span class="p">.</span><span class="n">Body</span> <span class="k">as</span> <span class="n">MemberExpression</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">memberExpression</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">&quot;Not a member access.&quot;</span><span class="p">);</span>

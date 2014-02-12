@@ -190,8 +190,8 @@
 </span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
 </span><span class='line'>    <span class="c1">// find all pairs</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">bracketFinder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BracketPairFinder</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">bracketPairs</span> <span class="p">=</span> <span class="n">bracketFinder</span><span class="p">.</span><span class="n">FindPairs</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Text</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">bracketFinder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BracketPairFinder</span><span class="p">();</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">bracketPairs</span> <span class="p">=</span> <span class="n">bracketFinder</span><span class="p">.</span><span class="n">FindPairs</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Text</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="c1">// get index of caret from source text</span>
 </span><span class='line'>    <span class="n">Source</span> <span class="n">source</span> <span class="p">=</span> <span class="n">languageService</span><span class="p">.</span><span class="n">GetSource</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">View</span><span class="p">);</span>

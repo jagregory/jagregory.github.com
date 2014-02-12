@@ -9,7 +9,7 @@
   <meta name="author" content="James Gregory">
 
   
-  <meta name="description" content="I started writing this as a comment, but I felt it’s own post was deserved. Ricky Clarkson left me a link in a comment to one of his posts that ties &hellip;">
+  <meta name="description" content="Introducing the DeleGrid The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -83,6 +83,201 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/delegrid/">DeleGrid - a Paged GridView Control</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-09T00:00:00+11:00" pubdate data-updated="true">Dec 9<span>th</span>, 2007</time>
+        
+           | <a href="/writings/delegrid/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/delegrid/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Introducing the DeleGrid</h2>
+
+<p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
+
+<h3>Why the DeleGrid?</h3>
+
+<p>It came about because I wanted a nice way of implementing paging using NHibernate without having the grid know about it. I really didn&#8217;t want NHibernate to leave my data layer, so I needed a nice way of the grid calling my DAL with the paging parameters.</p>
+
+<p>I didn&#8217;t want to utilise the ObjectDataSource because honestly, it made me feel dirty. I&#8217;m all for delegation and composition, but not when it means creating a control in my HTML that acts as a DAL. Additionally, I didn&#8217;t feel the ObjectDataSource was very type-safe, or refactor-friendly, with the method names and types exposed in the HTML. Granted, the IDE would probably pick it up, but I don&#8217;t want to risk a runtime failure on it.</p>
+
+<h2>Using the DeleGrid (aka The Example)</h2>
+
+<p>After getting the source or assembly and doing the usual song-and-dance, add a reference to the control to your page:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;%@</span> <span class="n">Register</span> <span class="n">Assembly</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls.DeleGrid&quot;</span> <span class="n">Namespace</span><span class="p">=</span><span class="s">&quot;JAGregory.Controls&quot;</span> <span class="n">TagPrefix</span><span class="p">=</span><span class="s">&quot;jag&quot;</span> <span class="nt">%&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then create an instance of the control, turning the paging on and setting the correct page size:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='aspx-cs'><span class='line'><span class="nt">&lt;jag:DeleGrid</span> <span class="na">ID=</span><span class="s">&quot;grid&quot;</span> <span class="na">runat=</span><span class="s">&quot;server&quot;</span> <span class="na">AllowPaging=</span><span class="s">&quot;true&quot;</span> <span class="na">PageSize=</span><span class="s">&quot;4&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you have a control set up, however it sill won&#8217;t bind correctly. So, you need to attach the event handlers in the code-behind.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// code to get total</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Starting with the TotalRecordCountRequest, this event is raised when the grid needs to know how many records in total your grid is going to be displaying. This number is the cumulative count of all the pages. I&#8217;m going to use a simple repository pattern to factor away my DAL logic.</p>
+
+<p>The OnInit method is now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now your grid knows how many records it has overall, however we still haven&#8217;t told it how to actually get the data. So now to put the code in the PageDataRequest handler. This event is raised when the grid is needing a new page of data, this will get called once on initial data-bind, then again every time you change the page (or sorting etc&#8230;).</p>
+
+<p>The OnInit method is now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnInit</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ProductRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ProductRepository</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="k">delegate</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetTotal</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="n">grid</span><span class="p">.</span><span class="n">PageDataRequest</span> <span class="p">+=</span> <span class="k">delegate</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">DataRequestEventArgs</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="n">GetRange</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">Start</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">Size</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The event-handler receives an instance of DataRequestEventArgs, which contains the start index of the current page of data, and the number of records in a page. It also contains a SortField and SortDirection, for when sorting is enabled on the grid; however, we aren&#8217;t utilising them in this example.</p>
+
+<p>Finally we just need to bind the grid on page load. We don&#8217;t re-bind the grid on post-back, due to that being handled internally in the DeleGrid.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnLoad</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">eventArgs</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">base</span><span class="p">.</span><span class="n">OnLoad</span><span class="p">(</span><span class="n">eventArgs</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(!</span><span class="n">IsPostBack</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">grid</span><span class="p">.</span><span class="n">DataBind</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s all there is to it!</p>
+
+<p>You don&#8217;t need to use delegates, the normal event-handler syntax is fine (and probably preferred for larger examples). I just did it this way for brevity&#8217;s sake.</p>
+
+<h2>Further reading&#8230;</h2>
+
+<h3>Testing</h3>
+
+<p>I&#8217;ve written a small number of tests that cover the implementation of the grid as best I can. There was only so-far I was willing to go to test the control, as it&#8217;s heavily tied to the ASP.Net implementation; which can get pretty messy for testing without using something like NUnitASP, which was a bit much for one control.. I&#8217;ve got coverage of about 85% of the code, which I&#8217;d say is pretty reasonable anyway.</p>
+
+<h3>Sorting</h3>
+
+<p>As mentioned above, you can implement sorting in your handlers by accessing the SortField and SortDirection properties of the event arguments.</p>
+
+<h3>DeleGrid.AlwaysRequestTotal</h3>
+
+<p>By default the DeleGrid only requests the total number of records on the initial data-bind, however if you see this as being a problem (such as with rapidly changing data-sets), you may want to set this property to true so it refreshes the total on every data-bind.</p>
+
+<h2>Downloads</h2>
+
+<p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you&#8217;re allowed to do.</p>
+
+<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0-source.zip">Download Source</a>.</p>
+
+<p>You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.0.zip">Download Binary</a>.</p>
+
+<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
+
+<p><strong>All patches are welcomed with open arms!</strong></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1218,57 +1413,6 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 </span><span class='line'><span class="k">END</span>
 </span></code></pre></td></tr></table></div></figure>
 
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/writings/javascript-console-in-safari/">JavaScript Console in Safari</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2006-05-15T00:00:00+10:00" pubdate data-updated="true">May 15<span>th</span>, 2006</time>
-        
-           | <a href="/writings/javascript-console-in-safari/#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com/writings/javascript-console-in-safari/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Just a quick tip to enable the Debug menu in Safari, the main reason being to get the JavaScript Console (ala Firefox).</p>
-
-<p>Simply close down your open instances of Safari and enter this into the Terminal:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>defaults write com.apple.Safari IncludeDebugMenu 1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That’ll enable a new Debug menu next time you start Safari, simple as that. I was on the verge of loading up Firefox on the Mac
-before I came across this, bad James!</p>
-
-<p>Also, just in-case, running the above again with 0 will turn off the menu.</p>
 </div>
   
   

@@ -9,7 +9,7 @@
   <meta name="author" content="James Gregory">
 
   
-  <meta name="description" content="tl;dr The Markdown source of Michael Abrash&#8217;s Graphics Programming Black Book is available on Github, there are Epub and Mobi versions on the &hellip;">
+  <meta name="description" content="Over the past few years I&#8217;ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -83,6 +83,50 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/writings/virtualised-development-environments/">My Ever Evolving Development Virutalisation Situation</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-12T23:15:00+11:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
+        
+           | <a href="/writings/virtualised-development-environments/#disqus_thread"
+             data-disqus-identifier="http://www.jagregory.com/writings/virtualised-development-environments/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Over the past few years I&#8217;ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows whilst using a Mac, continued when I refused to sully my machine with some godforsaken Oracle product, and has now reached completion with the arrival of a new laptop and an unwillingness to install RVM again.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/writings/virtualised-development-environments/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -467,7 +511,7 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">rsa</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RSACryptoServiceProvider</span><span class="p">(</span><span class="m">1024</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">rsa</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RSACryptoServiceProvider</span><span class="p">(</span><span class="m">1024</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="n">ToXmlString</span><span class="p">(</span><span class="k">false</span><span class="p">));</span>
 </span><span class='line'>    <span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="n">ToXmlString</span><span class="p">(</span><span class="k">true</span><span class="p">));</span>
@@ -506,7 +550,7 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">publicKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">publicKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;publicKey.xml&quot;</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">new</span> <span class="nf">LicenseValidator</span><span class="p">(</span><span class="n">publicKey</span><span class="p">,</span> <span class="s">&quot;license.xml&quot;</span><span class="p">)</span>
 </span><span class='line'>      <span class="p">.</span><span class="n">AssertValidLicense</span><span class="p">();</span>
@@ -558,22 +602,22 @@
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">privateKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">privateKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">&quot;privateKey.xml&quot;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="n">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">generator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LicenseGenerator</span><span class="p">(</span><span class="n">private_key</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">();</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">generator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">LicenseGenerator</span><span class="p">(</span><span class="n">private_key</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Name: &quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">name</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">name</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Date: &quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">expirationDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">expirationDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="s">&quot;Type: &quot;</span><span class="p">);</span>
 </span><span class='line'>    <span class="n">LicenseType</span> <span class="n">licenseType</span> <span class="p">=</span> <span class="p">(</span><span class="n">LicenseType</span><span class="p">)</span><span class="n">Enum</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">LicenseType</span><span class="p">),</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">());</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="c1">// generate the license</span>
-</span><span class='line'>    <span class="n">var</span> <span class="n">license</span> <span class="p">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">Generate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">expirationDate</span><span class="p">,</span> <span class="n">licenseType</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">var</span> <span class="n">license</span> <span class="p">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">Generate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">expirationDate</span><span class="p">,</span> <span class="n">licenseType</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
 </span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">license</span><span class="p">);</span>
@@ -753,51 +797,6 @@ An introduction to distributed version control using Git, and how your VCS shoul
 
 <object width="600" height="450"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="600" height="450"></embed></object>
 
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/writings/git-e-van/">Git E-VAN</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-02-08T00:00:00+11:00" pubdate data-updated="true">Feb 8<span>th</span>, 2010</time>
-        
-           | <a href="/writings/git-e-van/#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com/writings/git-e-van/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Just a reminder that tonight I&#8217;ll be doing an <a href="http://europevan.blogspot.com/2010/01/next-european-van-on-08-february-2010.html">E-VAN on Git</a> tonight at 7pm GMT.</p>
-
-<p>It&#8217;s going to be a pretty basic talk on what Git is (and indirectly what DVCS is), and a demo on how to use most of the features you&#8217;ll need daily. There might be some advanced talk at the end, depending on how well I time things.</p>
-
-<p>If you&#8217;ve already used Git (successfully), then this talk won&#8217;t really be for you; unless you just want to listen to me ramble for an hour and an half.</p>
-
-<p>Looking forward to &#8220;seeing&#8221; you there. Now, I best finish reading that &#8220;Getting started with Git&#8221; book I&#8217;ve had lying around for months.</p>
 </div>
   
   

@@ -233,11 +233,11 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
@@ -269,7 +269,7 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">WithConventions</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
 </span><span class='line'>  <span class="p">{</span>
@@ -409,11 +409,11 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">&quot;Entities&quot;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="p">()</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">.</span><span class="n">BuildSessionFactory</span><span class="p">();</span>
