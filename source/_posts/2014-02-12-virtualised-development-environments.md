@@ -1,6 +1,6 @@
 ---
 layout: post
-title: My ever evolving development virutalisation situation
+title: My ever evolving development virtualisation situation
 date: 2014-02-12 23:15
 comments: true
 type: post
