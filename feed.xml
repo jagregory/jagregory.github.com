@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>James Gregory</title>
+    <description>Code monkey. ThoughtWorks. Chief Agitator.
+</description>
+    <link>http://www.jagregory.com//</link>
+    <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 04 May 2015 16:46:28 +1000</pubDate>
+    <lastBuildDate>Mon, 04 May 2015 16:46:28 +1000</lastBuildDate>
+    <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>My ever evolving development virtualisation situation</title>
+        <description>&lt;p&gt;Over the past few years I’ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows whilst using a Mac, continued when I refused to sully my machine with some godforsaken Oracle product, and has now reached completion with the arrival of a new laptop and an unwillingness to install RVM again.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;The first attempt used &lt;a href=&quot;http://www.vagrantup.com/&quot;&gt;Vagrant&lt;/a&gt; to create a simple Virtual Machine which acted as a surrogate development environment. All my current project’s development dependencies would be installed on the box, and I’d SSH into it to start servers or run tests etc…&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;2&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;CentOS-6.4-x86_64-v20130731&#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[postgresql]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[rvm::system]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It had its perks such as developing on an OS which would be used for the production servers and the obvious protecting my host machine from project specific software; nevertheless, doing everything on the VM itself quickly became painful. LiveReload? &lt;em&gt;No.&lt;/em&gt; Customised Sublime Text? &lt;em&gt;Nope.&lt;/em&gt; Photoshop? &lt;em&gt;No way.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Vagrant’s &lt;a href=&quot;http://docs.vagrantup.com/v2/synced-folders/basic_usage.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;synched_folder&lt;/code&gt;&lt;/a&gt; feature allows you to share a directory from your host and expose it in the VMs file system, acting much like a regular symlink. By adding this I had my source code on my host system and could use my native editors all while still executing the code within the VM. The best of both worlds.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Another optimisation was using &lt;a href=&quot;http://docs.vagrantup.com/v2/vagrantfile/ssh_settings.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;forward_agent&lt;/code&gt;&lt;/a&gt;, which forwards the VM’s SSH via your host ssh-agent. You can use your ssh keys from your host box within the VM without doing any &lt;code class=&quot;highlighter-rouge&quot;&gt;cp ~/.ssh&lt;/code&gt; nastiness. This means I can push and pull with git whether I’m inside or outside my VM. It doesn’t sound all that amazing until you’ve failed at running &lt;code class=&quot;highlighter-rouge&quot;&gt;git pull&lt;/code&gt; for the tenth time from within your VM.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Other than that, all this is really doing is spinning up a VM and installing all the dependencies. The up side is those dependencies are no longer on my host, so I can just bin the VM when I leave a client.&lt;/p&gt;
+
+&lt;p&gt;I liked the idea of working in a more ever-so-slightly more production like environment too. This stuck with me.&lt;/p&gt;
+
+&lt;h2 id=&quot;it-grows&quot;&gt;It grows&lt;/h2&gt;
+
+&lt;p&gt;What I didn’t like about that setup was I still had my database installed right next to my app. That’s nothing like how it would be running when deployed, so why should it be like that in development?&lt;/p&gt;
+
+&lt;p&gt;And so my Vagrantfile grew.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;2&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;CentOS-6.4-x86_64-v20130731&#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;app&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[rvm::system]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;db&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[postgresql]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And then there were two. I had a VM for my app and a VM for the database. My development environment had acquired some of the qualities of “real” environments through the forced separation of app and database. This had the added benefit of pushing some considerations of service resolution and dealing with different environments into development space-and-time.&lt;/p&gt;
+
+&lt;p&gt;And then it grew again.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;smtp-stub&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And again.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;admin-app&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And again.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;reverse-proxy&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nginx]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;My virtualised development environment was now complete. The Vagrantfile resembles a production-like environment–warts and all–whilst maintaining the ability to develop on it. Separate VMs for each application, configured only with the languages and tools needed for that particular application. Services were localised which had only existed as shared resources, and others split out when they’d been lumped in with the main application for convenience. Other hidden bits of infrastructure started making their way into VMs too, such as the mysterious &lt;code class=&quot;highlighter-rouge&quot;&gt;reverse-proxy&lt;/code&gt; box which had never made an appearance in development until now. The Chef cookbooks which were creating these development VMs were also now being used to provision our other “real” environments, and vice-versa.&lt;/p&gt;
+
+&lt;p&gt;This is by no means a simple setup, it has a lot of moving parts, and its more complex to maintain; but guess what? That’s because the app has a lot of moving parts and is quite complex!&lt;/p&gt;
+
+&lt;p&gt;It’s nice to not live in isolated developer-la-la-land for a change. I thoroughly encourage you to experiment with this setup, especially if you’re developing on a OSX or Windows machine. As a developer setup it’s closer to a realistic deployment environment than I’ve had before. I can encounter and fix infrastructure related issues way before changes hit an end-to-end build, and it forces you to understand how your application will be deployed and run. Dev meet Ops, Ops meet Dev.&lt;/p&gt;
+
+&lt;p&gt;It’s also quite cathartic to delete a VM when I’m done with a project. Not seeing the Java Updater pop-up ever again isn’t too bad either.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 12 Feb 2014 23:15:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/virtualised-development-environments</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/virtualised-development-environments</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Converting and preserving Michael Abrash&#39;s Graphics Programming Black Book</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt; The Markdown source of Michael Abrash’s Graphics Programming Black Book is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;, there are Epub and Mobi versions on the &lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Github Releases list&lt;/a&gt;, and you can read an online copy of the book &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;It started out as an attempt to read &lt;a href=&quot;http://en.wikipedia.org/wiki/Michael_Abrash&quot;&gt;Michael Abrash’s&lt;/a&gt; Graphics Programming Black Book over the Christmas period. It turned into a epic mission of &lt;code class=&quot;highlighter-rouge&quot;&gt;grep&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sed&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;awk&lt;/code&gt;, and a few blisters.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;But first…&lt;/p&gt;
+
+&lt;h2 id=&quot;a-brief-history-of-3d-gaming&quot;&gt;A brief history of 3D gaming&lt;/h2&gt;
+
+&lt;p&gt;The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like &lt;a href=&quot;http://en.wikipedia.org/wiki/Wolfenstein_3D&quot;&gt;Wolfenstein 3D&lt;/a&gt;, to hardware accelerated full 3D multi-player online games like &lt;a href=&quot;http://en.wikipedia.org/wiki/Quake_III_Arena&quot;&gt;Quake III Arena&lt;/a&gt;. That’s progress for you.&lt;/p&gt;
+
+&lt;p&gt;In 1992 &lt;a href=&quot;http://en.wikipedia.org/wiki/Id_Software&quot;&gt;id Software&lt;/a&gt; released Wolfenstein 3D.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Then a year later in 1993 came &lt;a href=&quot;http://en.wikipedia.org/wiki/Doom_\(video_game\)&quot;&gt;Doom&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The team at id Software were now furiously working on a sequel to Doom reusing the same engine. Everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time lighting. 3D particle effects. Portals. Water. It was going to amaze.&lt;/p&gt;
+
+&lt;p&gt;This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was finished.&lt;/p&gt;
+
+&lt;p&gt;In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you’re interested in learning more this period in gaming, you must read &lt;a href=&quot;http://en.wikipedia.org/wiki/Masters_of_Doom&quot;&gt;Masters of Doom&lt;/a&gt; by David Kushner.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-this-all-about-then&quot;&gt;What’s this all about then?&lt;/h2&gt;
+
+&lt;p&gt;In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly–blogging before blogging was a thing–and other parts were wrote about his work on Quake. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. &lt;a href=&quot;http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html&quot;&gt;Jeff Atwood wrote a lovely little tribute&lt;/a&gt; to this book a few years ago.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I know what you’re thinking. “This book is about graphics. And assembly language. Plus it’s from, like, 1996, which is approximately 1928 in computer years. It’s of no interest to me as a programmer.” Admit it. You are. But you know what you’re going to do? You’re going to click through anyway and read some of it. Just like in college, &lt;strong&gt;the class topic doesn’t matter when the instructor is a brilliant teacher&lt;/strong&gt;. And that’s exactly what Abrash is.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Come Christmas 2013 and I’d entered my annual contemplation on course correcting towards building video games, a desire I’ve had ever since I got the shareware version of Wolfenstein 3D back in the early 90s. As usual, this lead me to reading a bunch on game development and rendering engines in particular. Mostly indulgent. It was Christmas, after all.&lt;/p&gt;
+
+&lt;p&gt;One of the articles I was reading, I can’t remember which now, referenced Michael Abrash’s Graphics Programming Black Book. And a flood of memories came back. I’d tried to read this book once before, I’d even owned it at one point. “I should read it again”, my brain said.&lt;/p&gt;
+
+&lt;p&gt;My physical copy of the book was long gone. I turned to the Internet to try to buy it, out of print and over $200 on ebay. Even if I were willing to pay that, by the time it arrived my Christmas would be over (and probably my annual game developing desire too). “Ebooks, they’re a thing now!” Sadly, the publisher had shut down a few years ago, so they’ve been struggling to keep up with the times. Thankfully, in 2001, Michael and Dr. Dobbs &lt;a href=&quot;http://www.drdobbs.com/parallel/graphics-programming-black-book/184404919&quot;&gt;released a PDF version of the book online&lt;/a&gt; for free. Gotta love these nerdy types, always giving their stuff away.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately–and we’re heading firmly into first-world problems here–the PDFs weren’t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren’t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grep’d, and I awk’d, and I sed’d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.&lt;/p&gt;
+
+&lt;p&gt;As with any yak shaving exercise, I missed the exit for &lt;em&gt;Good Enough&lt;/em&gt; by a long margin. I invested more time than I’d originally planned. I think I was up to two days, casually, now. At this point I’d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It does make me a little sad that books and online works like this–which influenced so many–can so easily fall away and be forgotten. Not just forgotten, but lost.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;What I’ve ended up with is the book converted into Markdown, in a style which lends itself to ebook publishing. It wasn’t my intention to preserve the layout or style of the book, just the content. In theory, you could read the pure Markdown files and get a quite enjoyable experience. If you choose to read the prepared versions, you benefit from a web-browser and e-reader compatible layout and some modern tweaks like syntax highlighting.&lt;/p&gt;
+
+&lt;p&gt;I contacted Michael about the work I’ve been doing on his book, and asked him if he’d have any issue with me releasing it on Github. His reaction was obvious, in hind sight, “The more people can read it, the better!”.&lt;/p&gt;
+
+&lt;h2 id=&quot;getting-your-hands-on-it&quot;&gt;Getting your hands on it&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Markdown source is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Each Github release&lt;/a&gt; has a download in ePub and Mobi format.&lt;/li&gt;
+  &lt;li&gt;There’s a mirror of the current HTML version over &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;The source has a &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; for compiling your own ePub and Mobi’s, if you’ve got &lt;a href=&quot;http://johnmacfarlane.net/pandoc/&quot;&gt;pandoc&lt;/a&gt; installed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you spot any issues whilst reading the book, please raise an issue on Github or send a Pull Request.&lt;/p&gt;
+
+&lt;p&gt;All rights, of course, still belong to Michael Abrash. Any errors are probably down to me.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 20 Jan 2014 06:45:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</guid>
+        
+        
+        <category>gamedev</category>
+        
+      </item>
+    
+      <item>
+        <title>Compiled Templates for Go</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; is a compiled templating language for &lt;a href=&quot;http://golang.org&quot;&gt;Go&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don’t care. &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Custom code?&lt;/th&gt;
+      &lt;th&gt;Custom markup?&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;ERB&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;HAML&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;Yes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Jade&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;Yes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Go html/template&lt;/td&gt;
+      &lt;td&gt;Yes&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;_.template&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cote&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Cote uses the same tokens as ERB and ASP.Net (and I imagine quite a few other languages), specificically &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;%= %&amp;gt;&lt;/code&gt; for any code which should write to the output stream and &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;% %&amp;gt;&lt;/code&gt; for code which doesn’t. Inside a code block you can write any valid Go code, outside can be anything.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;title&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;%=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Title&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;Products&lt;span class=&quot;nt&quot;&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;cp&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Products&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;%=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;cp&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As mentioned previously, Cote templates are compiled. A template is converted into pure Go and compiled into your package. No dependency on Cote is needed outside of your build pipeline. This adds some overhead to development (a template change requires a recompile), but it makes the impact on runtime as minimal as possible.&lt;/p&gt;
+
+&lt;p&gt;There’s an executable (aptly named &lt;code class=&quot;highlighter-rouge&quot;&gt;cote&lt;/code&gt;) which will take a template and spit out a Go function which can be called to render the template. Cote uses a very simplistic form of code generation to build your templates. It’s really simple.&lt;/p&gt;
+
+&lt;p&gt;Given the above template, &lt;code class=&quot;highlighter-rouge&quot;&gt;cote&lt;/code&gt; would produce a Go file roughly like:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;package&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;byte&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;h1&amp;gt;Products&amp;lt;/h1&amp;gt;&amp;lt;ul&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Brute force. Ugly. Fast, very fast.&lt;/p&gt;
+
+&lt;p&gt;Each template produces a &lt;code class=&quot;highlighter-rouge&quot;&gt;[]byte&lt;/code&gt; which can easily be written to your HTTP response.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;templates&quot;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Products listing&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;To learn more about Cote, take a look at the README on Github: &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;https://github.com/jagregory/cote&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 14 Oct 2013 16:12:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/compiled-templates-for-go</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/compiled-templates-for-go</guid>
+        
+        <category>golang</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Go Slice Visualiser</title>
+        <description>&lt;p&gt;I’ve been learning &lt;a href=&quot;http://golang.org&quot;&gt;Go&lt;/a&gt; recently; it’s been fun.&lt;/p&gt;
+
+&lt;p&gt;An interesting aspect of Go is &lt;a href=&quot;http://blog.golang.org/go-slices-usage-and-internals&quot;&gt;Slices&lt;/a&gt;, which are lightweight views of an array. Why these are useful and necessary makes more sense when you understand Go’s &lt;a href=&quot;http://golang.org/doc/faq#pass_by_value&quot;&gt;pass-by-value&lt;/a&gt; semantics.&lt;/p&gt;
+
+&lt;p&gt;Whilst playing with slices, I put together a little visualiser to help understand their behaviour (the act of building it was probably more useful than the end result).&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;the-slice-visualiser&quot;&gt;The Slice Visualiser&lt;/h2&gt;
+
+&lt;p&gt;This is a tool to help you get your head around how the slice operations work &lt;em&gt;visually&lt;/em&gt;. The ten boxes below represent an array that you’re creating slices of, the input below them is your slice operation, and the black box you’ll see is the resulting slice.&lt;/p&gt;
+
+&lt;div id=&quot;slice&quot;&gt;
+  &lt;div id=&quot;sliceOverlay&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;array&quot;&gt;&lt;/div&gt;
+  &lt;p id=&quot;error&quot;&gt;&lt;/p&gt;
+  &lt;p&gt;slice[&lt;input id=&quot;sliceInput&quot; type=&quot;text&quot; /&gt;]&lt;/p&gt;
+  &lt;p&gt;// e.g. slice[0], slice[:3], slice[1:3]&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+  var array = document.getElementById(&#39;array&#39;)
+  var overlay = document.getElementById(&#39;sliceOverlay&#39;)
+  var error = document.getElementById(&#39;error&#39;)
+
+  var slice = {
+    length: 10
+  }
+
+  for (var i = 0; i &lt; slice.length; i++) {
+    var div = document.createElement(&#39;div&#39;)
+    div.innerText = &#39;&quot;&#39; + String.fromCharCode(97 + i) + &#39;&quot;&#39;
+    array.appendChild(div)
+  }
+
+  var repositionSlice = function(low, high) {
+    if (typeof low === &#39;undefined&#39; || low === null) low = 0
+    if (typeof high === &#39;undefined&#39; || high === null) high = slice.length
+    if (low &lt; 0) throw &#39;invalid slice index &#39; + low + &#39; (index must be non-negative)&#39;
+    if (high &lt; 0) throw &#39;invalid slice index &#39; + high + &#39; (index must be non-negative)&#39;
+    if (high &lt; low) throw &#39;inverted slice index &#39; + low + &#39; &gt; &#39; + high
+    if (slice.length &lt; high) throw &#39;slice bounds out of range&#39;
+
+    overlay.style.left = (low * 56) + &#39;px&#39;
+    overlay.style.width = ((high - low) * 56) + 2 + &#39;px&#39;
+    overlay.style.display = &#39;block&#39;
+  }
+
+  var input = document.getElementById(&#39;sliceInput&#39;)
+  input.addEventListener(&#39;keyup&#39;, function() {
+    error.innerText = &#39;&#39;
+    overlay.style.display = &#39;none&#39;
+
+    try {
+      if (input.value.indexOf(&#39;:&#39;) &gt;= 0) {
+        var split = input.value.split(&#39;:&#39;)
+        var start = split[0] === &#39;&#39; ? null : parseInt(split[0])
+        var end = split[1] === &#39;&#39; ? null : parseInt(split[1])
+        repositionSlice(start, end)
+      } else {
+        repositionSlice(parseInt(input.value), parseInt(input.value) + 1)
+      }
+    } catch (ex) {
+      error.innerText = ex
+    }
+  })
+&lt;/script&gt;
+
+</description>
+        <pubDate>Sun, 07 Jul 2013 16:30:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/go-slice-visualiser</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/go-slice-visualiser</guid>
+        
+        <category>golang</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Rails production 500 error page showing in dev</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;We’re sorry, but something went wrong!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I’ve been seeing some strange behaviour on the development environment for &lt;a href=&quot;http://www.getonthegame.com.au&quot;&gt;On the Game&lt;/a&gt; recently. I’ve just spent an hour combing through every line of code that varies from a standard Rails app, and I’ve finally found the issue. I’m putting it here for posterity.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;Regardless of my configuration, Rails was always displaying the production page for 500 errors (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;public/500.html&lt;/code&gt;) even in development mode.&lt;/p&gt;
+
+&lt;p&gt;I poked around for a while and eventually found it to be this:&lt;/p&gt;
+
+&lt;p&gt;I’d redefined &lt;code class=&quot;highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; somewhere (don’t ask!), and my implementation didn’t handle arrays of strings. That’s it, that’s why the detailed error page wasn’t being shown in development.&lt;/p&gt;
+
+&lt;p&gt;Ends up, &lt;code class=&quot;highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; is used by the development error page, and when something on that error page itself raises an error Rails will just fall back and show the 500.html and not log anything.&lt;/p&gt;
+
+&lt;p&gt;Moral of the story: If you’re seeing this behaviour, check you haven’t (badly) monkey patched something that the error page is using.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 05 Jul 2012 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/rails-500-error-showing-in-dev</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/rails-500-error-showing-in-dev</guid>
+        
+        <category>ruby</category>
+        
+        <category>rails</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Learning. It ain&#39;t hard.</title>
+        <description>&lt;p&gt;“I don’t have enough free time to learn a new language!”, or tool, or framework, etc. I hear this often. I appreciate we all handle things differently, but here’s my take on it.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;I remember years ago, some friends and I were talking about money and our savings accounts. They were flabbergasted at how I, a 19 year old at the time, were able to have nearly £10,000 saved (sadly which I’ve since spent!). I explained that it’s easy to save money if you do it slowly and consistently. £50 a week over the course of three years adds up. Obvious, right?&lt;/p&gt;
+
+&lt;p&gt;You don’t sit down and decide “I’m going to save £10,000” and then promptly spend one month working yourself to death to put away the whole amount in one go. It’d be nice to have the option to do that occasionally, but that’s not how most of us work. The same applies to learning.&lt;/p&gt;
+
+&lt;p&gt;You don’t need to read a 300 page book to learn something. Read a blog post (or an article, mailing list thread, commit discussion). One. Pick a subject and read a single article on it. Do this once a week, every week. That’s it, that’s my secret to learning.&lt;/p&gt;
+
+&lt;p&gt;Knowledge isn’t a substitute for experience, but it’ll certainly get you a lot further down the road, faster, than you would get without it.&lt;/p&gt;
+
+&lt;p&gt;Take Ruby as the typical example. Ruby on Rails has been around for 6 years now (and Ruby for nearly 15, but not visibly), if you’d have read one article on Ruby a week, you’d have read 312 by now. Three hundred and twelve. Combine that with the occasional Sunday afternoon playing around and I’m confident you’d be pretty proficient by now.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Javascript is around 15 years old.&lt;/li&gt;
+  &lt;li&gt;Haskell, 20 years.&lt;/li&gt;
+  &lt;li&gt;Erlang, 25 years.&lt;/li&gt;
+  &lt;li&gt;Python, 20 years.&lt;/li&gt;
+  &lt;li&gt;Clojure, 4 years. Scheme? 36 years.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Of course, we’ve not all been trying to learn those languages for as long as they’ve existed. Consider this though, in one year you could be proficient in a new language if you commit to just 15 minutes a week, or you could be in exactly the same place you are now still unable to find time to learn anything.&lt;/p&gt;
+
+&lt;p&gt;How do you eat an elephant? &lt;em&gt;One bite at a time.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;addendum-but-everything-moves-so-fast&quot;&gt;Addendum: but everything moves so fast!&lt;/h3&gt;
+
+&lt;p&gt;No, it doesn’t. It just feels like that from the inside.&lt;/p&gt;
+
+&lt;p&gt;Learn something fundamental and your knowledge will transcend trends. Learning a new language is a great way to do that whilst also feeling cool and trendy. Ruby or Python will help you understand dynamic languages, Scala will make you appreciate how powerful and unobtrusive static languages can be, and Clojure will introduce the code-as-data mindset. All those things will be useful beyond the scope of the language you’re learning.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;Stealth edit: Fixed my amazing saving ability.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Wed, 06 Jul 2011 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/learning-it-aint-hard</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/learning-it-aint-hard</guid>
+        
+        <category>learning</category>
+        
+        <category>rant</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Rhino Licensing</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/ayende/rhino-licensing&quot;&gt;Rhino Licensing&lt;/a&gt; is an open-source licensing framework by &lt;a href=&quot;http://ayende.com&quot;&gt;Ayende Rahien&lt;/a&gt;, and it grew out of his frustration with other license providers while creating &lt;a href=&quot;http://nhprof.com/&quot;&gt;NHibernate Profiler&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;Rhino Licensing uses asymmetric encryption–also known as &lt;a href=&quot;http://en.wikipedia.org/wiki/Public-key_cryptography&quot;&gt;public-key cryptography&lt;/a&gt;–specifically the &lt;a href=&quot;http://en.wikipedia.org/wiki/RSA&quot;&gt;RSA algorithm&lt;/a&gt;. In cryptography, asymmetric means there are two parts to each key, one public and one private. You encrypt a value using the one key, and it can only be decrypted using the other key. In the case of license key generation, we store our private key on the server (and never tell anyone it!), and distribute the public key with our application. When the user receives a license key, the application is able to verify that it came from us by using the public key. If someone tries to use a license key they’ve generated themselves, it wouldn’t work unless they had our exact private key.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Other systems that use asymmetric encryption include &lt;abbr title=&quot;Secure Shell&quot;&gt;SSH&lt;/abbr&gt;, &lt;abbr title=&quot;Secure Sockets Layer&quot;&gt;SSL&lt;/abbr&gt;, &lt;abbr title=&quot;Pretty Good Privacy&quot;&gt;PGP&lt;/abbr&gt;, and among others, Git uses asymmetric encryption for its security due to it using SSH.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The format of the license that Rhino Licensing generates is an XML document, plain and simple. By default, it includes the user’s name, an expiration date, the type of license (trial, standard, floating, etc…), and most importantly the cryptographic signature. Below is an example Rhino Licensing generated license.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;license&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ae4c05b5-c188-47f8-852f-b4e5375621f7&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;expiration=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;2011-01-01T00:00:00.0000000&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Standard&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;name&amp;gt;&lt;/span&gt;Bilbo&lt;span class=&quot;nt&quot;&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Signature&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignedInfo&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;CanonicalizationMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignatureMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#rsa-sha1&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;URI=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;Transforms&amp;gt;&lt;/span&gt;
+          &lt;span class=&quot;nt&quot;&gt;&amp;lt;Transform&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#enveloped-signature&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Transforms&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;DigestMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#sha1&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;DigestValue&amp;gt;&lt;/span&gt;sKDT7gzgedzmh1AMxxLbfcF1Hsw=&lt;span class=&quot;nt&quot;&gt;&amp;lt;/DigestValue&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/SignedInfo&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignatureValue&amp;gt;&lt;/span&gt;
+        SfkvCGv1+EdLTvaROv27ymDumS0y02fPANTVhr0Yxd/
+        AxxVH0q0BQ6w8Ou5L7gyLYLvnSckgjhrGnGpiifdvbg==
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/SignatureValue&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Signature&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/license&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;h2 id=&quot;whats-a-signature&quot;&gt;What’s a signature?&lt;/h2&gt;
+
+  &lt;p&gt;A cryptographic signature is a string of bytes used to aid in verification of the source of a document. In most cases–and in the case of Rhino Licensing–the signature is generated by hashing the content of the file using SHA1 (or another suitable hashing algorithm), and encrypting that hash using the private key. The resulting string of bytes is the signature.&lt;/p&gt;
+
+  &lt;p&gt;When the client receives a file with a signature, it creates a hash of the file (sans-signature) and compares that hash to the decrypted value of the signature. Baring in mind that the signature is an encrypted hash of the file, if either of the public or private keys were invalid or the file had been tampered with, then the decrypted string would not match the hash of the file. When the client generated hash and the decrypted signature match, you can be confident the sender of the message is who you think it is.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The great part about using the hash of the document as the signature is that if the user tampers with the license–such as changing the expiration date or the licensee name–the signature will no longer match the hash the client generates, and BAM, instant invalid license.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;One particular aspect I like with this approach is that the licensee name is clearly visible in the license. This simple act can be quite dissuasive when it comes to piracy; after all, who would want their name visible on all the torrent websites out there?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Enough with the waffle, let’s start using Rhino Licensing.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-your-key&quot;&gt;Create your key&lt;/h2&gt;
+
+&lt;p&gt;The first thing we need to do is generate a public/private key pair for us to use in our license generation. Rhino Licensing uses the RSACryptoServiceProvider for it’s keys, so we can use that ourselves to generate our keys. One of the simplest ways to do that is to knock up a really quick console application.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RSACryptoServiceProvider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Done&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That program will generate a new key for you and write out the public and private parts to two separate XML files (publicKey.xml and privateKey.xml). Keep these two files handy!&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;You will probably want to change the &lt;code class=&quot;highlighter-rouge&quot;&gt;1024&lt;/code&gt; value in the &lt;code class=&quot;highlighter-rouge&quot;&gt;RSACryptoServiceProvider&lt;/code&gt; constructor to something larger. This is the size of the key that will be generated. The larger the better really, but larger numbers require longer to generate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;update-your-application&quot;&gt;Update your application&lt;/h2&gt;
+
+&lt;p&gt;Now we’ll update your application to complain if it doesn’t have a license. In your entry-point for your application you need to assert the license. Before we do that, make sure you’ve got your public key handy from the previous step. Rhino Licensing needs the &lt;em&gt;content&lt;/em&gt; of this file, so you can either embed it directly into a constant or as a resource. Secondly, it needs to know where to look for a license that the user will have been given.&lt;/p&gt;
+
+&lt;p&gt;Assuming a really simple app, here’s a Program.cs with Rhino Licensing:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseValidator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;license.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AssertValidLicense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If the license.xml file doesn’t exist, or if it’s invalid, Rhino Licensing will throw an exception. Of course, as we haven’t generated a license yet we’ll get an exception. That’s the client done though, so we can move on to our final step now. Once we complete that step, you will be able to just drop a license.xml into the same directory as your application and everything will work as expected.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-the-license-generator&quot;&gt;Create the license generator&lt;/h2&gt;
+
+&lt;p&gt;We need something to actually generate a license for your users. If you were being all fancy you could do this as a web-service that gets integrated with your payment provider; however, for simplicity’s sake we’ll just create another console application that spits out a license.&lt;/p&gt;
+
+&lt;p&gt;Rhino Licensing has a few prerequisites for a license: A name, an id of the license, an expiration date, and a license type. You can also supply a dictionary of custom values, but we wont be using that in this example.&lt;/p&gt;
+
+&lt;p&gt;For a really simple license generator all you need is the above for each license, and the private key. We’ll wrap that up in a simple console app which’ll prompt for the required info:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Guid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;NewGuid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseGenerator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;private_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Name: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Date: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Type: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// generate the license
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;license&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Generate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;license&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s it, you’ve got a license generator. Remember, this will exist behind your firewall, the users will (and must) never see your private key.&lt;/p&gt;
+
+&lt;p&gt;If you take the output of this application and save it in a license.xml file in your client, your application should stop throwing license exceptions and run normally! You’ve officially just licensed your app.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-have-we-just-done&quot;&gt;What have we just done?&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Created a private key generator, purely for convenience than anything else. We should only need to run this once before we start generating our keys. You could run it once per major release to ensure your 1.0 licenses are never compatible with 2.0.&lt;/li&gt;
+  &lt;li&gt;Updated our client application to validate the presence and validity of a license (and to explode if there isn’t one).&lt;/li&gt;
+  &lt;li&gt;Created a “server” to generate licenses for us. This is very primitive but could easily be adapted to a web server. You might want to look at the Rhino Licensing &lt;a href=&quot;https://github.com/ayende/rhino-licensing/blob/master/Rhino.Licensing/LicensingService.cs&quot;&gt;LicensingService&lt;/a&gt; before you continue.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 11 Jan 2011 00:00:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/rhino-licensing</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/rhino-licensing</guid>
+        
+        <category>licensing</category>
+        
+        <category>OpenSource</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>NDC 2010</title>
+        <description>&lt;a href=&quot;http://www.ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; was a huge success, if you ask me. This was largely down to the NDC team, who deserve all the praise they&#39;re getting (and much more). Unlike conferences I&#39;ve been to in the past, NDC was truely by the people, for the people. &lt;a href=&quot;http://blog.scottbellware.com&quot;&gt;Scott Bellware&lt;/a&gt; put it much better than I could, with his &lt;a href=&quot;http://blog.scottbellware.com/2010/06/praise-for-norwegian-developers.html&quot;&gt;praise for Norwegian Developers&lt;/a&gt; (and Kjersti Sandberg). Herself and the rest of the team were there because they wanted to be, not because they had to. The whole attitude surrounding this conference was one of learning, not plugging products or motives.
+
+I could go into great detail about the individual aspects of the conference, but it&#39;s much easier to say that there&#39;s nothing I&#39;d change.
+
+If there&#39;s one conference you should go to next year, make it NDC 2011.
+
+&lt;h2&gt;My part in all this...&lt;/h2&gt;
+
+I presented on two topics at NDC; the first was an introduction to &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;, and the second an introduction and demo of &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;. Fluent NHibernate was on the Thursday, and Git the Friday. It was a great experience speaking at an event of this size, and the number of people who seemed genuinely interested in what I had to say (by either turning up to my talks, or approaching me afterwards) was quite humbling. If you&#39;re interested in seeing what I presented, the talks will be on the NDC website before too long.
+
+&lt;blockquote&gt;The videos are becoming available at &lt;a href=&quot;http://streaming.ndc2010.no&quot;&gt;streaming.ndc2010.no&lt;/a&gt;, but they&#39;re suffering from bandwidth issues. If you do want to watch the videos, please stream them until the issues are resolved.&lt;/blockquote&gt;
+
+Due to me speaking, and also being woefully unprepared, I didn&#39;t get to see as many talks as I would&#39;ve liked &amp;mdash; regardless of how well rehearsed and prepared my talks are, it seems I always end up rewriting them an hour before I go on &amp;mdash; I did end up catching Lisa Crispin, Steve Strong, Eric Evans, Greg Young, Jon Skeet, Roy Osherove, Michael Feathers, Sebastian Lambla, and Mark Nijhof. I recommend you catch their talks online when they&#39;re published. The quality of the talks at NDC have been significantly higher than I&#39;ve seen elsewhere, and (more importantly) the technical level seems to be higher too; there was very few basic talks (a few introductions, mine included, but no pandering), but the majority were pretty in-depth. This is quite a contrast to the all-too-often &quot;Microsoft technology of the week&quot; presentations you can get at conferences.
+
+Of course, a big part of any conference is what happens between (and after) the talks. Meeting other developers is a big part of why I go to these things, after all I don&#39;t get out much normally. The socialising aspect of NDC was excellent, good drinks and food was had by all (I have a good idea they did anyway, at least one place we ate refused to serve us as a group anything other than the same meal for everyone!). I can&#39;t possibly list everyone who I met while I was out there, but it was really good to meet up with some people who I&#39;ve known on Twitter for a long time; specifically Hadi Hariri, Steve Strong, Greg Young, Ben Hall, Seb Lambla, Mark Nijhof, and Rob Conery are ones that stand out to me right now.
+
+NDC 2011 will be next year, and it&#39;s looking like it&#39;ll be in May this time. If there&#39;s anyone that&#39;s on the fence about going, I would whole heartedly recommend you do. Even more so, I&#39;d recommend you submit a talk of your own. It&#39;s a great way to test yourself, if nothing else. I&#39;ll definitely be going next year; hopefully I&#39;ll speak again, but if not I&#39;ll still be there. Hope to see you there!
+</description>
+        <pubDate>Tue, 22 Jun 2010 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/ndc-2010</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/ndc-2010</guid>
+        
+        <category>FluentNHibernate</category>
+        
+        <category>Git</category>
+        
+        <category>ndc</category>
+        
+        <category>Speaking</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Speaking engagements in 2010</title>
+        <description>In an attempt to get out of my shell more this year, I&#39;ve taken up speaking (at conferences, not just in general). First came my &lt;a href=&quot;http://jagregory.com/writings/git-e-van-recording/&quot;&gt;Git E-VAN&lt;/a&gt;, then came &lt;a href=&quot;http://fiesta.lostechies.com/&quot;&gt;Pablo&#39;s Fiesta&lt;/a&gt;, so what else have I got lined up this year?
+
+&lt;strong&gt;24&lt;sup&gt;th&lt;/sup&gt; April&lt;/strong&gt;: &lt;a href=&quot;http://codingday.org/&quot;&gt;Irish Open Spaces Coding Day II&lt;/a&gt; in Dublin, where I&#39;ll be speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;.
+
+&lt;strong&gt;16&lt;sup&gt;th&lt;/sup&gt;-18&lt;sup&gt;th&lt;/sup&gt; June&lt;/strong&gt;: &lt;a href=&quot;http://ndc2010.no&quot; title=&quot;Norwegian Developers Conference 2010&quot;&gt;NDC 2010&lt;/a&gt; in Oslo, speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt; and DVCS with Git.
+
+The abstracts for my talks can be found below. If you&#39;re interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email (&lt;a href=&quot;mailto:james@jagregory.com&quot;&gt;james@jagregory.com&lt;/a&gt;). You can see my availability on my &lt;a href=&quot;http://www.google.com/calendar/embed?src=mtbk7g2u13e2j7s1u8p0flitho@group.calendar.google.com&amp;ctz=Europe/London&amp;gsessionid=GBDJzqgaRWqAze87fNda9Q&quot;&gt;speaking calendar&lt;/a&gt;.
+
+&lt;h3&gt;Fluent NHibernate&lt;/h3&gt;
+
+An introduction and overview to object⁄relational mapping using Fluent NHibernate. See how Fluent NHibernate can help you map your domain with the least amount of effort, how you can remain flexible with your database, and how to drive your design through convention–over–configuration; all without writing a single line of XML.
+
+The talk is an introduction to Fluent NHibernate for those that aren&#39;t familiar with it, and assumes some NHibernate experience and is for .Net developers primarily. The goal is to show people how low–impact NHibernate can be with Fluent NHibernate, and how it can actually speed up development in rapid–change environments.
+
+I&#39;ll cover an overview of what Fluent NHibernate is, the various parts of it (the fluent interface, the conventions, and the auto–mappings, and the configuration aspect), then expand on how these features can be utilised to improve your NHibernate experience and simplify your development process.
+
+&lt;h3&gt;Introduction to Git&lt;/h3&gt;
+
+An introduction to distributed version control using Git, and how your VCS should work with you and not against you. How DVCS can completely alter your development process, streamline it, and help you produce better software, faster. Covering how local repositories speed up your development, multiple authoritative sources, distributed teams, multiple workflows, and some of the more distinct features of Git. With experiences from an OSS team on how the migration from SVN to Git has helped the project and changed how the team works (Fluent NHibernate).
+</description>
+        <pubDate>Wed, 31 Mar 2010 00:00:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/speaking-engagements-2010</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/speaking-engagements-2010</guid>
+        
+        <category>Speaking</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Git E-VAN recording</title>
+        <description>&lt;p&gt;Last monday (8th of Feb) I did an &lt;a href=&quot;http://jagregory.com/writings/git-e-van/&quot;&gt;E-VAN on Git&lt;/a&gt;; an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn’t &lt;em&gt;hear&lt;/em&gt; anyone complaining.&lt;/p&gt;
+
+&lt;p&gt;The talk was recorded, so if you haven’t already seen it then you can do so at your own leisure.&lt;/p&gt;
+
+&lt;p&gt;The video is up on the &lt;a href=&quot;http://vimeo.com/user1286822&quot;&gt;E-VAN’s Vimeo account&lt;/a&gt;, specifically &lt;a href=&quot;http://vimeo.com/9324683&quot; title=&quot;Git E-VAN recording&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;object width=&quot;600&quot; height=&quot;450&quot;&gt;&lt;param name=&quot;allowfullscreen&quot; value=&quot;true&quot; /&gt;&lt;param name=&quot;allowscriptaccess&quot; value=&quot;always&quot; /&gt;&lt;param name=&quot;movie&quot; value=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; /&gt;&lt;embed src=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; type=&quot;application/x-shockwave-flash&quot; allowfullscreen=&quot;true&quot; allowscriptaccess=&quot;always&quot; width=&quot;600&quot; height=&quot;450&quot; /&gt;&lt;/object&gt;
+</description>
+        <pubDate>Wed, 17 Feb 2010 00:00:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/git-e-van-recording</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/git-e-van-recording</guid>
+        
+        <category>Git</category>
+        
+        <category>Speaking</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>

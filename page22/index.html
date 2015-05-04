@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header no-cover">
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title"><a href="/">James Gregory</a></h1>
+            <h2 class="page-description">
+                 Code monkey. ThoughtWorks. Chief Agitator.
+ 
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page21/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 22 of 23 </span>
+     
+        <a class="older-posts" href="/page23/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+    </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/back-once-again">Personal Note: The new job</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Since getting my new job I’ve been rather quiet on the blogging side of things, mostly do to the fact that I’m actually doing something with my time rather than just sitting around tinkering. Strange I know, but you get used to it.</p>
+
+<p>As you’d probably expect, I’m not really supposed to talk about what I do for security reasons of course. It’s mostly working for the Swift group (caravans, motorhomes) doing their internal systems and web sites. Other things as well, but it’s mainly that. It’s all very interesting, a big change from serving customers in a supermarket thats for sure. It’s a really strange feeling actually going to work and learning something, I generally come home every night having picked something new up.</p>
+
+<p>Since I started the job I’ve learnt that my coding abilities are much better than I thought they were, having being subjected to the woes that are legacy code. Definitely a nice feeling, it’s always rather hard to rate your abilities when you have nothing to compare them against. For better or for worse I’ve been developing in VB.Net, something I tried to stay away from when coding for my self but haven’t been able to avoid recently. Not my cup of tea really but it’s another addition to the CV. Speaking of legacy code, there’s been some serious Daily WTF material lying around. A prime example was this beauty:</p>
+
+<pre><code class="language-vbnet">Sub Function GetTime(ByVal hours, ByVal minutes)
+  Dim hours
+  Dim minutes
+  Dim yHours
+
+  yHours = hours * minutes
+
+  GetTime = (yHours / minutes) + (hours * minutes)
+End Sub
+</code></pre>
+
+<p>Really interesting! Note the lack of any variable type declarations as well! It hasn’t all been like this, but there certainly a lot of amusing things.</p>
+
+<p>One resource I’ve found invaluable since starting to code professionally is <a href="http://www.hanselman.com/">Scott Hanselman</a>’s <a href="http://www.hanselman.com/blog/content/radiostories/2003/09/09/scottHanselmansUltimateDeveloperAndPowerUsersToolsList.html">utilities list</a>, there are so many handy little tools there that I can’t believe I’ve managed to live without! Some perfect examples are <a href="http://www.aisto.com/roeder/dotnet/">Lutz’s Reflector</a> and <a href="http://www.sliver.com/dotnet/ruler/">Jeff Key’s Screen Ruler</a>. A tool for “reverse engineering” compiled .Net assemblies and a floatable screen ruler respectively.</p>
+
+ <a class="read-more" href="/writings/back-once-again">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-06-06">
+                06 Jun 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/debugging-glory">Debugging Glory</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Debugging is a great thing… Often though I’ve dreamt of some greater, more useful debugger. It would have helped if I’d actually gone out and looked for such a thing.</p>
+
+<p>Anyway, I haven’t found a better debugger. I’ve found how to use the current one better! I’ve enabled client-side script debugging, which is fantastic. No more using IE or Firefoxes vague error messages, I can now step through code just as you would VB/C#.Net. The big one for me though has to be the ability to debug Stored Procedures, yes SQL Server Stored Procedures. Breakpoints, step-through, the lot.</p>
+
+<p>Client-side debugging is so obvious I was kicking my self when I got it working. All you need to do is go into Tools &gt; Internet Options &gt; Advanced and check the “Enable Client-Side Debugging” in Internet explorer. You may need to do some jiggery-pokery in VS but I can’t remember what.</p>
+
+<p>SqlServer is a bit more complicated, you need to copy the mssdi98.dll from your [visual studio installation]\sqlserver folder into your sqlserver instances binn folder. Then open up Enterprise Manager and grant Exec permissions to the user you use to log-in (or the Builtin\Administrators group) for the extended procedure sp_sdidebug. Lastly in your project options in VS mark the Enable Sql Debugging. That should be it, from the server explorer in VS you should now be able to choose “step-into” from any stored procedure, function or trigger!</p>
+
+<p>Productivity++</p>
+
+ <a class="read-more" href="/writings/debugging-glory">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-05-03">
+                03 May 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/goodbye-tesco">Goodbye Tesco</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’m outta there, finally free from the bounds of a supermarket job. I’ve been taken in by Evolution Interactive, a web/multimedia design company.</p>
+
+<p>I’m now a ‘New Media Developer’, nicer than ‘Checkout Assistant’ if I do say so my self. It’s very strange to be in a real job, doing something that I actually want to do (and like doing). This is going to take some getting used to…</p>
+
+ <a class="read-more" href="/writings/goodbye-tesco">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-04-11">
+                11 Apr 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/amplification-baby">Amplification, baby</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Upon receiving payment for my month of work, I promptly bought a new Amplifier for my musification; rendering me skint.</p>
+
+<p>Thats not the point though, the amp is hot! Line 6 Spider II 210, not the biggest they make but big enough for me. It weighs a bloody tonne! This thing comes laden with 12 pre-defined tones, 4 custom presets and all the knobs you know you couldn’t live without.</p>
+
+<p>The 12 default tones range from your standard spangly Clean tone right the way up to some godforsaken guttural death metal style distortion, with everything in between. Each one of these tones can be tweaked to your hearts content via the knobs, if you make a tone that you are particularly fond of you can store it in one of the 4 custom presets. These can be accessed via the 4 buttons on the head, or via the footpedal that comes with it. If you pay an extra £100 you can get a FBV Shortboard pedal that enables you to save up to 36 (I think) presets, nice!</p>
+
+<p>Built in tuner, noise-gate, tap-tempo for effects… Pretty good for £300.<br />
+Now I can sound like Hendrix, even if I can’t play like him. (Hey, its better than not being able to sound like him OR play like him!</p>
+
+ <a class="read-more" href="/writings/amplification-baby">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-03-07">
+                07 Mar 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/caesar-and-delphi">Caesar and Delphi</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>While bored yesterday I decided to have a go with programming in Delphi, something which I’ve been intending to do for quite some time now. Anyway, here is the result.</p>
+
+<p><a href="#">Download CaesarShift.zip 244kb</a> (this download is no longer available, sorry)</p>
+
+<p>It’s a simple cryptography program based on the shifting letters (Caesar Shift) methods. Took me about two hours, not bad to say I’ve never programmed in Delphi before.</p>
+
+<p>Delphi seems nice, I’m not too keen on the syntax of the language though. Its all rather too much like VB for my likings, messy and unstructured. Maybe thats just me though.</p>
+
+ <a class="read-more" href="/writings/caesar-and-delphi">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-01-07">
+                07 Jan 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page21/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 22 of 23 </span>
+     
+        <a class="older-posts" href="/page23/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

@@ -1,118 +1,45 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>The Problem With Onload - James Gregory</title>
-  <meta name="author" content="James Gregory">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  
-  <meta name="description" content="Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. &hellip;">
-  
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
-  <link rel="canonical" href="http://www.jagregory.com/writings/the-problem-with-onload">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  
-  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-3186192-13']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<logo>
+<body class="post-template">
 
-<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
-</logo>
-
-
-
-<body >
-  <header role="banner"><hgroup>
-  <h1><a href="/">James Gregory</a></h1>
-  
-</hgroup>
-
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
-  <nav role="navigation"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-<br>
-  
-<!--
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
+<main class="content" role="main">
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">The Problem With Onload</h1>
-    
-    
-      <p class="meta">
-        
+    <article class="post">
 
+        <header class="post-header">
+            <h1 class="post-title">The problem with onload</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2006-04-12">12 Apr 2006</time>
+                
+            </section>
+        </header>
 
-
-
-
-
-
-
-  
-
-
-<time datetime="2006-04-12T00:00:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2006</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
+        <section class="post-content">
+            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
 
 <p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
 
@@ -120,186 +47,104 @@
 
 <p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
 
-<h2>Our Problem</h2>
+<h2 id="our-problem">Our Problem</h2>
 
 <p>The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the <a href="http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content">FOUC</a>, where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.</p>
 
 <p>If you had the following code in your header tag, the element <code>aTable</code> would be visible until the page has finished loading, at which point it would suddenly disappear.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="kd">function</span> <span class="nx">hideATable</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;aTable&#39;</span><span class="p">).</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;display&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Event</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">hideATable</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="kd">function</span> <span class="nx">hideATable</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'aTable'</span><span class="p">).</span><span class="nx">style</span><span class="p">[</span><span class="s1">'display'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'none'</span><span class="p">;</span>
+  <span class="p">}</span>
 
+  <span class="nx">Event</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">'load'</span><span class="p">,</span> <span class="nx">hideATable</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre>
+</div>
 
 <p>What we really need is an <code>onBodyRendered</code> event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.</p>
 
-<h2>The Solution</h2>
-
+<h2 id="the-solution">The Solution</h2>
 <p>The only real solution to this problem, as there isn’t an <code>onBodyRendered</code> event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.</p>
 
 <p>The following code would hide the table before the page has finished rendering; exactly what we want.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">hideATable</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="nx">hideATable</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre>
+</div>
 
-
-<h2>My additions</h2>
+<h2 id="my-additions">My additions</h2>
 
 <p>The above method isn’t completely desirable, because it is still mixing code with markup and any code within the footer will not be cached. There isn’t much you can do about that really, but one thing that i’ve taken to doing in my websites is to make sure there is only ever one function call in that footer script block.</p>
 
-<p>My method of doing such a thing is to create a special object that represents all my pages and their individual footer script blocks. You can see below an example of such an object, there’s an wrapper object that allows for further extensions (such as Unload or Validation sections) and then the Load object that contains each pages onload function. Each page then has a single line script block like <code>Pages.Load.Home();</code></p>
+<p>My method of doing such a thing is to create a special object that represents all my pages and their individual footer script blocks. You can see below an example of such an object, there’s an wrapper object that allows for further extensions (such as Unload or Validation sections) and then the Load object that contains each pages onload function. Each page then has a single line script block like <code class="highlighter-rouge">Pages.Load.Home();</code></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Pages</span> <span class="o">=</span> <span class="p">{};</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">Home</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">highlightSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">saveCookies</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Portfolio</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">makeMeLookGood</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">Contact</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">highlightFields</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Pages</span> <span class="o">=</span> <span class="p">{};</span>
 
+<span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">Home</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">highlightSomething</span><span class="p">();</span>
+    <span class="nx">hideSomething</span><span class="p">();</span>
+    <span class="nx">saveCookies</span><span class="p">();</span>
+  <span class="p">},</span>
+
+  <span class="na">Portfolio</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">hideSomething</span><span class="p">();</span>
+    <span class="nx">makeMeLookGood</span><span class="p">();</span>
+  <span class="p">},</span>
+
+  <span class="na">Contact</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">highlightFields</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</code></pre>
+</div>
 
 <p>So the above code is stored in an external js file and loaded in the usual way, thus being cached.</p>
 
-<h3>Before:</h3>
+<h3 id="before">Before:</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">highlightSomething</span><span class="p">();</span>
-</span><span class='line'>  <span class="nx">hideSomething</span><span class="p">();</span>
-</span><span class='line'>  <span class="nx">saveCookies</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>After:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span><span class="p">.</span><span class="nx">Home</span><span class="p">();</span>
-</span><span class='line'><span class="nt">&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="nx">highlightSomething</span><span class="p">();</span>
+  <span class="nx">hideSomething</span><span class="p">();</span>
+  <span class="nx">saveCookies</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre>
 </div>
 
+<h3 id="after">After:</h3>
 
-  <footer>
-    
-      <div class="sharing">
-  
-  
-  
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span><span class="p">.</span><span class="nx">Home</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre>
 </div>
 
-    
-    <p class="meta">
-      
-  
+        </section>
 
-<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
-
-
-      
-
-
-    </p>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/" title="Previous Post: How-to use ClientIDs in JavaScript without the ugliness">&laquo; How-to use ClientIDs in JavaScript without the ugliness</a>
-      
-      
-        <a class="basic-alignment right" href="/writings/servercontrolids-update/" title="Next Post: ServerControlIDs Update">ServerControlIDs Update &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Website copyright &copy; 2014 - James Gregory |
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jagregory';
-      
         
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
 
+            
+        </footer>
+    </article>
+</main>
 
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
 
-
-
-
-
-
-
-
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header no-cover">
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title"><a href="/">James Gregory</a></h1>
+            <h2 class="page-description">
+                 Code monkey. ThoughtWorks. Chief Agitator.
+ 
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page20/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 21 of 23 </span>
+     
+        <a class="older-posts" href="/page22/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+    </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/launching-woes">Launching woes</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Launch problems, they always occur. Yesterday (1st September) was no exception, we launched this years Swift Leisure website; a bloody huge site. As soon as it got up there it fell over, which was unfortunate. After some investigation we narrowed it down to the Url Rewriter that we have in place (unfortunately, solely my work!).</p>
+
+<p>The big problem with it was that it replaces the Request.ApplicationPath in any requested path with a blank string to remove any unnecessary parts of the path; <code class="highlighter-rouge">SwiftLeisure2006/Caravans/Abbey</code> became <code class="highlighter-rouge">Caravans/Abbey</code>. This worked fine on our local setup but we didn’t account for possible changes in the <code class="highlighter-rouge">Request.ApplicationPath</code> when the site is situated directly in the root instead of a sub-folder. The <code class="highlighter-rouge">Request.ApplicationPath</code> became just <code class="highlighter-rouge">/</code> which means <code class="highlighter-rouge">/Caravans/Abbey</code> became <code class="highlighter-rouge">CaravansAbbey</code> instead of <code class="highlighter-rouge">Caravans/Abbey</code>. Simple fix once we figured this out and found any similar sections throughout our controls.</p>
+
+<p>Live and learn, live and learn.</p>
+
+ <a class="read-more" href="/writings/launching-woes">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-09-02">
+                02 Sep 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/accessibility-standards-and-my-say">Accessibility, standards and my say</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The web has come a long way in the past few years, but it is still hindered greatly by the methodology of the “previous generation” of web-designers. People are still designing with the mentality of serving everyone with a page that is specifically tailored to suit their particular browser and operating system. While this did get the job done originally, it was most certainly a lot more work than it needed to be. That’s why I find the idea of generating one (and only one) document to serve all users very interesting. Most browsers are conforming to standards in some way shape or form, the majority support CSS2 and XHTML 1.1 and the ones that don’t (mostly) degrade gracefully. It’s no longer about serving a page that is pixel perfect on every system; it’s about making sure all users get a good experience from your site.</p>
+
+<p>Another branch of this takes the form of Accessibility. Accessibility has recently been highlighted by governments as a priority for websites; the US and UK both have their own take on the situation with relating laws and amendments. It basically boils down to any website that is providing a service should have a bare minimum of accessibility; otherwise they are discriminating against their less able customers. This means businesses are required, by law, to provide for all their customers (whether or not they have disabilities). Just as you would expect a shop to provide wheelchair ramps for disabled shoppers, you should expect pages to be designed to aid disabled web-users.</p>
+
+<p>Recently I equipped my self with a screen-reader (<a href="http://www.freedomscientific.com/fs_products/software_jaws.asp" title="JAWS Screen Reader">JAWS</a>) and was appalled — but not particularly shocked — at the amount of sites that are simply unusable with anything other than a standard browser. Most pages are so full of invalid markup that the screen-readers simply mumble on continuously and any actual content is undecipherable. If websites complied to the standards then their experience would be tolerable at the very least. Unfortunately the majority of website designers simply do not know (or often care) about creating accessible pages.</p>
+
+<p><span class="note">
+Note: Screen-readers, for those that don’t know, take a web page and read it out using a synthesised voice. A perfectly accessible site would read the same as a printed document.
+</span></p>
+
+<p>One of the largest problems with the way pages have been designed in the past has been using the supplied tags for their appearance rather than their actual purpose. The <code>&lt;b&gt;</code> tags have been used to create bold headings, the <code>&lt;font&gt;</code> tags used to change styles of fonts and worst of all the <code>&lt;table&gt;</code> tags for layout. This means when a screen reader parses these pages it emphasises the wrong words and spouts nonsense when encountering these convoluted tags. What a properly designed page would have is a distinct separation of content and layout, of HTML and CSS. The HTML document should use be structured like a standard plain text print document; with appropriate headings, sub-headings, lists and paragraphs. These tags can then be styled using CSS to any manner to which they like. So when a screen reader encounters this page it reads the unstyled version; a perfectly formed document.</p>
+
+<p>That’s the end of my little rant, maybe together we learned something.</p>
+
+ <a class="read-more" href="/writings/accessibility-standards-and-my-say">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-07-27">
+                27 Jul 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/error-logging-modules-ampamp-handlers-elmah">ELMAH: Error Logging Modules & Handlers</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>In my previous post I talked about my exception logging system that I laid to rest. Fortunately for me that doesn’t mean my applications are logless, quite the contrary. I’ll explain…</p>
+
+<p>When I came to terms with my logging system being inadequate and hard to maintain, I began looking for a replacement. To my delight I came across <a href="http://www.raboof.com/Projects/Elmah/Elmah.aspx"><acronym title="Error Logging Modules &amp; Handlers">ELMAH</acronym></a>  written by <a href="http://www.raboof.com">Atif Aziz</a>. <acronym title="Error Logging Modules &amp; Handlers">ELMAH</acronym> is basically a couple of HttpModules and a HttpHandler that intercept any unhandled exceptions from within your application and log them. This is where the fun begins…</p>
+
+<p>You can download/create extensions that enable you to save your logs to wherever takes your fancy. There is a SQL Server writer, an XML file writer and I believe an MySql writer too. I’m currently using the XML writer simply because connecting to the SqlServer may be one of the possible exceptions raised. I’ve been running ELMAH now for 2 weeks and have had no issues at all; especially no write-permission related ones!</p>
+
+<p>This <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnaspp/html/elmah.asp" title="Using HTTP Modules and Handlers to Create Pluggable ASP.NET Components">MSDN Article</a> by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> was my manual for setting up ELMAH, not that it was hard. That article can explain it much better than I every could.</p>
+
+<p>Once you’ve got it all set up and assigned a location to the HttpHandler, you can navigate there and be presented with a log viewer. Details of the exception and even the actual yellow screen that occurred too (through a dump of the html) can be accessed though that screen. The thing that got me really interested was the ability to subscribe to an RSS feed of your log! Now I no longer have to spend 40 minutes on the phone trying to decipher what really happened when the client claims they “didn’t touch a thing, it just crashed on its own”. All you have to do is (in your favourite feed reader) enter your log viewer path with “/rss” added to the end (e.g. http://www.mysite.com/Logs/View.aspx/rss). Then you can get all the same details as navigating to the page, without actually having to do anything! Oh yes, life is good.</p>
+
+<p>There was one thing I had to come to terms with while setting up ELMAH. That is the fact that only unhandled exceptions will be logged, so that meant most of my try-catch blocks were causing my exceptions not to be logged. The solution to this was to remove the blocks that weren’t performing any specific function except that of gobbling up the exception and firing out a generic error message. I felt uncomfortable with this at first, as I was letting exceptions run riot but then I realised there’s not much point in handling exceptions if I can’t actually do anything to correct the error that occurred. So letting them go unhandled is probably the best cause of action (what exactly can be done if your SqlConnection won’t connect? It’s not like you can just connect to your mirrored SQL Server). So those exceptions are bubbled up to the page and then ELMAH captures and logs them. Using the customErrors section of the web.config you can present your users with a generic error page to stop them from seeing the nasty yellow screen.</p>
+
+<p>That my friends is the general gist of ELMAH…</p>
+
+ <a class="read-more" href="/writings/error-logging-modules-ampamp-handlers-elmah">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-07-23">
+                23 Jul 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/exception-logging">Exception Logging</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Something I’ve always been tinkering with for my ASP.Net applications has been exception logging. I often get irritated when users (or applications) supply me with misleading or incorrect error messages, or at least incorrect directions of how to recreate the error.</p>
+
+<p>I worked for quite some time trying to create a Logging system that would cater for my needs, and I got quite close to doing that. I created a small go-between object for the Trace and Debug logging and wrote that to my own XML file. The idea behind it, of course, was to make it easier for my self in debugging problems, if I could supply my self with all the data that I know I would require to trace an issue then, in theory, I could correct it much more quickly. This took me quite some time to create and of course was not perfect.</p>
+
+<p>There were a few major (a.k.a. Huge) issues with my system, firstly the logger would only interact with your code wherever you explicitly told it to. Basically you had to write extra code wherever you wanted to log an exception. This was neither friendly nor desirable. The next issue was access rights for the XML files; this reared its head in a few shapes and forms. One of the instances didn’t occur very often but was a pain when it did; the writer was rejected write access due to another instance of itself actually writing to the file. I remedied this by making the writer wait until the other was done; this of course had performance implications though, having to stop everything within a page while the log writer sits idle. The other time it was an issue was whenever I wanted to archive the logs I had to wait until no other instances were accessing it, this also involved waiting but it takes longer to rename a file and create a new one than it does to simply amend a file.</p>
+
+<p>The problem of having to explicitly declare any usage of the writer was the deciding factor in me binning my writer. Sad as it is to see something that I spent a fair amount of time creating deleted, it’s always slightly reassuring when you’re moving onto a product that is fully tested and working and also includes all source code! More on that soon though…</p>
+
+ <a class="read-more" href="/writings/exception-logging">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-07-18">
+                18 Jul 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/a-bit-of-culture">A bit of culture</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I think this is possibly something that everyone goes through at some point in their life, the desire to be more cultured. To me and most people this means going out and buying a lot of “classic” books and giving them a good going over. If you had tried to get me to do this a few years ago there would have been no chance of it happening, but it just so happens that I’m starting to get really into reading so this is a natural extension of things.</p>
+
+<p>I’ve got my self the following books, anybody with any suggestions feel free to drop me a comment or e-mail.</p>
+
+<ul>
+  <li>Brave New World (Aldous Huxley)</li>
+  <li>Heart Of Darkness (Joseph Conrad)</li>
+  <li>Animal Farm (George Orwell)</li>
+  <li>Catch-22 (Joseph Heller)</li>
+  <li>Gulliver’s Travels (Jonathan Swift)</li>
+  <li>Fahrenheit 451 (Ray Bradbury)</li>
+</ul>
+
+<p>For something a little different I also got The Interpretation of Dreams by Sigmund Freud, a slight change of pace.</p>
+
+<p>I’ve nearly finished reading Heart of Darkness, not taken long really. Not surprising considering it’s only 100 pages long, I can’t say it’s had a huge impact on me. I may be missing the point completely but nothing really seems to have happened and I’m onto the 3rd chapter (of 3). None the less the point is that I’ve now read a piece of history and have an informed opinion of it rather than just hints of what it’s about from what I’ve picked up listening to other people.</p>
+
+ <a class="read-more" href="/writings/a-bit-of-culture">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-06-13">
+                13 Jun 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page20/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 21 of 23 </span>
+     
+        <a class="older-posts" href="/page22/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

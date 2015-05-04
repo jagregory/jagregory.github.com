@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header no-cover">
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title"><a href="/">James Gregory</a></h1>
+            <h2 class="page-description">
+                 Code monkey. ThoughtWorks. Chief Agitator.
+ 
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page5/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 6 of 23 </span>
+     
+        <a class="older-posts" href="/page7/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+    </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Fluent NHibernate: Auto mapping, overrides and alterations</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> This is an excerpt from the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p>
+</blockquote>
+
+<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you&#8217;re having to alter many entities.</p>
+
+<p>An alternative is to use an <code>IAutoMappingOverride<t>, which is an interface you can implement to override the mappings of a particular auto-mapped class.
+
+``` csharp
+public class PersonMappingOverride : IAutoMappingOverride<person>
+{
+  public void Override(AutoMap<person> mapping)
+  {
+  }
+}
+```
+
+<p>This example overrides the auto-mapping of a <code>Person</code> entity. Within the <code>Override</code> method you can perform any actions on the mapping that you can in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mappings</a>.</p>
+
+<p>To use overrides, you need to instruct your <code>AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+
+``` csharp
+AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
+  .Where(type =&gt; type.Namespace == "Entities")
+  .UseOverridesFromAssemblyOf<personmappingoverride>();
+```
+
+<p>It&#8217;s the <code>UserOverridesFromAssemblyOf<t> call that instructs the <code>AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code>T</code>.
+
+<p>These overrides are made possible with use of the configuration alteration capabilities of the <code>AutoPersistenceModel</code>. You can use these features yourself to create your own customisations, or simply to separate your configuration into logical sections.</p>
+
+<p>An alteration is an implementation of the <code>IAutoMappingAlteration</code> interface, and is a self contained piece of configuration logic that can be applied with others to an <code>AutoPersistenceModel</code> prior to any mappings being generated. These are simple to use, but very powerful.</p>
+
+``` csharp
+public class WhereAlteration : IAutoMappingAlteration
+{
+  public void Alter(AutoPersistenceModel model)
+  {
+    model.Where(type =&gt; IsMappable(type));
+  }
+
+  private bool IsMappable(Type type)
+  {
+    // some logic
+  }
+}
+```
+
+<p>The <code>Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code>IMappingOverride<t> instances and executes each one against the model.
+
+<p>You need to instruct your <code>AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code>WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+
+``` csharp
+AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()  
+  .WithAlterations(alterations =&gt;
+    alterations.AddFromAssemblyOf<wherealteration>());
+```
+
+<p>The <code>WithAlterations</code> method takes a lambda action that allows you to set multiple alterations on your model; you can add single alterations with <code>Add</code>, and everything from an assembly like the above example.</p>
+
+<p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There&#8217;s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
+
+</wherealteration></person></t></code></p></t></code></p></personmappingoverride></person></person></person></t></code></p>
+ <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-10">
+                10 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-the-official-website">Fluent NHibernate - The official website</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>&#8220;Documentation? What documentation!&#8221; I hear you say. Yes, Fluent NHibernate is not best known for it&#8217;s abundance of documentation. I know.</p>
+
+<p>I&#8217;ve realised that over the past couple of months Fluent NHibernate has been growing in popularity, stupidly so. We&#8217;ve got new features out the bjingo, an active mailing list, and a flow of people moaning on twitter. Well I figure enough is enough, we need a proper website; googlecode is great for hosting, but it&#8217;s wiki is poor, we needed something better.</p>
+
+<p style="text-align:left"><strong>Announcing the official Fluent NHibernate website:</strong> <a href="http://www.fluentnhibernate.org">http://fluentnhibernate.org</a> and it&#8217;s <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a>.</p>
+
+<p>As always, comments are welcome on the <a href="http://groups.google.com/group/fluent-nhibernate">mailing list</a>. Please, no porn on the wiki just yet.</p>
+
+<p>I will be updating all my recent blog posts to point to the appropriate content on the wiki, and I would prefer if people would direct-link to the website rather than the googlecode project from now on. We&#8217;ll still be using googlecode for hosting and issue tracking, but the wiki will be cleared out.</p>
+
+<p>As with any wiki, the content is not final, and not exhaustive. I'm working on it.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-the-official-website">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-04">
+                04 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-green-and-brown">Fluent green and brown</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>To paint a very black-and-white picture, there are two camps of applications: greenfield and brownfield. Greenfield are generally nice, they have good separation of concerns, probably an IoC container, they may even be covered by unit tests. Brownfield apps are not. They generally don’t have great separation of concerns (they’re usually pretty concerned about everything), they definitely don’t have great unit test coverage (but you’re working on it!), and they don’t have IoC containers.</p>
+
+<p>If you’re designing a framework you need to cater for both these markets. Unfortunately, they’re both at odds with each other. A design that caters for inversion of control can sometimes be too verbose or “bitty” to use easily without a container. Similarly, if designed without a container in mind it will fall short for use with one; it’ll be too tightly nit, too hard to break apart.</p>
+
+<p>Although when Fluent NHibernate was started it was heading towards a design for greenfield, when I took over I steered it in the direction I thought was most important - brownfield. Fluent NHibernate has been aimed at being a drop-in replacement for your traditional NHibernate setup, simply replace your <code class="highlighter-rouge">CreateSessionFactory</code> method with ours and you’re away. The problem is, by focussing so hard on brownfield, I’ve neglected the green.</p>
+
+<p>I’m not apologising, because nobody has complained, but considerations need to be made for the other half. I still very much believe that Fluent NHibernate is heading in the right direction, we want to make life easier for those people who’s lives are pretty damn hard (those greenfield guys have it easy anyway); however, I do believe considerations need to be made to allow Fluent NHibernate to be more accessible for those of us who have the pleasure of working in a well designed system.</p>
+
+<p><strong>What does the future hold for Fluent NHibernate?</strong> Supporting all of NHibernate’s mapping options, making the automapper a lot more powerful, improving testability even more, and finally… giving some love to the PersistenceModel and SessionSource that the greenfield guys need.</p>
+
+ <a class="read-more" href="/writings/fluent-green-and-brown">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-04">
+                04 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-configuring-your-application">Fluent NHibernate: Configuring your application</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>There&#8217;s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+
+<blockquote>
+<p>I&#8217;m going to assume that you&#8217;ve got an application already set up, or you know how to structure a standard NHibernate application. If you don&#8217;t, I suggest you read up on that first.</p>
+</blockquote>
+
+<p>All the examples that follow are tailored to directly replace your <code>SessionFactory</code> instantiation code.</p>
+
+<h2 id="introducing_the_configuration_api">Introducing the configuration API</h2>
+
+<p>You can now <code>Fluently.Configure</code> your application. The API is broken down into five main methods, three of which are required.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="cm">/* your database settings */</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="cm">/* your mappings */</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">ExposeConfiguration</span><span class="p">(</span><span class="cm">/* alter Configuration */</span><span class="p">)</span> <span class="c1">// optional
+</span>  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<p>You can combine these methods in various ways to setup your application.</p>
+
+<ol><li><code>Fluently.Configure</code> starts the configuration process</li><li><code>Database</code> is where you specify your database configuration</li><li><code>Mappings</code> is where you supply which mappings you&#8217;re using</li><li><code>ExposeConfiguration</code> is optional, but allows you to alter the raw Configuration object</li><li><code>BuildSessionFactory</code> is the final call, and it creates the NHibernate SessionFactory instance from your configuration.</li></ol>
+
+<h2 id="exclusively_fluent">Exclusively fluent</h2>
+
+<p>If you&#8217;re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;())</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<p>This setup uses the SQLite database configuration, but you can substitute that with your own; it then adds any fluent mappings from the assebly that contains <code>YourEntity</code>.</p>
+
+<h2 id="automappings">Automappings</h2>
+
+<p>If you&#8217;re using only auto mappings, then this config is for you.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span>
+      <span class="c1">// your automapping setup here
+</span>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+        <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="nf">EndsWith</span><span class="p">(</span><span class="s">"Entities"</span><span class="p">))))</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<p>Replace the code inside <code>AutoMappings.Add</code> with your auto mapping configuration. You can see more about auto mappings in my <a href="http://blog.jagregory.com/tag/automapping/">automapping tag</a>.</p>
+
+<h2 id="mixed_fluent_mappings_and_auto_mappings">Mixed fluent mappings and auto mappings</h2>
+
+<p>If you&#8217;re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+      
+    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span>
+      <span class="c1">// your automapping setup here
+</span>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+        <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="nf">EndsWith</span><span class="p">(</span><span class="s">"Entities"</span><span class="p">)));</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<p>You can see that this is a combination of the two previous examples, the <code>Mappings</code> method can accept multiple kinds of mappings.</p>
+
+<h2 id="hbm_mappings">HBM mappings</h2>
+
+<p>You&#8217;ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;())</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<p>The <code>HbmMappings</code> property allows you to add HBM XML mappings in a few different ways, this example adds everything from an assembly which defines <code>YourEntity</code>; however, you can add from an assembly instance, or just add single types.</p>
+
+<h2 id="mixed_hbm_and_fluent_mappings">Mixed HBM and fluent mappings</h2>
+
+<p>You&#8217;re migrating your entities to Fluent NHibernate but haven&#8217;t quite got them all across yet - this is for you.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<h2 id="the_whole_shebang_fluent_auto_and_hbm_mappings">The whole shebang: fluent, auto, and hbm mappings</h2>
+
+<p>You&#8217;re a crazy fool and map a bit of everything, then this is how you&#8217;d configure it.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">HbmMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;();</span>
+      
+    <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span>
+      <span class="c1">// your automapping setup here
+</span>      <span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+        <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namspace</span><span class="p">.</span><span class="nf">EndsWith</span><span class="p">(</span><span class="s">"Entities"</span><span class="p">)));</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
+
+<h3 id="exporting_hbmxml_mappings">Exporting hbm.xml mappings</h3>
+
+<p>In the <code>Mappings</code> call, you can do the following:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+    <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+    <span class="p">.</span><span class="nf">ExportTo</span><span class="p">(</span><span class="s">@"C:\your\export\path"</span><span class="p">);</span>
+
+  <span class="n">m</span><span class="p">.</span><span class="n">AutoMappings</span>
+    <span class="p">.</span><span class="nf">Add</span><span class="p">(...)</span>
+    <span class="p">.</span><span class="nf">ExportTo</span><span class="p">(</span><span class="s">@"C:\your\export\path"</span><span class="p">);</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>That will export all of your fluent and automapped mappings in hbm.xml format to whatever location you specify.</p>
+
+<h3 id="altering_nonautomapped_conventions">Altering non-automapped conventions</h3>
+
+<p>If you want to override conventions that are used by your non-automapped classes, then you can use the <code>AlterConventions</code> method on <code>FluentMappings</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+    <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">YourEntity</span><span class="p">&gt;()</span>
+    <span class="p">.</span><span class="nf">AlterConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+    <span class="p">{</span>
+      <span class="n">conventions</span><span class="p">.</span><span class="n">IsBaseType</span> <span class="p">=</span>
+        <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">BaseType</span><span class="p">);</span>
+    <span class="p">}))</span>
+</code></pre>
+</div>
+
+<h3 id="validation">Validation</h3>
+
+<p>If you forget to setup your database, or don&#8217;t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It&#8217;ll tell you whether you&#8217;ve forgot to add any entities, or not setup your database.</p>
+
+<p>That's it for now, I hope this helps to make configuring your application a little clearer.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-configuring-your-application">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-03">
+                03 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+<p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn&#8217;t working, what&#8217;s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
+</blockquote>
+
+<p>There&#8217;s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it&#8217;s a one-to-one they need; after all, there&#8217;s their current entity (one) and the related entity (to-one). They&#8217;re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
+
+<p>There&#8217;s also a big distinction between what&#8217;s possible in the domain, and what&#8217;s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there&#8217;s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there&#8217;s nothing in the underlying pattern to disallow it.</p>
+
+<h2 id="manytoone">Many-to-one</h2>
+
+<p>Lets have a look at what actually is a many-to-one. Here&#8217;s a small database schema and the related entity.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
+  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+  <span class="n">AddressId</span> <span class="n">int</span> <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">Address</span><span class="p">.</span><span class="n">Id</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
+  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
+  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
+<span class="err">{</span>
+  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+<span class="err">}</span>
+</code></pre>
+</div>
+
+<p>This is a standard many-to-one relationship, many <code>Customers</code> to one <code>Address</code>; the tables are linked by the <code>AddressId</code> key in the <code>Customer</code> table. You can see how people can misinterpret this as a one-to-one relationship when designing the Customer entity; the customer has one address, so it must be a one-to-one. People forget about this scenario:</p>
+
+<table class="db-table">
+  <caption>Customer</caption>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>AddressId</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Plumbers</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Joiners</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Roofers</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="db-table">
+  <caption>Address</caption>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Number</th>
+      <th>Street</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>23</td>
+      <td>Baker St.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>47</td>
+      <td>Jefferson Ave.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>That is, the first and third customer both reference the first address.</p>
+
+<h2 id="onetoone">One-to-one</h2>
+
+<p><strong>So what actually is a one-to-one relationship then?</strong> A one-to-one is a relationship between two tables that share a mutually exclusive primary key value.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
+  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
+  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
+  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
+<span class="err">{</span>
+  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
+<span class="err">}</span>
+</code></pre>
+</div>
+
+<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It&#8217;s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
+
+<p>It&#8217;s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it&#8217;s not immediately clear from the class what kind of relationship it is.</p>
+
+<p>So just remember this: <strong>if you think you&#8217;re mapping a one-to-one, you probably aren&#8217;t!</strong> It&#8217;s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it&#8217;ll be a many-to-one you need.</p>
+
+ <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-27">
+                27 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page5/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 6 of 23 </span>
+     
+        <a class="older-posts" href="/page7/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

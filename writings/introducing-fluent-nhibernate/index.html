@@ -1,321 +1,156 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Introducing Fluent NHibernate - James Gregory</title>
-  <meta name="author" content="James Gregory">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  
-  <meta name="description" content="A couple of people have already covered this already, specifically Bobby Johnson, Matt Hinze, and Zachariah Young. I figure I should say something on &hellip;">
-  
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
-  <link rel="canonical" href="http://www.jagregory.com/writings/introducing-fluent-nhibernate">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  
-  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-3186192-13']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<logo>
+<body class="post-template">
 
-<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
-</logo>
-
-
-
-<body >
-  <header role="banner"><hgroup>
-  <h1><a href="/">James Gregory</a></h1>
-  
-</hgroup>
-
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
-  <nav role="navigation"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-<br>
-  
-<!--
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
+<main class="content" role="main">
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Introducing Fluent NHibernate</h1>
-    
-    
-      <p class="meta">
-        
+    <article class="post">
 
+        <header class="post-header">
+            <h1 class="post-title">Introducing Fluent NHibernate</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-08-08">08 Aug 2008</time>
+                
+            </section>
+        </header>
 
+        <section class="post-content">
+            <blockquote>
+  <p>A couple of people have already covered this already, specifically <a href="http://www.IAmNotMyself.com/2008/08/07/SkinningTheCatWithFluentNHibernate.aspx">Bobby Johnson</a>, <a href="http://mhinze.com/fluent-nhibernate-project/">Matt Hinze</a>, and <a href="http://zachariahyoung.com/zy/post/2008/08/fluent-nhibernate-for-creating-entity-mapping-files.aspx">Zachariah Young</a>. I figure I should say something on it anyway.</p>
+</blockquote>
 
+<p>I’ve adopted a project from <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a> that I think has the potential to be a really useful tool. It’s called <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and it’s primarily a fluent API for mapping classes with NHibernate.</p>
 
+<p>We’re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They’re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
 
-
-
-
-  
-
-
-<time datetime="2008-08-08T00:00:00+10:00" pubdate data-updated="true">Aug 8<span>th</span>, 2008</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><blockquote><p>A couple of people have already covered this already, specifically <a href="http://www.IAmNotMyself.com/2008/08/07/SkinningTheCatWithFluentNHibernate.aspx">Bobby Johnson</a>, <a href="http://mhinze.com/fluent-nhibernate-project/">Matt Hinze</a>, and <a href="http://zachariahyoung.com/zy/post/2008/08/fluent-nhibernate-for-creating-entity-mapping-files.aspx">Zachariah Young</a>. I figure I should say something on it anyway.</p></blockquote>
-
-<p>I&#8217;ve adopted a project from <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a> that I think has the potential to be a really useful tool. It&#8217;s called <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and it&#8217;s primarily a fluent API for mapping classes with NHibernate.</p>
-
-<p>We&#8217;re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They&#8217;re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
-
-<h2>The API</h2>
+<h2 id="the-api">The API</h2>
 
 <p>Take the following simple hbm file:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span>
-</span><span class='line'><span class="nt">&lt;hibernate-mapping</span> <span class="na">xmlns=</span><span class="s">&quot;urn:nhibernate-mapping-2.2&quot;</span> <span class="na">namespace=</span><span class="s">&quot;Eg&quot;</span> <span class="na">assembly=</span><span class="s">&quot;Eg&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">&quot;Customer&quot;</span> <span class="na">table=</span><span class="s">&quot;Customers&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">&quot;ID&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">&quot;identity&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/id&gt;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Name&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Credit&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;bag</span> <span class="na">name=</span><span class="s">&quot;Products&quot;</span> <span class="na">table=</span><span class="s">&quot;Products&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">&quot;CustomerID&quot;</span><span class="nt">/&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;one-to-many</span> <span class="na">class=</span><span class="s">&quot;Eg.Product, Eg&quot;</span><span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/bag&gt;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">&quot;Address&quot;</span> <span class="na">class=</span><span class="s">&quot;Eg.Address, Eg&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;AddressLine1&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;AddressLine2&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;CityName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;CountryName&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/component&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/class&gt;</span>
-</span><span class='line'><span class="nt">&lt;/hibernate-mapping&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="nt">&lt;hibernate-mapping</span> <span class="na">xmlns=</span><span class="s">"urn:nhibernate-mapping-2.2"</span> <span class="na">namespace=</span><span class="s">"Eg"</span> <span class="na">assembly=</span><span class="s">"Eg"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">"Customer"</span> <span class="na">table=</span><span class="s">"Customers"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">"ID"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">"identity"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/id&gt;</span>
 
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"Name"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"Credit"</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;bag</span> <span class="na">name=</span><span class="s">"Products"</span> <span class="na">table=</span><span class="s">"Products"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">"CustomerID"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;one-to-many</span> <span class="na">class=</span><span class="s">"Eg.Product, Eg"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/bag&gt;</span>
+
+    <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">"Address"</span> <span class="na">class=</span><span class="s">"Eg.Address, Eg"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"AddressLine1"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"AddressLine2"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"CityName"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"CountryName"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/component&gt;</span>
+  <span class="nt">&lt;/class&gt;</span>
+<span class="nt">&lt;/hibernate-mapping&gt;</span>
+</code></pre>
+</div>
 
 <p>Then compare it to the same mapping, created using the fluent API:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="n">CustomerMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="nf">CustomerMap</span><span class="p">()</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ID</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Credit</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">HasMany</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Products</span><span class="p">)</span>
-</span><span class='line'>      <span class="p">.</span><span class="n">AsBag</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">Component</span><span class="p">&lt;</span><span class="n">Address</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Address</span><span class="p">,</span> <span class="n">m</span> <span class="p">=&gt;</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine1</span><span class="p">);</span>
-</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine2</span><span class="p">);</span>
-</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CityName</span><span class="p">);</span>
-</span><span class='line'>        <span class="n">m</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CountryName</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Firstly, you&#8217;ll note that there is a marginal reduction in lines of code, but that&#8217;s not what we&#8217;re particularly striving for. Instead we&#8217;re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code>id</code> element in the hbm file, you&#8217;re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int&#8217;s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
-
-<h2>Testability</h2>
-
-<p>Another one of our goals is to make your mappings more robust. I imagine most people have had the problem where you&#8217;ve renamed a property and not updated the mapping file; due to there being no compile time validation, the only way to catch these mistakes are at run time (hopefully you had tests to cover that!). With the way our API is designed, you use the actual properties on your classes to create the mapping, so there&#8217;s nothing to forget. If you rename a property, your IDE will either rename the property in the mapping, or fail at compilation.</p>
-
-<p>We also want to help you verify that your mappings are set up properly, not just syntactically valid. So to make your   integration tests a bit easier, we&#8217;re providing an API for testing your mappings.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="na">[Test]</span>
-</span><span class='line'><span class="k">public</span> <span class="k">void</span> <span class="nf">VerifyCustomerSaves</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="k">new</span> <span class="n">PersistenceSpecification</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;()</span>
-</span><span class='line'>        <span class="p">.</span><span class="n">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="s">&quot;James Gregory&quot;</span><span class="p">)</span>
-</span><span class='line'>        <span class="p">.</span><span class="n">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Age</span><span class="p">,</span> <span class="m">22</span><span class="p">)</span>
-</span><span class='line'>        <span class="p">.</span><span class="n">VerifyTheMappings</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Behind the scenes the <code>PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code>CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It&#8217;s a fairly standard integration test, except we&#8217;ve taken the time to write all the wiring up that needs to be done, so you don&#8217;t have to.</p>
-
-<h2>The Framework</h2>
-
-<p>We&#8217;re working towards our first official release, which will have a fairly solid implementation of the API. Once that&#8217;s out in the wild, we&#8217;re going to focus on our Framework.</p>
-
-<p>Our framework is a layer that sits on-top of the API to provide an even better experience. We&#8217;re looking to integrate with your favorite container, which will reduce the code you need to write to integrate NHibernate into your system. Then we&#8217;re going to tackle extensible conventions, which will allow you to specify your own implied conventions for your application. For example, if you&#8217;re <strong>always</strong> going to call your identifier &#8220;ID&#8221;, then why should you have to specify it every time? <em>You shouldn&#8217;t!</em></p>
-
-<p>Development is progressing at a nice pace, and I expect we&#8217;ll be able to get our first release out within the next few weeks. The testing API hasn&#8217;t been kept quite as up to date as the main API, but we&#8217;re working on that too. It&#8217;s open-source, so suggestions and patches are welcome.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="n">CustomerMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">CustomerMap</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="nf">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ID</span><span class="p">);</span>
+    <span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+    <span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Credit</span><span class="p">);</span>
+    <span class="n">HasMany</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Products</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">AsBag</span><span class="p">();</span>
+    <span class="n">Component</span><span class="p">&lt;</span><span class="n">Address</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Address</span><span class="p">,</span> <span class="n">m</span> <span class="p">=&gt;</span>
+    <span class="p">{</span>  
+        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine1</span><span class="p">);</span>  
+        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine2</span><span class="p">);</span>  
+        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CityName</span><span class="p">);</span>  
+        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CountryName</span><span class="p">);</span>  
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
 </div>
 
+<p>Firstly, you’ll note that there is a marginal reduction in lines of code, but that’s not what we’re particularly striving for. Instead we’re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code>id</code> element in the hbm file, you’re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int’s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
 
-  <footer>
-    
-      <div class="sharing">
-  
-  
-  
+<h2 id="testability">Testability</h2>
+
+<p>Another one of our goals is to make your mappings more robust. I imagine most people have had the problem where you’ve renamed a property and not updated the mapping file; due to there being no compile time validation, the only way to catch these mistakes are at run time (hopefully you had tests to cover that!). With the way our API is designed, you use the actual properties on your classes to create the mapping, so there’s nothing to forget. If you rename a property, your IDE will either rename the property in the mapping, or fail at compilation.</p>
+
+<p>We also want to help you verify that your mappings are set up properly, not just syntactically valid. So to make your 	integration tests a bit easier, we’re providing an API for testing your mappings.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="na">[Test]</span>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">VerifyCustomerSaves</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">new</span> <span class="n">PersistenceSpecification</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;()</span>
+        <span class="p">.</span><span class="nf">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="s">"James Gregory"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Age</span><span class="p">,</span> <span class="m">22</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">VerifyTheMappings</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
 </div>
 
-    
-    <p class="meta">
-      
-  
+<p>Behind the scenes the <code>PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code>CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It’s a fairly standard integration test, except we’ve taken the time to write all the wiring up that needs to be done, so you don’t have to.</p>
 
-<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
+<h2 id="the-framework">The Framework</h2>
 
+<p>We’re working towards our first official release, which will have a fairly solid implementation of the API. Once that’s out in the wild, we’re going to focus on our Framework.</p>
 
-      
+<p>Our framework is a layer that sits on-top of the API to provide an even better experience. We’re looking to integrate with your favorite container, which will reduce the code you need to write to integrate NHibernate into your system. Then we’re going to tackle extensible conventions, which will allow you to specify your own implied conventions for your application. For example, if you’re <strong>always</strong> going to call your identifier “ID”, then why should you have to specify it every time? <em>You shouldn’t!</em></p>
 
+<p>Development is progressing at a nice pace, and I expect we’ll be able to get our first release out within the next few weeks. The testing API hasn’t been kept quite as up to date as the main API, but we’re working on that too. It’s open-source, so suggestions and patches are welcome.</p>
 
-    </p>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/writings/latest-on-boolangstudio/" title="Previous Post: Latest on BooLangStudio">&laquo; Latest on BooLangStudio</a>
-      
-      
-        <a class="basic-alignment right" href="/writings/time-time-time/" title="Next Post: Time, time, time">Time, time, time &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
+        </section>
 
-</div>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Website copyright &copy; 2014 - James Gregory |
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jagregory';
-      
         
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
 
+            
+        </footer>
+    </article>
+</main>
 
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
 
-
-
-
-
-
-
-
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 </body>
 </html>

@@ -1,272 +1,107 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Preventing Debugger Property Evaluation for Side-effect Laden Properties - James Gregory</title>
-  <meta name="author" content="James Gregory">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  
-  <meta name="description" content="Property getters with side-effects, now there&#8217;s a controversial subject if ever I saw one. Don&#8217;t do it is the rule; as with any rule &hellip;">
-  
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
-  <link rel="canonical" href="http://www.jagregory.com/writings/preventing-debugger-property-evaluation-side-effects">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  
-  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-3186192-13']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<logo>
+<body class="post-template">
 
-<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
-</logo>
-
-
-
-<body >
-  <header role="banner"><hgroup>
-  <h1><a href="/">James Gregory</a></h1>
-  
-</hgroup>
-
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
-  <nav role="navigation"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-<br>
-  
-<!--
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
+<main class="content" role="main">
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Preventing Debugger Property Evaluation for Side-effect Laden Properties</h1>
-    
-    
-      <p class="meta">
-        
+    <article class="post">
 
+        <header class="post-header">
+            <h1 class="post-title">Preventing debugger property evaluation for side-effect laden properties</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-08-18">18 Aug 2009</time>
+                
+            </section>
+        </header>
 
+        <section class="post-content">
+            <p>Property getters with side-effects, now there's a controversial subject if ever I saw one. Don't do it is the rule; as with any rule though, there's generally an exception that proves it. If you're in this situation and you genuinely do have a scenario that requires a property getter to have side-effects, then there's a side-effect (ha!) that you should be aware of.</p>
 
-
-
-
-
-
-  
-
-
-<time datetime="2009-08-18T00:00:00+10:00" pubdate data-updated="true">Aug 18<span>th</span>, 2009</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>Property getters with side-effects, now there&#8217;s a controversial subject if ever I saw one. Don&#8217;t do it is the rule; as with any rule though, there&#8217;s generally an exception that proves it. If you&#8217;re in this situation and you genuinely do have a scenario that requires a property getter to have side-effects, then there&#8217;s a side-effect (ha!) that you should be aware of.</p>
-
-
-
-
-<p><strong>The debugger evaluates property getters when showing it&#8217;s locals and autos windows.</strong> While this feature is indispensable in most cases, it plays havoc with our property-with-side-effects. What the debugger does is call the getter to present it&#8217;s value in the autos window, at the same time firing our code that has a side-effect. From there you have pretty confusing behavior with code seemingly running itself.</p>
-
-
-
+<p><strong>The debugger evaluates property getters when showing it's locals and autos windows.</strong> While this feature is indispensable in most cases, it plays havoc with our property-with-side-effects. What the debugger does is call the getter to present it's value in the autos window, at the same time firing our code that has a side-effect. From there you have pretty confusing behavior with code seemingly running itself.</p>
 
 <p>My exception to the rule is mutator properties in a fluent interface. You can often find properties in fluent interfaces that when touched alter the behavior of the next method called.</p>
 
-
-
-
 <p>For example:</p>
 
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">string</span> <span class="k">value</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
 
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">string</span> <span class="k">value</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Is</span><span class="p">.</span><span class="n">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>      <span class="c1">// returns true</span>
-</span><span class='line'><span class="n">Is</span><span class="p">.</span><span class="n">Not</span><span class="p">.</span><span class="n">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>  <span class="c1">// returns false</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<span class="n">Is</span><span class="p">.</span><span class="nf">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>      <span class="c1">// returns true
+</span><span class="n">Is</span><span class="p">.</span><span class="n">Not</span><span class="p">.</span><span class="nf">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>  <span class="c1">// returns false
+</span></code></pre>
+</div>
 
 <p>The Is class would contain a value tracking whether the next call would be inverted or not, and the Not property would flip that value when called.</p>
 
+<p>Now assume this, you're using <code>Is.Null(value)</code> and you set a breakpoint on it. Your autos window has expanded Is and shows the Not property, what's just happened? The debugger has now called Not and altered your state! Undesirable.</p>
 
+<p><a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debuggerbrowsableattribute.aspx">DebuggerBrowsable attribute</a> to the rescue; this attribute when used with the DebuggerBrowsableState.Never parameter instructs Visual Studio to never inspect the property you apply it to. Your property won't appear in the autos or locals window, and if you expand the tree of an instance containing the property it will show up with a Browsing Disabled message; you can then force it to evaluate the property, but at least it doesn't do it automatically.</p>
 
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">private</span> <span class="kt">bool</span> <span class="n">inverted</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
 
-<p>Now assume this, you&#8217;re using <code>Is.Null(value)</code> and you set a breakpoint on it. Your autos window has expanded Is and shows the Not property, what&#8217;s just happened? The debugger has now called Not and altered your state! Undesirable.</p>
-
-
-
-
-<p><a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debuggerbrowsableattribute.aspx">DebuggerBrowsable attribute</a> to the rescue; this attribute when used with the DebuggerBrowsableState.Never parameter instructs Visual Studio to never inspect the property you apply it to. Your property won&#8217;t appear in the autos or locals window, and if you expand the tree of an instance containing the property it will show up with a Browsing Disabled message; you can then force it to evaluate the property, but at least it doesn&#8217;t do it automatically.</p>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">private</span> <span class="kt">bool</span> <span class="n">inverted</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="na">[DebuggerBrowsable(DebuggerBrowsableState.Never)]</span>
-</span><span class='line'><span class="k">public</span> <span class="n">Is</span> <span class="n">Not</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">get</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">inverted</span> <span class="p">=</span> <span class="p">!</span><span class="n">inverted</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<span class="na">[DebuggerBrowsable(DebuggerBrowsableState.Never)]</span>
+<span class="k">public</span> <span class="n">Is</span> <span class="n">Not</span>
+<span class="p">{</span>
+  <span class="k">get</span>
+  <span class="p">{</span>
+    <span class="n">inverted</span> <span class="p">=</span> <span class="p">!</span><span class="n">inverted</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>Sticking the DebuggerBrowsable attribute on your Not property prevents the debugger from hitting it and inverting the switch.</p>
 
-
-
-
 <p>So there you go, if your property-with-side-effects is being invoked by the debugger, you can use the DebuggerBrowsableAttribute to prevent it.</p>
 
+<blockquote>By the way, I'm not advocating properties with side-effects...</blockquote>
 
+        </section>
 
-
-<blockquote>By the way, I&#8217;m not advocating properties with side-effects&#8230;</blockquote>
-
-</div>
-
-
-  <footer>
-    
-      <div class="sharing">
-  
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
-
-
-      
-
-
-    </p>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/writings/fluent-nhibernate-10rc/" title="Previous Post: Fluent NHibernate 1.0RC">&laquo; Fluent NHibernate 1.0RC</a>
-      
-      
-        <a class="basic-alignment right" href="/writings/fluent-nhibernate-10-rtm/" title="Next Post: Fluent NHibernate 1.0 RTM">Fluent NHibernate 1.0 RTM &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Website copyright &copy; 2014 - James Gregory |
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jagregory';
-      
         
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
 
+            
+        </footer>
+    </article>
+</main>
 
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
 
-
-
-
-
-
-
-
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 </body>
 </html>

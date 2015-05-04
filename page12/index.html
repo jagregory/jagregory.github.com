@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header no-cover">
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title"><a href="/">James Gregory</a></h1>
+            <h2 class="page-description">
+                 Code monkey. ThoughtWorks. Chief Agitator.
+ 
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 12 of 23 </span>
+     
+        <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+    </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Freeing the model from its evil web-service oppressors</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The current system I’m working with has a setup whereby the model (data access objects) are being used by the web-services for delivery; this means that the consumers of the web-services are directly tied to our inner implementation of our data access code. On-top of that, it’s old full of bad conventions, and is in need of refactoring.</p>
+
+<p>This is my account of how I freed the model from the web-service.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">vehicle_info</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_id</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_manufacturer</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">vehicle_manufactured_date</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_number_produced</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>That’s the existing model. You can see that these have some nasty naming conventions that I just can’t live with anymore.</p>
+
+<p>A large problem with pushing your model out to the web-service consumers is that I can’t refactor the classes without breaking their implementations; if I rename a field in my model, the consumers will have to update their code to deal with it. This is an issue because not all the consumers are able to update their code. So we’re stuck with how the classes were built years ago, with awful naming conventions, and no ability to change.</p>
+
+<p>What’s the ideal setup then? It’s my opinion that we should be using specialised DTOs (Data Transfer Objects) for this purpose, they’ll exist solely to be the transport mechanism for the web-service. With DTOs you’re separating what your service pushes out from what you use internally, which allows you to refactor your internal design without any problems with integration.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">VehicleWebServiceDto</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_id</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_manufacturer</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">vehicle_manufactured_date</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_number_produced</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>There’s an issue with using DTOs in an existing web-service environment, it’s unlikely your DTOs will be named the same as your original objects (if they do, you’re fine). We can’t just swap it out with a DTO, because the signatures won’t match in the WSDL.</p>
+
+<p>When we change the web-service to return those DTOs instead of the original classes, we end up with this mismatch in the output:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;vehicle_info&gt;</span>
+  <span class="nt">&lt;vehicle_id&gt;</span>int<span class="nt">&lt;/vehicle_id&gt;</span>
+  <span class="nt">&lt;vehicle_name&gt;</span>string<span class="nt">&lt;/vehicle_name&gt;</span>
+	...
+
+<span class="nt">&lt;VehicleWebServiceDto&gt;</span>
+  <span class="nt">&lt;vehicle_id&gt;</span>int<span class="nt">&lt;/vehicle_id&gt;</span>
+  <span class="nt">&lt;vehicle_name&gt;</span>string<span class="nt">&lt;/vehicle_name&gt;</span>
+	...
+</code></pre>
+</div>
+
+<p>How can we get around this? Make the signatures match.</p>
+
+<p>You can control the way objects are serialized by the web-service through the serialization attributes; namely the <code>XmlRoot</code> and <code>SoapType</code> attributes are the ones you’re looking for, these allow you to override what name is output in the xml for your class. Slap on those attributes, one for the standard HTTP usage and the other for SOAP, and give them your old class name; then as far as the consumers of the webservice can see, you’re giving them the same old classes. Now you have a separate DTO from your domain layer, but without breaking the schema.</p>
+
+<p>These are the updated DTO objects:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="na">[XmlRoot("vehicle_info"), SoapType("vehicle_info")]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">VehicleWebServiceDto</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_id</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">vehicle_manufacturer</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">vehicle_manufactured_date</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">vehicle_number_produced</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Which now produce this xml:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;vehicle_info&gt;</span>
+  <span class="nt">&lt;vehicle_id&gt;</span>int<span class="nt">&lt;/vehicle_id&gt;</span>
+  <span class="nt">&lt;vehicle_name&gt;</span>string<span class="nt">&lt;/vehicle_name&gt;</span>
+	...
+</code></pre>
+</div>
+
+<p>We are now free to refactor our code as much as we like, without affecting the output of the web-service.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Vehicle</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">ID</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">ManufacturingDetails</span> <span class="n">ManufacturingDetails</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ManufacturingDetails</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">Manufacturer</span> <span class="n">Manufacturer</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">ManufacturedDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberProduced</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Manufacturer</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">ID</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Magic.</p>
+
+ <a class="read-more" href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-18">
+                18 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/boo-visual-studio-plug-in-1-complete">Boo Visual Studio plug-in: 1% complete</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>What do we want? <em>A Boo plug-in for Visual Studio</em>. When do we want it? <em>Sooner, rather than later</em>.</p>
+
+<p>The initial aim of this plug-in is to provide a “good enough” experience when using Boo files within other projects. I’m not currently focussing on doing full-scale development with Boo; so the target is DSLs and Binsor. There won’t be any assemblies created, or anything else that would affect your project. The only difference between how you work now would be that you could write Boo using Visual Studio, with syntax highlighting and intellisense.</p>
+
+<p>That’s for the initial version anyway.</p>
+
+<p>I’ve found that creating a plugin for Visual Studio isn’t that difficult, in-fact that’s an understatement, it’s stupidly easy. Most of the plugin architecture is successfully created using the project wizard, so there’s very little I needed to do from that point of view. The tricky part is getting Boo and Visual Studio to communicate.</p>
+
+<p>I started by spending some time looking at the IronPython Studio implementation, the Boo implementation, abstract syntax trees, antlr, and after getting my head around what I needed to do, I set out on my adventure.</p>
+
+<p>So what’s the result? A very basic (and flakey) implementation of both syntax highlighting and intellisense.</p>
+
+<p><img src="/images/booplugin-syntax.jpg" alt="Boo Plugin syntax highlighting" /></p>
+
+<p>The highlighter isn’t perfect yet. It suffers from slowdown when you’re writing an unclosed string, and it can’t handle multi-line statements yet (think comment blocks).</p>
+
+<p><img src="/images/booplugin-codecomplete.jpg" alt="Boo Plugin code completion" /></p>
+
+<p>The intellisense is pretty basic, it allows namespace navigation, and type methods, but there isn’t much in the way of constraints (you can see instance methods against types, for example).</p>
+
+<p>There’s a lot of work to be done, but it’s fun and interesting.</p>
+
+<h2 id="targets">Targets</h2>
+
+<p>In the near future I’d like to get the following done:</p>
+
+<ul>
+  <li>Make intellisense work with everything in the local scope</li>
+  <li>Make intellisense parse import statements</li>
+  <li>Make syntax-highlighting correctly handle multi-line blocks</li>
+  <li>Make syntax-highlighting highlight types (like C# does)</li>
+</ul>
+
+<p>Then at some point tackle these:</p>
+<ul>
+  <li>Get Resharper involved</li>
+  <li>Refactoring support</li>
+</ul>
+
+<p>Hopefully I’ll progress on these and report back in a future post.</p>
+
+<h1 id="code">Code</h1>
+
+<p>The code is poor, it’s a mess and probably all wrong; however, you can get it in the usual place. However, I haven’t provided a direct download because it isn’t really in a state to be distributed yet.</p>
+
+<p>The source is accessible from Subversion at: http://jagregory.googlecode.com/svn/trunk/BooPlugin/ (using user jagregory-read-only)</p>
+
+ <a class="read-more" href="/writings/boo-visual-studio-plug-in-1-complete">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-18">
+                18 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/plugin-baby-steps">Plugin baby steps</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Making a Visual Studio 2008 plugin isn’t as hard as it sounds.</p>
+
+<p>Making one that works is a bit more difficult.</p>
+
+<p>Syntax highlighting is fairly straight forward, just run a tokenizer over the text and colour code each token appropriately. It’s the code sense that is causing me to go slightly mad. To determine what methods need to be listed when the intellisesne pops up, you need to parse the code that’s in the document, then resolve any classes and references in there to build up a collection of methods to display. It gets more tricky when the document isn’t valid, because you can’t compile it. That’s where I am now, I need to figure out some way of partially compiling the document, or maybe using an AST walker.</p>
+
+ <a class="read-more" href="/writings/plugin-baby-steps">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-12">
+                12 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/futility-transforming-entities-into-dtos">Futility: Transforming entities into DTOs</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>Future James: This is pretty much describing <a href="http://automapper.codeplex.com/">AutoMapper</a>, just take a look at that instead.</p>
+</blockquote>
+
+<p>I quite dislike mapping DTOs to entities, it’s a pain, but mostly tedious and tiresome rather than difficult. I decided to try to ease things by creating a library that would resolve entity instances to their DTO counterparts.</p>
+
+<p>My requirements were few but I was determined not to violate any of them.</p>
+
+<ol>
+  <li>Refactoring friendly. No strings for property names, changing names should give compiler errors.</li>
+  <li>Must simplify code.</li>
+  <li>Must improve maintainability.</li>
+</ol>
+
+<h2 id="first-attempt-explicit-mapping">First attempt: Explicit mapping</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">mapper</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DtoMapper</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">,</span> <span class="n">CustomerDto</span><span class="p">&gt;();</span>
+
+<span class="n">mapper</span><span class="p">.</span><span class="nf">Pair</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="n">Entity</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">mapper</span><span class="p">.</span><span class="n">Dto</span><span class="p">.</span><span class="n">CustomerName</span><span class="p">);</span>
+<span class="n">mapper</span><span class="p">.</span><span class="nf">Pair</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="n">Entity</span><span class="p">.</span><span class="n">Address</span><span class="p">,</span> <span class="n">mapper</span><span class="p">.</span><span class="n">Dto</span><span class="p">.</span><span class="n">CustomerAddress</span><span class="p">);</span>
+
+<span class="c1">// ... elsewhere ...
+</span>
+<span class="n">CustomerDto</span> <span class="n">dto</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">.</span><span class="nf">Transform</span><span class="p">(</span><span class="n">customer</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>With a clever bit of DynamicProxy usage, this implementation successfully mapped properties on an entity to a DTO. I believed it was reasonably clear, but having to use mapper.Entity was a bit obtuse. Dealing with properties on instances without an instance is tricky, especially if you want to avoid using strings.</p>
+
+<p>The explicit mapping is very refactoring friendly. I could rename a property without breaking the mapping, so requirement 1 was satisfied.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">dto</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">CustomerDto</span><span class="p">();</span>
+
+<span class="n">dto</span><span class="p">.</span><span class="n">CustomerName</span> <span class="p">=</span> <span class="n">customer</span><span class="p">.</span><span class="n">Name</span><span class="p">;</span>
+<span class="n">dto</span><span class="p">.</span><span class="n">CustomerAddress</span> <span class="p">=</span> <span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">dto</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>As the above code demonstrates, this implementation isn’t actually any simpler than just doing simple assignments, it’s in-fact more complicated because of the overhead of understanding what the mapper is. This simple assignment method is also refactoring friendly.</p>
+
+<p>So with requirement 2 failed, and requirement 3 no different to doing it manually, it was time to move on.</p>
+
+<h2 id="second-attempt-implicit-mapping">Second attempt: Implicit mapping</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">mapper</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">DtoMapper</span><span class="p">();</span>
+
+<span class="n">mapper</span><span class="p">.</span><span class="n">CreateImplicitMap</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">,</span> <span class="n">CustomerDto</span><span class="p">&gt;();</span>
+
+<span class="c1">// ... elsewhere ...
+</span>
+<span class="n">CustomerDto</span> <span class="n">dto</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">.</span><span class="nf">Transform</span><span class="p">(</span><span class="n">customer</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>This is my favourite implementation, it’s clean and smart; however, it’s also useless.</p>
+
+<p>It did the same as the first example, but implicitly mapped any properties that have the same name together. This is fine, but it would ignore anything that don’t have the same names. I could’ve implemented some logic for guessing names, but that would just be asking for trouble.</p>
+
+<p>Tragically this implementation wasn’t that refactoring friendly; you can rename properties, but it would silently stop mapping them unless you renamed it’s partner too. That’s pretty dangerous stuff. Requirement 1 failed.</p>
+
+<p>It does produce less code than the first implementation, and the simple assignment method, so 2 and 3 are covered.</p>
+
+<h2 id="third-attempt-attributes">Third attempt: Attributes</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerDto</span>
+<span class="p">{</span>
+  <span class="p">[</span><span class="nf">DtoPartner</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Customer</span><span class="p">),</span> <span class="s">"Name"</span><span class="p">)]</span>
+  <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  
+  <span class="p">[</span><span class="nf">DtoPartner</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Customer</span><span class="p">),</span> <span class="s">"Address"</span><span class="p">)]</span>
+  <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerAddress</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>I could live with this implementation, it’s not as clean as the implicit method, but it is still quite clear.</p>
+
+<p>Unfortunately, it fails in the refactoring test. You can’t rename a property on Customer without it breaking the mapping, because the property names are strings. Requirement 1 failed.</p>
+
+<p>You could smooth over this with an inspection unit test, which checks the strings against their types to see if the property exists, but that smells, it’s not a very good library if you have to verify it even works. I could’ve also created a static class to represent the Customer instance properties, but that’s more noise (you’d need 3 classes, instead of just 2); a pre-build step (ala SubSonic) came to mind, but that’s entering into the realm of diminished returns.</p>
+
+<h2 id="conclusion">Conclusion?</h2>
+
+<p>Sometimes the obvious way is the best way. Old fashioned may be old, but that doesn’t make it wrong. Sometimes a cigar is just a cigar.</p>
+
+ <a class="read-more" href="/writings/futility-transforming-entities-into-dtos">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-06">
+                06 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/all-about-dependencies">All about dependencies</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>This article serves as an introduction to the concept of <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, and why you’d want to use it. It is not a getting started guide for using containers. If you’re interested in those, my personal preference is <a href="http://www.castleproject.org/container/">Castle Windsor</a> and you can find their <a href="http://www.castleproject.org/container/gettingstarted/index.html">getting started guide here</a>.</p>
+</blockquote>
+
+<p>What are dependencies? Also referred to as couplings, dependencies are other modules that one module requires to fulfil it’s purpose.</p>
+
+<p>Are dependencies bad? No, of course they’re not, otherwise we wouldn’t be able to create anything. However, highly coupled code can cause a lot of problems for your application.</p>
+
+<p>If your code requires knowledge of how a dependency works, then your code is highly coupled. If your code is tied explicitly to an implementation, then your code is also highly coupled.</p>
+
+<p>Take the following example:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">SqlDataStore</span> <span class="n">dataStore</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SqlDataStore</span><span class="p">();</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The above example is highly coupled to the <code>SqlDataStore</code>. Firstly, it directly creates an instance, which means there’s no way for us to replace that instance if we need to (I’ll come to why you’d want to do that in a bit). Secondly, it relies on a great deal of knowledge of <code>SqlDataStore</code>’s implementation. In this code we can see that you need to create a connection and open it before you can update the record; that’s quite a bit of implementation knowledge. If the <code>SqlDataStore</code> was to change so that the <code>OpenConnection</code> method created a connection if one didn’t already exist, then we’d need to change every caller of  that code to remove the <code>CreateConnection</code> call; in large system situations like that can quickly lead to a fear of change and refactoring.</p>
+
+<p>I mentioned directly creating an instance stops us from replacing it if need be.  Well when would you actually want to do this? For those unfamiliar with unit testing, you probably haven’t encountered <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>; there are different types of test doubles, but for the purposes of this example they’re interchangeable.</p>
+
+<p>A test double serves as a swap-in replacement for one of your dependencies. These allow you to execute a piece of code under test, without having to worry about whether things are being put in your database, or e-mails sent for example. If your code is creating instances within methods, those instances cannot be replaced by a test double. Without that ability, testing becomes considerably more difficult.</p>
+
+<p>Tightly tying your code to an instance of a class reduces the flexibility and reuse of your code. Take the above example, that same code could be used to update the product in a cache instead of the database; similarly, you could use an in-memory storage instead of a database for when you’re running in a test or demo environment. If only your method wasn’t so tightly tied to the implementation.</p>
+
+<p>This is solved by using <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, which is a part of the &lt;a href=”http://en.wikipedia.org/wiki/Dependency_inversion_principle”Dependency Inversion Principal&lt;/a&gt; and <a href="http://en.wikipedia.org/wiki/Inversion_of_Control">Inversion of Control</a>.</p>
+
+<blockquote>
+  <p>[DIP] seeks to “invert” the conventional notion that high level modules in software should depend upon the lower level modules. The principle states that high level or low level modules should not depend upon each other, instead they should depend upon abstractions. – Wikipedia</p>
+</blockquote>
+
+<p>Essentially, dependency injection allows you to stop instantiating your dependencies. Instead they’re “injected” into your object when it is instantiated itself. This allows the dependencies to be swapped out like we mentioned above.</p>
+
+<p>So taking the original example, here’s a version of it that’s been updated to use dependency injection.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
+	
+	<span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
+	<span class="p">}</span>
+	
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The above implementation now allows us to create a test double, and replace the <code>SqlDataStore</code> in our tests. As I mentioned before, we could now easily push in an in-memory implementation without any changes to the code required.</p>
+
+<p>We can take this further though, because we’re still tied to a concrete class. Lets make <code>SqlDataStore</code> implement an interface, so we can create other implementations.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="n">IDataStore</span>
+<span class="p">{</span>
+	<span class="k">void</span> <span class="nf">CreateConnection</span><span class="p">();</span>
+	<span class="k">void</span> <span class="nf">OpenConnection</span><span class="p">();</span>
+	<span class="k">void</span> <span class="nf">Update</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">);</span>
+	<span class="k">void</span> <span class="nf">CloseConnection</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
+	
+	<span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
+	<span class="p">}</span>
+	
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Now our example is no longer specifically tied to a <code>SqlDataStore</code>, so we could quite easily pass it a <code>FileSystemDataStore</code>, or an <code>InMemoryDataStore</code>, or anything else that implements <code>IDataStore</code>. All that without having to touch a single line within the <code>ProductUpdater</code>.</p>
+
+<p>That’s the power of dependency injection, and why you should stop hard-coding your dependencies.</p>
+
+ <a class="read-more" href="/writings/all-about-dependencies">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-04-05">
+                05 Apr 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 12 of 23 </span>
+     
+        <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

@@ -1,347 +1,173 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>All About Dependencies - James Gregory</title>
-  <meta name="author" content="James Gregory">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  
-  <meta name="description" content="This article serves as an introduction to the concept of Dependency Injection, and why you&#8217;d want to use it. It is not a getting started guide &hellip;">
-  
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
-  <link rel="canonical" href="http://www.jagregory.com/writings/all-about-dependencies">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  
-  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-3186192-13']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<logo>
+<body class="post-template">
 
-<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
-</logo>
-
-
-
-<body >
-  <header role="banner"><hgroup>
-  <h1><a href="/">James Gregory</a></h1>
-  
-</hgroup>
-
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
-  <nav role="navigation"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-<br>
-  
-<!--
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
+<main class="content" role="main">
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">All About Dependencies</h1>
-    
-    
-      <p class="meta">
-        
+    <article class="post">
 
+        <header class="post-header">
+            <h1 class="post-title">All about dependencies</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-04-05">05 Apr 2008</time>
+                
+            </section>
+        </header>
 
+        <section class="post-content">
+            <blockquote>
+  <p>This article serves as an introduction to the concept of <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, and why you’d want to use it. It is not a getting started guide for using containers. If you’re interested in those, my personal preference is <a href="http://www.castleproject.org/container/">Castle Windsor</a> and you can find their <a href="http://www.castleproject.org/container/gettingstarted/index.html">getting started guide here</a>.</p>
+</blockquote>
 
+<p>What are dependencies? Also referred to as couplings, dependencies are other modules that one module requires to fulfil it’s purpose.</p>
 
-
-
-
-
-  
-
-
-<time datetime="2008-04-05T00:00:00+11:00" pubdate data-updated="true">Apr 5<span>th</span>, 2008</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><blockquote><p>This article serves as an introduction to the concept of <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, and why you&#8217;d want to use it. It is not a getting started guide for using containers. If you&#8217;re interested in those, my personal preference is <a href="http://www.castleproject.org/container/">Castle Windsor</a> and you can find their <a href="http://www.castleproject.org/container/gettingstarted/index.html">getting started guide here</a>.</p></blockquote>
-
-<p>What are dependencies? Also referred to as couplings, dependencies are other modules that one module requires to fulfil it&#8217;s purpose.</p>
-
-<p>Are dependencies bad? No, of course they&#8217;re not, otherwise we wouldn&#8217;t be able to create anything. However, highly coupled code can cause a lot of problems for your application.</p>
+<p>Are dependencies bad? No, of course they’re not, otherwise we wouldn’t be able to create anything. However, highly coupled code can cause a lot of problems for your application.</p>
 
 <p>If your code requires knowledge of how a dependency works, then your code is highly coupled. If your code is tied explicitly to an implementation, then your code is also highly coupled.</p>
 
 <p>Take the following example:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">SqlDataStore</span> <span class="n">dataStore</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SqlDataStore</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CreateConnection</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">OpenConnection</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CloseConnection</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">SqlDataStore</span> <span class="n">dataStore</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SqlDataStore</span><span class="p">();</span>
 
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
 
-<p>The above example is highly coupled to the <code>SqlDataStore</code>. Firstly, it directly creates an instance, which means there&#8217;s no way for us to replace that instance if we need to (I&#8217;ll come to why you&#8217;d want to do that in a bit). Secondly, it relies on a great deal of knowledge of <code>SqlDataStore</code>&#8217;s implementation. In this code we can see that you need to create a connection and open it before you can update the record; that&#8217;s quite a bit of implementation knowledge. If the <code>SqlDataStore</code> was to change so that the <code>OpenConnection</code> method created a connection if one didn&#8217;t already exist, then we&#8217;d need to change every caller of  that code to remove the <code>CreateConnection</code> call; in large system situations like that can quickly lead to a fear of change and refactoring.</p>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
 
-<p>I mentioned directly creating an instance stops us from replacing it if need be.  Well when would you actually want to do this? For those unfamiliar with unit testing, you probably haven&#8217;t encountered <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>; there are different types of test doubles, but for the purposes of this example they&#8217;re interchangeable.</p>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The above example is highly coupled to the <code>SqlDataStore</code>. Firstly, it directly creates an instance, which means there’s no way for us to replace that instance if we need to (I’ll come to why you’d want to do that in a bit). Secondly, it relies on a great deal of knowledge of <code>SqlDataStore</code>’s implementation. In this code we can see that you need to create a connection and open it before you can update the record; that’s quite a bit of implementation knowledge. If the <code>SqlDataStore</code> was to change so that the <code>OpenConnection</code> method created a connection if one didn’t already exist, then we’d need to change every caller of  that code to remove the <code>CreateConnection</code> call; in large system situations like that can quickly lead to a fear of change and refactoring.</p>
+
+<p>I mentioned directly creating an instance stops us from replacing it if need be.  Well when would you actually want to do this? For those unfamiliar with unit testing, you probably haven’t encountered <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>; there are different types of test doubles, but for the purposes of this example they’re interchangeable.</p>
 
 <p>A test double serves as a swap-in replacement for one of your dependencies. These allow you to execute a piece of code under test, without having to worry about whether things are being put in your database, or e-mails sent for example. If your code is creating instances within methods, those instances cannot be replaced by a test double. Without that ability, testing becomes considerably more difficult.</p>
 
-<p>Tightly tying your code to an instance of a class reduces the flexibility and reuse of your code. Take the above example, that same code could be used to update the product in a cache instead of the database; similarly, you could use an in-memory storage instead of a database for when you&#8217;re running in a test or demo environment. If only your method wasn&#8217;t so tightly tied to the implementation.</p>
+<p>Tightly tying your code to an instance of a class reduces the flexibility and reuse of your code. Take the above example, that same code could be used to update the product in a cache instead of the database; similarly, you could use an in-memory storage instead of a database for when you’re running in a test or demo environment. If only your method wasn’t so tightly tied to the implementation.</p>
 
-<p>This is solved by using <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, which is a part of the <a href="http://en.wikipedia.org/wiki/Dependency_inversion_principle"Dependency Inversion Principal</a> and <a href="http://en.wikipedia.org/wiki/Inversion_of_Control">Inversion of Control</a>.</p>
+<p>This is solved by using <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, which is a part of the &lt;a href=”http://en.wikipedia.org/wiki/Dependency_inversion_principle”Dependency Inversion Principal&lt;/a&gt; and <a href="http://en.wikipedia.org/wiki/Inversion_of_Control">Inversion of Control</a>.</p>
 
-<blockquote><p>[DIP] seeks to &#8220;invert&#8221; the conventional notion that high level modules in software should depend upon the lower level modules. The principle states that high level or low level modules should not depend upon each other, instead they should depend upon abstractions. &#8211; Wikipedia</p></blockquote>
+<blockquote>
+  <p>[DIP] seeks to “invert” the conventional notion that high level modules in software should depend upon the lower level modules. The principle states that high level or low level modules should not depend upon each other, instead they should depend upon abstractions. – Wikipedia</p>
+</blockquote>
 
-<p>Essentially, dependency injection allows you to stop instantiating your dependencies. Instead they&#8217;re &#8220;injected&#8221; into your object when it is instantiated itself. This allows the dependencies to be swapped out like we mentioned above.</p>
+<p>Essentially, dependency injection allows you to stop instantiating your dependencies. Instead they’re “injected” into your object when it is instantiated itself. This allows the dependencies to be swapped out like we mentioned above.</p>
 
-<p>So taking the original example, here&#8217;s a version of it that&#8217;s been updated to use dependency injection.</p>
+<p>So taking the original example, here’s a version of it that’s been updated to use dependency injection.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">private</span> <span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CreateConnection</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">OpenConnection</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CloseConnection</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
+	
+	<span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">SqlDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
+	<span class="p">}</span>
+	
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
 
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>The above implementation now allows us to create a test double, and replace the <code>SqlDataStore</code> in our tests. As I mentioned before, we could now easily push in an in-memory implementation without any changes to the code required.</p>
 
-<p>We can take this further though, because we&#8217;re still tied to a concrete class. Lets make <code>SqlDataStore</code> implement an interface, so we can create other implementations.</p>
+<p>We can take this further though, because we’re still tied to a concrete class. Lets make <code>SqlDataStore</code> implement an interface, so we can create other implementations.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IDataStore</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">void</span> <span class="nf">CreateConnection</span><span class="p">();</span>
-</span><span class='line'>  <span class="k">void</span> <span class="nf">OpenConnection</span><span class="p">();</span>
-</span><span class='line'>  <span class="k">void</span> <span class="nf">Update</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">void</span> <span class="nf">CloseConnection</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">private</span> <span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CreateConnection</span><span class="p">();</span>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">OpenConnection</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">dataStore</span><span class="p">.</span><span class="n">CloseConnection</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="n">IDataStore</span>
+<span class="p">{</span>
+	<span class="k">void</span> <span class="nf">CreateConnection</span><span class="p">();</span>
+	<span class="k">void</span> <span class="nf">OpenConnection</span><span class="p">();</span>
+	<span class="k">void</span> <span class="nf">Update</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">);</span>
+	<span class="k">void</span> <span class="nf">CloseConnection</span><span class="p">();</span>
+<span class="p">}</span>
 
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ProductUpdater</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">;</span>
+	
+	<span class="k">public</span> <span class="nf">ProductUpdater</span><span class="p">(</span><span class="n">IDataStore</span> <span class="n">dataStore</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">dataStore</span> <span class="p">=</span> <span class="n">dataStore</span><span class="p">;</span>
+	<span class="p">}</span>
+	
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">StoreChanges</span><span class="p">(</span><span class="n">Product</span> <span class="n">product</span><span class="p">)</span>
+	<span class="p">{</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CreateConnection</span><span class="p">();</span>
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">OpenConnection</span><span class="p">();</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+
+	  <span class="n">dataStore</span><span class="p">.</span><span class="nf">CloseConnection</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>Now our example is no longer specifically tied to a <code>SqlDataStore</code>, so we could quite easily pass it a <code>FileSystemDataStore</code>, or an <code>InMemoryDataStore</code>, or anything else that implements <code>IDataStore</code>. All that without having to touch a single line within the <code>ProductUpdater</code>.</p>
 
-<p>That&#8217;s the power of dependency injection, and why you should stop hard-coding your dependencies.</p>
-</div>
+<p>That’s the power of dependency injection, and why you should stop hard-coding your dependencies.</p>
 
+        </section>
 
-  <footer>
-    
-      <div class="sharing">
-  
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
-
-
-      
-
-
-    </p>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/writings/static-method-abuse/" title="Previous Post: Static method abuse">&laquo; Static method abuse</a>
-      
-      
-        <a class="basic-alignment right" href="/writings/futility-transforming-entities-into-dtos/" title="Next Post: Futility: Transforming entities into DTOs">Futility: Transforming entities into DTOs &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Website copyright &copy; 2014 - James Gregory |
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jagregory';
-      
         
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
 
+            
+        </footer>
+    </article>
+</main>
 
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
 
-
-
-
-
-
-
-
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 </body>
 </html>

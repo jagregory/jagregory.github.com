@@ -1,261 +1,135 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Getfilename NAnt Task - James Gregory</title>
-  <meta name="author" content="James Gregory">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  
-  <meta name="description" content="As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The &hellip;">
-  
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
-  <link rel="canonical" href="http://www.jagregory.com/writings/getfilename-nant-task">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  
-  <link href="/atom.xml" rel="alternate" title="James Gregory" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cardo:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-3186192-13']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<logo>
+<body class="post-template">
 
-<img src="/logo.png" alt="Website Logo. Upload to /source/logo.png ; disable in /source/_includes/logo.html" height="32px" width="32px">
-</logo>
-
-
-
-<body >
-  <header role="banner"><hgroup>
-  <h1><a href="/">James Gregory</a></h1>
-  
-</hgroup>
-
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
-  <nav role="navigation"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-<br>
-  
-<!--
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
+<main class="content" role="main">
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Getfilename NAnt Task</h1>
-    
-    
-      <p class="meta">
-        
+    <article class="post">
 
+        <header class="post-header">
+            <h1 class="post-title">getfilename NAnt task</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-03-12">12 Mar 2008</time>
+                
+            </section>
+        </header>
 
+        <section class="post-content">
+            <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn’t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
 
-
-
-
-
-
-  
-
-
-<time datetime="2008-03-12T00:00:00+11:00" pubdate data-updated="true">Mar 12<span>th</span>, 2008</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://www.jagregory.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn&#8217;t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
-
-<p>The <code>getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc&#8230;</p>
+<p>The <code class="highlighter-rouge">getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc…</p>
 
 <p>The attributes are as follows:</p>
 
 <table class="format-table">
-    <thead>
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-            <th>Required</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>in</td>
-            <td>The directory to search</td>
-            <td>Yes</td>
-        </tr>
-        <tr class="alt">
-            <td>property</td>
-            <td>The property to push the filename into.</td>
-            <td>Yes</td>
-        </tr>
-        <tr>
-            <td>searchPattern</td>
-            <td>Wildcard search pattern for finding the file.</td>
-            <td>No</td>
-        </tr>
-        <tr class="alt">
-            <td>of</td>
-            <td>
-                The file to get the filename of.<br /><br />
-                <strong>NewestFile</strong> - The most recently created file<br />
-                <strong>OldestFile</strong> - The oldest file in the directory<br />
-                <strong>FirstModifiedFile</strong> - The file with the oldest last modified date<br />
-                <strong>LastModifiedFile</strong> - The most recently modified file<br />
-                <strong>FirstFile</strong> - The first file in the directory, using default sorting<br />
-                <strong>LastFile</strong> - The last file in the directory, using default sorting<br />
-            </td>
-            <td>No - Defaults to NewestFile</td>
-        </tr>
-    </tbody>
+	<thead>
+		<tr>
+			<th>Attribute</th>
+			<th>Description</th>
+			<th>Required</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>in</td>
+			<td>The directory to search</td>
+			<td>Yes</td>
+		</tr>
+		<tr class="alt">
+			<td>property</td>
+			<td>The property to push the filename into.</td>
+			<td>Yes</td>
+		</tr>
+		<tr>
+			<td>searchPattern</td>
+			<td>Wildcard search pattern for finding the file.</td>
+			<td>No</td>
+		</tr>
+		<tr class="alt">
+			<td>of</td>
+			<td>
+				The file to get the filename of.<br /><br />
+				<strong>NewestFile</strong> - The most recently created file<br />
+				<strong>OldestFile</strong> - The oldest file in the directory<br />
+				<strong>FirstModifiedFile</strong> - The file with the oldest last modified date<br />
+				<strong>LastModifiedFile</strong> - The most recently modified file<br />
+				<strong>FirstFile</strong> - The first file in the directory, using default sorting<br />
+				<strong>LastFile</strong> - The last file in the directory, using default sorting<br />
+			</td>
+			<td>No - Defaults to NewestFile</td>
+		</tr>
+	</tbody>
 </table>
-
 
 <p>An example usage is:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">&quot;Example&quot;</span> <span class="na">default=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;getfilename</span> <span class="na">of=</span><span class="s">&quot;NewestFile&quot;</span> <span class="na">in=</span><span class="s">&quot;C:\path\to\backups&quot;</span> <span class="na">searchPattern=</span><span class="s">&quot;*.bak&quot;</span> <span class="na">property=</span><span class="s">&quot;filename&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;echo</span> <span class="na">message=</span><span class="s">&quot;Filename: ${filename}&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/target&gt;</span>
-</span><span class='line'><span class="nt">&lt;/project&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">"Example"</span> <span class="na">default=</span><span class="s">"run"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">"run"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;getfilename</span> <span class="na">of=</span><span class="s">"NewestFile"</span> <span class="na">in=</span><span class="s">"C:\path\to\backups"</span> <span class="na">searchPattern=</span><span class="s">"*.bak"</span> <span class="na">property=</span><span class="s">"filename"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;echo</span> <span class="na">message=</span><span class="s">"Filename: ${filename}"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/target&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre>
+</div>
 
+<p>Foreseeable usage situations revolve around anything where you’d need to get the last modified, or newest file in a directory; backups, database scripts etc…</p>
 
-<p>Foreseeable usage situations revolve around anything where you&#8217;d need to get the last modified, or newest file in a directory; backups, database scripts etc&#8230;</p>
-
-<h2>Downloads</h2>
+<h2 id="downloads">Downloads</h2>
 
 <p>The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_license">new BSD License</a>; read the license for what you’re allowed to do.</p>
 
-<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip">Download Source</a>.
+<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip">Download Source</a>.<br />
 You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip">Download Binary</a>.</p>
 
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/">http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/</a> (using user jagregory-read-only)</p>
-</div>
 
+        </section>
 
-  <footer>
-    
-      <div class="sharing">
-  
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Text authored by <span class="fn">James Gregory</span></span>
-
-
-      
-
-
-    </p>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/writings/introducing-the-filterable-delegrid/" title="Previous Post: Introducing the filterable DeleGrid">&laquo; Introducing the filterable DeleGrid</a>
-      
-      
-        <a class="basic-alignment right" href="/writings/plug-ins-and-browsers/" title="Next Post: Plug-in's and browsers">Plug-in's and browsers &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Website copyright &copy; 2014 - James Gregory |
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/TheChymera/Koenigspress">Königspress</a></span>.
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jagregory';
-      
         
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
 
+            
+        </footer>
+    </article>
+</main>
 
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
 
-
-
-
-
-
-
-
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 </body>
 </html>

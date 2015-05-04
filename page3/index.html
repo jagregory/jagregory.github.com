@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header no-cover">
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title"><a href="/">James Gregory</a></h1>
+            <h2 class="page-description">
+                 Code monkey. ThoughtWorks. Chief Agitator.
+ 
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page2/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 3 of 23 </span>
+     
+        <a class="older-posts" href="/page4/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+    </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/git-e-van">Git E-VAN</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Just a reminder that tonight I’ll be doing an <a href="http://europevan.blogspot.com/2010/01/next-european-van-on-08-february-2010.html">E-VAN on Git</a> tonight at 7pm GMT.</p>
+
+<p>It’s going to be a pretty basic talk on what Git is (and indirectly what DVCS is), and a demo on how to use most of the features you’ll need daily. There might be some advanced talk at the end, depending on how well I time things.</p>
+
+<p>If you’ve already used Git (successfully), then this talk won’t really be for you; unless you just want to listen to me ramble for an hour and an half.</p>
+
+<p>Looking forward to “seeing” you there. Now, I best finish reading that “Getting started with Git” book I’ve had lying around for months.</p>
+
+ <a class="read-more" href="/writings/git-e-van">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2010-02-08">
+                08 Feb 2010
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/git-remotes-contributions-and-the-letter-n">Git: Remotes, contributions, and the letter N</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Here’s a few ways to think about Git and it’s distributed nature.</p>
+
+<ul>
+<li>You deal with multiples of repositories, not a single central repository</li>
+<li>Updates come from a remote repository, and changes are pushed to a remote; none of these repositories have to be the same</li>
+<li><em>Origin</em> is the canonical name for the repository you cloned from</li>
+<li><em>Upstream</em> is the canonical name for the original project repository you forked from</li>
+</ul>
+
+<h2>General pushing and pulling</h2>
+
+<p><img src="/images/remote-1.png" alt="Figure 1" /></p>
+
+<p>Pushing your changes to a remote: <code>git push remote_name</code></p>
+
+<p><img src="/images/remote-2.png" alt="Figure 2" /></p>
+
+<p>Pulling changes from a remote: <code>git pull remote_name</code></p>
+
+<p>Or if you want to rebase:</p>
+<pre>git fetch remote_name
+git rebase remote_name/branch</pre>
+
+<blockquote>You can change your <code>branch.autosetuprebase</code> to <code>always</code>, to make this the default <code>git pull</code> behaviour.</blockquote>
+
+<p>That’s all there is to moving commits around in Git repositories. Any other operations you perform are all combinations of the above.</p>
+
+<h2>Github &mdash; personal repositories</h2>
+
+<p>When you’re dealing directly with Github, on a personal project or as the project owner, your repositories will look like this:</p>
+
+<p><img src="/images/remote-3.png" alt="Figure 3" /></p>
+
+<p>To push and pull changes between your local and your github repositories, just issue the push and pull commands with the origin remote:</p>
+
+<pre>git push origin
+git pull origin</pre>
+
+<p>You can set the defaults for these commands too, so the origin isn’t even necessary in a lot of cases.</p>
+
+<h2>Github &mdash; receiving contributions</h2>
+
+<p>As a project owner, you’ll sometimes have to deal with contributions from other people. Each contributor will have their own github repository, and they’ll issue you with a pull request.</p>
+
+<p><img src="/images/remote-4.png" alt="Figure 4" /></p>
+
+<p>There’s no direct link to push between these two repositories; they’re unmanned. To manage changes from contributors, you need to involve your local repository.</p>
+
+<p>You can think of this as taking the shape of a V.</p>
+
+<p><img src="/images/remote-5.png" alt="Figure 5" /></p>
+
+<p>You need to register their github repository as a remote on your local, pull in their changes, merge them, and push them up to your github. This can be done as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git remote add contributor contributor_repository.git
+git pull contributor branch
+git push
+</code></pre>
+</div>
+
+<h2>Github &mdash; providing contributions</h2>
+
+<p>Do exactly as you would your own personal project. Local changes, pushed up to your github fork; then issue a pull request. That’s all there is to it.</p>
+
+<h2>Github &mdash; the big picture</h2>
+
+<p>Here’s how to imagine the whole process, think of it as an N shape.</p>
+
+<p><img src="/images/remote-6.png" alt="Figure 6" /></p>
+
+<p>On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.</p>
+
+<ol>
+<li>Contributor makes a commit in their local repository</li>
+<li>Contributor pushes that commit to their github</li>
+<li>Contributor issues a pull request to the project
+<li>Project lead pulls the contributor's change into their local repository</li>
+<li>Project lead pushes the change up to the project github</li>
+
+
+That's as complicated as it gets.
+
+
+</li></ol>
+ <a class="read-more" href="/writings/git-remotes-contributions-and-the-letter-n">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2010-02-07">
+                07 Feb 2010
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/behaviours-in-mspec">Behaviours in MSpec</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2010/01/18/behaviours-in-mspec.aspx">Los Techies</a></blockquote>
+
+<p><a href="http://github.com/machine/machine.specifications">MSpec</a> is awesome, I think it's praised by myself and others enough for that particular point to not need any expansion; however, there is a particular feature I would like to highlight that hasn't really got a lot of press: behaviours.</p>
+
+<p>Behaviours define reusable specs that encapsulate a particular set of, you guessed it, behaviours; you're then able to include these specs in any context that exhibits a particular behaviour.</p>
+
+<p>Lets go with the cliche'd Vehicle example. Given an <code>IVehicle</code> interface, with <code>Car</code> and <code>Motorbike</code> implementations; these all expose a <code>StartEngine</code> method and some properties reflecting the state of the vehicle. We'll start the engine and verify that it is actually started, whether it's got anything on the rev counter, and whether it's killing our planet in the process (zing!).</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="n">IVehicle</span>
+<span class="p">{</span>
+  <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">();</span>
+  <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">bool</span> <span class="n">IsPolluting</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">int</span> <span class="n">RevCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Car</span> <span class="p">:</span> <span class="n">IVehicle</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">// use your imagination...
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Motorbike</span> <span class="p">:</span> <span class="n">IVehicle</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="n">IsEngineRunning</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">StartEngine</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">// use your imagination...
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Those are our classes, if rather contrived, but they'll do. Now what we need to do is write some specs for them.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_car_is_started</span>
+<span class="p">{</span>
+  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Car</span><span class="p">();</span>
+  
+  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="nf">StartEngine</span><span class="p">();</span>
+  
+  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+  
+  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+  
+  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="nf">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+  
+  <span class="k">static</span> <span class="n">Car</span> <span class="n">vehicle</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_motorbike_is_started</span>
+<span class="p">{</span>
+  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Motorbike</span><span class="p">();</span>
+  
+  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="nf">StartEngine</span><span class="p">();</span>
+  
+  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="nf">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+  
+  <span class="k">static</span> <span class="n">Motorbike</span> <span class="n">vehicle</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Those are our specs, there's not much in there but already you can see that we've got duplication. Our two contexts contain identical specs, they're the same in what they're verifying, the only difference is the vehicle instance. This is where behaviours can come in handy.</p>
+
+<p>With behaviours we can extract the specs and make them reusable. Lets do that.</p>
+
+<p>Create a class for your behaviour and adorn it with the <code>Behaviors</code> attribute &mdash; this ensures MSpec recognises your class as a behaviour definition and not just any old class &mdash; then move your specs into it.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="na">[Behaviors]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">VehicleThatHasBeenStartedBehaviors</span>
+<span class="p">{</span>
+  <span class="k">protected</span> <span class="k">static</span> <span class="n">IVehicle</span> <span class="n">vehicle</span><span class="p">;</span>
+  
+  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_have_a_running_engine</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsEngineRunning</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_be_polluting_the_atmosphere</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">IsPolluting</span><span class="p">.</span><span class="nf">ShouldBeTrue</span><span class="p">();</span>
+
+  <span class="n">It</span> <span class="n">should_be_idling</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="n">RevCount</span><span class="p">.</span><span class="nf">ShouldBeBetween</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>We've now got our specs in the behaviour, and have defined a field for the vehicle instance itself (it won't compile otherwise). This is our behaviour complete, it defines a set of specifications that verify that a particular behaviour.</p>
+
+<p>Lets hook that behaviour into our contexts from before:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_car_is_started</span>
+<span class="p">{</span>
+  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Car</span><span class="p">();</span>
+  
+  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="nf">StartEngine</span><span class="p">();</span>
+  
+  <span class="n">Behaves_like</span><span class="p">&lt;</span><span class="n">VehicleThatHasBeenStartedBehaviors</span><span class="p">&gt;</span> <span class="n">a_started_vehicle</span><span class="p">;</span>
+  
+  <span class="k">protected</span> <span class="k">static</span> <span class="n">Car</span> <span class="n">vehicle</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">when_a_motorbike_is_started</span>
+<span class="p">{</span>
+  <span class="n">Establish</span> <span class="n">context</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Motorbike</span><span class="p">();</span>
+  
+  <span class="n">Because</span> <span class="n">of</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span>
+    <span class="n">vehicle</span><span class="p">.</span><span class="nf">StartEngine</span><span class="p">();</span>
+  
+  <span class="n">Behaves_like</span><span class="p">&lt;</span><span class="n">VehicleThatHasBeenStartedBehaviors</span><span class="p">&gt;</span> <span class="n">a_started_vehicle</span><span class="p">;</span>
+  
+  <span class="k">protected</span> <span class="k">static</span> <span class="n">Motorbike</span> <span class="n">vehicle</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>We've now put to use the <code>Behaves_like</code> feature, which references our behaviour class and imports the specs into the current context. Now when you run your specs, the specs from our behaviour are imported and run in each context. We don't need to assign anything to that field, just defining it is enough; the name you choose for the field is what's used by MSpec as the description for what your class is behaving like. In our case this is translated roughly to <em>"when a motorbike is started it behaves like a started vehicle"</em>.</p>
+
+<p>There are a couple of things you need to be aware of to get this to work: your fields must be <code>protected</code>, both in the behaviour and the contexts; and the fields must have identical names. If you don't get these two correct your behaviour won't be hooked up properly. It's also good to know that the fields <strong>do not</strong> need to have the same type, as long as the value from your context is assignable to the field in the behaviour then you're good; this is key to defining reusable specs for classes that share a sub-set of functionality.</p>
+
+<p>In short, behaviours are an excellent way of creating reusable specs for shared functionality, without the need to create complex inheritance structures. It's not a feature you should use lightly, as it can greatly reduce the readability of your specs, but it is a good feature if you've got a budding spec explosion nightmare on your hands.</p>
+
+ <a class="read-more" href="/writings/behaviours-in-mspec">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2010-01-22">
+                22 Jan 2010
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/gits-guts-merging-and-rebasing">Git's guts: Merging and rebasing</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2009/11/27/git-guts-merging-and-rebasing.aspx">Los Techies</a></blockquote>
+
+<p>Here we go again, explaining the internals of Git with the intention of helping you understand what you're doing day-to-day. Last time I covered <a href="/writings/gits-guts-branches-head-and-fast-forwards">branches, HEAD, and fast-forwarding</a>. Today we'll dive into the guts of merging and rebasing.</p>
+
+<h3>Merging branches</h3>
+
+<p>You've probably merged before. You do it when you want the changes from one branch in another. The principal is the same in Git as it is most other source control systems, but the implementation differs.</p>
+
+<p>Given the following commit structure, consisting of two branches created from the same commit, each with two commits after the branching occurred.</p>
+
+<p><img src="/images/GitGuts2_Figure1.png" alt="Figure 1" /></p>
+
+<p>When these two branches are merged together, this is the structure that results:</p>
+
+<p><img src="/images/GitGuts2_Figure2.png" alt="Figure 1" /></p>
+
+<p>The top-most commit, the red one, is a new commit made by the merge; the merge commit is what reminds Git that a merge occurred next time it's showing the history. This commit is special, as it contains multiple parent's in it's meta-data; these multiple parent's allow Git to follow the two trees of commits that constituted the branches that were merged.</p>
+
+<p>One difference in how Git handles merges compared to many other SCMs is that it preserves the commits that were made in both branches. In other systems merges are often represented as a single commit containing the squashed contents of all the commits that were made in the branch being merged in. Git doesn't do this (by default, you can tell it to if you want), and therefore preserves all the commits just as they were made; this is quite nice, as it proves incredibly useful to be able to track the origin of changes beyond the point of a merge.</p>
+
+<p>When you merge two branches, it's interesting to know that none of the commits are altered in the process. Just bare this in mind for now, I'll explain why this is good to know later.</p>
+
+<p>After a merge, if you were to view the history, you'd see it shown like the previous example, commits in chronological order; the feature branch commits are interspersed between the master commits.</p>
+
+<p><img src="/images/GitGuts2_Figure2.png" alt="Figure 1" /></p>
+
+<p>Yet no commits have been altered in the merge, so how are the commits in a different order? Well, they're not, Git's just showing you it in the order you expect it to be in. Internally the structure is still as below:</p>
+
+<p><img src="/images/GitGuts2_Figure3.png" alt="Figure 1" /></p>
+
+<p>The merge commit instructs Git to walk the two trees while building the history, and it just displays the results in chronological order. This makes more sense if you recall that Git commits don't hold differences like other SCM systems, instead they each contain a snapshot of the complete repository; while in another SCM the ordering of commits is vital &mdash; otherwise the diffs wouldn't build a valid file &mdash; Git is able to infer order without affecting the repository contents.</p>
+
+<p>Looking at it in commit order, you can quite easily see how Git flattens the history to be perceived as linear without ever having to touch any of the original commits.</p>
+
+<h4>What happens if there's a merge conflict?</h4>
+
+<p>We've all dealt with conflicts in merging before. They typically happen when changes are made to the same file in two branches, in a way that cannot be easily merged (two people edit the same line, for example).</p>
+
+<p>Git's commit's are immutable though, so how are the changes that you need to make to resolve these conflicts saved? Simple. The merge commit is a regular commit with some extra meta-data, and so it capable of containing changes itself; merge conflict changes are stored in the merge commit. Again, no changes necessary to the original commits.</p>
+
+<h3>Git objects, immutability, and rewriting history</h3>
+
+<p>A Git repository is comprised of objects. A file is a blob object with a name attached to it; if you have two files with the same content, that's just two names to a single blob. A directory is a tree object, which is comprised of other trees and blobs. A commit is an object that references a tree object, which is the state of the repository at the time of committing.</p>
+
+<blockquote>To read more about git objects, I'd definitely recommend you read the <a href="http://book.git-scm.com">Git community book</a>.</blockquote>
+
+<p>Git objects are immutable. To change an object after it's been created is impossible, you have to recreate the object with any changes made. Even operations that seem to modify objects actually don't; <code>commit --amend</code> is a typical example, that deletes and re-creates the commit rather than actually amending it.</p>
+
+<p>I mentioned that merges don't rewrite history, and that it's a good thing. Now I'll explain why. When you rewrite history, you do so by making changes to commits that ripple up the commit tree; when this happens, it can cause complications when others merge from you. Given a series of commits, like so:</p>
+
+<p><img src="/images/GitGuts2_Figure4.png" alt="Figure 1" /></p>
+
+<p>You then share these commits with another user.</p>
+
+<p><img src="/images/GitGuts2_Figure5.png" alt="Figure 1" /></p>
+
+<p>John now has Michael's commits in his repository; however, Michael notices he's made a typo in the first commit message, so he amends the commit message. The change in the message requires the commit be recreated. With that first commit recreated, the second commit now has an invalid parent reference, so that commit has to be recreated with the new reference; this recreation ripples it's way up the tree, recreating each commit with a new parent. Michael has completely rewritten his tree's history.</p>
+
+<p><img src="/images/GitGuts2_Figure6.png" alt="Figure 1" /></p>
+
+<p>Notice all the commit hashes have changed in Michael's repository, and John's now don't match. If Michael was then to make a new commit to his repository, and John tried to merge that change into his repository, Git would get very upset because the new commit would reference a commit that doesn't exist in John's repository.</p>
+
+<p><strong>The golden rule is:</strong> rewriting history is fine as long as the commits that will be affected haven't been made public.</p>
+
+<h3>Rebasing</h3>
+
+<p>The purpose of a rebase is the same as a merge, to bring two tree's of commits together. It differs in it's approach. Rebasing is a seriously sharp tool. Very powerful, but pretty easy to cut yourself with it.</p>
+
+<p>When you rebase one branch onto another, Git undoes any changes you've made in the target branch, brings it up to date with the changes made in the source branch, then replays your commits on top. This sounds quite strange, so I'll go over it step-by-step.</p>
+
+<p>You start with your diverged branches:</p>
+
+<p><img src="/images/GitGuts2_Figure7.png" alt="Figure 1" /></p>
+
+<p>If you then rebase feature onto master, Git undoes the changes in master.</p>
+
+<p><img src="/images/GitGuts2_Figure8.png" alt="Figure 1" /></p>
+
+<p>The history of both branches is now the same, master has been updated to reflect feature; the new commits that were made in master are now detached, floating in the repository without anything referencing them.</p>
+
+<p>The next step is to replay the master commits onto the new structure. This is done one-by-one, and can sometimes result in conflicts that will need to be handled like any merge.</p>
+
+<p>After replaying the repository will look like this:</p>
+
+<p><img src="/images/GitGuts2_Figure9.png" alt="Figure 1" /></p>
+
+<p>The master branch commits are now on the top of the stack, after the commits from the feature branch.</p>
+
+<p>You should recall that commits are immutable, and for changes to be made commits need to be recreated. A rebase is a destructive operation, as it has to rewrite commits to be able to work. In this case, the commits from feature have been unaffected, but the master commits have been assigned new parents (and thus rewritten). What's also noticeable is there's a lack of a merge commit, which isn't needed because the commits have been integrated into the tree; any conflicts are stored in the amended commits, rather than in a merge commit.</p>
+
+<p>The rewriting of commits in a rebase is what makes it a dangerous operation to perform on any branch that has already been pushed to the public (or specifically, that the changes affected by the rebase have already been pushed to the public). A rebase can cause problems upstream, like mentioned in the previous section.</p>
+
+<p>Rebase has it's place though. If you're working locally and haven't yet pushed your changes public, it can be a useful tool. Rebase can be used to pull in changes from upstream in the order that the upstream repository has them, and your local changes (that can be rewritten because you're the only one with them) can be replayed on-top; this is a really easy way to keep your repository up-to-date with an authoritative source. You can also use Rebase to manage local branches that you don't necessarily want polluting the history with merge markers.</p>
+
+<h3>When to rebase and when to merge?</h3>
+
+<p>Merge when you've already made changes public, and when you want to indicate that two tree's have converged. Rebase pretty much any other time.</p>
+
+<p>That's it for this time. Same deal as last time, if you have anything you'd like me to cover I'll nail it in the next one.</p>
+
+ <a class="read-more" href="/writings/gits-guts-merging-and-rebasing">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-11-27">
+                27 Nov 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/gits-guts-branches-head-and-fast-forwards">Git's guts: Branches, HEAD, and fast-forwards</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2009/11/25/git-s-guts-branches-head-and-fast-forwards.aspx">Los Techies</a></blockquote>
+
+<p>Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I'd post some answers as a mini-series of blog posts. I'll cover some fundamentals, while trying not to retread too much ground that the fantastic <a href="http://book.git-scm.com">Git community book</a> already covers so well. Instead I'm going to talk about things that should help you understand what you and Git are doing day-to-day.</p>
+
+<h3>What's a branch?</h3>
+
+<p>I know what you're thinking. <em>"C'mon, we know what a branch is"</em>. A branch is a copy of a source tree, that's maintained separately from it's parent; that's what we perceive a branch to be, and that's how we're used to dealing with them. Sometimes they're physical copies (VSS and TFS), other times they're lightweight copies (SVN), but they're copies non-the-less. Or are they?</p>
+
+<p>Lets look at it a different way. <em>The Git way</em>.</p>
+
+<p>Git works a little differently than most other version control systems. It doesn't store changes using <a href="http://en.wikipedia.org/wiki/Delta_encoding">delta encoding</a>, where complete files are built up by stacking differences contained in each commit. Instead, in Git each commit stores a snapshot of how the repository looked when the commit occurred; a commit also contains a bit of meta-data, author, date, but more importantly a reference to the parent of the commit (the previous commit, usually).</p>
+
+<p>That's a bit weird, I know, but bare with me.</p>
+
+<p>So what is a branch? Nothing more than a pointer to a commit (with a name). There's nothing physical about it, nothing is created, moved, copied, nothing. A branch contains no history, and has no idea of what it consists of beyond the reference to a single commit.</p>
+
+<p>Given a stack of commits:</p>
+
+<p><img src="/images/GitGuts1_Figure1.png" alt="Figure 1" /></p>
+
+<p>The branch references the newest commit. If you were to make another commit in this branch, the branch's reference would be updated to point at the new commit.</p>
+
+<p><img src="/images/GitGuts2_Figure2.png" alt="Figure 2" /></p>
+
+<p>The history is built up by recursing over the commits through each's parent.</p>
+
+<h3>What's HEAD?</h3>
+
+<p>Now that you know what a branch is, this one is easy. <code>HEAD</code> is a reference to the latest commit in the branch you're in.</p>
+
+<p>Given these two branches:</p>
+
+<p><img src="/images/GitGuts1_Figure3.png" alt="Figure 3" /></p>
+
+<p>If you had master checked out, <code>HEAD</code> would reference <code>e34fa33</code>, the exact same commit that the master branch itself references. If you had feature checked out, <code>HEAD</code> would reference <code>dde3e1</code>. With that in mind, as both <code>HEAD</code> and a branch is just a reference to a commit, it is sometimes said that <code>HEAD</code> points to the current branch you're on; while this is not strictly true, in most circumstances it's close enough.</p>
+
+<h3>What's a fast-forward?</h3>
+
+<p>A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.</p>
+
+<p>Given the following branch setup:</p>
+
+<p><img src="/images/GitGuts1_Figure4.png" alt="Figure 4" /></p>
+
+<p>You've got both branches referencing the same commit. They've both got exactly the same history. Now commit something to feature.</p>
+
+<p><img src="/images/GitGuts1_Figure5.png" alt="Figure 5" /></p>
+
+<p>The <code>master</code> branch is still referencing <code>7ddac6c</code>, while <code>feature</code> has advanced by two commits. The <code>feature</code> branch can now be considered ahead of <code>master</code>.</p>
+
+<p>It's now quite easy to see what'll happen when Git does a fast-forward. It simply updates the <code>master</code> branch to reference the same commit that <code>feature</code> does. No changes are made to the repository itself, as the commits from <code>feature</code> already contain all the necessary changes.</p>
+
+<p>Your repository history would now look like this:</p>
+
+<p><img src="/images/GitGuts1_Figure6.png" alt="Figure 6" /></p>
+
+<h3>When doesn't a fast-forward happen?</h3>
+
+<p>Fast-forwards don't happen in situations where changes have been made in the original branch and the new branch.</p>
+
+<p><img src="/images/GitGuts1_Figure7.png" alt="Figure 7" /></p>
+
+<p>If you were to merge or rebase <code>feature</code> onto <code>master</code>, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there's no way for Git to get the commits from <code>feature</code> into <code>master</code> without changing their parent references.</p>
+
+<p>For more info on all this object malarky, I'd recommend reading the <a href="http://book.git-scm.com">Git community book</a>.</p>
+
+ <a class="read-more" href="/writings/gits-guts-branches-head-and-fast-forwards">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-11-25">
+                25 Nov 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <nav class="pagination" role="pagination">
+    
+        
+            <a class="newer-posts" href="/page2/" title="Previous Page">&laquo; Newer Posts</a>
+      
+    
+    <span class="page-number"> Page 3 of 23 </span>
+     
+        <a class="older-posts" href="/page4/" title="Next Page">Older Posts &raquo;</a>
+     
+</nav>
+
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
