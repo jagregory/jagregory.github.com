@@ -55,7 +55,7 @@
 
 <h2>Getting started with a simple example</h2>
 
-<p>Although it isn't the purpose of this post give an in-depth walkthrough of Auto Mapping, it's not out of scope for a simple example! So I'll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
+<p>Although it isn’t the purpose of this post give an in-depth walkthrough of Auto Mapping, it’s not out of scope for a simple example! So I’ll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
 
 <p>Imagine what the entities might be like for a simple shop; in-fact, let me show you.</p>
 
@@ -74,7 +74,7 @@
 </code></pre>
 </div>
 
-<p>You can't get much simpler than that. We've got a product, with an auto-incrementing primary key called <code>Id</code>, a <code>Name</code> and a <code>Price</code>. The store has some shelves it fills with products, so there's a <code>Shelf</code> entity, which has an <code>Id</code> again, and a list of the <code>Product</code>s on it; the <code>Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code>Product</code>.</p>
+<p>You can’t get much simpler than that. We’ve got a product, with an auto-incrementing primary key called <code>Id</code>, a <code>Name</code> and a <code>Price</code>. The store has some shelves it fills with products, so there’s a <code>Shelf</code> entity, which has an <code>Id</code> again, and a list of the <code>Product</code>s on it; the <code>Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code>Product</code>.</p>
 
 <blockquote>
   <p>I’m going to make the assumption here that you have <em>an existing NHibernate infrastructure</em>, if you don’t then it’s best you consult a general NHibernate walkthrough before continuing.</p>
@@ -82,66 +82,67 @@
   <p>Unless otherwise specified, any code samples are assumed to be placed with your NHibernate <code>SessionFactory</code> initialisation code.</p>
 </blockquote>
 
-<p>We're going to be using the <code>AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code>MapEntitiesFromAssemblyOf<t> method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.
+<p>We’re going to be using the <code>AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.</t></code></p>
 
-``` csharp
-AutoPersistenceModel.MapEntitiesFromAssemblyOf<product>();
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+</code></pre>
+</div>
 
-<p>That's it, you've mapped your domain... Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
+<p>That’s it, you’ve mapped your domain… Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
 
-<p>The <code>MapEntitiesFromAssemblyOf<t> method creates an instance of an <code>AutoPersistenceModel</code> that's tied to the assembly that <code>Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.
+<p>The <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method creates an instance of an <code>AutoPersistenceModel</code> that's tied to the assembly that <code>Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.</t></code></p>
 
 <p>A typical NHibernate setup looks something like this:</p>
 
-``` csharp
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAssembly(typeof(Product).Assembly)
-  .BuildSessionFactory();
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Product</span><span class="p">).</span><span class="n">Assembly</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
 <p>What we need to do is get our auto mappings in the middle of that.</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>();
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
 
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAutoMappings(autoMappings)
-  .BuildSessionFactory();
-```
+<span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
 <p>Notice the substitution of <code>AddAssembly</code> for <code>AddAutoMappings</code>. This allows us to stop NHibernate from looking for <code>hbm.xml</code> files, and use our auto mapped entities instead.</p>
 
-&gt; If you're dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code>AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.
+<blockquote>
+  <p>If you’re dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code>AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.</p>
+</blockquote>
 
-<p>We're now capable of getting NHibernate to accept our auto mapped entities, there's just one more thing we need to deal with. The auto mapper doesn't know which classes are your entities, and which ones are your services (and everything else). The setup we're using above simply maps every class in your assembly as an entity, which isn't going to be very useful; so I'll introduce one final method: <code>Where(Func&lt;Type, bool&gt;)</code>.</p>
+<p>We’re now capable of getting NHibernate to accept our auto mapped entities, there’s just one more thing we need to deal with. The auto mapper doesn’t know which classes are your entities, and which ones are your services (and everything else). The setup we’re using above simply maps every class in your assembly as an entity, which isn’t going to be very useful; so I’ll introduce one final method: <code>Where(Func&lt;Type, bool&gt;)</code>.</p>
 
 <p>The <code>Where</code> method takes a lambda expression which is used to limit types based on your own criteria. The most common usage is limiting based on a namespace, but you could also look at the type name, or anything else exposed on the <code>Type</code> object.</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>()
-  .Where(t =&gt; t.Namespace == "Storefront.Entities");
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
+</code></pre>
+</div>
 
 <p>Bringing all that together leaves us with this NHibernate setup:</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>()
-  .Where(t =&gt; t.Namespace == "Storefront.Entities");
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
 
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAutoMappings(autoMappings)
-  .BuildSessionFactory();
-```
+<span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
-<p>That's all there is to automatically mapping your domain entities. It's all a lot easier than writing out mappings, isn't it? There's much more to the auto mapping that I haven't covered here, and I hope to write about those soon. Until then, enjoy!</p>
-</product></product></product></t></code></p></product></t></code></p>
+<p>That’s all there is to automatically mapping your domain entities. It’s all a lot easier than writing out mappings, isn’t it? There’s much more to the auto mapping that I haven’t covered here, and I hope to write about those soon. Until then, enjoy!</p>
 
         </section>
 

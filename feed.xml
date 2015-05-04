@@ -6,9 +6,99 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2015 16:46:28 +1000</pubDate>
-    <lastBuildDate>Mon, 04 May 2015 16:46:28 +1000</lastBuildDate>
+    <pubDate>Mon, 04 May 2015 22:59:48 +1000</pubDate>
+    <lastBuildDate>Mon, 04 May 2015 22:59:48 +1000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Sinopia: a private NPM registry in Vagrant</title>
+        <description>&lt;p&gt;Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Or you modularise and share via git dependencies, which isn’t a great solution. You lose versioning, all the pre-publish hook loveliness, and become quite limited by where our package is being used (no preprocessors for you!).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the early days NPM wasn’t designed with multiple registries in mind, so hosting your own internal one meant either proxying/mirroring the public registry or manually adding public packages to your private registry and using it for everything. Thanks to improvements in NPM and several open-source efforts, it’s now much easier than that to host your own internal NPM registry.&lt;/p&gt;
+
+&lt;p&gt;NPM have recently &lt;a href=&quot;https://www.npmjs.com/private-modules&quot;&gt;started offering private modules&lt;/a&gt;, which looks very interesting. There’s also a pay-for &lt;a href=&quot;http://npmjs.com/enterprise#pricing&quot;&gt;Enterprise option&lt;/a&gt; from NPM which is worth thinking about once you scale.&lt;/p&gt;
+
+&lt;p&gt;If private cloud hosting isn’t your thing, the host-your-own options are worth exploring. &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;Sinopia&lt;/a&gt; is what we’ll setup.&lt;/p&gt;
+
+&lt;h2 id=&quot;running-sinopia-in-vagrant&quot;&gt;Running Sinopia in Vagrant&lt;/h2&gt;
+
+&lt;p&gt;To get a Sinopia Virtual Machine running locally there’s a few tools you need to have installed. Install &lt;a href=&quot;https://www.vagrantup.com&quot;&gt;Vagrant&lt;/a&gt; and &lt;a href=&quot;https://www.virtualbox.org&quot;&gt;VirtualBox&lt;/a&gt;, and we’ll later be using &lt;a href=&quot;http://www.ansible.com/&quot;&gt;Ansible&lt;/a&gt; to configure our machine so you should get that installed too.&lt;/p&gt;
+
+&lt;p&gt;Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant init&lt;/code&gt; to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.&lt;/p&gt;
+
+&lt;p&gt;To follow along, you can &lt;a href=&quot;/downloads/sinopia/Vagrantfile&quot;&gt;download the complete Vagrantfile&lt;/a&gt;.&lt;/p&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;The Ubuntu boxes provided by the Phusion team are a good set of boxes to start from. We’re using their 14.04 TLS box.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu-14.04-amd64-vbox&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box_url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;When Sinopia starts it will listen on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt; in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;network&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forwarded_port&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;guest: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;We also want to sync the Sinopia data directory (&lt;code class=&quot;highlighter-rouge&quot;&gt;/var/sinopia&lt;/code&gt;) to our host, so we can destroy the Virtual Machine without losing all of our registry content.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sinopia_data/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/var/sinopia&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;mount_options: &lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;%W{dmode=777 fmode=666}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;Finally, Vagrant will run Ansible on the Virtual Machine. Ansible will download and configure Sinopia using the &lt;a href=&quot;https://github.com/jagregory/sinopia-ansible&quot;&gt;sinopia-ansible&lt;/a&gt; role.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ansible&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;playbook&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;site.yml&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;p&gt;Once you’ve saved the changes to your Vagrant file, you can run: &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant up&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;You’ll see the Ansible output fly by and eventually it will complete. At this point you can point your browser at &lt;a href=&quot;http://localhost:4873&quot;&gt;http://localhost:4873&lt;/a&gt; to be greeted by Sinopia.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 14 May 2015 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/private-npm-registry</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/private-npm-registry</guid>
+        
+        
+      </item>
     
       <item>
         <title>My ever evolving development virtualisation situation</title>
@@ -223,9 +313,9 @@
         <title>Compiled Templates for Go</title>
         <description>&lt;p&gt;&lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; is a compiled templating language for &lt;a href=&quot;http://golang.org&quot;&gt;Go&lt;/a&gt;.&lt;/p&gt;
 
-&lt;!-- more --&gt;
-
 &lt;p&gt;Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don’t care. &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.&lt;/p&gt;
+
+&lt;!-- more --&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
@@ -671,23 +761,27 @@
     
       <item>
         <title>NDC 2010</title>
-        <description>&lt;a href=&quot;http://www.ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; was a huge success, if you ask me. This was largely down to the NDC team, who deserve all the praise they&#39;re getting (and much more). Unlike conferences I&#39;ve been to in the past, NDC was truely by the people, for the people. &lt;a href=&quot;http://blog.scottbellware.com&quot;&gt;Scott Bellware&lt;/a&gt; put it much better than I could, with his &lt;a href=&quot;http://blog.scottbellware.com/2010/06/praise-for-norwegian-developers.html&quot;&gt;praise for Norwegian Developers&lt;/a&gt; (and Kjersti Sandberg). Herself and the rest of the team were there because they wanted to be, not because they had to. The whole attitude surrounding this conference was one of learning, not plugging products or motives.
+        <description>&lt;p&gt;&lt;a href=&quot;http://www.ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; was a huge success, if you ask me. This was largely down to the NDC team, who deserve all the praise they’re getting (and much more). Unlike conferences I’ve been to in the past, NDC was truely by the people, for the people. &lt;a href=&quot;http://blog.scottbellware.com&quot;&gt;Scott Bellware&lt;/a&gt; put it much better than I could, with his &lt;a href=&quot;http://blog.scottbellware.com/2010/06/praise-for-norwegian-developers.html&quot;&gt;praise for Norwegian Developers&lt;/a&gt; (and Kjersti Sandberg). Herself and the rest of the team were there because they wanted to be, not because they had to. The whole attitude surrounding this conference was one of learning, not plugging products or motives.&lt;/p&gt;
 
-I could go into great detail about the individual aspects of the conference, but it&#39;s much easier to say that there&#39;s nothing I&#39;d change.
+&lt;!-- more --&gt;
 
-If there&#39;s one conference you should go to next year, make it NDC 2011.
+&lt;p&gt;I could go into great detail about the individual aspects of the conference, but it’s much easier to say that there’s nothing I’d change.&lt;/p&gt;
 
-&lt;h2&gt;My part in all this...&lt;/h2&gt;
+&lt;p&gt;If there’s one conference you should go to next year, make it NDC 2011.&lt;/p&gt;
 
-I presented on two topics at NDC; the first was an introduction to &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;, and the second an introduction and demo of &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;. Fluent NHibernate was on the Thursday, and Git the Friday. It was a great experience speaking at an event of this size, and the number of people who seemed genuinely interested in what I had to say (by either turning up to my talks, or approaching me afterwards) was quite humbling. If you&#39;re interested in seeing what I presented, the talks will be on the NDC website before too long.
+&lt;h2 id=&quot;my-part-in-all-this&quot;&gt;My part in all this…&lt;/h2&gt;
 
-&lt;blockquote&gt;The videos are becoming available at &lt;a href=&quot;http://streaming.ndc2010.no&quot;&gt;streaming.ndc2010.no&lt;/a&gt;, but they&#39;re suffering from bandwidth issues. If you do want to watch the videos, please stream them until the issues are resolved.&lt;/blockquote&gt;
+&lt;p&gt;I presented on two topics at NDC; the first was an introduction to &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;, and the second an introduction and demo of &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;. Fluent NHibernate was on the Thursday, and Git the Friday. It was a great experience speaking at an event of this size, and the number of people who seemed genuinely interested in what I had to say (by either turning up to my talks, or approaching me afterwards) was quite humbling. If you’re interested in seeing what I presented, the talks will be on the NDC website before too long.&lt;/p&gt;
 
-Due to me speaking, and also being woefully unprepared, I didn&#39;t get to see as many talks as I would&#39;ve liked &amp;mdash; regardless of how well rehearsed and prepared my talks are, it seems I always end up rewriting them an hour before I go on &amp;mdash; I did end up catching Lisa Crispin, Steve Strong, Eric Evans, Greg Young, Jon Skeet, Roy Osherove, Michael Feathers, Sebastian Lambla, and Mark Nijhof. I recommend you catch their talks online when they&#39;re published. The quality of the talks at NDC have been significantly higher than I&#39;ve seen elsewhere, and (more importantly) the technical level seems to be higher too; there was very few basic talks (a few introductions, mine included, but no pandering), but the majority were pretty in-depth. This is quite a contrast to the all-too-often &quot;Microsoft technology of the week&quot; presentations you can get at conferences.
+&lt;blockquote&gt;
+  &lt;p&gt;The videos are becoming available at &lt;a href=&quot;http://streaming.ndc2010.no&quot;&gt;streaming.ndc2010.no&lt;/a&gt;, but they’re suffering from bandwidth issues. If you do want to watch the videos, please stream them until the issues are resolved.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-Of course, a big part of any conference is what happens between (and after) the talks. Meeting other developers is a big part of why I go to these things, after all I don&#39;t get out much normally. The socialising aspect of NDC was excellent, good drinks and food was had by all (I have a good idea they did anyway, at least one place we ate refused to serve us as a group anything other than the same meal for everyone!). I can&#39;t possibly list everyone who I met while I was out there, but it was really good to meet up with some people who I&#39;ve known on Twitter for a long time; specifically Hadi Hariri, Steve Strong, Greg Young, Ben Hall, Seb Lambla, Mark Nijhof, and Rob Conery are ones that stand out to me right now.
+&lt;p&gt;Due to me speaking, and also being woefully unprepared, I didn’t get to see as many talks as I would’ve liked – regardless of how well rehearsed and prepared my talks are, it seems I always end up rewriting them an hour before I go on – I did end up catching Lisa Crispin, Steve Strong, Eric Evans, Greg Young, Jon Skeet, Roy Osherove, Michael Feathers, Sebastian Lambla, and Mark Nijhof. I recommend you catch their talks online when they’re published. The quality of the talks at NDC have been significantly higher than I’ve seen elsewhere, and (more importantly) the technical level seems to be higher too; there was very few basic talks (a few introductions, mine included, but no pandering), but the majority were pretty in-depth. This is quite a contrast to the all-too-often “Microsoft technology of the week” presentations you can get at conferences.&lt;/p&gt;
 
-NDC 2011 will be next year, and it&#39;s looking like it&#39;ll be in May this time. If there&#39;s anyone that&#39;s on the fence about going, I would whole heartedly recommend you do. Even more so, I&#39;d recommend you submit a talk of your own. It&#39;s a great way to test yourself, if nothing else. I&#39;ll definitely be going next year; hopefully I&#39;ll speak again, but if not I&#39;ll still be there. Hope to see you there!
+&lt;p&gt;Of course, a big part of any conference is what happens between (and after) the talks. Meeting other developers is a big part of why I go to these things, after all I don’t get out much normally. The socialising aspect of NDC was excellent, good drinks and food was had by all (I have a good idea they did anyway, at least one place we ate refused to serve us as a group anything other than the same meal for everyone!). I can’t possibly list everyone who I met while I was out there, but it was really good to meet up with some people who I’ve known on Twitter for a long time; specifically Hadi Hariri, Steve Strong, Greg Young, Ben Hall, Seb Lambla, Mark Nijhof, and Rob Conery are ones that stand out to me right now.&lt;/p&gt;
+
+&lt;p&gt;NDC 2011 will be next year, and it’s looking like it’ll be in May this time. If there’s anyone that’s on the fence about going, I would whole heartedly recommend you do. Even more so, I’d recommend you submit a talk of your own. It’s a great way to test yourself, if nothing else. I’ll definitely be going next year; hopefully I’ll speak again, but if not I’ll still be there. Hope to see you there!&lt;/p&gt;
 </description>
         <pubDate>Tue, 22 Jun 2010 00:00:00 +1000</pubDate>
         <link>http://www.jagregory.com//writings/ndc-2010</link>
@@ -706,50 +800,31 @@ NDC 2011 will be next year, and it&#39;s looking like it&#39;ll be in May this t
     
       <item>
         <title>Speaking engagements in 2010</title>
-        <description>In an attempt to get out of my shell more this year, I&#39;ve taken up speaking (at conferences, not just in general). First came my &lt;a href=&quot;http://jagregory.com/writings/git-e-van-recording/&quot;&gt;Git E-VAN&lt;/a&gt;, then came &lt;a href=&quot;http://fiesta.lostechies.com/&quot;&gt;Pablo&#39;s Fiesta&lt;/a&gt;, so what else have I got lined up this year?
+        <description>&lt;p&gt;In an attempt to get out of my shell more this year, I’ve taken up speaking (at conferences, not just in general). First came my &lt;a href=&quot;/writings/git-e-van-recording/&quot;&gt;Git E-VAN&lt;/a&gt;, then came &lt;a href=&quot;http://fiesta.lostechies.com/&quot;&gt;Pablo’s Fiesta&lt;/a&gt;, so what else have I got lined up this year?&lt;/p&gt;
 
-&lt;strong&gt;24&lt;sup&gt;th&lt;/sup&gt; April&lt;/strong&gt;: &lt;a href=&quot;http://codingday.org/&quot;&gt;Irish Open Spaces Coding Day II&lt;/a&gt; in Dublin, where I&#39;ll be speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;.
+&lt;!-- more --&gt;
 
-&lt;strong&gt;16&lt;sup&gt;th&lt;/sup&gt;-18&lt;sup&gt;th&lt;/sup&gt; June&lt;/strong&gt;: &lt;a href=&quot;http://ndc2010.no&quot; title=&quot;Norwegian Developers Conference 2010&quot;&gt;NDC 2010&lt;/a&gt; in Oslo, speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt; and DVCS with Git.
+&lt;p&gt;&lt;strong&gt;24&lt;sup&gt;th&lt;/sup&gt; April&lt;/strong&gt;: &lt;a href=&quot;http://codingday.org/&quot;&gt;Irish Open Spaces Coding Day II&lt;/a&gt; in Dublin, where I’ll be speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;.&lt;/p&gt;
 
-The abstracts for my talks can be found below. If you&#39;re interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email (&lt;a href=&quot;mailto:james@jagregory.com&quot;&gt;james@jagregory.com&lt;/a&gt;). You can see my availability on my &lt;a href=&quot;http://www.google.com/calendar/embed?src=mtbk7g2u13e2j7s1u8p0flitho@group.calendar.google.com&amp;ctz=Europe/London&amp;gsessionid=GBDJzqgaRWqAze87fNda9Q&quot;&gt;speaking calendar&lt;/a&gt;.
+&lt;p&gt;&lt;strong&gt;16&lt;sup&gt;th&lt;/sup&gt;-18&lt;sup&gt;th&lt;/sup&gt; June&lt;/strong&gt;: &lt;a href=&quot;http://ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; in Oslo, speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt; and DVCS with Git.&lt;/p&gt;
 
-&lt;h3&gt;Fluent NHibernate&lt;/h3&gt;
+&lt;p&gt;The abstracts for my talks can be found below. If you’re interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email (&lt;a href=&quot;&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#106;&amp;#097;&amp;#109;&amp;#101;&amp;#115;&amp;#064;&amp;#106;&amp;#097;&amp;#103;&amp;#114;&amp;#101;&amp;#103;&amp;#111;&amp;#114;&amp;#121;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&quot;&gt;&amp;#106;&amp;#097;&amp;#109;&amp;#101;&amp;#115;&amp;#064;&amp;#106;&amp;#097;&amp;#103;&amp;#114;&amp;#101;&amp;#103;&amp;#111;&amp;#114;&amp;#121;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;).&lt;/p&gt;
 
-An introduction and overview to object⁄relational mapping using Fluent NHibernate. See how Fluent NHibernate can help you map your domain with the least amount of effort, how you can remain flexible with your database, and how to drive your design through convention–over–configuration; all without writing a single line of XML.
+&lt;h2 id=&quot;fluent-nhibernate&quot;&gt;Fluent NHibernate&lt;/h2&gt;
 
-The talk is an introduction to Fluent NHibernate for those that aren&#39;t familiar with it, and assumes some NHibernate experience and is for .Net developers primarily. The goal is to show people how low–impact NHibernate can be with Fluent NHibernate, and how it can actually speed up development in rapid–change environments.
+&lt;p&gt;An introduction and overview to object⁄relational mapping using Fluent NHibernate. See how Fluent NHibernate can help you map your domain with the least amount of effort, how you can remain flexible with your database, and how to drive your design through convention–over–configuration; all without writing a single line of XML.&lt;/p&gt;
 
-I&#39;ll cover an overview of what Fluent NHibernate is, the various parts of it (the fluent interface, the conventions, and the auto–mappings, and the configuration aspect), then expand on how these features can be utilised to improve your NHibernate experience and simplify your development process.
+&lt;p&gt;The talk is an introduction to Fluent NHibernate for those that aren’t familiar with it, and assumes some NHibernate experience and is for .Net developers primarily. The goal is to show people how low–impact NHibernate can be with Fluent NHibernate, and how it can actually speed up development in rapid–change environments.&lt;/p&gt;
 
-&lt;h3&gt;Introduction to Git&lt;/h3&gt;
+&lt;p&gt;I’ll cover an overview of what Fluent NHibernate is, the various parts of it (the fluent interface, the conventions, and the auto–mappings, and the configuration aspect), then expand on how these features can be utilised to improve your NHibernate experience and simplify your development process.&lt;/p&gt;
 
-An introduction to distributed version control using Git, and how your VCS should work with you and not against you. How DVCS can completely alter your development process, streamline it, and help you produce better software, faster. Covering how local repositories speed up your development, multiple authoritative sources, distributed teams, multiple workflows, and some of the more distinct features of Git. With experiences from an OSS team on how the migration from SVN to Git has helped the project and changed how the team works (Fluent NHibernate).
+&lt;h2 id=&quot;introduction-to-git&quot;&gt;Introduction to Git&lt;/h2&gt;
+
+&lt;p&gt;An introduction to distributed version control using Git, and how your VCS should work with you and not against you. How DVCS can completely alter your development process, streamline it, and help you produce better software, faster. Covering how local repositories speed up your development, multiple authoritative sources, distributed teams, multiple workflows, and some of the more distinct features of Git. With experiences from an OSS team on how the migration from SVN to Git has helped the project and changed how the team works (Fluent NHibernate).&lt;/p&gt;
 </description>
         <pubDate>Wed, 31 Mar 2010 00:00:00 +1100</pubDate>
         <link>http://www.jagregory.com//writings/speaking-engagements-2010</link>
         <guid isPermaLink="true">http://www.jagregory.com//writings/speaking-engagements-2010</guid>
-        
-        <category>Speaking</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Git E-VAN recording</title>
-        <description>&lt;p&gt;Last monday (8th of Feb) I did an &lt;a href=&quot;http://jagregory.com/writings/git-e-van/&quot;&gt;E-VAN on Git&lt;/a&gt;; an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn’t &lt;em&gt;hear&lt;/em&gt; anyone complaining.&lt;/p&gt;
-
-&lt;p&gt;The talk was recorded, so if you haven’t already seen it then you can do so at your own leisure.&lt;/p&gt;
-
-&lt;p&gt;The video is up on the &lt;a href=&quot;http://vimeo.com/user1286822&quot;&gt;E-VAN’s Vimeo account&lt;/a&gt;, specifically &lt;a href=&quot;http://vimeo.com/9324683&quot; title=&quot;Git E-VAN recording&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;object width=&quot;600&quot; height=&quot;450&quot;&gt;&lt;param name=&quot;allowfullscreen&quot; value=&quot;true&quot; /&gt;&lt;param name=&quot;allowscriptaccess&quot; value=&quot;always&quot; /&gt;&lt;param name=&quot;movie&quot; value=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; /&gt;&lt;embed src=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; type=&quot;application/x-shockwave-flash&quot; allowfullscreen=&quot;true&quot; allowscriptaccess=&quot;always&quot; width=&quot;600&quot; height=&quot;450&quot; /&gt;&lt;/object&gt;
-</description>
-        <pubDate>Wed, 17 Feb 2010 00:00:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/git-e-van-recording</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/git-e-van-recording</guid>
-        
-        <category>Git</category>
         
         <category>Speaking</category>
         

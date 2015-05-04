@@ -52,6 +52,127 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-conventions-rewrite">Fluent NHibernate: Conventions Rewrite</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I’ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+
+<p><strong>So why have I rewritten conventions?</strong> Our original implementation was simple, but not really maintainable into the future. It was a single class that was a major violation of separation of concerns, and it just kept growing and growing. It didn’t gracefully degrade either; if we didn’t have the exact convention you needed it was tough luck, there was very little you could do short of modifying the code yourself.</p>
+
+<p>Our original design worked something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">WithConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">conventions</span><span class="p">.</span><span class="n">TableName</span> <span class="p">=</span> <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">"Table"</span><span class="p">;</span>
+  <span class="n">conventions</span><span class="p">.</span><span class="n">DefaultLazy</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>As you can see, it’s a fairly simple design. Lambda functions were set that got called in various places throughout the mapping generation cycle. It was a good design for simple scenarios; however, when you start overriding more conventions, and introducing logic into them, it can quickly become a massive ball of mud. So while there was an initial simplicity to it, that simplicity was quickly lost if you were trying to do anything clever with it. This is another thing that the rewrite aims to solve.</p>
+
+<p><strong>So how have things changed?</strong> The ability to define conventions inline is gone, for starters. Instead what you have is a series of interfaces of varying degrees of granularity; any classes implementing any of the interfaces will be automagically hooked into the mapping generation cycle. What this equates to is you’ll have a folder/namespace in your projects dedicated to conventions, each class making an alteration to the conventions when it’s called. As each convention is an interface, it means you can implement multiples of them in a single class, which allows you to group common conventions into a single class if you desire.</p>
+
+<h2 id="example_customising_the_table_name">Example: Customising the table name</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">TableNameConvention</span> <span class="p">:</span> <span class="n">IClassConvention</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Accept</span><span class="p">(</span><span class="n">IClassMap</span> <span class="k">class</span><span class="nc">Map</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// apply to all mappings
+</span>  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">Apply</span><span class="p">(</span><span class="n">IClassMap</span> <span class="k">class</span><span class="nc">Map</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// will produce table names like: tbl_Customer, tbl_Product
+</span>    <span class="k">class</span><span class="nc">Map</span><span class="p">.</span><span class="nf">WithTable</span><span class="p">(</span><span class="s">"tbl_"</span> <span class="p">+</span> <span class="k">class</span><span class="nc">Map</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This is a simple implementation of the <code>IClassConvention</code> interface, which is applied to all class mappings (hence the <code>return true</code> in <code>Accept</code>) and simply prefixes the table name with <code>tbl_</code>.</p>
+
+<h2 id="example_adding_your_conventions">Example: Adding your conventions</h2>
+
+<p>There’s one thing you need to do to get Fluent NHibernate to use your conventions, and that’s to inform the convention discovery mechanism of where it’s to search for conventions. You do this using the <code>PersistenceModel</code>s <code>CovnentionFinder</code> property, or through the <code>ConventionDiscovery</code> property through <a href="http://wiki.fluentnhibernate.org/show/FluentConfiguration">Fluent Configuration</a>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+      <span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;())</span>
+  <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>That’s all there is to it really, certainly from a users perspective anyway. The architecture is designed in such a way that you have a much greater control of the granularity of your conventions; if you need a convention we haven’t explicitly supplied, you can use the convention “above” the one you want, and implement it yourself. If you need a convention for just Bag collections (which we don’t have one for), you just need to create an implementation of <code>IHasManyConvention</code> and limit it to bags. Easy.</p>
+
+<h2 id="some_shortcuts">Some shortcuts</h2>
+
+<p>I realise that the new design is more verbose than it was originally, and if your scenario really is one that only uses one or two conventions, then the new design might be too much for you. To cater for you people, I’ve created some basic inline support. I really don’t recommend you use these unless you’re doing something <em>really</em> simple. Separation is always preferred.</p>
+
+<p>There’s the <code>ConventionBuilder</code> class which has several static properties (<code>Class</code> for example, there’s one for each convention) which allow you to create an inline convention.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">SetAttribute</span><span class="p">(</span><span class="s">"something"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">))</span>
+<span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">))</span>
+
+<span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="nf">When</span><span class="p">(</span>
+  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">PropertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span>
+  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">"Num"</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>These can be used directly in the <code>ConventionDiscovery</code> property mentioned above; it has an <code>Add</code> method that can take a params array of conventions, there’s also a <code>Setup</code> method which can be used for multiple additions.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span>
+  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">SetAttribute</span><span class="p">(</span><span class="s">"something"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)),</span>
+  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="nf">Setup</span><span class="p">(</span><span class="n">c</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">c</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;();</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">)));</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>In addition to that, there’s a limited selection of very common conventions which can be used inline. Again, I don’t advocate using these for anything complicated. If you start having logic in your conventions, or even if the lambdas end up being multi-line, I’d suggest using the full conventions. These helpers live in the <code>FluentNHibernate.Conventions.Helpers</code> namespace.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Table</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="s">"tbl_"</span> <span class="p">+</span> <span class="n">x</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span>
+<span class="n">PrimaryKey</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="s">"ID"</span><span class="p">)</span>
+<span class="n">DynamicUpdate</span><span class="p">.</span><span class="nf">AlwaysTrue</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>These can be used in the same way as the <code>ConventionBuilder</code> above.</p>
+
+<h2 id="regarding_auto_mapping">Regarding auto mapping</h2>
+
+<p>The auto mapper uses a small subset of conventions to discover various parts of your mappings. It was originally the case that these special conventions were lumped in with the rest of the conventions, even though you couldn’t use them outside of the automapper. As the old style conventions have gone, the automapper now has a separate set of conventions (they’re the same ones, just moved) that it uses. So in addition to the <code>ConventionDiscovery</code> property, the auto mapper has a <code>WithSetup</code> method that you can use to configure the auto mapping specific ones (<code>IsBaseType</code> primarily).</p>
+
+<h2 id="further_reading">Further reading</h2>
+
+<p>So this post should have given you a basic introduction to the changes I’ve made. To go further, you’re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there’s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-conventions-rewrite">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-03-11">
+                11 Mar 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Fluent NHibernate: Auto mapping, overrides and alterations</a></h2>
         </header>
         <section class="post-excerpt">
@@ -59,65 +180,64 @@
   <p><strong>Notice:</strong> This is an excerpt from the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p>
 </blockquote>
 
-<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you&#8217;re having to alter many entities.</p>
+<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you’re having to alter many entities.</p>
 
-<p>An alternative is to use an <code>IAutoMappingOverride<t>, which is an interface you can implement to override the mappings of a particular auto-mapped class.
+<p>An alternative is to use an <code>IAutoMappingOverride<t>&lt;/code&gt;, which is an interface you can implement to override the mappings of a particular auto-mapped class.</t></code></p>
 
-``` csharp
-public class PersonMappingOverride : IAutoMappingOverride<person>
-{
-  public void Override(AutoMap<person> mapping)
-  {
-  }
-}
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">PersonMappingOverride</span> <span class="p">:</span> <span class="n">IAutoMappingOverride</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">Override</span><span class="p">(</span><span class="n">AutoMap</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">mapping</span><span class="p">)</span>
+  <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>This example overrides the auto-mapping of a <code>Person</code> entity. Within the <code>Override</code> method you can perform any actions on the mapping that you can in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mappings</a>.</p>
 
-<p>To use overrides, you need to instruct your <code>AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+<p>To use overrides, you need to instruct your <code>AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> setup, but I’ll just illustrate with the <code>AutoPersistenceModel</code> on it’s own.</p>
 
-``` csharp
-AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
-  .Where(type =&gt; type.Namespace == "Entities")
-  .UseOverridesFromAssemblyOf<personmappingoverride>();
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Entities"</span><span class="p">)</span>
+  <span class="p">.</span><span class="n">UseOverridesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">PersonMappingOverride</span><span class="p">&gt;();</span>
+</code></pre>
+</div>
 
-<p>It&#8217;s the <code>UserOverridesFromAssemblyOf<t> call that instructs the <code>AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code>T</code>.
+<p>It’s the <code>UserOverridesFromAssemblyOf<t>&lt;/code&gt; call that instructs the <code>AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code>T</code>.</t></code></p>
 
 <p>These overrides are made possible with use of the configuration alteration capabilities of the <code>AutoPersistenceModel</code>. You can use these features yourself to create your own customisations, or simply to separate your configuration into logical sections.</p>
 
 <p>An alteration is an implementation of the <code>IAutoMappingAlteration</code> interface, and is a self contained piece of configuration logic that can be applied with others to an <code>AutoPersistenceModel</code> prior to any mappings being generated. These are simple to use, but very powerful.</p>
 
-``` csharp
-public class WhereAlteration : IAutoMappingAlteration
-{
-  public void Alter(AutoPersistenceModel model)
-  {
-    model.Where(type =&gt; IsMappable(type));
-  }
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">WhereAlteration</span> <span class="p">:</span> <span class="n">IAutoMappingAlteration</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">Alter</span><span class="p">(</span><span class="n">AutoPersistenceModel</span> <span class="n">model</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">model</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="nf">IsMappable</span><span class="p">(</span><span class="n">type</span><span class="p">));</span>
+  <span class="p">}</span>
 
-  private bool IsMappable(Type type)
-  {
-    // some logic
-  }
-}
-```
+  <span class="k">private</span> <span class="kt">bool</span> <span class="nf">IsMappable</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// some logic
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>The <code>Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code>IMappingOverride<t> instances and executes each one against the model.
+<p>The <code>Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code>IMappingOverride<t>&lt;/code&gt; instances and executes each one against the model.</t></code></p>
 
-<p>You need to instruct your <code>AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code>WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I&#8217;ll just illustrate with the <code>AutoPersistenceModel</code> on it&#8217;s own.</p>
+<p>You need to instruct your <code>AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code>WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I’ll just illustrate with the <code>AutoPersistenceModel</code> on it’s own.</p>
 
-``` csharp
-AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()  
-  .WithAlterations(alterations =&gt;
-    alterations.AddFromAssemblyOf<wherealteration>());
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>  
+  <span class="p">.</span><span class="nf">WithAlterations</span><span class="p">(</span><span class="n">alterations</span> <span class="p">=&gt;</span>
+    <span class="n">alterations</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">WhereAlteration</span><span class="p">&gt;());</span>
+</code></pre>
+</div>
 
 <p>The <code>WithAlterations</code> method takes a lambda action that allows you to set multiple alterations on your model; you can add single alterations with <code>Add</code>, and everything from an assembly like the above example.</p>
 
-<p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There&#8217;s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
+<p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There’s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
 
-</wherealteration></person></t></code></p></t></code></p></personmappingoverride></person></person></person></t></code></p>
  <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -136,17 +256,17 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-the-official-website">Fluent NHibernate - The official website</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>&#8220;Documentation? What documentation!&#8221; I hear you say. Yes, Fluent NHibernate is not best known for it&#8217;s abundance of documentation. I know.</p>
+            <p>“Documentation? What documentation!” I hear you say. Yes, Fluent NHibernate is not best known for it’s abundance of documentation. I know.</p>
 
-<p>I&#8217;ve realised that over the past couple of months Fluent NHibernate has been growing in popularity, stupidly so. We&#8217;ve got new features out the bjingo, an active mailing list, and a flow of people moaning on twitter. Well I figure enough is enough, we need a proper website; googlecode is great for hosting, but it&#8217;s wiki is poor, we needed something better.</p>
+<p>I’ve realised that over the past couple of months Fluent NHibernate has been growing in popularity, stupidly so. We’ve got new features out the bjingo, an active mailing list, and a flow of people moaning on twitter. Well I figure enough is enough, we need a proper website; googlecode is great for hosting, but it’s wiki is poor, we needed something better.</p>
 
-<p style="text-align:left"><strong>Announcing the official Fluent NHibernate website:</strong> <a href="http://www.fluentnhibernate.org">http://fluentnhibernate.org</a> and it&#8217;s <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a>.</p>
+<p style="text-align:left"><strong>Announcing the official Fluent NHibernate website:</strong> <a href="http://www.fluentnhibernate.org">http://fluentnhibernate.org</a> and it’s <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a>.</p>
 
 <p>As always, comments are welcome on the <a href="http://groups.google.com/group/fluent-nhibernate">mailing list</a>. Please, no porn on the wiki just yet.</p>
 
-<p>I will be updating all my recent blog posts to point to the appropriate content on the wiki, and I would prefer if people would direct-link to the website rather than the googlecode project from now on. We&#8217;ll still be using googlecode for hosting and issue tracking, but the wiki will be cleared out.</p>
+<p>I will be updating all my recent blog posts to point to the appropriate content on the wiki, and I would prefer if people would direct-link to the website rather than the googlecode project from now on. We’ll still be using googlecode for hosting and issue tracking, but the wiki will be cleared out.</p>
 
-<p>As with any wiki, the content is not final, and not exhaustive. I'm working on it.</p>
+<p>As with any wiki, the content is not final, and not exhaustive. I’m working on it.</p>
 
  <a class="read-more" href="/writings/fluent-nhibernate-the-official-website">Read more &raquo;</a>
         </section>
@@ -198,10 +318,10 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
   <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
 </blockquote>
 
-<p>There&#8217;s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+<p>There’s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I’ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
 
 <blockquote>
-<p>I&#8217;m going to assume that you&#8217;ve got an application already set up, or you know how to structure a standard NHibernate application. If you don&#8217;t, I suggest you read up on that first.</p>
+  <p>I’m going to assume that you’ve got an application already set up, or you know how to structure a standard NHibernate application. If you don’t, I suggest you read up on that first.</p>
 </blockquote>
 
 <p>All the examples that follow are tailored to directly replace your <code>SessionFactory</code> instantiation code.</p>
@@ -224,7 +344,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="exclusively_fluent">Exclusively fluent</h2>
 
-<p>If you&#8217;re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
+<p>If you’re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -239,7 +359,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="automappings">Automappings</h2>
 
-<p>If you&#8217;re using only auto mappings, then this config is for you.</p>
+<p>If you’re using only auto mappings, then this config is for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -256,7 +376,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="mixed_fluent_mappings_and_auto_mappings">Mixed fluent mappings and auto mappings</h2>
 
-<p>If you&#8217;re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
+<p>If you’re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -278,7 +398,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="hbm_mappings">HBM mappings</h2>
 
-<p>You&#8217;ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
+<p>You’ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -293,7 +413,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="mixed_hbm_and_fluent_mappings">Mixed HBM and fluent mappings</h2>
 
-<p>You&#8217;re migrating your entities to Fluent NHibernate but haven&#8217;t quite got them all across yet - this is for you.</p>
+<p>You’re migrating your entities to Fluent NHibernate but haven’t quite got them all across yet - this is for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -311,7 +431,7 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h2 id="the_whole_shebang_fluent_auto_and_hbm_mappings">The whole shebang: fluent, auto, and hbm mappings</h2>
 
-<p>You&#8217;re a crazy fool and map a bit of everything, then this is how you&#8217;d configure it.</p>
+<p>You’re a crazy fool and map a bit of everything, then this is how you’d configure it.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -368,9 +488,9 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
 
 <h3 id="validation">Validation</h3>
 
-<p>If you forget to setup your database, or don&#8217;t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It&#8217;ll tell you whether you&#8217;ve forgot to add any entities, or not setup your database.</p>
+<p>If you forget to setup your database, or don’t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It’ll tell you whether you’ve forgot to add any entities, or not setup your database.</p>
 
-<p>That's it for now, I hope this helps to make configuring your application a little clearer.</p>
+<p>That’s it for now, I hope this helps to make configuring your application a little clearer.</p>
 
  <a class="read-more" href="/writings/fluent-nhibernate-configuring-your-application">Read more &raquo;</a>
         </section>
@@ -379,142 +499,6 @@ AutoPersistenceModel.MapEntitiesFromAssemblyOf<person>()
             
             <time class="post-date" datetime="2009-02-03">
                 03 Feb 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-<p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn&#8217;t working, what&#8217;s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
-</blockquote>
-
-<p>There&#8217;s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it&#8217;s a one-to-one they need; after all, there&#8217;s their current entity (one) and the related entity (to-one). They&#8217;re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
-
-<p>There&#8217;s also a big distinction between what&#8217;s possible in the domain, and what&#8217;s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there&#8217;s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there&#8217;s nothing in the underlying pattern to disallow it.</p>
-
-<h2 id="manytoone">Many-to-one</h2>
-
-<p>Lets have a look at what actually is a many-to-one. Here&#8217;s a small database schema and the related entity.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">AddressId</span> <span class="n">int</span> <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">Address</span><span class="p">.</span><span class="n">Id</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
-  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
-<span class="err">{</span>
-  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-<span class="err">}</span>
-</code></pre>
-</div>
-
-<p>This is a standard many-to-one relationship, many <code>Customers</code> to one <code>Address</code>; the tables are linked by the <code>AddressId</code> key in the <code>Customer</code> table. You can see how people can misinterpret this as a one-to-one relationship when designing the Customer entity; the customer has one address, so it must be a one-to-one. People forget about this scenario:</p>
-
-<table class="db-table">
-  <caption>Customer</caption>
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>AddressId</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Plumbers</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Joiners</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>Roofers</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="db-table">
-  <caption>Address</caption>
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Number</th>
-      <th>Street</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>23</td>
-      <td>Baker St.</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>47</td>
-      <td>Jefferson Ave.</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>That is, the first and third customer both reference the first address.</p>
-
-<h2 id="onetoone">One-to-one</h2>
-
-<p><strong>So what actually is a one-to-one relationship then?</strong> A one-to-one is a relationship between two tables that share a mutually exclusive primary key value.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
-  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
-<span class="err">{</span>
-  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-<span class="err">}</span>
-</code></pre>
-</div>
-
-<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It&#8217;s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
-
-<p>It&#8217;s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it&#8217;s not immediately clear from the class what kind of relationship it is.</p>
-
-<p>So just remember this: <strong>if you think you&#8217;re mapping a one-to-one, you probably aren&#8217;t!</strong> It&#8217;s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it&#8217;ll be a many-to-one you need.</p>
-
- <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-27">
-                27 Jan 2009
             </time>
         </footer>
     </article>

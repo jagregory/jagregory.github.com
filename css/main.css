@@ -196,3 +196,18 @@
     color: #008080; }
   .highlight .il {
     color: #009999; }
+
+@media only screen and (min-width: 650px) {
+  .side-by-side {
+    display: flex; }
+    .side-by-side p:first-child {
+      margin-top: 11px; }
+    .side-by-side > * {
+      width: 50%;
+      display: flex;
+      flex-direction: column; }
+      .side-by-side > *.highlighter-rouge {
+        flex: 1;
+        font-size: 1.45rem; }
+      .side-by-side > *:last-child {
+        margin-left: 2rem; } }

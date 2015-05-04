@@ -458,7 +458,7 @@ margin on the iframe, cause it breaks stuff. */
 /* ==========================================================================
    3. Utilities - These things get used a lot
    ========================================================================== */
-/* Clears shit */
+/* Clears */
 .clearfix:before,
 .clearfix:after {
   content: " ";
@@ -470,7 +470,7 @@ margin on the iframe, cause it breaks stuff. */
 .clearfix {
   *zoom: 1; }
 
-/* Hides shit */
+/* Hides */
 .hidden {
   text-indent: -9999px;
   visibility: hidden;
@@ -480,7 +480,7 @@ margin on the iframe, cause it breaks stuff. */
 .inner {
   position: relative;
   width: 80%;
-  max-width: 710px;
+  max-width: 1200px;
   margin: 0 auto; }
 
 /* Centres vertically yo. (IE8+) */
@@ -539,6 +539,10 @@ margin on the iframe, cause it breaks stuff. */
   color: #fff;
   -webkit-animation: none;
   animation: none; }
+
+.home-template .post {
+  width: 80%;
+  max-width: 710px; }
 
 /* Put a semi-opaque radial gradient behind the icon to make it more visible
    on photos which happen to have a light background. */
@@ -706,7 +710,7 @@ margin on the iframe, cause it breaks stuff. */
 .post {
   position: relative;
   width: 80%;
-  max-width: 710px;
+  max-width: 1200px;
   margin: 4rem auto;
   padding-bottom: 4rem;
   border-bottom: #EBF2F6 1px solid;
@@ -1130,7 +1134,7 @@ body:not(.post-template) .post-title {
 .pagination {
   position: relative;
   width: 80%;
-  max-width: 710px;
+  max-width: 1200px;
   margin: 4rem auto;
   font-family: "Open Sans", sans-serif;
   font-size: 1.3rem;
@@ -1578,7 +1582,3 @@ body:not(.post-template) .post-title {
   60% {
     -webkit-transform: translateY(-5px) rotate(-90deg);
     transform: translateY(-5px) rotate(-90deg); } }
-/* ==========================================================================
-   End of file. Animations should be the last thing here. Do not add stuff
-   below this point, or it will probably fuck everything up.
-   ========================================================================== */

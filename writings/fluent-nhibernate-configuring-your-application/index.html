@@ -43,10 +43,10 @@
   <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
 </blockquote>
 
-<p>There&#8217;s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+<p>There’s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I’ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
 
 <blockquote>
-<p>I&#8217;m going to assume that you&#8217;ve got an application already set up, or you know how to structure a standard NHibernate application. If you don&#8217;t, I suggest you read up on that first.</p>
+  <p>I’m going to assume that you’ve got an application already set up, or you know how to structure a standard NHibernate application. If you don’t, I suggest you read up on that first.</p>
 </blockquote>
 
 <p>All the examples that follow are tailored to directly replace your <code>SessionFactory</code> instantiation code.</p>
@@ -69,7 +69,7 @@
 
 <h2 id="exclusively_fluent">Exclusively fluent</h2>
 
-<p>If you&#8217;re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
+<p>If you’re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -84,7 +84,7 @@
 
 <h2 id="automappings">Automappings</h2>
 
-<p>If you&#8217;re using only auto mappings, then this config is for you.</p>
+<p>If you’re using only auto mappings, then this config is for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -101,7 +101,7 @@
 
 <h2 id="mixed_fluent_mappings_and_auto_mappings">Mixed fluent mappings and auto mappings</h2>
 
-<p>If you&#8217;re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
+<p>If you’re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -123,7 +123,7 @@
 
 <h2 id="hbm_mappings">HBM mappings</h2>
 
-<p>You&#8217;ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
+<p>You’ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -138,7 +138,7 @@
 
 <h2 id="mixed_hbm_and_fluent_mappings">Mixed HBM and fluent mappings</h2>
 
-<p>You&#8217;re migrating your entities to Fluent NHibernate but haven&#8217;t quite got them all across yet - this is for you.</p>
+<p>You’re migrating your entities to Fluent NHibernate but haven’t quite got them all across yet - this is for you.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -156,7 +156,7 @@
 
 <h2 id="the_whole_shebang_fluent_auto_and_hbm_mappings">The whole shebang: fluent, auto, and hbm mappings</h2>
 
-<p>You&#8217;re a crazy fool and map a bit of everything, then this is how you&#8217;d configure it.</p>
+<p>You’re a crazy fool and map a bit of everything, then this is how you’d configure it.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
   <span class="p">.</span><span class="nf">Database</span><span class="p">(</span><span class="n">SQLiteConfiguration</span><span class="p">.</span><span class="n">Standard</span><span class="p">.</span><span class="n">InMemory</span><span class="p">)</span>
@@ -213,9 +213,9 @@
 
 <h3 id="validation">Validation</h3>
 
-<p>If you forget to setup your database, or don&#8217;t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It&#8217;ll tell you whether you&#8217;ve forgot to add any entities, or not setup your database.</p>
+<p>If you forget to setup your database, or don’t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It’ll tell you whether you’ve forgot to add any entities, or not setup your database.</p>
 
-<p>That's it for now, I hope this helps to make configuring your application a little clearer.</p>
+<p>That’s it for now, I hope this helps to make configuring your application a little clearer.</p>
 
         </section>
 

@@ -66,18 +66,21 @@
 
 <dl>
   <dt>Common Object Types:</dt>
-  <dd><code>P</code> - Stored Procedure</dd>
-  <dd><code>U</code> - User Table</dd>
-  <dd><code>FN</code> - User-Defined Function</dd>
-</dl>
+  <dd>
+    <p><code>P</code> - Stored Procedure&lt;/dd&gt;</p>
+    <dd>
+      <p><code>U</code> - User Table&lt;/dd&gt;</p>
+      <dd>
+        <p><code>FN</code> - User-Defined Function&lt;/dd&gt;
+&lt;/dl&gt;</p>
 
-<p>Thanks to this little function, you can now almost match the simplicity of MySQL.</p>
+        <p>Thanks to this little function, you can now almost match the simplicity of MySQL.</p>
 
-<h2 id="and-now-the-code">…and now the code</h2>
+        <h2 id="and-now-the-code">…and now the code</h2>
 
-<h3 id="sql-server-2000">SQL Server 2000</h3>
+        <h3 id="sql-server-2000">SQL Server 2000</h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">dbo</span><span class="p">.</span><span class="n">ObjectExists</span><span class="p">(</span><span class="o">@</span><span class="k">Object</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="o">@</span><span class="k">Type</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="k">RETURNS</span> <span class="n">BIT</span>
+        <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">dbo</span><span class="p">.</span><span class="n">ObjectExists</span><span class="p">(</span><span class="o">@</span><span class="k">Object</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="o">@</span><span class="k">Type</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="k">RETURNS</span> <span class="n">BIT</span>
 <span class="k">AS</span>
 <span class="k">BEGIN</span>
   <span class="k">DECLARE</span> <span class="o">@</span><span class="k">Exists</span> <span class="n">BIT</span>
@@ -88,11 +91,11 @@
   <span class="k">RETURN</span> <span class="o">@</span><span class="k">Exists</span>
 <span class="k">END</span>
 </code></pre>
-</div>
+        </div>
 
-<h3 id="sql-server-2005">SQL Server 2005</h3>
+        <h3 id="sql-server-2005">SQL Server 2005</h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">dbo</span><span class="p">.</span><span class="n">ObjectExists</span><span class="p">(</span><span class="o">@</span><span class="k">Object</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="o">@</span><span class="k">Type</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="k">RETURNS</span> <span class="n">BIT</span>
+        <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">dbo</span><span class="p">.</span><span class="n">ObjectExists</span><span class="p">(</span><span class="o">@</span><span class="k">Object</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="o">@</span><span class="k">Type</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="k">RETURNS</span> <span class="n">BIT</span>
 <span class="k">AS</span>
 <span class="k">BEGIN</span>
   <span class="k">DECLARE</span> <span class="o">@</span><span class="k">Exists</span> <span class="n">BIT</span>
@@ -103,7 +106,11 @@
   <span class="k">RETURN</span> <span class="o">@</span><span class="k">Exists</span>
 <span class="k">END</span>
 </code></pre>
-</div>
+        </div>
+      </dd>
+    </dd>
+  </dd>
+</dl>
 
         </section>
 

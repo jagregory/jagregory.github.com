@@ -52,6 +52,165 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Fluent NHibernate: Auto Mapping Type Conventions</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>I’ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I’ll cover now.</p>
+
+<p>We’re going to use the same domain as before, but with a few extensions.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>  
+<span class="p">{</span>  
+  <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>  
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="n">ReplenishmentDay</span> <span class="n">ReplenishmentDay</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>  
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Shelf</span>  
+<span class="p">{</span>  
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>  
+  <span class="k">public</span> <span class="k">virtual</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">Products</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>  
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDay</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Monday</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="s">"mon"</span><span class="p">);</span>
+  <span class="cm">/* ... */</span>
+  <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Sunday</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="s">"sun"</span><span class="p">);</span>
+  
+  <span class="k">private</span> <span class="kt">string</span> <span class="n">day</span><span class="p">;</span>
+  
+  <span class="k">private</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="kt">string</span> <span class="n">day</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">day</span> <span class="p">=</span> <span class="n">day</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>We’ve extended our domain with a <code>Description</code> and a <code>ReplenishmentDay</code> for the <code>Product</code>; the replenishment day is represented by a type-safe enum (using the <a href="http://www.javacamp.org/designPattern/enum.html">type-safe enum pattern</a>). Also there’s a <code>Description</code> against the <code>Shelf</code> too (not sure why you’d have a description of a shelf, but hey, that’s customers for you). These changes are mapped against the following schema:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
+  <span class="n">ProductId</span> <span class="n">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">250</span><span class="p">),</span>
+  <span class="n">Description</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span>
+  <span class="n">Price</span> <span class="n">decimal</span><span class="p">,</span>
+  <span class="n">RepOn</span> <span class="n">int</span><span class="p">,</span> 
+  <span class="n">Shelf_FK</span> <span class="n">int</span> <span class="k">foreign</span> <span class="k">key</span>
+<span class="p">)</span>
+
+<span class="k">table</span> <span class="n">Shelf</span> <span class="p">(</span>
+  <span class="n">ShelfId</span> <span class="n">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+  <span class="n">Description</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Now, if you’ve been following along you’ll remember that we made all strings default to 250; and yet the new description columns are 2000 characters long. The customer has stipulated that all descriptions of anything in the domain will always be 2000 or less characters, so lets map that without affecting our other rule for strings.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">autoMappings</span>
+  <span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">convention</span><span class="p">.</span><span class="nf">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="nf">DescriptionTypeConvention</span><span class="p">());</span>
+    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+
+    <span class="c1">// other conventions
+</span>  <span class="p">});</span>
+</code></pre>
+</div>
+
+<p>We’re using the Fluent NHibernate’s <code>ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code>AddTypeConvention</code> method takes a <code>ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code>string</code> property, and only for ones that are called “Description”, lets see how the <code>DescriptionTypeConvention</code> is declared.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">DescriptionTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">propertyMapping</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">!=</span> <span class="s">"Description"</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="n">propertyMapping</span><span class="p">.</span><span class="nf">WithLengthOf</span><span class="p">(</span><span class="m">2000</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>It’s fairly expressive of what it does, but I’ll cover it for completeness. The <code>ITypeConvention</code> specifies two methods: <code>bool CanHandle(Type)</code> and <code>void AlterMap(IProperty)</code>. <code>CanHandle</code> should be implemented to return <code>true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it’s ancestry, but in our case we just check whether it’s a string. <code>AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code>CanHandle</code> returns <code>true</code> for. We’ve implemented <code>AlterMap</code> to firstly check if the property is called “Description” (if it isn’t, we do nothing) and then alter the length of the property. Simple really.</p>
+
+<p>With a simple implementation like this, we’re able to map every Description property (that’s a <code>string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
+
+<h2 id="iusertype_support">IUserType support</h2>
+
+<p>The other alteration to our domain was the addition of the <code>ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it’s stored in an <code>int</code> column, which obviously doesn’t match our type; and secondly the column is called <code>RepOn</code>, which we mustn’t change. We’re going to utilise NHibernate’s <code>IUserType</code> to handle this column.</p>
+
+<blockquote>
+  <p>For the sake of this example we’re going to assume you’ve got an <code>IUserType</code> called <code>ReplenishmentDayUserType</code>, but as it’s beyond the scope of this post I won’t actually show the implementation as it can be quite lengthy. It’s best to just assume that the <code>IUserType</code> reads an <code>int</code> from the database and can convert it to a <code>ReplenishmentDay</code> instance. There’s a <a href="http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx">nice example of implementing <code>IUserType</code></a> on <a href="http://intellect.dk">Jakob Andersen</a>’s blog.</p>
+</blockquote>
+
+<p>So how do we tell Fluent NHibernate to use an <code>IUserType</code> instead of the specified type? Easy, with another <code>ITypeConvention</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">autoMappings</span>
+  <span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">convention</span><span class="p">.</span><span class="nf">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="nf">DescriptionTypeConvention</span><span class="p">());</span>
+    <span class="n">convention</span><span class="p">.</span><span class="nf">AddTypeConvention</span><span class="p">(</span><span class="k">new</span> <span class="nf">ReplenishmentDayTypeConvention</span><span class="p">());</span>
+    <span class="n">convention</span><span class="p">.</span><span class="n">DefaultStringLength</span> <span class="p">=</span> <span class="m">250</span><span class="p">;</span>
+
+    <span class="c1">// other conventions
+</span>  <span class="p">});</span>
+</code></pre>
+</div>
+
+<p>Here’s how our new <code>ReplenishmentDayTypeConvention</code> looks:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDayTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanHandle</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">ReplenishmentDay</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">AlterMap</span><span class="p">(</span><span class="n">IProperty</span> <span class="n">propertyMapping</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">propertyMapping</span>
+      <span class="p">.</span><span class="n">CustomTypeIs</span><span class="p">&lt;</span><span class="n">ReplenishmentDayUserType</span><span class="p">&gt;()</span>
+      <span class="p">.</span><span class="nf">TheColumnNameIs</span><span class="p">(</span><span class="s">"RepOn"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>As you can see, we handle any <code>ReplenishmentDay</code> types, and then supply a <code>IUserType</code> using the <code>CustomTypeIs<t>()&lt;/code&gt; method, and override the column name with <code>TheColumnNameIs(string)</code>. Again, easy!</t></code></p>
+
+<p>So that’s it, with those conventions we’re able to keep our standard rule that all strings should be 250 characters or less, unless they’re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code>int</code> in the database, which also has a custom column name.</p>
+
+<p>Next time: How to override conventions on an entity-by-entity basis.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-11">
+                11 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-entity-conventions">Fluent NHibernate: Auto Mapping Entity Conventions</a></h2>
         </header>
         <section class="post-excerpt">
@@ -59,28 +218,27 @@
   <p><strong>Notice:</strong> The content in this post is out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
 </blockquote>
 
-<p>This post should be short and sweet. We want to alter our <strong>has many</strong> relationship from <code>Shelf</code> to <code>Product</code> so that it has a cascade set on it. We don&#8217;t want this to affect all one-to-many&#8217;s in our domain, so we need to do this alteration only on the <code>Shelf</code> entity rather than with an <code>ITypeConvention</code>.</p>
+<p>This post should be short and sweet. We want to alter our <strong>has many</strong> relationship from <code>Shelf</code> to <code>Product</code> so that it has a cascade set on it. We don’t want this to affect all one-to-many’s in our domain, so we need to do this alteration only on the <code>Shelf</code> entity rather than with an <code>ITypeConvention</code>.</p>
 
-<p>So how exactly do you supply conventions only for a specific entity? Easy! with <code>ForTypesThatDeriveFrom<t>(ClassMap<t>).
+<p>So how exactly do you supply conventions only for a specific entity? Easy! with <code>ForTypesThatDeriveFrom<t>(ClassMap<t>)&lt;/code&gt;.</t></t></code></p>
 
-``` csharp
-autoMappings
-  .WithConvention(convention =&gt;
-  {
-    // our conventions
-  })
-  .ForTypesThatDeriveFrom<shelf>(map =&gt;
-  {
-    map.HasMany<product>()
-      .Cascade.All();
-  });
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">autoMappings</span>
+  <span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="c1">// our conventions
+</span>  <span class="p">})</span>
+  <span class="p">.</span><span class="n">ForTypesThatDeriveFrom</span><span class="p">&lt;</span><span class="n">Shelf</span><span class="p">&gt;(</span><span class="n">map</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">map</span><span class="p">.</span><span class="n">HasMany</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+      <span class="p">.</span><span class="n">Cascade</span><span class="p">.</span><span class="nf">All</span><span class="p">();</span>
+  <span class="p">});</span>
+</code></pre>
+</div>
 
-<p>The <code>ForTypesThatDeriveFrom</code> method takes a generic parameter that&#8217;s the entity you want to customise. The parameter is an expression that allows you to alter the underlying <code>ClassMap<t> that is generated by the auto mapper. Anything you can do in the non-auto fluent mapping, you can do in this override. So for our case, we map a <code>HasMany</code> of <code>Product</code>, and specify it&#8217;s cascade; this overrides the <code>HasMany</code> that will have been generated by the auto mapper.
+<p>The <code>ForTypesThatDeriveFrom</code> method takes a generic parameter that’s the entity you want to customise. The parameter is an expression that allows you to alter the underlying <code>ClassMap<t>&lt;/code&gt; that is generated by the auto mapper. Anything you can do in the non-auto fluent mapping, you can do in this override. So for our case, we map a <code>HasMany</code> of <code>Product</code>, and specify it&#8217;s cascade; this overrides the <code>HasMany</code> that will have been generated by the auto mapper.</t></code></p>
 
-<p>That&#8217;s it. We&#8217;ve overridden the auto mapping explicitly for a specific type, while not affecting the general conventions of the system. You can do this for as many types as you need in your domain; however, baring in mind readability, it may sometimes be more appropriate to map entities explicitly using the standard fluent mapping if you find yourself overriding a lot of conventions.</p>
+<p>That’s it. We’ve overridden the auto mapping explicitly for a specific type, while not affecting the general conventions of the system. You can do this for as many types as you need in your domain; however, baring in mind readability, it may sometimes be more appropriate to map entities explicitly using the standard fluent mapping if you find yourself overriding a lot of conventions.</p>
 
-</t></code></p></product></shelf></t></t></code></p>
  <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-entity-conventions">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -107,17 +265,17 @@ autoMappings
   <p>This is a continuation of my previous <a href="/writings/fluent-nhibernate-auto-mapping-introduction/">Auto Mapping Introduction</a> post, and is based on the same revision of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>.</p>
 </blockquote>
 
-<p>Auto mappings are generated based on a set of conventions, assumptions about your environment, that mean you can map your entire domain with a miniscule amount of code. Sometimes however, the conventions we supply are not to your liking, perhaps you&#8217;re a control freak and want 100% control, or more likely you&#8217;re working against an existing database that has it&#8217;s own set of standards. You&#8217;d still like to use the auto mapper, but can&#8217;t because it maps your entities all wrong.</p>
+<p>Auto mappings are generated based on a set of conventions, assumptions about your environment, that mean you can map your entire domain with a miniscule amount of code. Sometimes however, the conventions we supply are not to your liking, perhaps you’re a control freak and want 100% control, or more likely you’re working against an existing database that has it’s own set of standards. You’d still like to use the auto mapper, but can’t because it maps your entities all wrong.</p>
 
-<p>Luckily for you we&#8217;ve thought about that, you can customise the conventions that the auto mapper uses.</p>
+<p>Luckily for you we’ve thought about that, you can customise the conventions that the auto mapper uses.</p>
 
 <blockquote>
-<p><strong>What exactly is mapped using conventions?</strong> As of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a>: Default lazy load, cacheability, string length, ids, key names, foreign key column names, table names, many-to-many table names, version column names, and a wealth of specific property, one-to-one, one-to-many, and many-to-many overrides.</p>
+  <p><strong>What exactly is mapped using conventions?</strong> As of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a>: Default lazy load, cacheability, string length, ids, key names, foreign key column names, table names, many-to-many table names, version column names, and a wealth of specific property, one-to-one, one-to-many, and many-to-many overrides.</p>
 
-<p>Although we do allow you to customise a lot of things, not everything is covered yet. If you do encounter a scenario you can&#8217;t handle, drop us a message on the <a href="http://groups.google.com/group/fluent-nhibernate">mailing list</a>, or even better: supply us a patch.</p>
+  <p>Although we do allow you to customise a lot of things, not everything is covered yet. If you do encounter a scenario you can’t handle, drop us a message on the <a href="http://groups.google.com/group/fluent-nhibernate">mailing list</a>, or even better: supply us a patch.</p>
 </blockquote>
 
-<p>We&#8217;ll continue with our store example from before, which comprised of a <code>Product</code> and a <code>Shelf</code>.</p>
+<p>We’ll continue with our store example from before, which comprised of a <code>Product</code> and a <code>Shelf</code>.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>  
 <span class="p">{</span>  
@@ -149,9 +307,9 @@ autoMappings
 </code></pre>
 </div>
 
-<p>Nothing too complicated there. The auto mapper has correctly assumed that our Ids are identity&#8217;s and are primary keys, it&#8217;s also assumed their names, the name of our foreign key to the <code>Shelf</code> table (<code>ShelfId</code>), and the length of our <code>Name</code> column.</p>
+<p>Nothing too complicated there. The auto mapper has correctly assumed that our Ids are identity’s and are primary keys, it’s also assumed their names, the name of our foreign key to the <code>Shelf</code> table (<code>ShelfId</code>), and the length of our <code>Name</code> column.</p>
 
-<p>Lets assume for the sake of this post that you&#8217;re not happy with that schema. You&#8217;re one of those people that prefers to name their primary key after the table it&#8217;s in, so our <code>Product</code> identity should be called <code>ProductId</code>; also, you like your foreign key&#8217;s to be explicitly named _FK, and your strings are always a bit longer than <code>100</code>.</p>
+<p>Lets assume for the sake of this post that you’re not happy with that schema. You’re one of those people that prefers to name their primary key after the table it’s in, so our <code>Product</code> identity should be called <code>ProductId</code>; also, you like your foreign key’s to be explicitly named _FK, and your strings are always a bit longer than <code>100</code>.</p>
 
 <p>Remember this fellow?</p>
 
@@ -161,7 +319,7 @@ autoMappings
 </code></pre>
 </div>
 
-<p>Lets update it to include some convention overrides. We&#8217;ll start with the Id name.</p>
+<p>Lets update it to include some convention overrides. We’ll start with the Id name.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
   <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
@@ -174,7 +332,7 @@ autoMappings
 </code></pre>
 </div>
 
-<p>What we did there was use the <code>WithConvention</code> method to customise the <code>Convention</code> instance that the auto mapper uses. In this case we overwrote the <code>GetPrimaryKeyNameFromType</code> function with our own lambda expression; as per our function, our primary key&#8217;s will now be generated as <code>TypeNameId</code>; which means our schema now looks like this:</p>
+<p>What we did there was use the <code>WithConvention</code> method to customise the <code>Convention</code> instance that the auto mapper uses. In this case we overwrote the <code>GetPrimaryKeyNameFromType</code> function with our own lambda expression; as per our function, our primary key’s will now be generated as <code>TypeNameId</code>; which means our schema now looks like this:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
   <span class="n">ProductId</span> <span class="n">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
@@ -190,10 +348,10 @@ autoMappings
 </div>
 
 <blockquote>
-<p>The convention functions are called against their respective mapping part for every generated entity, and the result of their execution is used to generate the mappings. The part that they work against is usually discernible from their name, or their parameters. <code>GetTableName</code> for example works against an entity <code>Type</code>, while <code>GetVersionColumnName</code> is called against every <code>PropertyInfo</code> gleaned from your entities. <em>As there is no API documentation (as of writing), it&#8217;s a matter of intellisense poking to find which conventions are applicable to what you want to override.</em></p>
+  <p>The convention functions are called against their respective mapping part for every generated entity, and the result of their execution is used to generate the mappings. The part that they work against is usually discernible from their name, or their parameters. <code>GetTableName</code> for example works against an entity <code>Type</code>, while <code>GetVersionColumnName</code> is called against every <code>PropertyInfo</code> gleaned from your entities. <em>As there is no API documentation (as of writing), it’s a matter of intellisense poking to find which conventions are applicable to what you want to override.</em></p>
 </blockquote>
 
-<p>As you can see, our primary key&#8217;s now have our desired naming convention. Lets do the other two together, as they&#8217;re so simple; we&#8217;ll override the foreign key naming, and change the default length for strings.</p>
+<p>As you can see, our primary key’s now have our desired naming convention. Lets do the other two together, as they’re so simple; we’ll override the foreign key naming, and change the default length for strings.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">autoMappings</span>
   <span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
@@ -207,7 +365,7 @@ autoMappings
 </code></pre>
 </div>
 
-<p>That&#8217;s all there is to it, when combined with the other conventions you can customise the mappings quite heavily while only adding a few lines to your auto mapping.</p>
+<p>That’s all there is to it, when combined with the other conventions you can customise the mappings quite heavily while only adding a few lines to your auto mapping.</p>
 
 <p>This is our final schema:</p>
 
@@ -224,7 +382,7 @@ autoMappings
 </code></pre>
 </div>
 
-<p>Next time: how to apply your own type conventions that apply to all properties of a specific type in your domain, and how to utilise NHibernate&#8217;s <code>IUserType</code>s.</p>
+<p>Next time: how to apply your own type conventions that apply to all properties of a specific type in your domain, and how to utilise NHibernate’s <code>IUserType</code>s.</p>
 
  <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-conventions">Read more &raquo;</a>
         </section>
@@ -260,7 +418,7 @@ autoMappings
 
 <h2>Getting started with a simple example</h2>
 
-<p>Although it isn't the purpose of this post give an in-depth walkthrough of Auto Mapping, it's not out of scope for a simple example! So I'll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
+<p>Although it isn’t the purpose of this post give an in-depth walkthrough of Auto Mapping, it’s not out of scope for a simple example! So I’ll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
 
 <p>Imagine what the entities might be like for a simple shop; in-fact, let me show you.</p>
 
@@ -279,7 +437,7 @@ autoMappings
 </code></pre>
 </div>
 
-<p>You can't get much simpler than that. We've got a product, with an auto-incrementing primary key called <code>Id</code>, a <code>Name</code> and a <code>Price</code>. The store has some shelves it fills with products, so there's a <code>Shelf</code> entity, which has an <code>Id</code> again, and a list of the <code>Product</code>s on it; the <code>Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code>Product</code>.</p>
+<p>You can’t get much simpler than that. We’ve got a product, with an auto-incrementing primary key called <code>Id</code>, a <code>Name</code> and a <code>Price</code>. The store has some shelves it fills with products, so there’s a <code>Shelf</code> entity, which has an <code>Id</code> again, and a list of the <code>Product</code>s on it; the <code>Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code>Product</code>.</p>
 
 <blockquote>
   <p>I’m going to make the assumption here that you have <em>an existing NHibernate infrastructure</em>, if you don’t then it’s best you consult a general NHibernate walkthrough before continuing.</p>
@@ -287,68 +445,68 @@ autoMappings
   <p>Unless otherwise specified, any code samples are assumed to be placed with your NHibernate <code>SessionFactory</code> initialisation code.</p>
 </blockquote>
 
-<p>We're going to be using the <code>AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code>MapEntitiesFromAssemblyOf<t> method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.
+<p>We’re going to be using the <code>AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.</t></code></p>
 
-``` csharp
-AutoPersistenceModel.MapEntitiesFromAssemblyOf<product>();
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+</code></pre>
+</div>
 
-<p>That's it, you've mapped your domain... Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
+<p>That’s it, you’ve mapped your domain… Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
 
-<p>The <code>MapEntitiesFromAssemblyOf<t> method creates an instance of an <code>AutoPersistenceModel</code> that's tied to the assembly that <code>Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.
+<p>The <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method creates an instance of an <code>AutoPersistenceModel</code> that's tied to the assembly that <code>Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.</t></code></p>
 
 <p>A typical NHibernate setup looks something like this:</p>
 
-``` csharp
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAssembly(typeof(Product).Assembly)
-  .BuildSessionFactory();
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Product</span><span class="p">).</span><span class="n">Assembly</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
 <p>What we need to do is get our auto mappings in the middle of that.</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>();
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
 
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAutoMappings(autoMappings)
-  .BuildSessionFactory();
-```
+<span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
 <p>Notice the substitution of <code>AddAssembly</code> for <code>AddAutoMappings</code>. This allows us to stop NHibernate from looking for <code>hbm.xml</code> files, and use our auto mapped entities instead.</p>
 
-&gt; If you're dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code>AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.
+<blockquote>
+  <p>If you’re dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code>AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.</p>
+</blockquote>
 
-<p>We're now capable of getting NHibernate to accept our auto mapped entities, there's just one more thing we need to deal with. The auto mapper doesn't know which classes are your entities, and which ones are your services (and everything else). The setup we're using above simply maps every class in your assembly as an entity, which isn't going to be very useful; so I'll introduce one final method: <code>Where(Func&lt;Type, bool&gt;)</code>.</p>
+<p>We’re now capable of getting NHibernate to accept our auto mapped entities, there’s just one more thing we need to deal with. The auto mapper doesn’t know which classes are your entities, and which ones are your services (and everything else). The setup we’re using above simply maps every class in your assembly as an entity, which isn’t going to be very useful; so I’ll introduce one final method: <code>Where(Func&lt;Type, bool&gt;)</code>.</p>
 
 <p>The <code>Where</code> method takes a lambda expression which is used to limit types based on your own criteria. The most common usage is limiting based on a namespace, but you could also look at the type name, or anything else exposed on the <code>Type</code> object.</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>()
-  .Where(t =&gt; t.Namespace == "Storefront.Entities");
-```
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
+</code></pre>
+</div>
 
 <p>Bringing all that together leaves us with this NHibernate setup:</p>
 
-``` csharp
-var autoMappings = AutoPersistenceModel
-  .MapEntitiesFromAssemblyOf<product>()
-  .Where(t =&gt; t.Namespace == "Storefront.Entities");
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
 
-var sessionFactory = new Configuration()
-  .AddProperty(ConnectionString, ApplicationConnectionString)
-  .AddAutoMappings(autoMappings)
-  .BuildSessionFactory();
-```
+<span class="n">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre>
+</div>
 
-<p>That's all there is to automatically mapping your domain entities. It's all a lot easier than writing out mappings, isn't it? There's much more to the auto mapping that I haven't covered here, and I hope to write about those soon. Until then, enjoy!</p>
+<p>That’s all there is to automatically mapping your domain entities. It’s all a lot easier than writing out mappings, isn’t it? There’s much more to the auto mapping that I haven’t covered here, and I hope to write about those soon. Until then, enjoy!</p>
 
-
-</product></product></product></t></code></p></product></t></code></p>
  <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-introduction">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -396,148 +554,6 @@ I can't believe I fell for a C# vs. VB argument.
             
             <time class="post-date" datetime="2009-01-08">
                 08 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-subclass-syntax-changes">Fluent NHibernate SubClass syntax changes</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I've just committed a breaking change to <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> (as of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=184" title="Revision 184">r184</a>), which I thought I'd document here for anyone interested; it's a reworking of the subclass syntax.</p>
-
-<p>Mapping multiple subclasses with the same parent wasn't a very fluent affair, and it was pretty <em>wordy</em> too. You can see a comparison of the old and new syntaxes below.</p>
-
-<h4>Before</h4>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">discriminator</span> <span class="p">=</span> <span class="n">DiscriminateSubClassesOnColumn</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">"Type"</span><span class="p">);</span>
-
-<span class="n">discriminator</span><span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;()</span>
-  <span class="p">.</span><span class="nf">IdentifiedBy</span><span class="p">(</span><span class="s">"bID"</span><span class="p">)</span>
-  <span class="p">.</span><span class="nf">MapSubClassColumns</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">BProperty</span><span class="p">);</span>
-  <span class="p">});</span>
-  
-<span class="n">discriminator</span><span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">C</span><span class="p">&gt;()</span>
-  <span class="p">.</span><span class="nf">IdentifiedBy</span><span class="p">(</span><span class="s">"cID"</span><span class="p">)</span>
-  <span class="p">.</span><span class="nf">MapSubClassColumns</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CProperty</span><span class="p">);</span>
-  <span class="p">});</span>
-</code></pre>
-</div>
-
-<h4>After</h4>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nf">DiscriminateSubClassesOnColumn</span><span class="p">(</span><span class="s">"Type"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">BProperty</span><span class="p">);</span>
-  <span class="p">})</span>
-  <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">C</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CProperty</span><span class="p">);</span>
-  <span class="p">});</span>
-</code></pre>
-</div>
-
-<p>Much nicer! The changes you can see here are:</p>
-
-<ul>
-  <li><code>DiscriminateSubClassesOnColumn</code> now assumes your discriminator is a <code>string</code> if you don't specify a type</li>
-  <li><code>SubClass</code> defaults to using the subclass type name as a discriminator value</li>
-  <li><code>IdentifiedBy</code> and <code>MapSubClassColumns</code> are now merged into <code>SubClass</code> as overloads.</li>
-</ul>
-
-<p>Nested subclasses were never really supported in Fluent NHibernate, but they were <em>hackable</em>. You could abuse <code>DiscriminateSubClassesOnColumn</code> to let you trick it into creating nested classes. This worked but it led to some really ugly mapping code (and a nasty hack in the Fluent NHibernate codebase). I've given some loving to this area and have managed to really sweeten-up the syntax.</p>
-
-<h4>Before</h4>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">DiscriminateSubClassesOnColumn</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">"Type"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;()</span>
-    <span class="p">.</span><span class="nf">IdentifiedBy</span><span class="p">(</span><span class="s">"bID"</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">MapSubClassColumns</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
-    <span class="p">{</span>
-      <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">BProperty</span><span class="p">);</span>
-      <span class="n">m</span><span class="p">.</span><span class="n">DiscriminateSubClassesOnColumn</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">"Type"</span><span class="p">)</span>
-        <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">C</span><span class="p">&gt;()</span>
-          <span class="p">.</span><span class="nf">IdentifiedBy</span><span class="p">(</span><span class="s">"cID"</span><span class="p">)</span>
-          <span class="p">.</span><span class="nf">MapSubClassColumns</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
-          <span class="p">{</span>
-            <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CProperty</span><span class="p">);</span>
-          <span class="p">});</span>
-    <span class="p">});</span>
-</code></pre>
-</div>
-
-<h4>After</h4>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nf">DiscriminateSubClassesOnColumn</span><span class="p">(</span><span class="s">"Type"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">BProperty</span><span class="p">);</span>
-    <span class="n">m</span><span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">C</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
-    <span class="p">{</span>
-      <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CProperty</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-</code></pre>
-</div>
-
-<p>The changes in this one are:</p>
-<ul>
-  <li><code>SubClass</code> can now be used within subclasses without having to reuse <code>DiscriminateSubClassesOnColumn</code></li>
-</ul>
-
-<p>All in all, these changes serve to make mapping subclasses in Fluent NHibernate a little bit neater.</p>
-
-<h2>Update</h2>
-<p>As requested, here are the domain entites that the above mappings represent.</p>
-
-<h4>Two subclasses with shared parent</h4>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">A</span>
-<span class="p">{}</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">B</span> <span class="p">:</span> <span class="n">A</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">BProperty</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">:</span> <span class="n">A</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">CProperty</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<h4>Subclass of a subclass</h4>
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">A</span>
-<span class="p">{}</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">B</span> <span class="p">:</span> <span class="n">A</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">BProperty</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">:</span> <span class="n">B</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">CProperty</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
- <a class="read-more" href="/writings/fluent-nhibernate-subclass-syntax-changes">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-05">
-                05 Jan 2009
             </time>
         </footer>
     </article>

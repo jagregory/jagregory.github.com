@@ -40,16 +40,16 @@
 
         <section class="post-content">
             <blockquote>
-<p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn&#8217;t working, what&#8217;s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
+  <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn’t working, what’s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
 </blockquote>
 
-<p>There&#8217;s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it&#8217;s a one-to-one they need; after all, there&#8217;s their current entity (one) and the related entity (to-one). They&#8217;re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
+<p>There’s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it’s a one-to-one they need; after all, there’s their current entity (one) and the related entity (to-one). They’re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
 
-<p>There&#8217;s also a big distinction between what&#8217;s possible in the domain, and what&#8217;s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there&#8217;s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there&#8217;s nothing in the underlying pattern to disallow it.</p>
+<p>There’s also a big distinction between what’s possible in the domain, and what’s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there’s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there’s nothing in the underlying pattern to disallow it.</p>
 
 <h2 id="manytoone">Many-to-one</h2>
 
-<p>Lets have a look at what actually is a many-to-one. Here&#8217;s a small database schema and the related entity.</p>
+<p>Lets have a look at what actually is a many-to-one. Here’s a small database schema and the related entity.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
   <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
@@ -151,11 +151,11 @@
 </code></pre>
 </div>
 
-<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It&#8217;s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
+<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It’s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
 
-<p>It&#8217;s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it&#8217;s not immediately clear from the class what kind of relationship it is.</p>
+<p>It’s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it’s not immediately clear from the class what kind of relationship it is.</p>
 
-<p>So just remember this: <strong>if you think you&#8217;re mapping a one-to-one, you probably aren&#8217;t!</strong> It&#8217;s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it&#8217;ll be a many-to-one you need.</p>
+<p>So just remember this: <strong>if you think you’re mapping a one-to-one, you probably aren’t!</strong> It’s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it’ll be a many-to-one you need.</p>
 
         </section>
 

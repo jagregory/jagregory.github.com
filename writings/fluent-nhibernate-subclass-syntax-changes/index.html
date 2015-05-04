@@ -39,9 +39,9 @@
         </header>
 
         <section class="post-content">
-            <p>I've just committed a breaking change to <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> (as of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=184" title="Revision 184">r184</a>), which I thought I'd document here for anyone interested; it's a reworking of the subclass syntax.</p>
+            <p>I’ve just committed a breaking change to <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> (as of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=184" title="Revision 184">r184</a>), which I thought I’d document here for anyone interested; it’s a reworking of the subclass syntax.</p>
 
-<p>Mapping multiple subclasses with the same parent wasn't a very fluent affair, and it was pretty <em>wordy</em> too. You can see a comparison of the old and new syntaxes below.</p>
+<p>Mapping multiple subclasses with the same parent wasn’t a very fluent affair, and it was pretty <em>wordy</em> too. You can see a comparison of the old and new syntaxes below.</p>
 
 <h4>Before</h4>
 
@@ -85,7 +85,7 @@
   <li><code>IdentifiedBy</code> and <code>MapSubClassColumns</code> are now merged into <code>SubClass</code> as overloads.</li>
 </ul>
 
-<p>Nested subclasses were never really supported in Fluent NHibernate, but they were <em>hackable</em>. You could abuse <code>DiscriminateSubClassesOnColumn</code> to let you trick it into creating nested classes. This worked but it led to some really ugly mapping code (and a nasty hack in the Fluent NHibernate codebase). I've given some loving to this area and have managed to really sweeten-up the syntax.</p>
+<p>Nested subclasses were never really supported in Fluent NHibernate, but they were <em>hackable</em>. You could abuse <code>DiscriminateSubClassesOnColumn</code> to let you trick it into creating nested classes. This worked but it led to some really ugly mapping code (and a nasty hack in the Fluent NHibernate codebase). I’ve given some loving to this area and have managed to really sweeten-up the syntax.</p>
 
 <h4>Before</h4>
 

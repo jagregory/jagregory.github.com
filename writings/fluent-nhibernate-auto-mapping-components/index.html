@@ -43,7 +43,7 @@
   <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.&lt;/p&gt;</p>
 </blockquote>
 
-<p>I&#8217;ve just committed a change that should allow automatic mapping of simple components; by simple, I mean components that just map properties, nothing fancy. I&#8217;ll be looking to expand this functionality in the future, but for the time being any kind of relationships aren&#8217;t supported within components. With that in mind, I&#8217;ll walk through how to automap your components.</p>
+<p>I’ve just committed a change that should allow automatic mapping of simple components; by simple, I mean components that just map properties, nothing fancy. I’ll be looking to expand this functionality in the future, but for the time being any kind of relationships aren’t supported within components. With that in mind, I’ll walk through how to automap your components.</p>
 
 <p>Lets imagine this database structure:</p>
 
@@ -81,7 +81,7 @@
 </code></pre>
 </div>
 
-<p>With this design, <code>Address</code> is actually a component, which isn&#8217;t a full entity, more of a way of providing a clean model to a normalised database structure. I&#8217;ll get started by setting up the auto-mapper.</p>
+<p>With this design, <code>Address</code> is actually a component, which isn’t a full entity, more of a way of providing a clean model to a normalised database structure. I’ll get started by setting up the auto-mapper.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
   <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
@@ -94,7 +94,7 @@
 </code></pre>
 </div>
 
-<p>That's our auto mappings integrated with NHibernate. Next we need to instruct the auto mapper in how to identify components; after the <code>Where</code> call, we can add a call to <code>WithConvention</code> which is where we'll give it a hand.</p>
+<p>That’s our auto mappings integrated with NHibernate. Next we need to instruct the auto mapper in how to identify components; after the <code>Where</code> call, we can add a call to <code>WithConvention</code> which is where we’ll give it a hand.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
 <span class="p">{</span>
@@ -116,7 +116,7 @@
 
 <p>With that, the <code>Address</code> should now be automatically mapped as a component; the auto mapper will pick up the three properties and map them as properties on the component.</p>
 
-<p>There&#8217;s one more thing, for illustrative purposes I&#8217;ve deliberately gone against Fluent NHibernate&#8217;s inbuilt convention for naming columns. By default any columns mapped in a convention will be prefixed with their property name, so <code>person.HomeAddress.Street</code> would be mapped against a column called <code>HomeAddressStreet</code>; this is my personal preference, but not what our database contains! We can control how our columns are named by altering the <code>GetComponentColumnPrefix</code> convention, like so:</p>
+<p>There’s one more thing, for illustrative purposes I’ve deliberately gone against Fluent NHibernate’s inbuilt convention for naming columns. By default any columns mapped in a convention will be prefixed with their property name, so <code>person.HomeAddress.Street</code> would be mapped against a column called <code>HomeAddressStreet</code>; this is my personal preference, but not what our database contains! We can control how our columns are named by altering the <code>GetComponentColumnPrefix</code> convention, like so:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
 <span class="p">{</span>
@@ -133,7 +133,7 @@
 <p>Magic.</p>
 
 <h4>Update:</h4>
-<p>I've updated this post to reflect some recent changes whereby the <code>GetComponentColumnPrefix</code> convention was updated to use the component property instead of the component type. This is to allow for multiple component properties on an entity that are of the same type. If you still need to use the type you can access it through the <code>PropertyInfo</code> parameter.</p>
+<p>I’ve updated this post to reflect some recent changes whereby the <code>GetComponentColumnPrefix</code> convention was updated to use the component property instead of the component type. This is to allow for multiple component properties on an entity that are of the same type. If you still need to use the type you can access it through the <code>PropertyInfo</code> parameter.</p>
 
         </section>
 

@@ -52,6 +52,26 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/gits-guts-branches-head-and-fast-forwards">Git's guts: Branches, HEAD, and fast-forwards</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I’d post some answers as a mini-series of blog posts. I’ll cover some fundamentals, while trying not to retread too much ground that the fantastic <a href="http://book.git-scm.com">Git community book</a> already covers so well. Instead I’m going to talk about things that should help you understand what you and Git are doing day-to-day.</p>
+
+ <a class="read-more" href="/writings/gits-guts-branches-head-and-fast-forwards">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-11-25">
+                25 Nov 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-10-rtm">Fluent NHibernate 1.0 RTM</a></h2>
         </header>
         <section class="post-excerpt">
@@ -59,17 +79,6 @@
 
 <p>For those of you that don't know, <a href="http://fluentnhibernate.org">Fluent NHibernate</a> is for helping you map entities with <a href="http://nhforge.org">NHibernate</a>. It's based firmly on the practice of <a href="http://en.wikipedia.org/wiki/Convention_over_configuration">convention-over-configuration</a>, and can be used in a mapping-per-class style using our <a href="http://wiki.fluentnhibernate.org/Fluent_mapping">fluent interface</a>, or let our <a href="http://wiki.fluentnhibernate.org/Auto_mapping">automapper</a> map your entities itself.</p>
 
-<p>This release introduces a few significant changes, and a lot of insignificant ones. You should refer to the <a href="http://wiki.fluentnhibernate.org/Release_notes_1.0">1.0 release notes</a> for an overview of what's changed.</p>
-
-<p>The <a href="http://wiki.fluentnhibernate.org">wiki</a> has also been upgraded to use different software which should hopefully stop people being blocked, and make it a bit more stable; the upgrade included completely rewriting all of the pages, so don't anyone say that it's out of date.</p>
-
-<p>You can get the binaries from the our <a href="http://fluentnhibernate.org/downloads">downloads page</a>, or get the source from the <a href="http://github.com/jagregory/fluent-nhibernate">github site</a>.</p>
-
-<p>Special thanks go out to the Fluent NHibernate team, Paul Batum, Hudson Akridge, Andrew Stewart, and Stuart Childs. Each of them has put in time and effort above what was asked of them, and they've all felt guilty when not contributing, which is great. Thanks also to all the testers and contributors we've had over the months. Specifically Darko Conrad, for finding about 30 separate issues with the release candidiate; Everett Muniz and his subclasses, who now has a test of his own; and Kevin Dente, for deciding to moan about our method names only <em>after</em> months of work and a release candidate. I owe everyone beers if ever I'm in your area.</p>
-
-<p>Fabio Maulo, Ayende, and the rest of the NHibernate team: Thanks for a great tool. NHibernate is a shining example of all that is good in open source in the .Net world.</p>
-
-<p>...and with that, I'm going on <a href="http://maps.google.co.uk/maps?f=d&source=s_d&saddr=Sydney&daddr=Brisbane+to:Cairns&hl=en&geocode=&mra=ls&sll=-25.656382,152.880249&sspn=1.383954,1.851196&ie=UTF8&ll=-25.522615,152.358398&spn=22.065278,29.619141&z=5">holiday</a>.</p>
 
 
  <a class="read-more" href="/writings/fluent-nhibernate-10-rtm">Read more &raquo;</a>
@@ -90,9 +99,9 @@
             <h2 class="post-title"><a href="/writings/preventing-debugger-property-evaluation-side-effects">Preventing debugger property evaluation for side-effect laden properties</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>Property getters with side-effects, now there's a controversial subject if ever I saw one. Don't do it is the rule; as with any rule though, there's generally an exception that proves it. If you're in this situation and you genuinely do have a scenario that requires a property getter to have side-effects, then there's a side-effect (ha!) that you should be aware of.</p>
+            <p>Property getters with side-effects, now there’s a controversial subject if ever I saw one. Don’t do it is the rule; as with any rule though, there’s generally an exception that proves it. If you’re in this situation and you genuinely do have a scenario that requires a property getter to have side-effects, then there’s a side-effect (ha!) that you should be aware of.</p>
 
-<p><strong>The debugger evaluates property getters when showing it's locals and autos windows.</strong> While this feature is indispensable in most cases, it plays havoc with our property-with-side-effects. What the debugger does is call the getter to present it's value in the autos window, at the same time firing our code that has a side-effect. From there you have pretty confusing behavior with code seemingly running itself.</p>
+<p><strong>The debugger evaluates property getters when showing it’s locals and autos windows.</strong> While this feature is indispensable in most cases, it plays havoc with our property-with-side-effects. What the debugger does is call the getter to present it’s value in the autos window, at the same time firing our code that has a side-effect. From there you have pretty confusing behavior with code seemingly running itself.</p>
 
 <p>My exception to the rule is mutator properties in a fluent interface. You can often find properties in fluent interfaces that when touched alter the behavior of the next method called.</p>
 
@@ -107,9 +116,9 @@
 
 <p>The Is class would contain a value tracking whether the next call would be inverted or not, and the Not property would flip that value when called.</p>
 
-<p>Now assume this, you're using <code>Is.Null(value)</code> and you set a breakpoint on it. Your autos window has expanded Is and shows the Not property, what's just happened? The debugger has now called Not and altered your state! Undesirable.</p>
+<p>Now assume this, you’re using <code>Is.Null(value)</code> and you set a breakpoint on it. Your autos window has expanded Is and shows the Not property, what’s just happened? The debugger has now called Not and altered your state! Undesirable.</p>
 
-<p><a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debuggerbrowsableattribute.aspx">DebuggerBrowsable attribute</a> to the rescue; this attribute when used with the DebuggerBrowsableState.Never parameter instructs Visual Studio to never inspect the property you apply it to. Your property won't appear in the autos or locals window, and if you expand the tree of an instance containing the property it will show up with a Browsing Disabled message; you can then force it to evaluate the property, but at least it doesn't do it automatically.</p>
+<p><a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debuggerbrowsableattribute.aspx">DebuggerBrowsable attribute</a> to the rescue; this attribute when used with the DebuggerBrowsableState.Never parameter instructs Visual Studio to never inspect the property you apply it to. Your property won’t appear in the autos or locals window, and if you expand the tree of an instance containing the property it will show up with a Browsing Disabled message; you can then force it to evaluate the property, but at least it doesn’t do it automatically.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">private</span> <span class="kt">bool</span> <span class="n">inverted</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
 
@@ -129,8 +138,10 @@
 
 <p>So there you go, if your property-with-side-effects is being invoked by the debugger, you can use the DebuggerBrowsableAttribute to prevent it.</p>
 
-<blockquote>By the way, I'm not advocating properties with side-effects...</blockquote>
+<blockquote>
+  <p>By the way, I’m not advocating properties with side-effects…&lt;/blockquote&gt;</p>
 
+</blockquote>
  <a class="read-more" href="/writings/preventing-debugger-property-evaluation-side-effects">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -196,56 +207,6 @@
             
             <time class="post-date" datetime="2009-07-20">
                 20 Jul 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/whats-been-happening-in-fluent-nhibernate-land">What's been happening in Fluent NHibernate land?</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>Cross-posted to <a href="http://jagregory.lostechies.com/archive/2009/04/28/what-s-been-happening-in-fluent-nhibernate-land.aspx">Los Techies</a></blockquote>
-
-<p><a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> has seen a flurry of development followed by a complete lack of commits, I figure it’s time to let everyone know what’s going on.</p>
-
-<p><strong>The Short Version</strong></p>
-
-<p>We’re rewriting the internals. We have 100% of tests passing, but still can’t guarantee no regressions. Stuff may break, if it does, <a href="http://groups.google.com/group/fluent-nhibernate">tell us</a>. It’ll be worth it.</p>
-
-<p><strong>The Long Version</strong></p>
-
-<p>Once upon a time…</p>
-
-<p>Fluent NHibernate at it’s core is a fluent interface over xml generation. We use the series of methods you call in your mappings to build up an in-memory hbm xml document that we then feed to NHibernate. Slowly, as we’ve started to support more and more of NHibernate’s features, we’ve started to find flaws in our architecture. It amounts to us not having enough separation of concerns; our fluent interface is generating xml, I think most people would say that’s not a good thing. Our xml is being generated too soon in the cycle to allow us to do more clever things that’d improve the user’s experience. That’s where the quiet time comes in.</p>
-
-<p><a href="http://www.paulbatum.com">Paul Batum</a> undertook the task of redesigning the internals of Fluent NHibernate to be something much more scalable. I’ll leave the details out for now (maybe a future post), but it amounts to a intermediary layer being introduced between the fluent interface and the xml generation. We’ve dubbed this the Semantic Model, and it’s that which is now generated by the fluent interface, then later translated into xml. This added abstraction allows us to do things that weren’t possible while we were just generating straight xml.</p>
-
-<p>Whilst you wont see any immediate improvements while everything is being converted, the extra layer allows us to inspect the model before it is converted to xml; this gives us some immense capabilities, such as allowing subclasses to be separate from their parent mapping, create reusable component mappings, improve relationship support etc… We’re pretty much limited only by what we can imagine now, rather than by architectural decisions.</p>
-
-<p>However, we have a dilemma. The semantic-model branch has deviated so much from trunk we’ve got a major merge problem. A merge is pretty much out of the question actually, because there’s barely any commonality between the two streams at all. It was then assumed that the branch would eventually replace trunk (we’d just rename trunk to a tag, then rename the semantic-model branch to trunk), and all we needed to do was get the branch up-to-date with the features of trunk. Little did we realise we were essentially committing to something that I typically oppose, a complete rewrite! I’ve never been in a situation where that’s ever been a good idea, and yet here we are, responsible for our own destiny as it was, and we’d chosen a rewrite!</p>
-
-<p>A few weeks went by with very little work happening. I think we’d all started feeling demoralised by the idea of re-implementing most of the features from trunk using the new design. It was a worthwhile endeavor, definitely, but just very uninteresting. We repeatedly swore that we’d get this done, but all the while we felt less inclined to support trunk because every new feature meant a new feature to port too. We stopped.</p>
-
-<p>At that point <a href="http://www.bestguesstheory.com/">Hudson Akridge</a>, our newest contributor, had the balls to tell me that he thought what we were doing felt pretty futile. At that moment I gained a great deal of respect for him, as it’s something that was in the back of my mind for some time but I wasn’t ready to face yet. It was that which got me moving again.</p>
-
-<p>I sat down over a long weekend and took on the mammoth task of merging our rewrite branch and trunk, with the aim of allowing the existing code to exist alongside the new code; this approach, if it worked, would allow us to convert existing features at our own pace while still writing new features for the cleaner codebase. After a lot of unpleasant hacking of nice code, I managed to get all our existing tests passing while utilising the semantic model behind the scenes. Our old code still directly generates xml, which then gets injected into the semantic model via a nasty shortcut. It feels dirty, because I’ve had to comprimise some good code to get it working, but in a way I think that’s a good thing; if code is nasty, we’re all less likely to be content with it. The main goal was achieved though, and that was to allow us to work at our own pace on trunk.</p>
-
-<p>Where we stand now is three branches, trunk, integration, and semantic-model. Over the next day or so I am going to merge integration with trunk, which will mean the semantic model will be in use for new features. From there we can slowly migrate all the original code to use our new semantic model, all the while adding new features using it, then eventually remove the duct-tape that’s holding the legacy code to the new code and dump the old stuff.</p>
-
-<p>This is where I’ll give you a little warning: although we have 100% of tests passing, we don’t have 100% coverage. There may be some regressions that we aren’t aware of. If anyone finds anything broken that was working before, contact us immediately on the <a href="groups.google.com/group/fluent-nhibernate">mailing list</a> or via the <a href="http://code.google.com/p/fluent-nhibernate/issues/list">issues list</a> and we’ll correct it. Regressions will be treated with the highest priority over any other work.</p>
-
-<p>That’s it, you now know more about what’s happening with Fluent NHibernate than you ever wanted to. I hope this sheds a little light onto what’s been happening with us, and perhaps why your patch hasn’t been applied as quickly as you would’ve liked.</p>
-
- <a class="read-more" href="/writings/whats-been-happening-in-fluent-nhibernate-land">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-04-28">
-                28 Apr 2009
             </time>
         </footer>
     </article>
