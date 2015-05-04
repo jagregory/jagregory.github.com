@@ -2,6 +2,10 @@
 # Let's add a comment to make this file sass-y.
 # Change this file for any custom CSS.
 ---
+
+$content-width: 80%;
+$content-max-width: 1200px;
+
 /* ==========================================================================
    Table of Contents
    ========================================================================== */
@@ -437,7 +441,7 @@ margin on the iframe, cause it breaks stuff. */
    3. Utilities - These things get used a lot
    ========================================================================== */
 
-/* Clears shit */
+/* Clears */
 .clearfix:before,
 .clearfix:after {
     content: " ";
@@ -446,7 +450,7 @@ margin on the iframe, cause it breaks stuff. */
 .clearfix:after { clear: both; }
 .clearfix { *zoom: 1; }
 
-/* Hides shit */
+/* Hides */
 .hidden {
     text-indent: -9999px;
     visibility: hidden;
@@ -456,8 +460,8 @@ margin on the iframe, cause it breaks stuff. */
 /* Creates a responsive wrapper that makes our content scale nicely */
 .inner {
     position: relative;
-    width: 80%;
-    max-width: 710px;
+    width: $content-width;
+    max-width: $content-max-width;
     margin: 0 auto;
 }
 
@@ -486,7 +490,7 @@ margin on the iframe, cause it breaks stuff. */
 }
 
 .main-header .inner {
-    width: 80%;
+    width: $content-width;
 }
 
 .main-nav {
@@ -525,6 +529,11 @@ margin on the iframe, cause it breaks stuff. */
     color: #fff;
     -webkit-animation: none;
     animation: none;
+}
+
+.home-template .post {
+    width: 80%;
+    max-width: 710px;
 }
 
 /* Put a semi-opaque radial gradient behind the icon to make it more visible
@@ -710,8 +719,8 @@ margin on the iframe, cause it breaks stuff. */
 /* Every post, on every page, gets this style on its <article> tag */
 .post {
     position: relative;
-    width: 80%;
-    max-width: 710px;
+    width: $content-width;
+    max-width: $content-max-width;
     margin: 4rem auto;
     padding-bottom: 4rem;
     border-bottom: #EBF2F6 1px solid;
@@ -1200,8 +1209,8 @@ body:not(.post-template) .post-title {
 /* The main wrapper for our pagination links */
 .pagination {
     position: relative;
-    width: 80%;
-    max-width: 710px;
+    width: $content-width;
+    max-width: $content-max-width;
     margin: 4rem auto;
     font-family: "Open Sans", sans-serif;
     font-size: 1.3rem;
@@ -1766,9 +1775,3 @@ body:not(.post-template) .post-title {
                 transform: translateY(-5px) rotate(-90deg);
     }
 }
-
-
-/* ==========================================================================
-   End of file. Animations should be the last thing here. Do not add stuff
-   below this point, or it will probably fuck everything up.
-   ========================================================================== */

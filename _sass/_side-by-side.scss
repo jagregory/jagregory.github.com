@@ -2,10 +2,6 @@
   .side-by-side {
     display: flex;
 
-    p {
-      font-size: 1.45rem;
-    }
-
     p:first-child {
       margin-top: 11px;
     }
@@ -15,8 +11,13 @@
       display: flex;
       flex-direction: column;
 
-      > * {
+      &.highlighter-rouge {
         flex: 1;
+        font-size: 1.45rem;
+      }
+
+      &:last-child {
+        margin-left: 2rem;
       }
     }
   }
