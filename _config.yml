@@ -8,6 +8,7 @@ url: "http://www.jagregory.com"
 twitter_username: jagregory
 github_username:  jagregory
 excerpt_separator: '<!-- more -->'
+permalink: /writings/:title
 
 logo: false
 paginate: 5
