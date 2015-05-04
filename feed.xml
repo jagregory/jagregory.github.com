@@ -6,99 +6,9 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2015 23:01:59 +1000</pubDate>
-    <lastBuildDate>Mon, 04 May 2015 23:01:59 +1000</lastBuildDate>
+    <pubDate>Mon, 04 May 2015 23:03:01 +1000</pubDate>
+    <lastBuildDate>Mon, 04 May 2015 23:03:01 +1000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
-    
-      <item>
-        <title>Sinopia: a private NPM registry in Vagrant</title>
-        <description>&lt;p&gt;Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Or you modularise and share via git dependencies, which isn’t a great solution. You lose versioning, all the pre-publish hook loveliness, and become quite limited by where our package is being used (no preprocessors for you!).&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;In the early days NPM wasn’t designed with multiple registries in mind, so hosting your own internal one meant either proxying/mirroring the public registry or manually adding public packages to your private registry and using it for everything. Thanks to improvements in NPM and several open-source efforts, it’s now much easier than that to host your own internal NPM registry.&lt;/p&gt;
-
-&lt;p&gt;NPM have recently &lt;a href=&quot;https://www.npmjs.com/private-modules&quot;&gt;started offering private modules&lt;/a&gt;, which looks very interesting. There’s also a pay-for &lt;a href=&quot;http://npmjs.com/enterprise#pricing&quot;&gt;Enterprise option&lt;/a&gt; from NPM which is worth thinking about once you scale.&lt;/p&gt;
-
-&lt;p&gt;If private cloud hosting isn’t your thing, the host-your-own options are worth exploring. &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;Sinopia&lt;/a&gt; is what we’ll setup.&lt;/p&gt;
-
-&lt;h2 id=&quot;running-sinopia-in-vagrant&quot;&gt;Running Sinopia in Vagrant&lt;/h2&gt;
-
-&lt;p&gt;To get a Sinopia Virtual Machine running locally there’s a few tools you need to have installed. Install &lt;a href=&quot;https://www.vagrantup.com&quot;&gt;Vagrant&lt;/a&gt; and &lt;a href=&quot;https://www.virtualbox.org&quot;&gt;VirtualBox&lt;/a&gt;, and we’ll later be using &lt;a href=&quot;http://www.ansible.com/&quot;&gt;Ansible&lt;/a&gt; to configure our machine so you should get that installed too.&lt;/p&gt;
-
-&lt;p&gt;Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant init&lt;/code&gt; to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.&lt;/p&gt;
-
-&lt;p&gt;To follow along, you can &lt;a href=&quot;/downloads/sinopia/Vagrantfile&quot;&gt;download the complete Vagrantfile&lt;/a&gt;.&lt;/p&gt;
-
-&lt;section class=&quot;side-by-side&quot;&gt;
-  &lt;div&gt;
-
-    &lt;p&gt;The Ubuntu boxes provided by the Phusion team are a good set of boxes to start from. We’re using their 14.04 TLS box.&lt;/p&gt;
-
-  &lt;/div&gt;
-
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu-14.04-amd64-vbox&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box_url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
-
-&lt;/section&gt;
-
-&lt;section class=&quot;side-by-side&quot;&gt;
-  &lt;div&gt;
-
-    &lt;p&gt;When Sinopia starts it will listen on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt; in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.&lt;/p&gt;
-
-  &lt;/div&gt;
-
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;network&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forwarded_port&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;guest: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
-
-&lt;/section&gt;
-
-&lt;section class=&quot;side-by-side&quot;&gt;
-  &lt;div&gt;
-
-    &lt;p&gt;We also want to sync the Sinopia data directory (&lt;code class=&quot;highlighter-rouge&quot;&gt;/var/sinopia&lt;/code&gt;) to our host, so we can destroy the Virtual Machine without losing all of our registry content.&lt;/p&gt;
-
-  &lt;/div&gt;
-
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sinopia_data/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/var/sinopia&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;mount_options: &lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;%W{dmode=777 fmode=666}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
-
-&lt;/section&gt;
-
-&lt;section class=&quot;side-by-side&quot;&gt;
-  &lt;div&gt;
-
-    &lt;p&gt;Finally, Vagrant will run Ansible on the Virtual Machine. Ansible will download and configure Sinopia using the &lt;a href=&quot;https://github.com/jagregory/sinopia-ansible&quot;&gt;sinopia-ansible&lt;/a&gt; role.&lt;/p&gt;
-
-  &lt;/div&gt;
-
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ansible&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;playbook&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;site.yml&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
-
-&lt;/section&gt;
-
-&lt;p&gt;Once you’ve saved the changes to your Vagrant file, you can run: &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant up&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;You’ll see the Ansible output fly by and eventually it will complete. At this point you can point your browser at &lt;a href=&quot;http://localhost:4873&quot;&gt;http://localhost:4873&lt;/a&gt; to be greeted by Sinopia.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 04 May 2015 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/private-npm-registry</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/private-npm-registry</guid>
-        
-        
-      </item>
     
       <item>
         <title>My ever evolving development virtualisation situation</title>
@@ -825,6 +735,35 @@
         <pubDate>Wed, 31 Mar 2010 00:00:00 +1100</pubDate>
         <link>http://www.jagregory.com//writings/speaking-engagements-2010</link>
         <guid isPermaLink="true">http://www.jagregory.com//writings/speaking-engagements-2010</guid>
+        
+        <category>Speaking</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Git E-VAN recording</title>
+        <description>&lt;p&gt;Last monday (8th of Feb) I did an &lt;a href=&quot;/writings/git-e-van/&quot;&gt;E-VAN on Git&lt;/a&gt;; an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn’t &lt;em&gt;hear&lt;/em&gt; anyone complaining.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;The talk was recorded, so if you haven’t already seen it then you can do so at your own leisure.&lt;/p&gt;
+
+&lt;p&gt;The video is up on the &lt;a href=&quot;http://vimeo.com/user1286822&quot;&gt;E-VAN’s Vimeo account&lt;/a&gt;, specifically &lt;a href=&quot;http://vimeo.com/9324683&quot; title=&quot;Git E-VAN recording&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;object width=&quot;600&quot; height=&quot;450&quot;&gt;
+  &lt;param name=&quot;allowfullscreen&quot; value=&quot;true&quot; /&gt;
+  &lt;param name=&quot;allowscriptaccess&quot; value=&quot;always&quot; /&gt;
+  &lt;param name=&quot;movie&quot; value=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; /&gt;
+  &lt;embed src=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; type=&quot;application/x-shockwave-flash&quot; allowfullscreen=&quot;true&quot; allowscriptaccess=&quot;always&quot; width=&quot;600&quot; height=&quot;450&quot; /&gt;
+  &lt;p&gt;&amp;lt;/embed&amp;gt;&amp;lt;/object&amp;gt;&lt;/p&gt;
+&lt;/object&gt;
+</description>
+        <pubDate>Wed, 17 Feb 2010 00:00:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/git-e-van-recording</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/git-e-van-recording</guid>
+        
+        <category>Git</category>
         
         <category>Speaking</category>
         

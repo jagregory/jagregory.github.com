@@ -52,108 +52,6 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
-
-<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
-
-<p>Perfect - clean semantic markup and real event handling.</p>
-
-<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
-<h2 id="our-problem">Our Problem</h2>
-
-<p>The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the <a href="http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content">FOUC</a>, where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.</p>
-
-<p>If you had the following code in your header tag, the element <code>aTable</code> would be visible until the page has finished loading, at which point it would suddenly disappear.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">function</span> <span class="nx">hideATable</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'aTable'</span><span class="p">).</span><span class="nx">style</span><span class="p">[</span><span class="s1">'display'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'none'</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="nx">Event</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">'load'</span><span class="p">,</span> <span class="nx">hideATable</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<p>What we really need is an <code>onBodyRendered</code> event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.</p>
-
-<h2 id="the-solution">The Solution</h2>
-<p>The only real solution to this problem, as there isn’t an <code>onBodyRendered</code> event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.</p>
-
-<p>The following code would hide the table before the page has finished rendering; exactly what we want.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">hideATable</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h2 id="my-additions">My additions</h2>
-
-<p>The above method isn’t completely desirable, because it is still mixing code with markup and any code within the footer will not be cached. There isn’t much you can do about that really, but one thing that i’ve taken to doing in my websites is to make sure there is only ever one function call in that footer script block.</p>
-
-<p>My method of doing such a thing is to create a special object that represents all my pages and their individual footer script blocks. You can see below an example of such an object, there’s an wrapper object that allows for further extensions (such as Unload or Validation sections) and then the Load object that contains each pages onload function. Each page then has a single line script block like <code class="highlighter-rouge">Pages.Load.Home();</code></p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Pages</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">Home</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">highlightSomething</span><span class="p">();</span>
-    <span class="nx">hideSomething</span><span class="p">();</span>
-    <span class="nx">saveCookies</span><span class="p">();</span>
-  <span class="p">},</span>
-
-  <span class="na">Portfolio</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">hideSomething</span><span class="p">();</span>
-    <span class="nx">makeMeLookGood</span><span class="p">();</span>
-  <span class="p">},</span>
-
-  <span class="na">Contact</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">highlightFields</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">};</span>
-</code></pre>
-</div>
-
-<p>So the above code is stored in an external js file and loaded in the usual way, thus being cached.</p>
-
-<h3 id="before">Before:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">highlightSomething</span><span class="p">();</span>
-  <span class="nx">hideSomething</span><span class="p">();</span>
-  <span class="nx">saveCookies</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h3 id="after">After:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span><span class="p">.</span><span class="nx">Home</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
- <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-04-12">
-                12 Apr 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
             <h2 class="post-title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">How-to use ClientIDs in JavaScript without the ugliness</a></h2>
         </header>
         <section class="post-excerpt">
@@ -357,6 +255,39 @@
             
             <time class="post-date" datetime="2006-03-08">
                 08 Mar 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Trust Wireless Scroll Tablet with Dual Monitors</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
+
+<p>As far as I am aware there isn’t an option in the trust software to allow you to map to a specific monitor, only to restrict the area on the tablet (which isn’t at all helpful). So what I’ve figured out is purely a work around, and it isn’t great either<sup>1</sup>. This is mainly for my reference, but someone else might find it useful, so here we go:</p>
+<ol>
+	<li>Open up Display Properties and disable (“un-attach”) your secondary monitor.</li>
+	<li>Open the Trust Control Panel from the icon in your system tray.</li>
+	<li>Re-enable your second monitor.</li>
+	<li>Click ok in your Trust Control Panel.</li>
+</ol>
+<p>From there on out your tablet should only be mapped to the monitor that stayed enabled the whole time, that is until you re-open the Trust Control Panel. I didn’t say it was pretty!</p>
+
+<p>What I can gather is that after disabling your monitor, when you open up the control panel it maps the overall screen size so it can apply that to the tablet, but when you click OK after re-enabling the monitor it doesn’t refresh with the screen change and so uses the single monitor values.</p>
+
+<p><sup>1</sup> Also note that I have only tested this on my system.</p>
+
+ <a class="read-more" href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-03-07">
+                07 Mar 2006
             </time>
         </footer>
     </article>

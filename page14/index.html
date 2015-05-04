@@ -52,91 +52,6 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/objectfield-11">ObjectField 1.1</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I’ve updated the <code>ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code>BoundField</code> implementation:</p>
-
-<blockquote>
-  <p>Using a <code>TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path.</p>
-</blockquote>
-
-<p>Which is interesting, because I was using a <code>TypeDescriptor</code> in my <code>ObjectField</code> implementation!</p>
-
-<p>Originally, the <code>ObjectField</code> was using the method below to evaluate the hierarchical paths, which to be honest is a bit verbose.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">private</span> <span class="kt">object</span> <span class="nf">GetNestedValue</span><span class="p">(</span><span class="kt">object</span> <span class="n">component</span><span class="p">,</span> <span class="kt">string</span> <span class="n">field</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="kt">string</span><span class="p">[]</span> <span class="n">properties</span> <span class="p">=</span> <span class="n">field</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="sc">'.'</span><span class="p">);</span>
-	
-	<span class="k">foreach</span> <span class="p">(</span><span class="kt">string</span> <span class="n">property</span> <span class="k">in</span> <span class="n">properties</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="n">PropertyDescriptor</span> <span class="n">descriptor</span> <span class="p">=</span>
-			<span class="n">TypeDescriptor</span><span class="p">.</span><span class="nf">GetProperties</span><span class="p">(</span><span class="n">component</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="n">property</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-		
-		<span class="k">if</span> <span class="p">(</span><span class="n">descriptor</span> <span class="p">==</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">AllowNulls</span><span class="p">)</span>
-		<span class="p">{</span>
-			<span class="c1">// no descriptor, and we're not allowing nulls so complain that
-</span>			<span class="c1">// we can't find the object
-</span>			<span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpException</span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="n">MissingFieldErrorMessage</span><span class="p">,</span>
-				<span class="n">property</span><span class="p">));</span>
-		<span class="p">}</span>
-		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">descriptor</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
-		<span class="p">{</span>
-			<span class="c1">// silently return, with the NullValue if present
-</span>			<span class="n">component</span> <span class="p">=</span> <span class="n">NullValue</span><span class="p">;</span>
-			<span class="k">break</span><span class="p">;</span>
-		<span class="p">}</span>
-		
-		<span class="n">component</span> <span class="p">=</span> <span class="n">descriptor</span><span class="p">.</span><span class="nf">GetValue</span><span class="p">(</span><span class="n">component</span><span class="p">);</span>
-	<span class="p">}</span>
-
-	<span class="k">return</span> <span class="n">component</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>The <code>GetNestedValue</code> method was splitting the <code>DataField</code> value and then recursively evaluating each property.</p>
-
-<p>Here’s the same implementation using the <code>DataBinder</code>:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// looking to bind against child-objects
-</span><span class="kt">object</span> <span class="n">component</span> <span class="p">=</span> <span class="n">DataBinder</span><span class="p">.</span><span class="nf">GetDataItem</span><span class="p">(</span><span class="n">controlContainer</span><span class="p">);</span>
-                
-<span class="k">return</span> <span class="n">DataBinder</span><span class="p">.</span><span class="nf">Eval</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">DataField</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Magic!</p>
-
-<p>As a side effect of this change, the <code>ObjectField</code> can now support everything regular data-binding does. So you can use indexers and such in your <code>DataField</code> now.</p>
-
-<p>A couple of other things you should know: the <code>AllowNulls</code> property has been removed because it’s no longer supported, and the <code>NullValue</code> field has also been removed because the <code>BoundField</code> already supported it in the form of <code>NullDisplayText</code>.</p>
-
-<h2 id="downloads">Downloads</h2>
-
-<p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
-
-<p>You can download the source here: <a href="http://jagregory.googlecode.com/files/ObjectField-1.1-source.zip">Download Source</a>.<br />
-You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/ObjectField-1.1.zip">Download Binary</a>.</p>
-
-<p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/ObjectField/">http://jagregory.googlecode.com/svn/trunk/ObjectField/</a> (using user jagregory-read-only)</p>
-
- <a class="read-more" href="/writings/objectfield-11">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-02-21">
-                21 Feb 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
             <h2 class="post-title"><a href="/writings/data-binding-hierarchical-objects">Data-binding hierarchical objects</a></h2>
         </header>
         <section class="post-excerpt">
@@ -335,6 +250,38 @@ You can download the latest binary here: <a href="http://jagregory.googlecode.co
             
             <time class="post-date" datetime="2007-12-12">
                 12 Dec 2007
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/on-testing-implementation">On testing implementation</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what’s more concerning is I’ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it’s supposed to.</p>
+
+<p>There are a few problems with falling into this trap. Firstly, it’s very brittle. Secondly, you shouldn’t be concerned with the internals. Thirdly, it’s very time consuming.</p>
+
+<p>To elaborate…</p>
+
+<p>It’s brittle because you’re essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to <a href="http://martinfowler.com/bliki/TestCancer.html">test cancer</a>, where tests aren’t run or are commented out.</p>
+
+<p>You shouldn’t be concerned with the internals, because as long as your method is doing as requested, you shouldn’t really care how it’s achieving it’s goal. Not bolting down the internals allows methods to be refactored without too much resistance from the tests. This will increase the signal-to-noise ratio, allowing failing tests to be representative of a problem greater than your basic refactorings.</p>
+
+<p>Finally, it’s time consuming simply because you’re duplicating most of your work. All the time you spent writing the method (or the test, if done first) is then duplicated writing the tests (or code…). This is a pain, because as mentioned above, you’ll keep doing this work every time you change the method.</p>
+
+<p>The hardest part is learning how to not do this kind thing blindly. There are plenty of times when you’ll need this kind of testing, but don’t make it your default! Test expectations, not implementations.</p>
+
+ <a class="read-more" href="/writings/on-testing-implementation">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2007-12-10">
+                10 Dec 2007
             </time>
         </footer>
     </article>
