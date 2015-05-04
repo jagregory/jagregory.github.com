@@ -8,7 +8,7 @@ about: 'about.html'
 <header class="main-header {% if page.cover %}" style="background-image: url({{ page.cover }}) {%else%}no-cover{% endif %}">
     <div class="vertical">
         <div class="main-header-content inner">
-            <h1 class="page-title">{{ site.title }}</h1>
+            <h1 class="page-title"><a href="{{ site.baseurl }}">{{ site.title }}</a></h1>
             <h2 class="page-description">
                 {% if site.description %} {{ site.description }} {% endif %}
             </h2>

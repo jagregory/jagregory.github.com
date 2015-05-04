@@ -673,6 +673,10 @@ margin on the iframe, cause it breaks stuff. */
     color: #fff;
 }
 
+.page-title a {
+  text-decoration: none;
+}
+
 .page-description {
     margin: 0;
     font-size: 2rem;
