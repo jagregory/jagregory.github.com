@@ -9,16 +9,7 @@
     <link>http://www.jagregory.com</link>
     <description>Code monkey. ThoughtWorks. Chief Agitator.
 </description>
-    <pubDate>Thu, 14 May 2015 00:00:00 +1000</pubDate>
-    <item>
-      <title>Sinopia: a private NPM registry in Vagrant</title>
-      <link>http://www.jagregory.com/writings/private-npm-registry</link>
-      <description>&lt;p&gt;Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.&lt;/p&gt;
-
-</description>
-      <pubDate>Thu, 14 May 2015 00:00:00 +1000</pubDate>
-      <dc:date>2015-05-14T00:00:00+10:00</dc:date>
-    </item>
+    <pubDate>Wed, 12 Feb 2014 23:15:00 +1100</pubDate>
     <item>
       <title>My ever evolving development virtualisation situation</title>
       <link>http://www.jagregory.com/writings/virtualised-development-environments</link>
@@ -5847,6 +5838,6 @@ Now I can sound like Hendrix, even if I can’t play like him. (Hey, its better 
       <pubDate>Sun, 05 Dec 2004 00:00:00 +1100</pubDate>
       <dc:date>2004-12-05T00:00:00+11:00</dc:date>
     </item>
-    <dc:date>2015-05-14T00:00:00+10:00</dc:date>
+    <dc:date>2014-02-12T23:15:00+11:00</dc:date>
   </channel>
 </rss>
