@@ -52,6 +52,81 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Smart Indentation for Visual Studio Extensibility projects</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I said previously in my <a href="/writings/brace-matching-and-your-language-service/">Brace Matching post</a> that I want to try to document some of my findings while working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Well this is my second post on the subject.</p>
+
+<p>When you’re implementing a custom language in Visual Studio, there’s a very good chance that you’re going to want to handle indentation slightly differently to the defaults. Every language has it’s own rules, after all.</p>
+
+<p>Most of the resources I found online we’re pretty poor for how to get this working. Most people we’re pointing to overriding <code>OnCommand</code> in your derived <code>Source</code> class, or implementing some interop interface (i.e. <code>IVsLanguageLineIndent</code>). I could get none of these working. <code>OnCommand</code> never got raised, and the interfaces we’re useless.</p>
+
+<p>I tried a few different methods for handling indentation, but none of them worked very well. I tried capturing the enter key press, but that didn’t work. Then I tried capturing alterations to the document, but those also got fired for navigating the document, so you’d press the up key and add a new line!</p>
+
+<p>It ended up being pretty simple to implement, once I finally found the correct way to do it. I’ll cover how I did this for BooLangStudio below.</p>
+
+<p>In your <code>LanguageService</code>, there’s a method you can override called <code>CreateViewFilter</code> which sets everything in motion.</p>
+
+<p>Create yourself a class that derives from <code>ViewFilter</code>, and then return an instance of it from the overridden <code>CreateViewFilter</code> method in your language service.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">BooViewFilter</span> <span class="p">:</span> <span class="n">ViewFilter</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">view</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">view</span><span class="p">)</span>
+  <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">override</span> <span class="n">ViewFilter</span> <span class="nf">CreateViewFilter</span><span class="p">(</span><span class="n">CodeWindowManager</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">IVsTextView</span> <span class="n">newView</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nf">BooViewFilter</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">newView</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p><strong>Note:</strong> You need to make sure your project is configured to use Smart Indentation. If your project is complete enough to allow the user to customise this, then you’re fine. However, if not you can hard code this value yourself. In your language service there’s a <code>GetLanguagePreferences</code> method that returns all the preferences for your project. In that method you can set <code>languagePreferences.IndentStyle = IdentingStyle.Smart</code>, which is what I’ve done in BooLangStudio.</p>
+</blockquote>
+
+<p>You’ll kick yourself for how easy this is. Now override the <code>HandleSmartIndent</code> method in your derived <code>ViewFilter</code>. That’s it really, in there you can access the <code>Source</code> object and do as you wish with smart indentation.</p>
+
+<p>Taking BooLangStudio as an example, you can see in our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/BooViewFilter.cs">BooViewFilter.cs</a> that I delegate the work to a <code>HandleSmartIndentAction</code>. This is to make testing easier by having as little dependencies on Visual Studio as possible.</p>
+
+<p>The <code>Execute</code> method of our <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/HandleSmartIndentAction.cs">HandleSmartIndentAction.cs</a> class gets the caret location and passes it to an instance of a <a href="http://github.com/jagregory/boolangstudio/tree/443929113ca77ae3c4613691f06f043f9d8f8d77/Source/BooLangService/LineIndenter.cs">LineIndenter</a> class, which determines (based on the previous line to the caret) whether the next line should be indented, or outdented.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="kt">bool</span> <span class="nf">Execute</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">line</span><span class="p">,</span> <span class="n">col</span><span class="p">;</span>
+
+  <span class="n">view</span><span class="p">.</span><span class="nf">GetCaretPos</span><span class="p">(</span><span class="k">out</span> <span class="n">line</span><span class="p">,</span> <span class="k">out</span> <span class="n">col</span><span class="p">);</span>
+
+  <span class="n">indenter</span><span class="p">.</span><span class="nf">SetIndentationForNextLine</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<pre><code class="language-boo">class MyClass:
+  def MethodName(): # indent
+    return # outdent
+</code></pre>
+
+<p>So that’s how to implement Smart Indentation in your Visual Studio Extensibility project, and a little bit of implementation details of BooLangStudio.</p>
+
+ <a class="read-more" href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-19">
+                19 Oct 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/sharpdiff-diff-parsing-in-net">SharpDiff - Diff Parsing in .NET</a></h2>
         </header>
         <section class="post-excerpt">
@@ -322,154 +397,6 @@
             
             <time class="post-date" datetime="2008-09-12">
                 12 Sep 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/brace-matching-and-your-language-service">Brace Matching and your Language Service</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I’ve been meaning to write up some of my experiences developing for Visual Studio while I’ve been working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>, but I can never seem to find the time; either that, or when I can I’m not confident enough in what I’m doing to put it out here as a valid resource.</p>
-
-<p>I’ll start small, here’s a quick guide to how I’ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
-
-<p><strong>What exactly is brace matching?</strong> Brace matching is where paired characters are highlighted when one or the other is selected in the editor.</p>
-
-<p><img src="/images/bracematching-1.png" alt="Brace matching" /></p>
-
-<p>There are a couple of things you need to consider when you implement brace matching.</p>
-
-<p>Firstly, there are different types of braces that can be matched (depending on your language). Taking C# as an example, the brace matching works with parentheses (<code class="highlighter-rouge">()</code>), box brackets (<code class="highlighter-rouge">[]</code>), braces (<code class="highlighter-rouge"><span class="p">{}</span></code>), and chevrons (<code class="highlighter-rouge">&lt;&gt;</code>). These all need to be paired independently, as to avoid matching an open parenthesis with a closing brace.</p>
-
-<p>Secondly, the matching has to work bi-directionally. The user can place their caret at either side of the bracket pair, and the highlighting should know where both sides are regardless.</p>
-
-<h2 id="languageservice-implementation">LanguageService implementation</h2>
-
-<p>A lot of the legwork of implementing a language in Visual Studio is done in the LanguageService, and brace matching is no exception. You should already have a <code class="highlighter-rouge">ParseSource</code> method in your LanguageService; this is where we’re going to work.</p>
-
-<p>The <code class="highlighter-rouge">ParseSource</code> method has a <code class="highlighter-rouge">ParseRequest</code> parameter, which exposes a <code class="highlighter-rouge">Reason</code> property. When this property is set to <code class="highlighter-rouge">MatchBraces</code>, that’s when we need to do our processing.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="c1">// match braces here
-</span>  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>What needs to be done is pretty simple: Parse the open document and find the partner to the brace that the caret is on.</p>
-
-<p>In BooLangStudio I’ve implemented this in the following fashion:</p>
-
-<ul>
-  <li>Run the document through a <code class="highlighter-rouge">BracketPairFinder</code>, which creates a list of bracket pairs in the document</li>
-  <li>Get the index of the caret (baring in mind you have to translate between the Request’s Line and Column, and an actual string index)</li>
-  <li>Find the pair that the caret is positioned at</li>
-  <li>Get the opposite bracket from the pair</li>
-  <li>Get the Line and Column of the opposite bracket</li>
-</ul>
-
-<p>It’s up to you how you implement the above steps, as long as you end up with the opposite bracket to the one you started with. I’ll illustrate using the BooLangStudio source.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="c1">// find all pairs
-</span>    <span class="n">var</span> <span class="n">bracketFinder</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">BracketPairFinder</span><span class="p">();</span>
-    <span class="n">var</span> <span class="n">bracketPairs</span> <span class="p">=</span> <span class="n">bracketFinder</span><span class="p">.</span><span class="nf">FindPairs</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Text</span><span class="p">);</span>
-
-    <span class="c1">// get index of caret from source text
-</span>    <span class="n">Source</span> <span class="n">source</span> <span class="p">=</span> <span class="n">languageService</span><span class="p">.</span><span class="nf">GetSource</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">View</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">indexOfCaret</span> <span class="p">=</span> <span class="n">source</span><span class="p">.</span><span class="nf">GetPositionOfLineIndex</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">);</span>
-
-    <span class="c1">// find the partner to the bracket at the caret
-</span>    <span class="kt">int</span><span class="p">?</span> <span class="n">partner</span> <span class="p">=</span> <span class="n">bracketPairs</span><span class="p">.</span><span class="nf">FindPartnerIndex</span><span class="p">(</span><span class="n">indexOfCaret</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="c1">// tell Visual Studio about the pair
-</span>    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<blockquote>
-  <p>The <code class="highlighter-rouge">Source</code> class has a helpful <code class="highlighter-rouge">GetPositionOfLineIndex</code> method, which translates between a Line and Column to a single string index. Very handy!</p>
-</blockquote>
-
-<p>Once you’ve got your indices, we need to inform Visual Studio of our findings. You do that by setting the <code class="highlighter-rouge">request.Sink.FoundMatchingBrace</code> to <code class="highlighter-rouge">true</code>, then calling the <code class="highlighter-rouge">MatchPair</code> method on the Sink. You need to pass two <code class="highlighter-rouge">TextSpan</code> instances to the <code class="highlighter-rouge">MatchPair</code> method; the first is the left brace, and the second the right.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="p">...</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="c1">// tell Visual Studio about the pair
-</span>      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="n">FoundMatchingBrace</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-
-      <span class="kt">int</span> <span class="n">nextLine</span><span class="p">,</span> <span class="n">nextCol</span><span class="p">;</span>
-
-      <span class="n">source</span><span class="p">.</span><span class="nf">GetLineIndexOfPosition</span><span class="p">(</span><span class="n">partner</span><span class="p">.</span><span class="n">Value</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextLine</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextCol</span><span class="p">);</span>
-
-      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="nf">MatchPair</span><span class="p">(</span>
-        <span class="k">new</span> <span class="n">TextSpan</span>
-        <span class="p">{</span>
-          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
-          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
-          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">,</span>
-          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span>
-        <span class="p">},</span> 
-        <span class="k">new</span> <span class="n">TextSpan</span>
-        <span class="p">{</span>
-          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
-          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
-          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">nextCol</span><span class="p">,</span>
-          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">nextCol</span> <span class="p">+</span> <span class="m">1</span>
-        <span class="p">},</span> <span class="m">0</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="k">new</span> <span class="nf">AuthoringScope</span><span class="p">();</span> <span class="c1">// replace with your implementation
-</span>  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<blockquote>
-  <p>The <code class="highlighter-rouge">Source</code> class has another helpful method: <code class="highlighter-rouge">GetLineIndexOfPosition</code> method, which translates back to Line and Column from a single string index.</p>
-</blockquote>
-
-<p>Finally, just return an empty AuthoringScope, as it isn’t used as part of this parse request.</p>
-
-<p>That’s it! You should have now successfully implemented brace matching. You may need to tweak the TextSpan indexes depending on your parser implementation, but it shouldn’t be far wrong.</p>
-
-<h2 id="boolangstudio-implementation">BooLangStudio implementation</h2>
-
-<p>If you’re interested in seeing how I handle the brace parsing, I may cover that in a future post. However, you can find all the source in my <a href="http://github.com/jagregory/boolangstudio/tree/master">github BooLangStudio fork</a>. Some interesting one’s in particular are:</p>
-
-<ul>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/ParseRequestProcessor.cs#L133">ParseRequestProcessor.HighlightBraces</a> - Delegated to from the LanguageService.ParseSource method.</li>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/BracketPairFinder.cs">BracketPairFinder</a> - Class which parses a document to get all the bracket pairs. Uses <a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/ExcludingStringLiteralsStringWalker.cs">ExcludingStringLiteralsStringWalker</a>.</li>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/StringWalker.cs">StringWalker</a> - A simple string parser used by the <code class="highlighter-rouge">BracketPairFinder</code>, which walks over a string maintaining a code-aware state. Basically, it lets you know whether it’s currently inside a bracket or string literal. Handy for not matching characters inside strings.</li>
-</ul>
-
- <a class="read-more" href="/writings/brace-matching-and-your-language-service">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-09-02">
-                02 Sep 2008
             </time>
         </footer>
     </article>

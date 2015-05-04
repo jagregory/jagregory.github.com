@@ -52,6 +52,127 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-conventions-rewrite">Fluent NHibernate: Conventions Rewrite</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I’ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+
+<p><strong>So why have I rewritten conventions?</strong> Our original implementation was simple, but not really maintainable into the future. It was a single class that was a major violation of separation of concerns, and it just kept growing and growing. It didn’t gracefully degrade either; if we didn’t have the exact convention you needed it was tough luck, there was very little you could do short of modifying the code yourself.</p>
+
+<p>Our original design worked something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">WithConventions</span><span class="p">(</span><span class="n">conventions</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">conventions</span><span class="p">.</span><span class="n">TableName</span> <span class="p">=</span> <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">"Table"</span><span class="p">;</span>
+  <span class="n">conventions</span><span class="p">.</span><span class="n">DefaultLazy</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>As you can see, it’s a fairly simple design. Lambda functions were set that got called in various places throughout the mapping generation cycle. It was a good design for simple scenarios; however, when you start overriding more conventions, and introducing logic into them, it can quickly become a massive ball of mud. So while there was an initial simplicity to it, that simplicity was quickly lost if you were trying to do anything clever with it. This is another thing that the rewrite aims to solve.</p>
+
+<p><strong>So how have things changed?</strong> The ability to define conventions inline is gone, for starters. Instead what you have is a series of interfaces of varying degrees of granularity; any classes implementing any of the interfaces will be automagically hooked into the mapping generation cycle. What this equates to is you’ll have a folder/namespace in your projects dedicated to conventions, each class making an alteration to the conventions when it’s called. As each convention is an interface, it means you can implement multiples of them in a single class, which allows you to group common conventions into a single class if you desire.</p>
+
+<h2 id="example_customising_the_table_name">Example: Customising the table name</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">TableNameConvention</span> <span class="p">:</span> <span class="n">IClassConvention</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Accept</span><span class="p">(</span><span class="n">IClassMap</span> <span class="k">class</span><span class="nc">Map</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// apply to all mappings
+</span>  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">Apply</span><span class="p">(</span><span class="n">IClassMap</span> <span class="k">class</span><span class="nc">Map</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// will produce table names like: tbl_Customer, tbl_Product
+</span>    <span class="k">class</span><span class="nc">Map</span><span class="p">.</span><span class="nf">WithTable</span><span class="p">(</span><span class="s">"tbl_"</span> <span class="p">+</span> <span class="k">class</span><span class="nc">Map</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This is a simple implementation of the <code>IClassConvention</code> interface, which is applied to all class mappings (hence the <code>return true</code> in <code>Accept</code>) and simply prefixes the table name with <code>tbl_</code>.</p>
+
+<h2 id="example_adding_your_conventions">Example: Adding your conventions</h2>
+
+<p>There’s one thing you need to do to get Fluent NHibernate to use your conventions, and that’s to inform the convention discovery mechanism of where it’s to search for conventions. You do this using the <code>PersistenceModel</code>s <code>CovnentionFinder</code> property, or through the <code>ConventionDiscovery</code> property through <a href="http://wiki.fluentnhibernate.org/show/FluentConfiguration">Fluent Configuration</a>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Fluently</span><span class="p">.</span><span class="nf">Configure</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">Mappings</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">FluentMappings</span>
+      <span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+      <span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;())</span>
+  <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>That’s all there is to it really, certainly from a users perspective anyway. The architecture is designed in such a way that you have a much greater control of the granularity of your conventions; if you need a convention we haven’t explicitly supplied, you can use the convention “above” the one you want, and implement it yourself. If you need a convention for just Bag collections (which we don’t have one for), you just need to create an implementation of <code>IHasManyConvention</code> and limit it to bags. Easy.</p>
+
+<h2 id="some_shortcuts">Some shortcuts</h2>
+
+<p>I realise that the new design is more verbose than it was originally, and if your scenario really is one that only uses one or two conventions, then the new design might be too much for you. To cater for you people, I’ve created some basic inline support. I really don’t recommend you use these unless you’re doing something <em>really</em> simple. Separation is always preferred.</p>
+
+<p>There’s the <code>ConventionBuilder</code> class which has several static properties (<code>Class</code> for example, there’s one for each convention) which allow you to create an inline convention.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">SetAttribute</span><span class="p">(</span><span class="s">"something"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">))</span>
+<span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">))</span>
+
+<span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="nf">When</span><span class="p">(</span>
+  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">PropertyType</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span>
+  <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">"Num"</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>These can be used directly in the <code>ConventionDiscovery</code> property mentioned above; it has an <code>Add</code> method that can take a params array of conventions, there’s also a <code>Setup</code> method which can be used for multiple additions.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span>
+  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Class</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">SetAttribute</span><span class="p">(</span><span class="s">"something"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)),</span>
+  <span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="p">.</span><span class="n">ConventionDiscovery</span><span class="p">.</span><span class="nf">Setup</span><span class="p">(</span><span class="n">c</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">c</span><span class="p">.</span><span class="n">AddFromAssemblyOf</span><span class="p">&lt;</span><span class="n">MyConvention</span><span class="p">&gt;();</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">ConventionBuilder</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Always</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="nf">ColumnName</span><span class="p">(</span><span class="s">"ID"</span><span class="p">)));</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>In addition to that, there’s a limited selection of very common conventions which can be used inline. Again, I don’t advocate using these for anything complicated. If you start having logic in your conventions, or even if the lambdas end up being multi-line, I’d suggest using the full conventions. These helpers live in the <code>FluentNHibernate.Conventions.Helpers</code> namespace.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Table</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="s">"tbl_"</span> <span class="p">+</span> <span class="n">x</span><span class="p">.</span><span class="n">EntityType</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span>
+<span class="n">PrimaryKey</span><span class="p">.</span><span class="n">Name</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="s">"ID"</span><span class="p">)</span>
+<span class="n">DynamicUpdate</span><span class="p">.</span><span class="nf">AlwaysTrue</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>These can be used in the same way as the <code>ConventionBuilder</code> above.</p>
+
+<h2 id="regarding_auto_mapping">Regarding auto mapping</h2>
+
+<p>The auto mapper uses a small subset of conventions to discover various parts of your mappings. It was originally the case that these special conventions were lumped in with the rest of the conventions, even though you couldn’t use them outside of the automapper. As the old style conventions have gone, the automapper now has a separate set of conventions (they’re the same ones, just moved) that it uses. So in addition to the <code>ConventionDiscovery</code> property, the auto mapper has a <code>WithSetup</code> method that you can use to configure the auto mapping specific ones (<code>IsBaseType</code> primarily).</p>
+
+<h2 id="further_reading">Further reading</h2>
+
+<p>So this post should have given you a basic introduction to the changes I’ve made. To go further, you’re going to have to know what <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Available-conventions">interfaces are available</a> to implement. You should probably also read the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convertings">general conventions</a> wiki, how to <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">convert your existing conventions</a> to the new style, and the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Convention-shortcut">convention shortcuts</a> if it interests you. For maintainers, or just curious people, there’s also the wiki on how the <a href="http://wiki.fluentnhibernate.org/show/Conventions">conventions work behind-the-scenes</a>.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-conventions-rewrite">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-03-11">
+                11 Mar 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Fluent NHibernate: Auto mapping, overrides and alterations</a></h2>
         </header>
         <section class="post-excerpt">
@@ -378,142 +499,6 @@
             
             <time class="post-date" datetime="2009-02-03">
                 03 Feb 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn’t working, what’s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
-</blockquote>
-
-<p>There’s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it’s a one-to-one they need; after all, there’s their current entity (one) and the related entity (to-one). They’re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
-
-<p>There’s also a big distinction between what’s possible in the domain, and what’s possible by design in the database; for example, two businesses may <strong>never</strong> share an address in your application, but in the database there’s nothing stopping two rows in the Business table from referencing the same address row in the database. This is logic that can be applied on-top of a database design, but there’s nothing in the underlying pattern to disallow it.</p>
-
-<h2 id="manytoone">Many-to-one</h2>
-
-<p>Lets have a look at what actually is a many-to-one. Here’s a small database schema and the related entity.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">AddressId</span> <span class="n">int</span> <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">Address</span><span class="p">.</span><span class="n">Id</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
-  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
-<span class="err">{</span>
-  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-<span class="err">}</span>
-</code></pre>
-</div>
-
-<p>This is a standard many-to-one relationship, many <code>Customers</code> to one <code>Address</code>; the tables are linked by the <code>AddressId</code> key in the <code>Customer</code> table. You can see how people can misinterpret this as a one-to-one relationship when designing the Customer entity; the customer has one address, so it must be a one-to-one. People forget about this scenario:</p>
-
-<table class="db-table">
-  <caption>Customer</caption>
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>AddressId</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Plumbers</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Joiners</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>Roofers</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="db-table">
-  <caption>Address</caption>
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Number</th>
-      <th>Street</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>23</td>
-      <td>Baker St.</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>47</td>
-      <td>Jefferson Ave.</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>That is, the first and third customer both reference the first address.</p>
-
-<h2 id="onetoone">One-to-one</h2>
-
-<p><strong>So what actually is a one-to-one relationship then?</strong> A one-to-one is a relationship between two tables that share a mutually exclusive primary key value.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Customer</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="k">table</span> <span class="n">Address</span> <span class="p">(</span>
-  <span class="n">Id</span> <span class="n">int</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
-  <span class="n">Number</span> <span class="n">int</span><span class="p">,</span>
-  <span class="n">Street</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="n">Customer</span>
-<span class="err">{</span>
-  <span class="k">public</span> <span class="n">int</span> <span class="n">Id</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">string</span> <span class="n">Name</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-  <span class="k">public</span> <span class="n">Address</span> <span class="n">Address</span> <span class="err">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="err">}</span>
-<span class="err">}</span>
-</code></pre>
-</div>
-
-<p>You can see in this design <code>Customer</code> has no direct reference to <code>Address</code>, the two tables share a primary key value; so there would be a record in <code>Customer</code> with a primary key of <code>1</code>, and a record in <code>Address</code> that also has a primary key of <code>1</code>. It’s fairly common to have the primary key on the second table (<code>Address</code> in our case) be manually inserted on creation of a record in the first, so it may only be the first table that has a true auto-incrementing primary key.</p>
-
-<p>It’s also noticeable that both examples have exactly the same class design, this probably contributes to the confusion too, as it’s not immediately clear from the class what kind of relationship it is.</p>
-
-<p>So just remember this: <strong>if you think you’re mapping a one-to-one, you probably aren’t!</strong> It’s pretty uncommon to find a one-to-one relationship in a properly designed schema, 90% of the time it’ll be a many-to-one you need.</p>
-
- <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-27">
-                27 Jan 2009
             </time>
         </footer>
     </article>

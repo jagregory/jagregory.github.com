@@ -52,6 +52,39 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Trust Wireless Scroll Tablet with Dual Monitors</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
+
+<p>As far as I am aware there isn’t an option in the trust software to allow you to map to a specific monitor, only to restrict the area on the tablet (which isn’t at all helpful). So what I’ve figured out is purely a work around, and it isn’t great either<sup>1</sup>. This is mainly for my reference, but someone else might find it useful, so here we go:</p>
+<ol>
+	<li>Open up Display Properties and disable (“un-attach”) your secondary monitor.</li>
+	<li>Open the Trust Control Panel from the icon in your system tray.</li>
+	<li>Re-enable your second monitor.</li>
+	<li>Click ok in your Trust Control Panel.</li>
+</ol>
+<p>From there on out your tablet should only be mapped to the monitor that stayed enabled the whole time, that is until you re-open the Trust Control Panel. I didn’t say it was pretty!</p>
+
+<p>What I can gather is that after disabling your monitor, when you open up the control panel it maps the overall screen size so it can apply that to the tablet, but when you click OK after re-enabling the monitor it doesn’t refresh with the screen change and so uses the single monitor values.</p>
+
+<p><sup>1</sup> Also note that I have only tested this on my system.</p>
+
+ <a class="read-more" href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-03-07">
+                07 Mar 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/just-so-you-know">Personal Note: A brief interlude</a></h2>
         </header>
         <section class="post-excerpt">
@@ -146,249 +179,6 @@
             
             <time class="post-date" datetime="2006-01-23">
                 23 Jan 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/javascript-getnextelement-and-getpreviouselement-revised">JavaScript getNextElement and getPreviousElement - revised</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>This is a very old post. Please, stop reading and just <a href="http://jquery.com/">download jQuery</a>.</p>
-</blockquote>
-
-<p>As I said I would be in my previous post, I’ve been working on improving getNextElement. I’ve improved the overall performance of the function and also created a few others with similar purpose; including the sister function getPrevious element. I outline all the functions and their uses below; you can find the download link at the top and bottom of this post.</p>
-
-<p>Any bugs anyone finds don’t fret to email me or post a comment here, i’ll work on fixing them asap.</p>
-
-<h2 id="the-functions">The Functions</h2>
-
-<h3 id="getnextelement--getpreviouselement">getNextElement &amp; getPreviousElement</h3>
-
-<p>Basically this function is a more advanced, flexible version of the “element.nextSibling” and “element.previousSibling” properties. Features include the ability to specify the next element you’e looking for explicitly, so you can return the next list-item in a list (even if it happens to be a child of the current element) or the next matching node type. Also recursion is toggleable.</p>
-
-<h3 id="getfirstchild--getlastchild">getFirstChild &amp; getLastChild</h3>
-
-<p>A core part of getNextElement/getPreviousElement, this function recursively searches an elements child nodes for a matching element. Can be used stand alone to only return from within an elements child structure; recursively parses the childNode structures of all child elements.</p>
-
-<h3 id="getnextparent--getpreviousparent">getNextParent &amp; getPreviousParent</h3>
-
-<p>Gets the next node in the DOM tree after the current nodes parent; this walks the DOM tree backwards until it finds a parent of the current node with a nextSibling/previousSibling present.</p>
-
-<h3 id="istype">isType</h3>
-
-<p>Detects whether a specified element is of correct type; compares against a numerical value (nodeType) or a string value (tagName).</p>
-
-<h2 id="the-examples">The Examples</h2>
-
-<p>Note: All functions that require an element as a parameter can either take a direct reference or a string ID value.</p>
-
-<h3 id="getnextelement--getpreviouselement-1">getNextElement &amp; getPreviousElement</h3>
-
-<p>Both functions take exactly the same parameters and are used in the same way, so I’ll only provide examples for one.</p>
-
-<blockquote>
-  <p>Note: These functions also walk up the DOM tree, so if you have two lists and call getNextElement on the last list-item in the first list it will return the first item of the second list.</p>
-</blockquote>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the next element, regardless of type, after id.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the next list item, after id; could potentially be a child of id.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the next element with a nodeType of 1.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the next list-item that resides on the same level, or higher, as id; no child nodes are searched.</p>
-
-<h3 id="practical-example">Practical example:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"popup"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h1&gt;</span>This is a popup<span class="nt">&lt;/h1&gt;</span>
-  <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"paragraph"</span><span class="nt">&gt;</span>Below are some options:<span class="nt">&lt;/p&gt;</span>
-  <span class="nt">&lt;ul</span> <span class="na">id=</span><span class="s">"list"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;li&gt;</span>Your first choice<span class="nt">&lt;/li&gt;</span>
-    <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">"secondItem"</span><span class="nt">&gt;</span>Your second choice<span class="nt">&lt;/li&gt;</span>
-  <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would most likely return whitespace.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the H1 tag.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextElement</span><span class="p">(</span><span class="s1">'paragraph'</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the first list-item, “Your first choice”.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getPreviousElement</span><span class="p">(</span><span class="s1">'secondItem'</span><span class="p">,</span> <span class="s1">'ul'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the UL element.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getPreviousElement</span><span class="p">(</span><span class="s1">'paragraph'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the paragraph element.</p>
-
-<h3 id="getfirstchild--getlastchild-1">getFirstChild &amp; getLastChild</h3>
-
-<p>Once again, both these functions take the same parameters and behave the same way so I’ll only provide examples for one.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the first child of id, regardless of type.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the first child of id that is a list-item.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the first child of id that has a nodeType of 1.</p>
-
-<h3 id="practical-example-1">Practical example:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"popup"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h1&gt;</span>This is a popup<span class="nt">&lt;/h1&gt;</span>
-  <span class="nt">&lt;p&gt;</span>Below are some options:<span class="nt">&lt;/p&gt;</span>
-  <span class="nt">&lt;ul&gt;</span>
-    <span class="nt">&lt;li&gt;</span>Your first choice<span class="nt">&lt;/li&gt;</span>
-    <span class="nt">&lt;li&gt;</span>Your second choice<span class="nt">&lt;/li&gt;</span>
-  <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would most likely return a Text node with some whitespace.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the H1 element.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getFirstChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the first list-item, “Your first choice”.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Once again, probably whitespace.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the UL element.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getLastChild</span><span class="p">(</span><span class="s1">'popup'</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the last list-item, “Your second choice”.</p>
-
-<h3 id="getnextparent--getpreviousparent-1">getNextParent &amp; getPreviousParent</h3>
-
-<p>Again, both these functions take the same parameters, so I’ll only show one.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextParent</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns the node next to the parent of id.</p>
-
-<h3 id="practical-example-2">Practical example:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;ul&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">"first"</span><span class="nt">&gt;</span>Item One<span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;ul&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">id=</span><span class="s">"second"</span><span class="nt">&gt;</span>Item Two<span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span>
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getNextParent</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the second UL element.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">getPreviousParent</span><span class="p">(</span><span class="s1">'second'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Would return the first UL element.</p>
-
-<h3 id="istype-1">isType</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">isType</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">'li'</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns true if id has a tagName of ‘li’.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">isType</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>Returns true if id has a nodeType of 3.</p>
-
-<p>Download: <a href="#" title="DOM Navigation javascript file">domnavigation-1.1.js</a> <em>(this download is no longer available, sorry)</em></p>
-
- <a class="read-more" href="/writings/javascript-getnextelement-and-getpreviouselement-revised">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-01-12">
-                12 Jan 2006
             </time>
         </footer>
     </article>
