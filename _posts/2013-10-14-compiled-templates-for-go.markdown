@@ -10,9 +10,9 @@ published: true
 ---
 [Cote](https://github.com/jagregory/cote) is a compiled templating language for [Go](http://golang.org).
 
-<!-- more -->
-
 Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don't care. [Cote](https://github.com/jagregory/cote) falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.
+
+<!-- more -->
 
 <table>
   <thead>

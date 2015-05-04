@@ -11,7 +11,9 @@ meta:
   _edit_last: '2'
   dsq_thread_id: '644651492'
 ---
-Last monday (8th of Feb) I did an <a href="http://jagregory.com/writings/git-e-van/">E-VAN on Git</a>; an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn't <em>hear</em> anyone complaining.
+Last monday (8th of Feb) I did an [E-VAN on Git](/writings/git-e-van/); an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn't *hear* anyone complaining.
+
+<!-- more -->
 
 The talk was recorded, so if you haven't already seen it then you can do so at your own leisure.
 

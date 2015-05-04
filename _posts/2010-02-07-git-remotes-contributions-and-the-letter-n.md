@@ -13,12 +13,12 @@ meta:
 ---
 Here's a few ways to think about Git and it's distributed nature.
 
-<ul>
-<li>You deal with multiples of repositories, not a single central repository</li>
-<li>Updates come from a remote repository, and changes are pushed to a remote; none of these repositories have to be the same</li>
-<li><em>Origin</em> is the canonical name for the repository you cloned from</li>
-<li><em>Upstream</em> is the canonical name for the original project repository you forked from</li>
-</ul>
+  * You deal with multiples of repositories, not a single central repository
+  * Updates come from a remote repository, and changes are pushed to a remote; none of these repositories have to be the same
+  * *Origin* is the canonical name for the repository you cloned from
+  * *Upstream* is the canonical name for the original project repository you forked from
+
+<!-- more -->
 
 <h2>General pushing and pulling</h2>
 
@@ -81,7 +81,7 @@ Do exactly as you would your own personal project. Local changes, pushed up to y
 Here's how to imagine the whole process, think of it as an N shape.
 
 ![Figure 6](/images/remote-6.png)
-    
+
 On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.
 
 <ol>

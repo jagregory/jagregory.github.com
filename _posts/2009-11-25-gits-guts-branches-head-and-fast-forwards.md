@@ -10,9 +10,10 @@ meta:
   aktt_notify_twitter: 'no'
   _edit_last: '2'
 ---
-<blockquote>Cross posted to <a href="http://www.lostechies.com/blogs/jagregory/archive/2009/11/25/git-s-guts-branches-head-and-fast-forwards.aspx">Los Techies</a></blockquote>
 
 <p>Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I'd post some answers as a mini-series of blog posts. I'll cover some fundamentals, while trying not to retread too much ground that the fantastic <a href="http://book.git-scm.com">Git community book</a> already covers so well. Instead I'm going to talk about things that should help you understand what you and Git are doing day-to-day.</p>
+
+<!-- more -->
 
 <h3>What's a branch?</h3>
 
@@ -51,7 +52,7 @@ meta:
 <p>A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.</p>
 
 <p>Given the following branch setup:</p>
-    
+
 ![Figure 4](/images/GitGuts1_Figure4.png)
 
 <p>You've got both branches referencing the same commit. They've both got exactly the same history. Now commit something to feature.</p>

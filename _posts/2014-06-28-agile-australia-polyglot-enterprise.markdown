@@ -11,6 +11,8 @@ A colleague and I recently spoke at Agile Australia. a medium-to-large IT confer
 
 Our topic this year was Polyglot Enterprise, or "Using the Right Tool for the Job". We spoke to the idea that excessive standardisation can hinder your ability to innovate and respond to market changes. In other words, if you optimise for a particular path don't be surprised when it's hard to change direction.
 
+<!-- more -->
+
 The talk wasn't recorded, for some unknown reason, so here's the condensed version.
 
 As organisations grow and change, so does their technology landscape. Platforms multiply, tools and technologies appear and grow organically. Before long, if you're not careful, the landscape becomes a swamp. An uncomfortable place full of weird creatures and funny smells. We see multiple programming languages in these organisations, but more significantly we see multiples of everything: Operating Systems, Monitoring tools, communciation channels, deployment approaches, operational behaviour, and more. Everything and anything is ripe for multiple approaches and solutions.

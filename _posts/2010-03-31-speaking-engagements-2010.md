@@ -9,15 +9,17 @@ published: true
 meta:
   _edit_last: '2'
 ---
-In an attempt to get out of my shell more this year, I've taken up speaking (at conferences, not just in general). First came my <a href="http://jagregory.com/writings/git-e-van-recording/">Git E-VAN</a>, then came <a href="http://fiesta.lostechies.com/">Pablo's Fiesta</a>, so what else have I got lined up this year?
+In an attempt to get out of my shell more this year, I've taken up speaking (at conferences, not just in general). First came my [Git E-VAN](/writings/git-e-van-recording/), then came [Pablo's Fiesta](http://fiesta.lostechies.com/), so what else have I got lined up this year?
 
-<strong>24<sup>th</sup> April</strong>: <a href="http://codingday.org/">Irish Open Spaces Coding Day II</a> in Dublin, where I'll be speaking about <a href="http://fluentnhibernate.org">Fluent NHibernate</a>.
+<!-- more -->
 
-<strong>16<sup>th</sup>-18<sup>th</sup> June</strong>: <a href="http://ndc2010.no" title="Norwegian Developers Conference 2010">NDC 2010</a> in Oslo, speaking about <a href="http://fluentnhibernate.org">Fluent NHibernate</a> and DVCS with Git.
+**24<sup>th</sup> April**: [Irish Open Spaces Coding Day II](http://codingday.org/) in Dublin, where I'll be speaking about [Fluent NHibernate](http://fluentnhibernate.org).
 
-The abstracts for my talks can be found below. If you're interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email (<a href="mailto:james@jagregory.com">james@jagregory.com</a>). You can see my availability on my <a href="http://www.google.com/calendar/embed?src=mtbk7g2u13e2j7s1u8p0flitho@group.calendar.google.com&ctz=Europe/London&gsessionid=GBDJzqgaRWqAze87fNda9Q">speaking calendar</a>.
+**16<sup>th</sup>-18<sup>th</sup> June**: [NDC 2010](http://ndc2010.no) in Oslo, speaking about [Fluent NHibernate](http://fluentnhibernate.org) and DVCS with Git.
 
-<h3>Fluent NHibernate</h3>
+The abstracts for my talks can be found below. If you're interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email ([james@jagregory.com](mailto:james@jagregory.com)).
+
+## Fluent NHibernate
 
 An introduction and overview to object⁄relational mapping using Fluent NHibernate. See how Fluent NHibernate can help you map your domain with the least amount of effort, how you can remain flexible with your database, and how to drive your design through convention–over–configuration; all without writing a single line of XML.
 
@@ -25,6 +27,6 @@ The talk is an introduction to Fluent NHibernate for those that aren't familiar 
 
 I'll cover an overview of what Fluent NHibernate is, the various parts of it (the fluent interface, the conventions, and the auto–mappings, and the configuration aspect), then expand on how these features can be utilised to improve your NHibernate experience and simplify your development process.
 
-<h3>Introduction to Git</h3>
+## Introduction to Git
 
 An introduction to distributed version control using Git, and how your VCS should work with you and not against you. How DVCS can completely alter your development process, streamline it, and help you produce better software, faster. Covering how local repositories speed up your development, multiple authoritative sources, distributed teams, multiple workflows, and some of the more distinct features of Git. With experiences from an OSS team on how the migration from SVN to Git has helped the project and changed how the team works (Fluent NHibernate).
