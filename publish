@@ -5,6 +5,7 @@ set -e
 jekyll build
 git checkout master
 git rm -qr .
+git checkout master -- .gitignore
 cp -r _site/. .
 rm -r _site
 git add -A
