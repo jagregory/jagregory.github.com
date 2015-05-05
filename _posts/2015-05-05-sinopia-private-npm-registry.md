@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 'Sinopia: a private NPM registry'
+date: 2015-05-05
 ---
 
 Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.
