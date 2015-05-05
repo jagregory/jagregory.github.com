@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="post-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Sinopia: a private NPM registry</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-05-05">05 May 2015</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.</p>
+
+<!-- more -->
+
+<blockquote>
+  <p>Or you modularise and share via git dependencies, which isn’t a great solution. You lose versioning, all the pre-publish hook loveliness, and become quite limited by where our package is being used (no preprocessors for you!).</p>
+</blockquote>
+
+<p>In the early days NPM wasn’t designed with multiple registries in mind, so hosting your own internal one meant either proxying/mirroring the public registry or manually adding public packages to your private registry and using it for everything. Thanks to improvements in NPM and several open-source efforts, it’s now much easier than that to host your own internal NPM registry.</p>
+
+<p>NPM have recently <a href="https://www.npmjs.com/private-modules">started offering private modules</a>, which looks very interesting. There’s also a pay-for <a href="http://npmjs.com/enterprise#pricing">Enterprise option</a> from NPM which is worth thinking about once you scale.</p>
+
+<p>If private cloud hosting isn’t your thing, the host-your-own options are worth exploring. <a href="https://www.npmjs.com/package/sinopia">Sinopia</a> is what we’ll setup.</p>
+
+<h2 id="what-is-sinopia">What is Sinopia?</h2>
+
+<p>Sinopia is a simple NPM registry, which has zero dependencies (that means no CouchDB for those who’ve done this before); it has support for most day-to-day NPM features, such as <a href="https://docs.npmjs.com/misc/scope">scopes</a>, <a href="https://docs.npmjs.com/cli/publish">command line publishing</a>, and <a href="https://docs.npmjs.com/cli/adduser">authentication</a>. Sinopia is a good candidate for a low-to-medium utilised NPM registry, such as company private registries.</p>
+
+<h2 id="running-sinopia-on-your-machine">Running Sinopia on your machine</h2>
+
+<p>If you just want to run Sinopia locally and aren’t interested in how it works, you can:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/jagregory/sinopia-ansible.git
+cd sinopia-ansible
+ansible-galaxy install -r requirements.txt
+vagrant up
+</code></pre>
+</div>
+
+<p>Once this completes Sinopia will be available on port <code class="highlighter-rouge">4873</code>.</p>
+
+<h2 id="vagrant-setup">Vagrant setup</h2>
+
+<p>Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run <code class="highlighter-rouge">vagrant init</code> to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.</p>
+
+<section class="side-by-side">
+  <div>
+
+    <p>The Ubuntu boxes provided by the Phusion team are a good set of boxes to start from. We’re using their 14.04 TLS box.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"ubuntu-14.04-amd64-vbox"</span>
+<span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box_url</span> <span class="o">=</span> <span class="s2">"https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box"</span>
+</code></pre>
+  </div>
+
+</section>
+
+<section class="side-by-side">
+  <div>
+
+    <p>When Sinopia starts it will listen on port <code class="highlighter-rouge">4873</code> in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"forwarded_port"</span><span class="p">,</span> <span class="ss">guest: </span><span class="mi">4873</span><span class="p">,</span> <span class="ss">host: </span><span class="mi">4873</span>
+</code></pre>
+  </div>
+
+</section>
+
+<section class="side-by-side">
+  <div>
+
+    <p>Finally, Vagrant will run Ansible on the Virtual Machine. Ansible will download and configure Sinopia using the <a href="https://github.com/jagregory/sinopia-ansible">sinopia-ansible</a> role.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provision</span> <span class="s2">"ansible"</span> <span class="k">do</span> <span class="o">|</span><span class="n">ansible</span><span class="o">|</span>
+  <span class="n">ansible</span><span class="p">.</span><span class="nf">playbook</span> <span class="o">=</span> <span class="s2">"site.yml"</span>
+<span class="k">end</span>
+</code></pre>
+  </div>
+
+</section>
+
+<h2 id="ansible-playbook">Ansible playbook</h2>
+
+<p>Our Vagrantfile delegates machine setup to Ansible, which is driven by a <a href="http://docs.ansible.com/playbooks.html">Playbook</a>. Our playbook is pretty simple, but it’s worth having a look.</p>
+
+<section class="side-by-side">
+  <div>
+
+    <p>Here’s the directory structure we have for Ansible. There’s very little to it.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>.
+├── Vagrantfile
+├── hosts
+├── requirements.txt
+└── site.yml
+</code></pre>
+  </div>
+
+</section>
+
+<section class="side-by-side">
+  <div>
+
+    <p><strong>site.yml</strong>: For our Vagrantfile to run we need a site.yml Ansible playbook, which tells Ansible which roles our host is supposed to have.</p>
+
+    <p>In our site.yml we give the playbook a name, specify that it should run on all of our hosts (we only have one), that our commands should be run as sudo, and then we specify which roles our machine should have.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>---
+- name: Install Sinopia
+  hosts: all
+  sudo: True
+  roles:
+    - nodesource.node
+    - jagregory.sinopia
+</code></pre>
+  </div>
+
+</section>
+
+<p><strong>requirements.txt</strong>: Ansible has a dependency management system/tool called <a href="https://galaxy.ansible.com/">Ansible Galaxy</a> which is growing in popularity for sharing roles. We’ll use Ansible Galaxy to download the roles we use for this machine, rather than copying them into our repository.</p>
+
+<section class="side-by-side">
+  <div>
+
+    <p>Ansible Galaxy uses a requirements.txt to list which dependencies to install. We just have two, a NodeJS role and our Sinopia role.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>nodesource.node
+jagregory.sinopia
+</code></pre>
+  </div>
+
+</section>
+
+<p>To install these dependencies you can run: <code class="highlighter-rouge">ansible-galaxy install -r requirements.txt</code></p>
+
+<section class="side-by-side">
+  <div>
+
+    <p><strong>hosts</strong>: The last thing of interest is the Ansible inventory file, which declares the machines we’re letting Ansible manage. In our case it’s just one host in our inventory.</p>
+
+  </div>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>npm.jagregory.com
+</code></pre>
+  </div>
+
+</section>
+
+<h2 id="sinopia-in-the-cloud">Sinopia in the Cloud</h2>
+
+<p>If you want to run a Sinopia instance in the cloud it’s as easy as launching an instance in EC2 (or your preferred provider), adding it’s public IP address to the inventory file and running Ansible.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ansible-playbook site.yml -i hosts
+</code></pre>
+</div>
+
+<p>This will run Ansible against all the hosts in our inventory (hosts file) and execute the site.yml playbook.</p>
+
+<p>You can read more about running Sinopia <a href="https://www.npmjs.com/package/sinopia">on their website</a>.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

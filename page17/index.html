@@ -52,6 +52,40 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/sql-server-object-exists-function">SQL Server Object Exists Function</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Update:</strong> Added separate versions for SQL Server 2000 and SQL Server 2005, due to the differences in the system objects tables.It may just be me, but when writing migration/create scripts for use with SQL Server I get quite agitated at having to write an ugly, long-winded, drop statement at the start of every object definition.</p>
+</blockquote>
+
+<p>The support for dropping objects is one of the few things I would say MySQL has SQL Server over the barrel for.Baring in mind that if you try to drop an object that doesn’t exist, you’ll get an execution error; here’s how to drop a table in MySQL:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">customers</span>
+</code></pre>
+</div>
+
+<p>Here’s how to drop the same table, if you’re using SQL Server:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">IF</span> <span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span> <span class="mi">1</span> <span class="k">FROM</span> <span class="n">sys</span><span class="p">.</span><span class="n">objects</span> <span class="k">WHERE</span> <span class="n">OBJECT_ID</span> <span class="o">=</span> <span class="n">OBJECT_ID</span><span class="p">(</span><span class="n">N</span><span class="s1">'customers'</span><span class="p">)</span> <span class="k">AND</span> <span class="k">type</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="s1">'U'</span><span class="p">))</span>    <span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">customers</span>
+</code></pre>
+</div>
+
+ <a class="read-more" href="/writings/sql-server-object-exists-function">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-05-26">
+                26 May 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/javascript-console-in-safari">JavaScript Console in Safari</a></h2>
         </header>
         <section class="post-excerpt">
@@ -145,32 +179,6 @@ before I came across this, bad James!</p>
             
             <time class="post-date" datetime="2006-04-26">
                 26 Apr 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="highlighter-rouge">onclick="do_something()"</code>.</p>
-
-<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
-
-<p>Perfect - clean semantic markup and real event handling.</p>
-
-<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
- <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-04-12">
-                12 Apr 2006
             </time>
         </footer>
     </article>

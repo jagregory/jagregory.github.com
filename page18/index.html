@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="highlighter-rouge">onclick="do_something()"</code>.</p>
+
+<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
+
+<p>Perfect - clean semantic markup and real event handling.</p>
+
+<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
+
+ <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-04-12">
+                12 Apr 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">How-to use ClientIDs in JavaScript without the ugliness</a></h2>
         </header>
         <section class="post-excerpt">
@@ -152,26 +178,6 @@
             
             <time class="post-date" datetime="2006-03-08">
                 08 Mar 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Trust Wireless Scroll Tablet with Dual Monitors</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
-
- <a class="read-more" href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-03-07">
-                07 Mar 2006
             </time>
         </footer>
     </article>

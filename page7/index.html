@@ -52,6 +52,30 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn’t working, what’s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
+</blockquote>
+
+<p>There’s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it’s a one-to-one they need; after all, there’s their current entity (one) and the related entity (to-one). They’re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
+
+ <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-27">
+                27 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/introduction-to-static-reflection">Introduction to static reflection</a></h2>
         </header>
         <section class="post-excerpt">
@@ -142,30 +166,6 @@
             
             <time class="post-date" datetime="2009-01-13">
                 13 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Fluent NHibernate: Auto Mapping Type Conventions</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-</blockquote>
-
-<p>I’ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I’ll cover now.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-11">
-                11 Jan 2009
             </time>
         </footer>
     </article>

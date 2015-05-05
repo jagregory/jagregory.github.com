@@ -6,9 +6,180 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 05 May 2015 11:33:36 +1000</pubDate>
-    <lastBuildDate>Tue, 05 May 2015 11:33:36 +1000</lastBuildDate>
+    <pubDate>Tue, 05 May 2015 12:56:09 +1000</pubDate>
+    <lastBuildDate>Tue, 05 May 2015 12:56:09 +1000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Sinopia: a private NPM registry</title>
+        <description>&lt;p&gt;Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Or you modularise and share via git dependencies, which isn’t a great solution. You lose versioning, all the pre-publish hook loveliness, and become quite limited by where our package is being used (no preprocessors for you!).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the early days NPM wasn’t designed with multiple registries in mind, so hosting your own internal one meant either proxying/mirroring the public registry or manually adding public packages to your private registry and using it for everything. Thanks to improvements in NPM and several open-source efforts, it’s now much easier than that to host your own internal NPM registry.&lt;/p&gt;
+
+&lt;p&gt;NPM have recently &lt;a href=&quot;https://www.npmjs.com/private-modules&quot;&gt;started offering private modules&lt;/a&gt;, which looks very interesting. There’s also a pay-for &lt;a href=&quot;http://npmjs.com/enterprise#pricing&quot;&gt;Enterprise option&lt;/a&gt; from NPM which is worth thinking about once you scale.&lt;/p&gt;
+
+&lt;p&gt;If private cloud hosting isn’t your thing, the host-your-own options are worth exploring. &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;Sinopia&lt;/a&gt; is what we’ll setup.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-sinopia&quot;&gt;What is Sinopia?&lt;/h2&gt;
+
+&lt;p&gt;Sinopia is a simple NPM registry, which has zero dependencies (that means no CouchDB for those who’ve done this before); it has support for most day-to-day NPM features, such as &lt;a href=&quot;https://docs.npmjs.com/misc/scope&quot;&gt;scopes&lt;/a&gt;, &lt;a href=&quot;https://docs.npmjs.com/cli/publish&quot;&gt;command line publishing&lt;/a&gt;, and &lt;a href=&quot;https://docs.npmjs.com/cli/adduser&quot;&gt;authentication&lt;/a&gt;. Sinopia is a good candidate for a low-to-medium utilised NPM registry, such as company private registries.&lt;/p&gt;
+
+&lt;h2 id=&quot;running-sinopia-on-your-machine&quot;&gt;Running Sinopia on your machine&lt;/h2&gt;
+
+&lt;p&gt;If you just want to run Sinopia locally and aren’t interested in how it works, you can:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/jagregory/sinopia-ansible.git
+cd sinopia-ansible
+ansible-galaxy install -r requirements.txt
+vagrant up
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Once this completes Sinopia will be available on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;vagrant-setup&quot;&gt;Vagrant setup&lt;/h2&gt;
+
+&lt;p&gt;Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant init&lt;/code&gt; to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.&lt;/p&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;The Ubuntu boxes provided by the Phusion team are a good set of boxes to start from. We’re using their 14.04 TLS box.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu-14.04-amd64-vbox&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box_url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;When Sinopia starts it will listen on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt; in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;network&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forwarded_port&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;guest: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;Finally, Vagrant will run Ansible on the Virtual Machine. Ansible will download and configure Sinopia using the &lt;a href=&quot;https://github.com/jagregory/sinopia-ansible&quot;&gt;sinopia-ansible&lt;/a&gt; role.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ansible&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;playbook&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;site.yml&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;h2 id=&quot;ansible-playbook&quot;&gt;Ansible playbook&lt;/h2&gt;
+
+&lt;p&gt;Our Vagrantfile delegates machine setup to Ansible, which is driven by a &lt;a href=&quot;http://docs.ansible.com/playbooks.html&quot;&gt;Playbook&lt;/a&gt;. Our playbook is pretty simple, but it’s worth having a look.&lt;/p&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;Here’s the directory structure we have for Ansible. There’s very little to it.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.
+├── Vagrantfile
+├── hosts
+├── requirements.txt
+└── site.yml
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;&lt;strong&gt;site.yml&lt;/strong&gt;: For our Vagrantfile to run we need a site.yml Ansible playbook, which tells Ansible which roles our host is supposed to have.&lt;/p&gt;
+
+    &lt;p&gt;In our site.yml we give the playbook a name, specify that it should run on all of our hosts (we only have one), that our commands should be run as sudo, and then we specify which roles our machine should have.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+- name: Install Sinopia
+  hosts: all
+  sudo: True
+  roles:
+    - nodesource.node
+    - jagregory.sinopia
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;p&gt;&lt;strong&gt;requirements.txt&lt;/strong&gt;: Ansible has a dependency management system/tool called &lt;a href=&quot;https://galaxy.ansible.com/&quot;&gt;Ansible Galaxy&lt;/a&gt; which is growing in popularity for sharing roles. We’ll use Ansible Galaxy to download the roles we use for this machine, rather than copying them into our repository.&lt;/p&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;Ansible Galaxy uses a requirements.txt to list which dependencies to install. We just have two, a NodeJS role and our Sinopia role.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nodesource.node
+jagregory.sinopia
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;p&gt;To install these dependencies you can run: &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-galaxy install -r requirements.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;section class=&quot;side-by-side&quot;&gt;
+  &lt;div&gt;
+
+    &lt;p&gt;&lt;strong&gt;hosts&lt;/strong&gt;: The last thing of interest is the Ansible inventory file, which declares the machines we’re letting Ansible manage. In our case it’s just one host in our inventory.&lt;/p&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm.jagregory.com
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;
+
+&lt;h2 id=&quot;sinopia-in-the-cloud&quot;&gt;Sinopia in the Cloud&lt;/h2&gt;
+
+&lt;p&gt;If you want to run a Sinopia instance in the cloud it’s as easy as launching an instance in EC2 (or your preferred provider), adding it’s public IP address to the inventory file and running Ansible.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook site.yml -i hosts
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This will run Ansible against all the hosts in our inventory (hosts file) and execute the site.yml playbook.&lt;/p&gt;
+
+&lt;p&gt;You can read more about running Sinopia &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;on their website&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 05 May 2015 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/sinopia-private-npm-registry</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/sinopia-private-npm-registry</guid>
+        
+        
+      </item>
     
       <item>
         <title>My ever evolving development virtualisation situation</title>
@@ -735,35 +906,6 @@
         <pubDate>Wed, 31 Mar 2010 00:00:00 +1100</pubDate>
         <link>http://www.jagregory.com//writings/speaking-engagements-2010</link>
         <guid isPermaLink="true">http://www.jagregory.com//writings/speaking-engagements-2010</guid>
-        
-        <category>Speaking</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Git E-VAN recording</title>
-        <description>&lt;p&gt;Last monday (8th of Feb) I did an &lt;a href=&quot;/writings/git-e-van/&quot;&gt;E-VAN on Git&lt;/a&gt;; an introductory talk on Git and DVCS, covering pretty much everything you need to know for day-to-day Git life. I think it went down well, certainly didn’t &lt;em&gt;hear&lt;/em&gt; anyone complaining.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;The talk was recorded, so if you haven’t already seen it then you can do so at your own leisure.&lt;/p&gt;
-
-&lt;p&gt;The video is up on the &lt;a href=&quot;http://vimeo.com/user1286822&quot;&gt;E-VAN’s Vimeo account&lt;/a&gt;, specifically &lt;a href=&quot;http://vimeo.com/9324683&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;object width=&quot;600&quot; height=&quot;450&quot;&gt;
-  &lt;param name=&quot;allowfullscreen&quot; value=&quot;true&quot; /&gt;
-  &lt;param name=&quot;allowscriptaccess&quot; value=&quot;always&quot; /&gt;
-  &lt;param name=&quot;movie&quot; value=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; /&gt;
-  &lt;embed src=&quot;http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=0&amp;amp;show_portrait=0&amp;amp;color=00ADEF&amp;amp;fullscreen=1&quot; type=&quot;application/x-shockwave-flash&quot; allowfullscreen=&quot;true&quot; allowscriptaccess=&quot;always&quot; width=&quot;600&quot; height=&quot;450&quot; /&gt;
-  &lt;p&gt;&amp;lt;/embed&amp;gt;&amp;lt;/object&amp;gt;&lt;/p&gt;
-&lt;/object&gt;
-</description>
-        <pubDate>Wed, 17 Feb 2010 00:00:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/git-e-van-recording</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/git-e-van-recording</guid>
-        
-        <category>Git</category>
         
         <category>Speaking</category>
         

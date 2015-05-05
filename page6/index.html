@@ -52,6 +52,26 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-conventions-rewrite">Fluent NHibernate: Conventions Rewrite</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve just committed a rather large update to the Fluent NHibernate conventions code. This post explains why I’ve done this, and gives you some starting points to update your code. Anything else you need can be found on the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">wiki</a> under <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Conventions">conventions</a> and <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Converting-to-new-style-conventions">converting to new-style conventions</a>.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-conventions-rewrite">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-03-11">
+                11 Mar 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-overrides-and-alterations">Fluent NHibernate: Auto mapping, overrides and alterations</a></h2>
         </header>
         <section class="post-excerpt">
@@ -134,30 +154,6 @@
             
             <time class="post-date" datetime="2009-02-03">
                 03 Feb 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn’t working, what’s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
-</blockquote>
-
-<p>There’s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it’s a one-to-one they need; after all, there’s their current entity (one) and the related entity (to-one). They’re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
-
- <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-27">
-                27 Jan 2009
             </time>
         </footer>
     </article>
