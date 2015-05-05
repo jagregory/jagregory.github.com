@@ -502,6 +502,18 @@ margin on the iframe, cause it breaks stuff. */
   background: #222 no-repeat center center;
   background-size: cover;
   overflow: hidden; }
+  .main-header p {
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 1rem;
+    margin: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%; }
+    .main-header p a {
+      color: inherit;
+      text-decoration: none; }
+      .main-header p a:hover {
+        color: #111; }
 
 .main-header .inner {
   width: 80%; }
