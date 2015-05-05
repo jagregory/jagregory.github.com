@@ -39,9 +39,9 @@
         </header>
 
         <section class="post-content">
-            <h2 id="introducing-the-delegrid">Introducing the DeleGrid</h2>
+            <p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
 
-<p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
+<!-- more -->
 
 <h3 id="why-the-delegrid">Why the DeleGrid?</h3>
 
@@ -53,13 +53,15 @@
 
 <p>After getting the source or assembly and doing the usual song-and-dance, add a reference to the control to your page:</p>
 
-<pre><code class="language-aspx-cs">&lt;%@ Register Assembly="JAGregory.Controls.DeleGrid" Namespace="JAGregory.Controls" TagPrefix="jag" %&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="err">&lt;</span>%@ Register Assembly="JAGregory.Controls.DeleGrid" Namespace="JAGregory.Controls" TagPrefix="jag" %&gt;
 </code></pre>
+</div>
 
 <p>Then create an instance of the control, turning the paging on and setting the correct page size:</p>
 
-<pre><code class="language-aspx-cs">&lt;jag:DeleGrid ID="grid" runat="server" AllowPaging="true" PageSize="4" /&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;jag:DeleGrid</span> <span class="na">ID=</span><span class="s">"grid"</span> <span class="na">runat=</span><span class="s">"server"</span> <span class="na">AllowPaging=</span><span class="s">"true"</span> <span class="na">PageSize=</span><span class="s">"4"</span> <span class="nt">/&gt;</span>
 </code></pre>
+</div>
 
 <p>Now you have a control set up, however it sill won’t bind correctly. So, you need to attach the event handlers in the code-behind.</p>
 
@@ -153,7 +155,9 @@
 
 <p>The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)</p>
 
-<p><strong>All patches are welcomed with open arms!</strong></p>
+<blockquote>
+  <p>All patches are welcomed with open arms!</p>
+</blockquote>
 
         </section>
 

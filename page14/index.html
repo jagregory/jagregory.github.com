@@ -57,65 +57,11 @@
         <section class="post-excerpt">
             <p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I’d elaborate a bit on why it’s necessary.</p>
 
-<p>When you’re data binding against an object that isn’t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code>BoundField</code> incorrectly handling a hierarchical object path.</p>
+<p>When you’re data binding against an object that isn’t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code class="highlighter-rouge">BoundField</code> incorrectly handling a hierarchical object path.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>A field or property with the name 'MySubObject.PropertyName' was not found on the selected data source.
-</code></pre>
-</div>
-
-<p>Take this following Customer object for example:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Customer</span>
-<span class="p">{</span>
-	<span class="p">...</span>
-	
-	<span class="k">public</span> <span class="n">ContactDetails</span> <span class="n">ContactDetails</span>
-	<span class="p">{</span>
-		<span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">contactDetails</span><span class="p">;</span> <span class="p">}</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">ContactDetails</span>
-<span class="p">{</span>
-	<span class="p">...</span>
-	
-	<span class="k">public</span> <span class="kt">string</span> <span class="n">TelephoneNumber</span>
-	<span class="p">{</span>
-		<span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">telephoneNumber</span><span class="p">;</span> <span class="p">}</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>If you were to just use <code>DataField="ContactDetails"</code> on a <code>BoundField</code>, it would work fine because it’s binding against a property on your customer. However,  if you were to try to get the <code>TelephoneNumber</code> property of the <code>ContactDetails</code> by doing: <code>DataField="ContactDetails.TelephoneNumber"</code>, it would fail because the field can’t interpret the two property names; it treats the <code>DataField</code> as one big name, which obviously isn’t correct.</p>
-
-<p>The <code>BoundField</code> simply isn’t capable of resolving this kind of hierarchical path using late-binding. This is because it uses the DataField as the literal property name on the component, using a TypeDescriptor to get the property.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">TypeDescriptor</span><span class="p">.</span><span class="nf">GetProperties</span><span class="p">(</span><span class="n">component</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="n">dataField</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path. It’s pure speculation, but if this is a conscious decision it may be down to the performance implications of using late binding; however, I can’t see that it’s any worse than reflection.</p>
-
-<p>Unfortunately there isn’t a solution to this if you still want to use the <code>BoundField</code>. If you don’t mind a bit of untidy mark-up, you can do this instead:</p>
-
-<pre><code class="language-aspx-cs">&lt;asp:TemplateField&gt;
-  &lt;ItemTemplate&gt;
-    &lt;%# Eval("ContactDetails.TelephoneNumber") %&gt;
-  &lt;/ItemTemplate&gt;
-&lt;/asp:TemplateField&gt;
-</code></pre>
-
-<p>This is pretty messy though, and you’re going to quadruple the markup for your columns; imagine having 10 of those, it’s going to get pretty ugly. My solution is to use the <a href="/writings/objectfield/">ObjectField I wrote about previously</a>, which is a column that derives from <code>BoundField</code> and overrides it’s binding mechanism, allowing it to correctly evaluate hierarchical paths.</p>
-
-<p>The <code>ObjectField</code> allows you to use the familiar markup from the <code>BoundField</code>:</p>
-
-<pre><code class="language-aspx-cs">&lt;jag:ObjectField BoundField="ContactDetails.TelephoneNumber" /&gt;
-</code></pre>
-
-<p>Hopefully one of those solutions will suit you. Personally I’d prefer to see the <code>ObjectField</code>, or other derived field, instead of the nasty <code>TemplateField</code> usage.</p>
-
-<p><em>This is a follow up to my ObjectField post, because a few people have been hitting that page in search of the exception, which it doesn’t really cover.</em></p>
+<blockquote>
+  <p>A field or property with the name <code class="highlighter-rouge">MySubObject.PropertyName</code> was not found on the selected data source.</p>
+</blockquote>
 
  <a class="read-more" href="/writings/data-binding-hierarchical-objects">Read more &raquo;</a>
         </section>
@@ -141,34 +87,12 @@
 
 <p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn’t support specifying a nested value in it’s DataField property. So if you have a list of Customer’s, and want to display the TelephoneNumber property from inside the customer’s ContactDetails property, you’re out of luck.</p>
 
-<pre><code class="language-aspx-cs">&lt;asp:BoundField DataField="ContactDetails.TelephoneNumber" /&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
 </code></pre>
+</div>
 
 <p>The above would fall over with an exception along the lines of:<br />
-<code>A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
-
-<p>This is a mind-boggling flaw in the BoundField, with the main solution being to create a nested GridView, which is just overkill for most situations. This problem especially rears it’s ugly head if you’re using an ORM layer such as <a href="http://www.nhibernate.org/">NHibernate</a> or <a href="http://www.subsonicproject.com">SubSonic</a>.</p>
-
-<p>So what have I done? I’ve just gone and created a solution to this problem.</p>
-
-<p>Introducing the ObjectField, a GridView field that allows binding against hierarchical structured objects. In short, it takes a BoundField and splits it on full-stops (periods!) using each element to find an object.</p>
-
-<pre><code class="language-aspx-cs">&lt;jag:ObjectField DataField="ContactDetails.TelephoneNumber" /&gt;
-</code></pre>
-
-<p>The above is now possible! Huzzah.</p>
-
-<h2 id="extras">Extras</h2>
-
-<p>There’s one extra thing you should know about. The field has a couple of additional properties that can be useful.</p>
-
-<p>The first is <code>AllowNulls</code> which defaults to <code>true</code>, this will make the field return silently when a null is encountered anywhere along the object hierarchy; this can be useful if you know that there might be a null somewhere along the lines.</p>
-
-<p>The second property is <code>NullValue</code>, which is displayed by the field when <code>AllowNulls</code> is <code>true</code> and a null is encountered. Setting this value allows you to give a user-friendly message if a value is null.</p>
-
-<h2 id="downloads">Downloads</h2>
-
-<p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
+<code class="highlighter-rouge">A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
 
  <a class="read-more" href="/writings/objectfield">Read more &raquo;</a>
         </section>
@@ -192,13 +116,13 @@
 
 <p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
 
-<p>Upon execution of the second query, NHibernate was throwing a <code>SqlTypeException</code> for a <code>SqlDateTime</code> overflow. <code>SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
+<p>Upon execution of the second query, NHibernate was throwing a <code class="highlighter-rouge">SqlTypeException</code> for a <code class="highlighter-rouge">SqlDateTime</code> overflow. <code class="highlighter-rouge">SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
 
 <p>A good place to start for NHibernate debugging is always the logs, so I delved in. I discovered NHibernate was attempting to execute an update statement just before it tried the second query. It just kept getting stranger, why would a straightforward query cause an update?</p>
 
-<p>I thought i’d investigate why the update statement was failing first, then I’d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code>DateTime</code> column that was trying to be set to <code>DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code>DateTime</code> should be.</p>
+<p>I thought i’d investigate why the update statement was failing first, then I’d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code class="highlighter-rouge">DateTime</code> column that was trying to be set to <code class="highlighter-rouge">DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code class="highlighter-rouge">DateTime</code> should be.</p>
 
-<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn’t. So because <code>DateTime</code> is a value type and cannot be set to <code>null</code>, NHibernate was populating it with the closest value to <code>null</code> as it could manage.</p>
+<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn’t. So because <code class="highlighter-rouge">DateTime</code> is a value type and cannot be set to <code class="highlighter-rouge">null</code>, NHibernate was populating it with the closest value to <code class="highlighter-rouge">null</code> as it could manage.</p>
 
 <p>That was the key, as soon as I had that realisation, it was obvious what the problem was.</p>
 
@@ -208,12 +132,12 @@
 
 <ol>
   <li>Nullable column pulled into a non-nullable field forces NHibernate to create the smallest value it can.</li>
-  <li>NHibernate then checks for any changes, expecting a <code>null</code> on that field but finding a value.</li>
+  <li>NHibernate then checks for any changes, expecting a <code class="highlighter-rouge">null</code> on that field but finding a value.</li>
   <li>Object now considered dirty because value has allegedly changed.</li>
   <li>NHibernate performs an update before it pulls back the data agian.</li>
 </ol>
 
-<p>So the fix was simply to make the <code>DateTime</code> in the object a <code>DateTime?</code>, a nullable <code>DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
+<p>So the fix was simply to make the <code class="highlighter-rouge">DateTime</code> in the object a <code class="highlighter-rouge">DateTime?</code>, a nullable <code class="highlighter-rouge">DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
 
 <p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
 
@@ -237,12 +161,6 @@
         <section class="post-excerpt">
             <p>A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller’s blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.</p>
 
-<p>He makes a fair point really, we use tools because they solve a problem for us, if we haven’t actually experienced what they’re solving then their value is appears to be much less than what it is. Similarly, the value of such tools and methodologies is nil when there is a lack of recognition of a problem even existing.</p>
-
-<p>However, I don’t think the solution is to have developers learn “the hard way”. To discover the problem before using the solution is a problem in its-self. If we were to all learn from our own mistakes, and not from each-others, then we’re not going to make much progress as we’re all going to be solving the same problems.</p>
-
-<p>Most people will have struggled with whatever problem has necessitated the creation of these tools/methodologies, so I think it’s more a case of helping the developers connect the dots; “You remember such and such a problem? Well that’s easily solved using methodology/technology x!”, rather than making them retrace the steps of every developer before them.</p>
-
  <a class="read-more" href="/writings/percieved-value-and-developer-education">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -264,16 +182,6 @@
             <p>I’ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what’s more concerning is I’ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it’s supposed to.</p>
 
 <p>There are a few problems with falling into this trap. Firstly, it’s very brittle. Secondly, you shouldn’t be concerned with the internals. Thirdly, it’s very time consuming.</p>
-
-<p>To elaborate…</p>
-
-<p>It’s brittle because you’re essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to <a href="http://martinfowler.com/bliki/TestCancer.html">test cancer</a>, where tests aren’t run or are commented out.</p>
-
-<p>You shouldn’t be concerned with the internals, because as long as your method is doing as requested, you shouldn’t really care how it’s achieving it’s goal. Not bolting down the internals allows methods to be refactored without too much resistance from the tests. This will increase the signal-to-noise ratio, allowing failing tests to be representative of a problem greater than your basic refactorings.</p>
-
-<p>Finally, it’s time consuming simply because you’re duplicating most of your work. All the time you spent writing the method (or the test, if done first) is then duplicated writing the tests (or code…). This is a pain, because as mentioned above, you’ll keep doing this work every time you change the method.</p>
-
-<p>The hardest part is learning how to not do this kind thing blindly. There are plenty of times when you’ll need this kind of testing, but don’t make it your default! Test expectations, not implementations.</p>
 
  <a class="read-more" href="/writings/on-testing-implementation">Read more &raquo;</a>
         </section>

@@ -39,13 +39,11 @@
         </header>
 
         <section class="post-content">
-            <p>Download: <a href="#" title="Prototype extensions javascript file">prototype-extensions.js</a>. <em>(this download is no longer available, sorry)</em></p>
+            <p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
 
-<p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
+<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
 
-<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html" title=" Robert Hanson's Blog">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
-
-<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js" title="Prototype extensions javascript file">prototype-extensions.js</a> file and referenced it wherever needed.</p>
+<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js">prototype-extensions.js</a> file and referenced it wherever needed.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onTimerEvent</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">frequency</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>

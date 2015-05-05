@@ -43,6 +43,8 @@
 
 <p>I’ll start small, here’s a quick guide to how I’ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
 
+<!-- more -->
+
 <p><strong>What exactly is brace matching?</strong> Brace matching is where paired characters are highlighted when one or the other is selected in the editor.</p>
 
 <p><img src="/images/bracematching-1.png" alt="Brace matching" /></p>
@@ -135,7 +137,7 @@
           <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
           <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">,</span>
           <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span>
-        <span class="p">},</span> 
+        <span class="p">},</span>
         <span class="k">new</span> <span class="n">TextSpan</span>
         <span class="p">{</span>
           <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>

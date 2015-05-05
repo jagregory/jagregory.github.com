@@ -43,18 +43,21 @@
 
 <p>As you’d probably expect, I’m not really supposed to talk about what I do for security reasons of course. It’s mostly working for the Swift group (caravans, motorhomes) doing their internal systems and web sites. Other things as well, but it’s mainly that. It’s all very interesting, a big change from serving customers in a supermarket thats for sure. It’s a really strange feeling actually going to work and learning something, I generally come home every night having picked something new up.</p>
 
+<!-- more -->
+
 <p>Since I started the job I’ve learnt that my coding abilities are much better than I thought they were, having being subjected to the woes that are legacy code. Definitely a nice feeling, it’s always rather hard to rate your abilities when you have nothing to compare them against. For better or for worse I’ve been developing in VB.Net, something I tried to stay away from when coding for my self but haven’t been able to avoid recently. Not my cup of tea really but it’s another addition to the CV. Speaking of legacy code, there’s been some serious Daily WTF material lying around. A prime example was this beauty:</p>
 
-<pre><code class="language-vbnet">Sub Function GetTime(ByVal hours, ByVal minutes)
-  Dim hours
-  Dim minutes
-  Dim yHours
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">Sub</span> <span class="nf">Function</span> <span class="n">GetTime</span><span class="p">(</span><span class="k">ByVal</span> <span class="n">hours</span><span class="p">,</span> <span class="k">ByVal</span> <span class="n">minutes</span><span class="p">)</span>
+  <span class="k">Dim</span> <span class="nv">hours</span>
+  <span class="k">Dim</span> <span class="nv">minutes</span>
+  <span class="k">Dim</span> <span class="nv">yHours</span>
 
-  yHours = hours * minutes
+  <span class="n">yHours</span> <span class="o">=</span> <span class="n">hours</span> <span class="o">*</span> <span class="n">minutes</span>
 
-  GetTime = (yHours / minutes) + (hours * minutes)
-End Sub
+  <span class="n">GetTime</span> <span class="o">=</span> <span class="p">(</span><span class="n">yHours</span> <span class="o">/</span> <span class="n">minutes</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">hours</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">)</span>
+<span class="k">End</span> <span class="k">Sub</span>
 </code></pre>
+</div>
 
 <p>Really interesting! Note the lack of any variable type declarations as well! It hasn’t all been like this, but there certainly a lot of amusing things.</p>
 

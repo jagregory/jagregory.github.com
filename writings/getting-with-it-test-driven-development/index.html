@@ -41,11 +41,13 @@
         <section class="post-content">
             <p>Test-driven development is a practice that has started to make some serious headway into the average developer world of .Net. The tools have reached a stage of maturity where they offer solutions to most (if not all) aspects of test-driven development. Alongside the improved tools there has been a dramatic increase in the quantity and quality of articles addressing the needs of new and established test-driven developers. The combined effect of this is of a reduced learning curve for the average developer.</p>
 
+<!-- more -->
+
 <p>On a personal note, test-driven development is something I should have started doing a long time ago, it’s certainly something that I’ve known about long-enough to be unable to claim ignorance. I take no pride in saying that my sole reason for not learning sooner is laziness. I bet I’m not the only one though. There’s a lot to learn, and not all of it is simply new tools, some of it is mental too; rewiring your brain isn’t an easy task.</p>
 
 <p>Having broke through the pain barrier, I can now vouch for the other side and say it really is nicer.</p>
 
-<p>So how would I convince my-self from six months ago, that test-driven development is a worthwhile pursuit? Well after a bit of ear twisting about being lazy, I’d have to raise the point of security. I don’t mean the “IM <span class="caps">IN UR HARD DRIVE</span>, STEALIN <span class="caps">UR FILEZ</span>” security, but the knowledge that you’re the one who’ll find bugs in your code, not the tester (or worse, the customer). A record of bugless (or bug-minimal) releases will bode well at your performance reviews. That, and nobody likes people finding problems in their code, so it’s best you find them first.</p>
+<p>So how would I convince my-self from six months ago, that test-driven development is a worthwhile pursuit? Well after a bit of ear twisting about being lazy, I’d have to raise the point of security. I don’t mean the “IM IN UR HARD DRIVE, STEALIN UR FILEZ” security, but the knowledge that you’re the one who’ll find bugs in your code, not the tester (or worse, the customer). A record of bugless (or bug-minimal) releases will bode well at your performance reviews. That, and nobody likes people finding problems in their code, so it’s best you find them first.</p>
 
 <p>That all sounds rather selfish and egotistical. What about the team, the flexibility, and the clean structured code-base? I’m a big advocate of a clean code-base, and a well oiled team can’t be beat, but from experience, not everybody else feels the same way. Developers tend to respond more readily to two things: money, and fun. I’m generalising of course, but your average-joe developer isn’t an altruist, he isn’t going to go out of his way to help others. Give him the prospect of some extra cash, or even just the chance to break out of the mundane, and it’s a whole different game.</p>
 
@@ -61,7 +63,7 @@
 
 <h2 id="learning-to-drive">Learning to drive</h2>
 
-<p>When learning how to test drive your development, it’s important to know that you aren’t specifically learning a new tool as many people have put it. Not in the same respect as learning a new <span class="caps">IDE</span> or source control system. Test-driven development isn’t something physical. As I mentioned earlier, it requires you to rewire your programming brain. Although to successfully master test-driven development you are required to learn some physical tools (<a href="http://www.nunit.org/">NUnit</a> for example), the primary change will be a<br />
+<p>When learning how to test drive your development, it’s important to know that you aren’t specifically learning a new tool as many people have put it. Not in the same respect as learning a new IDE or source control system. Test-driven development isn’t something physical. As I mentioned earlier, it requires you to rewire your programming brain. Although to successfully master test-driven development you are required to learn some physical tools (<a href="http://www.nunit.org/">NUnit</a> for example), the primary change will be a<br />
 mental one.</p>
 
 <p>The most basic changes to your mental-model will be that your tests literally drive your code. You’ve probably heard it before, but you test first<sup><a href="#fn1">1</a></sup>.</p>
@@ -115,11 +117,11 @@ mental one.</p>
 
 <p>It passed, that’s one test under our belt.</p>
 
-<p>You’ll notice that this isn’t a very good design, but we’ve written enough code for the method to work for it’s current usage. We’re letting the tests drive our code, which means we’re ending up with only the code we require. <span class="caps">YAGNI</span>: You Aren’t Gonna Need It<sup><a href="#fn2">2</a></sup>.</p>
+<p>You’ll notice that this isn’t a very good design, but we’ve written enough code for the method to work for it’s current usage. We’re letting the tests drive our code, which means we’re ending up with only the code we require. YAGNI: You Aren’t Gonna Need It<sup><a href="#fn2">2</a></sup>.</p>
 
 <h3 id="the-second-product">The Second Product</h3>
 
-<p>Our implementation of <code>GetPrice</code> is painfully simple, so simple that we don’t even support multiple products. This worked fine for us while the customer only had one product, but they’ve now expanded and have requested their second product be added. Lets write another test to cover this new request.</p>
+<p>Our implementation of <code class="highlighter-rouge">GetPrice</code> is painfully simple, so simple that we don’t even support multiple products. This worked fine for us while the customer only had one product, but they’ve now expanded and have requested their second product be added. Lets write another test to cover this new request.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="na">[Test]</span>
 <span class="k">public</span> <span class="k">void</span> <span class="nf">ReturnsCorrectPriceForSausages</span><span class="p">()</span>
@@ -131,7 +133,7 @@ mental one.</p>
 </code></pre>
 </div>
 
-<p>Once again, if we compile and run this test it will fail, because we’ve hard-coded the method to always return <code>£0.50</code>. So lets update the method to work for sausages too.</p>
+<p>Once again, if we compile and run this test it will fail, because we’ve hard-coded the method to always return <code class="highlighter-rouge">£0.50</code>. So lets update the method to work for sausages too.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
 <span class="p">{</span>
@@ -153,8 +155,8 @@ mental one.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;table&gt;</span>
 	<span class="nt">&lt;tr&gt;</span>
-		<span class="nt">&lt;td&gt;&lt;strong&gt;</span>Product<span class="nt">&lt;/strong&gt;&lt;/td&gt;</span>
-		<span class="nt">&lt;td&gt;&lt;strong&gt;</span>Price<span class="nt">&lt;/strong&gt;&lt;/td&gt;</span>
+		<span class="nt">&lt;td&gt;</span>**Product**<span class="nt">&lt;/td&gt;</span>
+		<span class="nt">&lt;td&gt;</span>**Price**<span class="nt">&lt;/td&gt;</span>
 	<span class="nt">&lt;/tr&gt;</span>
 	<span class="nt">&lt;tr&gt;</span>
 		<span class="nt">&lt;td&gt;</span>Potatoes<span class="nt">&lt;/td&gt;</span>
@@ -251,12 +253,12 @@ mental one.</p>
 
 <blockquote>
   <p><strong>Boundary Condition:</strong> A problem or situation that occurs only at a extreme (maximum or minimum) operating parameter.<br />
-An example of a boundary condition would be supplying <code>1</code> and <code>12</code> to a <code>GetDaysInMonth</code> method.</p>
+An example of a boundary condition would be supplying <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">12</code> to a <code class="highlighter-rouge">GetDaysInMonth</code> method.</p>
 </blockquote>
 
 <blockquote>
   <p><strong>Invalid Input:</strong> Anything outside standard operating expectations.<br />
-Using the same example as boundary conditions, invalid input would cover supplying <code>-6</code>, <code>0</code> and <code>76</code> to the <code>GetDaysInMonth</code> method.</p>
+Using the same example as boundary conditions, invalid input would cover supplying <code class="highlighter-rouge">-6</code>, <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">76</code> to the <code class="highlighter-rouge">GetDaysInMonth</code> method.</p>
 </blockquote>
 
 <p>We’ll write a test to cover the invalid input the customer encountered, we’ll pass in a valid product name, but one that’s capitalised incorrectly.</p>
@@ -296,7 +298,7 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 
 <p>Running all our tests should assure us that our existing code still functions, and we’re now safe from any case variations from the customer’s product list.</p>
 
-<p>While doing this change, it’s noticeable that we’re also not handling the case for if a price is requested for a product that isn’t in the inventory. If this occurs we really should pass a message up to the <span class="caps">GUI</span>, so it can present the user with something.</p>
+<p>While doing this change, it’s noticeable that we’re also not handling the case for if a price is requested for a product that isn’t in the inventory. If this occurs we really should pass a message up to the GUI, so it can present the user with something.</p>
 
 <p>Due to this being an exceptional situation, it’s ideally suited to an exception! Let’s write a test to handle this case.</p>
 
@@ -310,17 +312,17 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 </code></pre>
 </div>
 
-<p>We’ve introduced a new attribute to our test in this case, <code>ExpectedException</code>, this simply allows you to specify what exception you want a method to throw in the situation you’re testing.</p>
+<p>We’ve introduced a new attribute to our test in this case, <code class="highlighter-rouge">ExpectedException</code>, this simply allows you to specify what exception you want a method to throw in the situation you’re testing.</p>
 
 <blockquote>
   <p><strong>Note:</strong> This test requires the use of a custom exception, I’m not going to show the implementation here as it’s simple stuff. I’ve chosen to use a custom exception so our “GUI guys” know what to capture for this case.</p>
 </blockquote>
 
 <blockquote>
-  <p>It’s generally regarded as good practice to wrap your internal errors in something that’s meaningful to the rest of the application, hiding the implementation details. An <code>InvalidProductException</code> is much easier to understand and implement than <code>NullReferenceException</code>, <code>IndexOutOfRangeException</code> etc. This is another topic in itself though.</p>
+  <p>It’s generally regarded as good practice to wrap your internal errors in something that’s meaningful to the rest of the application, hiding the implementation details. An <code class="highlighter-rouge">InvalidProductException</code> is much easier to understand and implement than <code class="highlighter-rouge">NullReferenceException</code>, <code class="highlighter-rouge">IndexOutOfRangeException</code> etc. This is another topic in itself though.</p>
 </blockquote>
 
-<p>To make this test pass, we need to update our <code>GetPrice</code> method to handle invalid products.</p>
+<p>To make this test pass, we need to update our <code class="highlighter-rouge">GetPrice</code> method to handle invalid products.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="kt">double</span> <span class="nf">GetPrice</span><span class="p">(</span><span class="kt">string</span> <span class="n">product</span><span class="p">)</span>
 <span class="p">{</span>
@@ -332,7 +334,7 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 </code></pre>
 </div>
 
-<p>We’re now doing a simple check to see if the internal product Dictionary contains an entry for the requested product, if it doesn’t we’ll throw one of our <code>InvalidProductException</code>’s.</p>
+<p>We’re now doing a simple check to see if the internal product Dictionary contains an entry for the requested product, if it doesn’t we’ll throw one of our <code class="highlighter-rouge">InvalidProductException</code>’s.</p>
 
 <p>Running our test again will now assure us that our method throws an exception in these circumstances.</p>
 
@@ -342,12 +344,12 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 
 <p>What have we witnessed in running through this little exercise?</p>
 
-<ol>
-	<li><strong>How easy it is to test first</strong> &#8211; It's really not that complicated. Once you've learnt to apply the restraint needed to stop yourself from just diving in, it's easy.</li>
-		<li><strong>The security you get from tests</strong> &#8211; If you've come from an environment that doesn't have any code tests, you're probably enjoying the reassurance that tests bring. You're at least safe in the knowledge that you haven't broken anything existing with your new features. The more tests you introduce, the more solid your base for making changes becomes.</li>
-		<li><strong>Ease of refactoring</strong> &#8211; As with the above, it's easy to refactor your existing code when you've got a suite of tests in-place.</li>
-		<li><strong>Light-weight nature of your code</strong> &#8211; When you're only coding to make your tests pass, you're less likely to code features that aren't required. This makes your code as light as possible.</li>
-</ol>
+<ul>
+  <li><strong>How easy it is to test first</strong> – It’s really not that complicated. Once you’ve learnt to apply the restraint needed to stop yourself from just diving in, it’s easy.</li>
+  <li><strong>The security you get from tests</strong> – If you’ve come from an environment that doesn’t have any code tests, you’re probably enjoying the reassurance that tests bring. You’re at least safe in the knowledge that you haven’t broken anything existing with your new features. The more tests you introduce, the more solid your base for making changes becomes.</li>
+  <li><strong>Ease of refactoring</strong> – As with the above, it’s easy to refactor your existing code when you’ve got a suite of tests in-place.</li>
+  <li><strong>Light-weight nature of your code</strong> – When you’re only coding to make your tests pass, you’re less likely to code features that aren’t required. This makes your code as light as possible.</li>
+</ul>
 
 <h2 id="dealing-with-legacies">Dealing with Legacies</h2>
 
@@ -364,12 +366,12 @@ Using the same example as boundary conditions, invalid input would cover supplyi
 <h2 id="recommended-reading">Recommended Reading</h2>
 
 <ul>
-	<li><a href="http://c2.com/cgi/wiki?ExtremeProgrammingRoadmap">Extreme Programming Roadmap</a> Great resource, lots of discussion, including some from the greats.</li>
-		<li><a href="http://www.martinfowler.com/">Martin Fowler</a> Lots of good articles.</li>
-		<li><a href="http://codebetter.com/blogs/jeremy.miller">Jeremy Miller</a> Plenty of reading material, lots of insightful stuff. Rules of <span class="caps">TDD</span>: <a href="http://codebetter.com/blogs/jeremy.miller/archive/2005/10/20/133437.aspx">1</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/03/09/140465.aspx">2</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx">3</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/04/27/Jeremy_2700_s-Fourth-Law-of-Test-Driven-Development_3A00_-Keep-Your-Tail-Short.aspx">4</a></li>
-		<li><a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">Adventures in C#: Using NUnit</a> Good introduction to using NUnit.</li>
-		<li><cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&amp;tag=jamegreg-21&amp;linkCode=as2&amp;camp=1634&amp;creative=6738&amp;creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, Ron Jeffries &#8211; Honest and friendly introduction to <span class="caps">TDD</span> and XP.</li>
-		<li><cite><a href="http://www.amazon.co.uk/gp/product/0201485672?ie=UTF8&amp;tag=jamegreg-21&amp;linkCode=as2&amp;camp=1634&amp;creative=6738&amp;creativeASIN=0201485672">Refactoring: Improving the Design of Existing Code</a></cite>, Martin Fowler &#8211; Refactoring bible.</li>
+  <li><a href="http://c2.com/cgi/wiki?ExtremeProgrammingRoadmap">Extreme Programming Roadmap</a> Great resource, lots of discussion, including some from the greats.</li>
+  <li><a href="http://www.martinfowler.com/">Martin Fowler</a> Lots of good articles.</li>
+  <li><a href="http://codebetter.com/blogs/jeremy.miller">Jeremy Miller</a> Plenty of reading material, lots of insightful stuff. Rules of TDD: <a href="http://codebetter.com/blogs/jeremy.miller/archive/2005/10/20/133437.aspx">1</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/03/09/140465.aspx">2</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx">3</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/04/27/Jeremy_2700_s-Fourth-Law-of-Test-Driven-Development_3A00_-Keep-Your-Tail-Short.aspx">4</a></li>
+  <li><a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">Adventures in C#: Using NUnit</a> Good introduction to using NUnit.</li>
+  <li><cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&amp;tag=jamegreg-21&amp;linkCode=as2&amp;camp=1634&amp;creative=6738&amp;creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, Ron Jeffries – Honest and friendly introduction to TDD and XP.</li>
+  <li><cite><a href="http://www.amazon.co.uk/gp/product/0201485672?ie=UTF8&amp;tag=jamegreg-21&amp;linkCode=as2&amp;camp=1634&amp;creative=6738&amp;creativeASIN=0201485672">Refactoring: Improving the Design of Existing Code</a></cite>, Martin Fowler – Refactoring bible.</li>
 </ul>
 
 <h2 id="references">References</h2>

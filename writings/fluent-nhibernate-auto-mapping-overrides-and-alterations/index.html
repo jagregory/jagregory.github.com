@@ -43,9 +43,11 @@
   <p><strong>Notice:</strong> This is an excerpt from the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> wiki page. It is recommended you refer to those pages for the latest version of this content, as this blog post will not be maintained for correctness.</p>
 </blockquote>
 
-<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code>ForMappingsThatDeriveFrom</code> method described in <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you’re having to alter many entities.</p>
+<p>When using the Auto Mapping facilities of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> you can use the <code class="highlighter-rouge">ForMappingsThatDeriveFrom</code> method described in <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Altering Entities</a> to override the mappings for specific entities, but that can quickly become cluttered if you’re having to alter many entities.</p>
 
-<p>An alternative is to use an <code>IAutoMappingOverride<t>&lt;/code&gt;, which is an interface you can implement to override the mappings of a particular auto-mapped class.</t></code></p>
+<!-- more -->
+
+<p>An alternative is to use an <code class="highlighter-rouge">IAutoMappingOverride&lt;T&gt;</code>, which is an interface you can implement to override the mappings of a particular auto-mapped class.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">PersonMappingOverride</span> <span class="p">:</span> <span class="n">IAutoMappingOverride</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span>
 <span class="p">{</span>
@@ -56,9 +58,9 @@
 </code></pre>
 </div>
 
-<p>This example overrides the auto-mapping of a <code>Person</code> entity. Within the <code>Override</code> method you can perform any actions on the mapping that you can in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mappings</a>.</p>
+<p>This example overrides the auto-mapping of a <code class="highlighter-rouge">Person</code> entity. Within the <code class="highlighter-rouge">Override</code> method you can perform any actions on the mapping that you can in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mappings</a>.</p>
 
-<p>To use overrides, you need to instruct your <code>AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> setup, but I’ll just illustrate with the <code>AutoPersistenceModel</code> on it’s own.</p>
+<p>To use overrides, you need to instruct your <code class="highlighter-rouge">AutoPersistenceModel</code> instance to use them. Typically this would be done in the context of a <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> setup, but I’ll just illustrate with the <code class="highlighter-rouge">AutoPersistenceModel</code> on it’s own.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>
   <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Entities"</span><span class="p">)</span>
@@ -66,11 +68,11 @@
 </code></pre>
 </div>
 
-<p>It’s the <code>UserOverridesFromAssemblyOf<t>&lt;/code&gt; call that instructs the <code>AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code>T</code>.</t></code></p>
+<p>It’s the <code class="highlighter-rouge">UserOverridesFromAssemblyOf&lt;T&gt;</code> call that instructs the <code class="highlighter-rouge">AutoPersistenceModel</code> to read any overrides that reside the assembly that contains <code class="highlighter-rouge">T</code>.</p>
 
-<p>These overrides are made possible with use of the configuration alteration capabilities of the <code>AutoPersistenceModel</code>. You can use these features yourself to create your own customisations, or simply to separate your configuration into logical sections.</p>
+<p>These overrides are made possible with use of the configuration alteration capabilities of the <code class="highlighter-rouge">AutoPersistenceModel</code>. You can use these features yourself to create your own customisations, or simply to separate your configuration into logical sections.</p>
 
-<p>An alteration is an implementation of the <code>IAutoMappingAlteration</code> interface, and is a self contained piece of configuration logic that can be applied with others to an <code>AutoPersistenceModel</code> prior to any mappings being generated. These are simple to use, but very powerful.</p>
+<p>An alteration is an implementation of the <code class="highlighter-rouge">IAutoMappingAlteration</code> interface, and is a self contained piece of configuration logic that can be applied with others to an <code class="highlighter-rouge">AutoPersistenceModel</code> prior to any mappings being generated. These are simple to use, but very powerful.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">WhereAlteration</span> <span class="p">:</span> <span class="n">IAutoMappingAlteration</span>
 <span class="p">{</span>
@@ -87,9 +89,9 @@
 </code></pre>
 </div>
 
-<p>The <code>Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code>IMappingOverride<t>&lt;/code&gt; instances and executes each one against the model.</t></code></p>
+<p>The <code class="highlighter-rouge">Alter(AutoPersistenceModel model)</code> method is where you place your logic for altering the model, you can do anything in here you like. The overrides functionality, for example, inspects an assembly looking for any <code class="highlighter-rouge">IMappingOverride&lt;T&gt;</code> instances and executes each one against the model.</p>
 
-<p>You need to instruct your <code>AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code>WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I’ll just illustrate with the <code>AutoPersistenceModel</code> on it’s own.</p>
+<p>You need to instruct your <code class="highlighter-rouge">AutoPersistenceModel</code> to use any alterations you may have, and you do that using the <code class="highlighter-rouge">WithAlterations</code> method. Typically this would be done in the context of a FluentConfiguration setup, but I’ll just illustrate with the <code class="highlighter-rouge">AutoPersistenceModel</code> on it’s own.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>  
   <span class="p">.</span><span class="nf">WithAlterations</span><span class="p">(</span><span class="n">alterations</span> <span class="p">=&gt;</span>
@@ -97,9 +99,9 @@
 </code></pre>
 </div>
 
-<p>The <code>WithAlterations</code> method takes a lambda action that allows you to set multiple alterations on your model; you can add single alterations with <code>Add</code>, and everything from an assembly like the above example.</p>
+<p>The <code class="highlighter-rouge">WithAlterations</code> method takes a lambda action that allows you to set multiple alterations on your model; you can add single alterations with <code class="highlighter-rouge">Add</code>, and everything from an assembly like the above example.</p>
 
-<p>Before your mappings are generated, the alterations are all run against the <code>AutoPersistenceModel</code>. There’s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
+<p>Before your mappings are generated, the alterations are all run against the <code class="highlighter-rouge">AutoPersistenceModel</code>. There’s currently no ordering of alterations, so you cannot rely on the ability to stack alterations.</p>
 
         </section>
 

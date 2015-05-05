@@ -45,6 +45,8 @@
 
 <p>I’ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I’ll cover now.</p>
 
+<!-- more -->
+
 <p>We’re going to use the same domain as before, but with a few extensions.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>  
@@ -68,9 +70,9 @@
   <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Monday</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="s">"mon"</span><span class="p">);</span>
   <span class="cm">/* ... */</span>
   <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">ReplenishmentDay</span> <span class="n">Sunday</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="s">"sun"</span><span class="p">);</span>
-  
+
   <span class="k">private</span> <span class="kt">string</span> <span class="n">day</span><span class="p">;</span>
-  
+
   <span class="k">private</span> <span class="nf">ReplenishmentDay</span><span class="p">(</span><span class="kt">string</span> <span class="n">day</span><span class="p">)</span>
   <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="n">day</span> <span class="p">=</span> <span class="n">day</span><span class="p">;</span>
@@ -79,14 +81,14 @@
 </code></pre>
 </div>
 
-<p>We’ve extended our domain with a <code>Description</code> and a <code>ReplenishmentDay</code> for the <code>Product</code>; the replenishment day is represented by a type-safe enum (using the <a href="http://www.javacamp.org/designPattern/enum.html">type-safe enum pattern</a>). Also there’s a <code>Description</code> against the <code>Shelf</code> too (not sure why you’d have a description of a shelf, but hey, that’s customers for you). These changes are mapped against the following schema:</p>
+<p>We’ve extended our domain with a <code class="highlighter-rouge">Description</code> and a <code class="highlighter-rouge">ReplenishmentDay</code> for the <code class="highlighter-rouge">Product</code>; the replenishment day is represented by a type-safe enum (using the <a href="http://www.javacamp.org/designPattern/enum.html">type-safe enum pattern</a>). Also there’s a <code class="highlighter-rouge">Description</code> against the <code class="highlighter-rouge">Shelf</code> too (not sure why you’d have a description of a shelf, but hey, that’s customers for you). These changes are mapped against the following schema:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">table</span> <span class="n">Product</span> <span class="p">(</span>
   <span class="n">ProductId</span> <span class="n">int</span> <span class="k">identity</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
   <span class="n">Name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">250</span><span class="p">),</span>
   <span class="n">Description</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span>
   <span class="n">Price</span> <span class="n">decimal</span><span class="p">,</span>
-  <span class="n">RepOn</span> <span class="n">int</span><span class="p">,</span> 
+  <span class="n">RepOn</span> <span class="n">int</span><span class="p">,</span>
   <span class="n">Shelf_FK</span> <span class="n">int</span> <span class="k">foreign</span> <span class="k">key</span>
 <span class="p">)</span>
 
@@ -110,7 +112,7 @@
 </code></pre>
 </div>
 
-<p>We’re using the Fluent NHibernate’s <code>ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code>AddTypeConvention</code> method takes a <code>ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code>string</code> property, and only for ones that are called “Description”, lets see how the <code>DescriptionTypeConvention</code> is declared.</p>
+<p>We’re using the Fluent NHibernate’s <code class="highlighter-rouge">ITypeConvention</code> support now, which allows you to override the mapping of properties that have a specific type. The <code class="highlighter-rouge">AddTypeConvention</code> method takes a <code class="highlighter-rouge">ITypeConvention</code> instance and applies that to every property that gets mapped. Baring in mind that our convention in this case is for a <code class="highlighter-rouge">string</code> property, and only for ones that are called “Description”, lets see how the <code class="highlighter-rouge">DescriptionTypeConvention</code> is declared.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">DescriptionTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
 <span class="p">{</span>
@@ -129,19 +131,19 @@
 </code></pre>
 </div>
 
-<p>It’s fairly expressive of what it does, but I’ll cover it for completeness. The <code>ITypeConvention</code> specifies two methods: <code>bool CanHandle(Type)</code> and <code>void AlterMap(IProperty)</code>. <code>CanHandle</code> should be implemented to return <code>true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it’s ancestry, but in our case we just check whether it’s a string. <code>AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code>CanHandle</code> returns <code>true</code> for. We’ve implemented <code>AlterMap</code> to firstly check if the property is called “Description” (if it isn’t, we do nothing) and then alter the length of the property. Simple really.</p>
+<p>It’s fairly expressive of what it does, but I’ll cover it for completeness. The <code class="highlighter-rouge">ITypeConvention</code> specifies two methods: <code class="highlighter-rouge">bool CanHandle(Type)</code> and <code class="highlighter-rouge">void AlterMap(IProperty)</code>. <code class="highlighter-rouge">CanHandle</code> should be implemented to return <code class="highlighter-rouge">true</code> for types that you want this convention to deal with; this can be handled in any way you want, you could check the name, or it’s ancestry, but in our case we just check whether it’s a string. <code class="highlighter-rouge">AlterMap</code> is where the bulk of the work happens; this method gets called for every property mapping that has a type that <code class="highlighter-rouge">CanHandle</code> returns <code class="highlighter-rouge">true</code> for. We’ve implemented <code class="highlighter-rouge">AlterMap</code> to firstly check if the property is called “Description” (if it isn’t, we do nothing) and then alter the length of the property. Simple really.</p>
 
-<p>With a simple implementation like this, we’re able to map every Description property (that’s a <code>string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
+<p>With a simple implementation like this, we’re able to map every Description property (that’s a <code class="highlighter-rouge">string</code>) so that it has a length of 2000, all with an addition of only one line to our auto mapping configuration.</p>
 
 <h2 id="iusertype_support">IUserType support</h2>
 
-<p>The other alteration to our domain was the addition of the <code>ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it’s stored in an <code>int</code> column, which obviously doesn’t match our type; and secondly the column is called <code>RepOn</code>, which we mustn’t change. We’re going to utilise NHibernate’s <code>IUserType</code> to handle this column.</p>
+<p>The other alteration to our domain was the addition of the <code class="highlighter-rouge">ReplenishmentDay</code>. There were two interesting things to consider for this change. Firstly, it’s stored in an <code class="highlighter-rouge">int</code> column, which obviously doesn’t match our type; and secondly the column is called <code class="highlighter-rouge">RepOn</code>, which we mustn’t change. We’re going to utilise NHibernate’s <code class="highlighter-rouge">IUserType</code> to handle this column.</p>
 
 <blockquote>
-  <p>For the sake of this example we’re going to assume you’ve got an <code>IUserType</code> called <code>ReplenishmentDayUserType</code>, but as it’s beyond the scope of this post I won’t actually show the implementation as it can be quite lengthy. It’s best to just assume that the <code>IUserType</code> reads an <code>int</code> from the database and can convert it to a <code>ReplenishmentDay</code> instance. There’s a <a href="http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx">nice example of implementing <code>IUserType</code></a> on <a href="http://intellect.dk">Jakob Andersen</a>’s blog.</p>
+  <p>For the sake of this example we’re going to assume you’ve got an <code class="highlighter-rouge">IUserType</code> called <code class="highlighter-rouge">ReplenishmentDayUserType</code>, but as it’s beyond the scope of this post I won’t actually show the implementation as it can be quite lengthy. It’s best to just assume that the <code class="highlighter-rouge">IUserType</code> reads an <code class="highlighter-rouge">int</code> from the database and can convert it to a <code class="highlighter-rouge">ReplenishmentDay</code> instance. There’s a <a href="http://intellect.dk/post/Implementing-custom-types-in-nHibernate.aspx">nice example of implementing <code class="highlighter-rouge">IUserType</code></a> on <a href="http://intellect.dk">Jakob Andersen</a>’s blog.</p>
 </blockquote>
 
-<p>So how do we tell Fluent NHibernate to use an <code>IUserType</code> instead of the specified type? Easy, with another <code>ITypeConvention</code>.</p>
+<p>So how do we tell Fluent NHibernate to use an <code class="highlighter-rouge">IUserType</code> instead of the specified type? Easy, with another <code class="highlighter-rouge">ITypeConvention</code>.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">autoMappings</span>
   <span class="p">.</span><span class="nf">WithConvention</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
@@ -155,7 +157,7 @@
 </code></pre>
 </div>
 
-<p>Here’s how our new <code>ReplenishmentDayTypeConvention</code> looks:</p>
+<p>Here’s how our new <code class="highlighter-rouge">ReplenishmentDayTypeConvention</code> looks:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ReplenishmentDayTypeConvention</span> <span class="p">:</span> <span class="n">ITypeConvention</span>
 <span class="p">{</span>
@@ -174,9 +176,9 @@
 </code></pre>
 </div>
 
-<p>As you can see, we handle any <code>ReplenishmentDay</code> types, and then supply a <code>IUserType</code> using the <code>CustomTypeIs<t>()&lt;/code&gt; method, and override the column name with <code>TheColumnNameIs(string)</code>. Again, easy!</t></code></p>
+<p>As you can see, we handle any <code class="highlighter-rouge">ReplenishmentDay</code> types, and then supply a <code class="highlighter-rouge">IUserType</code> using the <code class="highlighter-rouge">CustomTypeIs&lt;T&gt;()</code> method, and override the column name with <code class="highlighter-rouge">TheColumnNameIs(string)</code>. Again, easy!</p>
 
-<p>So that’s it, with those conventions we’re able to keep our standard rule that all strings should be 250 characters or less, unless they’re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code>int</code> in the database, which also has a custom column name.</p>
+<p>So that’s it, with those conventions we’re able to keep our standard rule that all strings should be 250 characters or less, unless they’re a Description, then they can be 2000 or less. Replenishment days use our type-safe enum, but are persisted to an <code class="highlighter-rouge">int</code> in the database, which also has a custom column name.</p>
 
 <p>Next time: How to override conventions on an entity-by-entity basis.</p>
 

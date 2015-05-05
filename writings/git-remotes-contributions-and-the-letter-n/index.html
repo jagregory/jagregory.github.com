@@ -50,81 +50,85 @@
 
 <!-- more -->
 
-<h2>General pushing and pulling</h2>
+<h2 id="general-pushing-and-pulling">General pushing and pulling</h2>
 
 <p><img src="/images/remote-1.png" alt="Figure 1" /></p>
 
-<p>Pushing your changes to a remote: <code>git push remote_name</code></p>
+<p>Pushing your changes to a remote: <code class="highlighter-rouge">git push remote_name</code></p>
 
 <p><img src="/images/remote-2.png" alt="Figure 2" /></p>
 
-<p>Pulling changes from a remote: <code>git pull remote_name</code></p>
+<p>Pulling changes from a remote: <code class="highlighter-rouge">git pull remote_name</code></p>
 
 <p>Or if you want to rebase:</p>
-<pre>git fetch remote_name
-git rebase remote_name/branch</pre>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git fetch remote_name
+git rebase remote_name/branch
+</code></pre>
+</div>
 
 <blockquote>
-  <p>You can change your <code>branch.autosetuprebase</code> to <code>always</code>, to make this the default <code>git pull</code> behaviour.&lt;/blockquote&gt;</p>
+  <p>You can change your <code class="highlighter-rouge">branch.autosetuprebase</code> to <code class="highlighter-rouge">always</code>, to make this the default <code class="highlighter-rouge">git pull</code> behaviour.</p>
+</blockquote>
 
-  <p>That’s all there is to moving commits around in Git repositories. Any other operations you perform are all combinations of the above.</p>
+<p>That’s all there is to moving commits around in Git repositories. Any other operations you perform are all combinations of the above.</p>
 
-  <h2>Github — personal repositories</h2>
+<h2 id="github----personal-repositories">Github – personal repositories</h2>
 
-  <p>When you’re dealing directly with Github, on a personal project or as the project owner, your repositories will look like this:</p>
+<p>When you’re dealing directly with Github, on a personal project or as the project owner, your repositories will look like this:</p>
 
-  <p><img src="/images/remote-3.png" alt="Figure 3" /></p>
+<p><img src="/images/remote-3.png" alt="Figure 3" /></p>
 
-  <p>To push and pull changes between your local and your github repositories, just issue the push and pull commands with the origin remote:</p>
+<p>To push and pull changes between your local and your github repositories, just issue the push and pull commands with the origin remote:</p>
 
-  <pre>git push origin
-git pull origin</pre>
+<div class="highlighter-rouge"><pre class="highlight"><code>git push origin
+git pull origin
+</code></pre>
+</div>
 
-  <p>You can set the defaults for these commands too, so the origin isn’t even necessary in a lot of cases.</p>
+<p>You can set the defaults for these commands too, so the origin isn’t even necessary in a lot of cases.</p>
 
-  <h2>Github — receiving contributions</h2>
+<h2 id="github----receiving-contributions">Github – receiving contributions</h2>
 
-  <p>As a project owner, you’ll sometimes have to deal with contributions from other people. Each contributor will have their own github repository, and they’ll issue you with a pull request.</p>
+<p>As a project owner, you’ll sometimes have to deal with contributions from other people. Each contributor will have their own github repository, and they’ll issue you with a pull request.</p>
 
-  <p><img src="/images/remote-4.png" alt="Figure 4" /></p>
+<p><img src="/images/remote-4.png" alt="Figure 4" /></p>
 
-  <p>There’s no direct link to push between these two repositories; they’re unmanned. To manage changes from contributors, you need to involve your local repository.</p>
+<p>There’s no direct link to push between these two repositories; they’re unmanned. To manage changes from contributors, you need to involve your local repository.</p>
 
-  <p>You can think of this as taking the shape of a V.</p>
+<p>You can think of this as taking the shape of a V.</p>
 
-  <p><img src="/images/remote-5.png" alt="Figure 5" /></p>
+<p><img src="/images/remote-5.png" alt="Figure 5" /></p>
 
-  <p>You need to register their github repository as a remote on your local, pull in their changes, merge them, and push them up to your github. This can be done as follows:</p>
+<p>You need to register their github repository as a remote on your local, pull in their changes, merge them, and push them up to your github. This can be done as follows:</p>
 
-  <div class="highlighter-rouge"><pre class="highlight"><code>git remote add contributor contributor_repository.git
+<div class="highlighter-rouge"><pre class="highlight"><code>git remote add contributor contributor_repository.git
 git pull contributor branch
 git push
 </code></pre>
-  </div>
+</div>
 
-  <h2>Github — providing contributions</h2>
+<h2 id="github----providing-contributions">Github – providing contributions</h2>
 
-  <p>Do exactly as you would your own personal project. Local changes, pushed up to your github fork; then issue a pull request. That’s all there is to it.</p>
+<p>Do exactly as you would your own personal project. Local changes, pushed up to your github fork; then issue a pull request. That’s all there is to it.</p>
 
-  <h2>Github — the big picture</h2>
+<h2 id="github----the-big-picture">Github – the big picture</h2>
 
-  <p>Here’s how to imagine the whole process, think of it as an N shape.</p>
+<p>Here’s how to imagine the whole process, think of it as an N shape.</p>
 
-  <p><img src="/images/remote-6.png" alt="Figure 6" /></p>
+<p><img src="/images/remote-6.png" alt="Figure 6" /></p>
 
-  <p>On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.</p>
+<p>On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.</p>
 
-  <ol>
-<li>Contributor makes a commit in their local repository</li>
-<li>Contributor pushes that commit to their github</li>
-<li>Contributor issues a pull request to the project
-<li>Project lead pulls the contributor's change into their local repository</li>
-<li>Project lead pushes the change up to the project github</li>
+<ol>
+  <li>Contributor makes a commit in their local repository</li>
+  <li>Contributor pushes that commit to their github</li>
+  <li>Contributor issues a pull request to the project</li>
+  <li>Project lead pulls the contributor’s change into their local repository</li>
+  <li>Project lead pushes the change up to the project github</li>
+</ol>
 
-
-That's as complicated as it gets.
-</li></ol>
-</blockquote>
+<p>That’s as complicated as it gets.</p>
 
         </section>
 

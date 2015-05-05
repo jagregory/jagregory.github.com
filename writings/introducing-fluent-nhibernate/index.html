@@ -47,6 +47,8 @@
 
 <p>We’re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They’re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
 
+<!-- more -->
+
 <h2 id="the-api">The API</h2>
 
 <p>Take the following simple hbm file:</p>
@@ -100,7 +102,7 @@
 </code></pre>
 </div>
 
-<p>Firstly, you’ll note that there is a marginal reduction in lines of code, but that’s not what we’re particularly striving for. Instead we’re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code>id</code> element in the hbm file, you’re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int’s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
+<p>Firstly, you’ll note that there is a marginal reduction in lines of code, but that’s not what we’re particularly striving for. Instead we’re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code class="highlighter-rouge">id</code> element in the hbm file, you’re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int’s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
 
 <h2 id="testability">Testability</h2>
 
@@ -119,7 +121,7 @@
 </code></pre>
 </div>
 
-<p>Behind the scenes the <code>PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code>CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It’s a fairly standard integration test, except we’ve taken the time to write all the wiring up that needs to be done, so you don’t have to.</p>
+<p>Behind the scenes the <code class="highlighter-rouge">PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code class="highlighter-rouge">CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It’s a fairly standard integration test, except we’ve taken the time to write all the wiring up that needs to be done, so you don’t have to.</p>
 
 <h2 id="the-framework">The Framework</h2>
 

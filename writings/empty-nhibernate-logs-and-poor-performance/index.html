@@ -47,6 +47,8 @@
 
 <p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
 
+<!-- more -->
+
 <p>Firstly, I noticed that our logging was set to <code class="highlighter-rouge">DEBUG</code>. Must’ve been a leftover from when we first deployed NHibernate, very sloppy, I know. So I reset that to <code class="highlighter-rouge">WARN</code>, but it had no effect.</p>
 
 <p>When files aren’t being written to, you should always check the directory permissions. Low and behold, it was a permissions problem. Our test server had different users allowed to write to the Logs directory than our production server. I granted the same users access, <code class="highlighter-rouge">NETWORK SERVICE</code> and <code class="highlighter-rouge">IUSR_MACHINENAME</code> in our case.</p>

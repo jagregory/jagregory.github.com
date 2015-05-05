@@ -90,20 +90,6 @@ before I came across this, bad James!</p>
 
 <p>A few days ago I decided it was about time I had a tinker with <a href="http://www.google.com/webmasters/sitemaps">Google Sitemaps</a>, part of which involves uploading a temporary file so google can be sure the website you’re trying to claim is actually yours. Anyway, fun things aside, google gave me an error message (“We’ve detected that your 404 (file not found) error page returns a status of 200 (OK) in the header.”) when it tried to read the file.</p>
 
-<p>The error message was caused by a feature of Ruby on Rails, which when in Development mode, invalid pages are still served by Rails and sent with a 200 header, but logged as having a Routing error of “Recognition failed”.</p>
-
-<p>All information pointed to a simple fix of setting the rails environment (<code>ENV['RAILS_ENV']</code>) to production mode, which would disable the aforementioned feature. Unfortunately for me, my environment was <em>already</em> set to production! I double checked this, logged into the ruby console on my web-server and checked the variables, then even checked which log file was being written to; everything was pointing to it being in production mode.</p>
-
-<p>After a lot of browsing of forums and chatting in IRC channels, I succumbed to randomly trying anything, which is when i noticed in my environment.rb file there was a line of code that I couldn’t for the life of me remember why it was in there, or what it was doing; removing this line of code worked a treat, everything snapped back to how it should be functioning.</p>
-
-<p>For future reference, the line in question was:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'error_handler_basic'</span> <span class="c1"># defines AC::Base#rescue_action_in_public</span>
-</code></pre>
-</div>
-
-<p>So there you go, now I have a 404 page and google accepted my site map, so we can all live happily ever after.</p>
-
  <a class="read-more" href="/writings/ruby-on-rails-recognition-failed-in-production-mode">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -122,7 +108,7 @@ before I came across this, bad James!</p>
             <h2 class="post-title"><a href="/writings/uncrippling-windows-xps-iis-51">Uncrippling Windows XP's IIS 5.1</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I apparently got around to reading <a href="http://www.codinghorror.com">Coding Horror</a> a bit too late, as I missed <a href="http://www.codinghorror.com/blog/archives/000329.html" title="Uncrippling Windows XP's IIS 5.1">this gem</a>. It’s an article about a small application used to bend XP’s IIS to your every whim, perfect for those of us suffering at the hands of Microsoft.</p>
+            <p>I apparently got around to reading <a href="http://www.codinghorror.com">Coding Horror</a> a bit too late, as I missed <a href="http://www.codinghorror.com/blog/archives/000329.html&quot; title=&quot;Uncrippling Windows XP's IIS 5.1">this gem</a>. It’s an article about a small application used to bend XP’s IIS to your every whim, perfect for those of us suffering at the hands of Microsoft.</p>
 
 <p>The basic gist of the application is that it removes the limits of XP’s IIS, namely the problem of only being allowed one website and 10 concurrent users. It takes a bit of getting used to, especially if you’re using Visual Studio; if you are, remember to reset IIS to it’s default website before opening a website created prior to using IISAdmin.</p>
 
@@ -150,7 +136,7 @@ before I came across this, bad James!</p>
 
 <p>That may sound like a bit of a hack, maybe it is, but if you want to refer to multiple elements within another, you shouldn’t really be doing it by ID anyway.</p>
 
-<p>You can get the <a href="http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip">updated source here</a> or view the <a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/" title="ASP.Net ClientIDs and their JavaScript companion">full article here</a>.</p>
+<p>You can get the <a href="/downloads/ServerControlIDs-1.1.zip">updated source here</a> or view the <a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/">full article here</a>.</p>
 
  <a class="read-more" href="/writings/servercontrolids-update">Read more &raquo;</a>
         </section>
@@ -170,89 +156,13 @@ before I came across this, bad James!</p>
             <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.</p>
+            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="highlighter-rouge">onclick="do_something()"</code>.</p>
 
 <p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
 
 <p>Perfect - clean semantic markup and real event handling.</p>
 
 <p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
-<h2 id="our-problem">Our Problem</h2>
-
-<p>The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the <a href="http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content">FOUC</a>, where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.</p>
-
-<p>If you had the following code in your header tag, the element <code>aTable</code> would be visible until the page has finished loading, at which point it would suddenly disappear.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">function</span> <span class="nx">hideATable</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'aTable'</span><span class="p">).</span><span class="nx">style</span><span class="p">[</span><span class="s1">'display'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'none'</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="nx">Event</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">'load'</span><span class="p">,</span> <span class="nx">hideATable</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<p>What we really need is an <code>onBodyRendered</code> event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.</p>
-
-<h2 id="the-solution">The Solution</h2>
-<p>The only real solution to this problem, as there isn’t an <code>onBodyRendered</code> event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.</p>
-
-<p>The following code would hide the table before the page has finished rendering; exactly what we want.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">hideATable</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h2 id="my-additions">My additions</h2>
-
-<p>The above method isn’t completely desirable, because it is still mixing code with markup and any code within the footer will not be cached. There isn’t much you can do about that really, but one thing that i’ve taken to doing in my websites is to make sure there is only ever one function call in that footer script block.</p>
-
-<p>My method of doing such a thing is to create a special object that represents all my pages and their individual footer script blocks. You can see below an example of such an object, there’s an wrapper object that allows for further extensions (such as Unload or Validation sections) and then the Load object that contains each pages onload function. Each page then has a single line script block like <code class="highlighter-rouge">Pages.Load.Home();</code></p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Pages</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">Home</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">highlightSomething</span><span class="p">();</span>
-    <span class="nx">hideSomething</span><span class="p">();</span>
-    <span class="nx">saveCookies</span><span class="p">();</span>
-  <span class="p">},</span>
-
-  <span class="na">Portfolio</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">hideSomething</span><span class="p">();</span>
-    <span class="nx">makeMeLookGood</span><span class="p">();</span>
-  <span class="p">},</span>
-
-  <span class="na">Contact</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">highlightFields</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">};</span>
-</code></pre>
-</div>
-
-<p>So the above code is stored in an external js file and loaded in the usual way, thus being cached.</p>
-
-<h3 id="before">Before:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">highlightSomething</span><span class="p">();</span>
-  <span class="nx">hideSomething</span><span class="p">();</span>
-  <span class="nx">saveCookies</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h3 id="after">After:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="nx">Pages</span><span class="p">.</span><span class="nx">Load</span><span class="p">.</span><span class="nx">Home</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
 
  <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
         </section>

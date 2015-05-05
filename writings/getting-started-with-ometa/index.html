@@ -49,6 +49,8 @@
 
 <p>Anyway, after 10 minutes down the path of parsing it myself, I cracked and decided to look into alternatives to ANTLR. I came across <a href="http://www.codeplex.com/ometasharp">OMeta#</a> and (with a reassuring nudge by Jeffery Olson) I went with it.</p>
 
+<!-- more -->
+
 <h2 id="so-what-is-ometa">So what is OMeta#?</h2>
 
 <p>At it’s heart, <a href="http://www.cs.ucla.edu/~awarth/ometa/">OMeta</a> is just a really great string parser, and OMeta# is a .Net implementation of it. Combine that with a fairly decent definition language and codegen’d parser creation, and you’re onto a winner.</p>
@@ -114,7 +116,7 @@
 <p>One more thing, then we can get going. For this generation to work, we really need to give it a grammar and parser to begin with. So we’ll create an empty grammar and parser.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">using</span> <span class="nc">OMetaSharp</span><span class="p">;</span>
- 
+
 <span class="n">ometa</span> <span class="nc">GitNumstatParser</span> <span class="p">:</span> <span class="nc">Parser</span> <span class="p">{</span>
 <span class="p">}</span>
 </code></pre>

@@ -67,97 +67,6 @@
 
 <p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
 
-<p>One solution, which I have used time-and-again, is to use a script block at the end of your page where you create a series of variables that contain the actual IDs. You then use these variables to reach the actual elements via JavaScript.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">'&lt;%= txtUsername.ClientID %&gt;'</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">'&lt;%= txtPassword.ClientID %&gt;'</span><span class="p">;</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<p>This solution works fine, but it isn’t exactly pretty and it doesn’t weigh well on my conscience.</p>
-
-<h2 id="javascript-mapping">Javascript Mapping</h2>
-
-<p>I’ve created a simple class that traverses the control structure and outputs an object that contains the mappings, as above, but without any client-side intervention; not a <code>&lt;%= ...ClientID %&gt;</code> in sight.</p>
-
-<p>An example of the output would be:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">ClientIDs</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">txtUsername</span> <span class="o">=</span> <span class="s1">'ctrl0_txtUsername'</span><span class="p">,</span>
-  <span class="nx">txtPassword</span> <span class="o">=</span> <span class="s1">'ctrl0_txtPassword'</span>
-<span class="p">};</span>
-</code></pre>
-</div>
-
-<p>Which enables you to reference elements, that you know are server-controls, by calling <code>ClientIDs.txtUsername</code>.</p>
-
-<h3 id="before">Before:</h3>
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">var</span> <span class="nx">txtUsernameID</span> <span class="o">=</span> <span class="s1">'&lt;%= txtUsername.ClientID %&gt;'</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">txtPasswordID</span> <span class="o">=</span> <span class="s1">'&lt;%= txtPassword.ClientID %&gt;'</span><span class="p">;</span>
-
-  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtUsernameID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtPasswordID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">'james'</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">alert</span><span class="p">(</span><span class="s2">"you shouldn't be here!"</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h3 id="after">After:</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtUsername</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ClientIDs</span><span class="p">.</span><span class="nx">txtPassword</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">'james'</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">alert</span><span class="p">(</span><span class="s2">"you shouldn't be here!"</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre>
-</div>
-
-<h2 id="servercontrolids-class">ServerControlIDs class</h2>
-
-<h3 id="methods">Methods</h3>
-
-<p><code>void Emit(page)</code> - Builds the controls of the page into a mapped structure, registering a client-side script block for the output.</p>
-
-<p><code>void Emit(control, literal)</code> - Builds the controls of the control into a mapped structure, rendering the output into the literal control supplied. The literal is best suited to being placed into the <code>&lt;head&gt;</code> tag, which helps improve the semantic nature of your page.</p>
-
-<h3 id="properties">Properties</h3>
-
-<p><code>bool Whitespace</code> - Sets whether the output should contain whitespace, provided only for “prettifying” your code; defaults to off.</p>
-
-<p><code>string VariableName</code> - Sets the JavaScript variable name used; defaults to ClientID.</p>
-
-<h3 id="usage">Usage</h3>
-
-<p>To use this class, simply create an instance in the PreRender event for your page — this ensures that all the controls have been set to their correct state — then call the Emit method you desire.</p>
-
-<h2 id="history">History</h2>
-
-<ul>
-  <li>[1.1] Removed IDs from Repeater/DataGrid contained controls.</li>
-  <li>[1.0] Initial release</li>
-</ul>
-
-<h2 id="download">Download</h2>
-
-<p>That’s all there is to it, use the link below to get the latest version of ServerControlIDs.</p>
-
-<p>Please note that this code isn’t pretty and it could probably do with some revising, but it works and that’s what’s important to me. I’m open to suggestions and feature requests.</p>
-
-<p><a href="http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip">Current Version (1.1)</a></p>
-
  <a class="read-more" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -206,25 +115,13 @@
         <section class="post-excerpt">
             <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
 
-<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code>body#profile</code>, when <code>#profile</code> doesn’t exist), a script error occurs; yet using <code>#profile</code> alone works fine.</p>
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="highlighter-rouge">body#profile</code>, when <code class="highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="highlighter-rouge">#profile</code> alone works fine.</p>
 
 <p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
 </code></pre>
 </div>
-
-<p>It’s finding the <code>tagName</code> (<code>body</code>), but element is undefined due to the ID being invalid. A slight change to the above if statement fixes the problem.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">))</span> <span class="p">{</span>
-</code></pre>
-</div>
-
-<p>Maybe somebody will find that useful, I’ve posted it on Simons blog, but incase he doesn’t accept the change you can download the modified version here.</p>
-
-<blockquote>
-  <p>Note: If you’re using Behaviour, as opposed to just <code>getElementsBySelector()</code>, you’ll need to paste the contents of the above file into the bottom of your behaviour.js file, overwriting everything after the <code>Behaviour.start();</code> line.</p>
-</blockquote>
 
  <a class="read-more" href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">Read more &raquo;</a>
         </section>
@@ -267,19 +164,6 @@
         </header>
         <section class="post-excerpt">
             <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
-
-<p>As far as I am aware there isn’t an option in the trust software to allow you to map to a specific monitor, only to restrict the area on the tablet (which isn’t at all helpful). So what I’ve figured out is purely a work around, and it isn’t great either<sup>1</sup>. This is mainly for my reference, but someone else might find it useful, so here we go:</p>
-<ol>
-	<li>Open up Display Properties and disable (“un-attach”) your secondary monitor.</li>
-	<li>Open the Trust Control Panel from the icon in your system tray.</li>
-	<li>Re-enable your second monitor.</li>
-	<li>Click ok in your Trust Control Panel.</li>
-</ol>
-<p>From there on out your tablet should only be mapped to the monitor that stayed enabled the whole time, that is until you re-open the Trust Control Panel. I didn’t say it was pretty!</p>
-
-<p>What I can gather is that after disabling your monitor, when you open up the control panel it maps the overall screen size so it can apply that to the tablet, but when you click OK after re-enabling the monitor it doesn’t refresh with the screen change and so uses the single monitor values.</p>
-
-<p><sup>1</sup> Also note that I have only tested this on my system.</p>
 
  <a class="read-more" href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Read more &raquo;</a>
         </section>

@@ -43,6 +43,8 @@
 
 <p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
 
+<!-- more -->
+
 <p><img src="/images/bls-1.png" alt="Syntax highlighting" /></p>
 
 <p><a href="http://www.justnbusiness.com/">Justin Chase</a> has been tackling various issues all over the place. Several related to the build process, specifically how the Boo binaries are located on your machine, which has been a bit of a problem when there’s multiple developers working on a project whom both have Boo installed in a different location. He’s also been spiffing up the interface by adding some much needed icons to the projects.</p>
@@ -55,7 +57,7 @@
 
 <p>The entire solution is now processed behind-the-scenes to provide intellisense. Import statements are now recognised and imported types appear in the local scope intellisense. Any assemblies or projects that are referenced have their top-level types and namespaces included in the intellisense too.</p>
 
-<p>Additionally I’ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code>StringBuilder().Append("Hello world").ToString().</code> for example).</p>
+<p>Additionally I’ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code class="highlighter-rouge">StringBuilder().Append("Hello world").ToString().</code> for example).</p>
 
 <p><img src="/images/bls-3.png" alt="Code completion" /></p>
 

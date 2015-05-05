@@ -55,78 +55,7 @@
             <h2 class="post-title"><a href="/writings/sharpdiff-diff-parsing-in-net">SharpDiff - Diff Parsing in .NET</a></h2>
         </header>
         <section class="post-excerpt">
-            <h2 id="about-sharpdiff">About SharpDiff</h2>
-
-<p>SharpDiff is a library for parsing the output of various diffing tools. It’s primary purpose is to reduce the time spent by SCM UI developers in handing diff output.</p>
-
-<h2 id="why-sharpdiff">Why SharpDiff</h2>
-
-<p>I’ve got a few tools in mind that require parsing of diff files. I figure it’s a pretty common thing for SCM UI developers to have to do, so I thought i’d put it out for others to use.</p>
-
-<h2 id="parsing-your-first-diff">Parsing your first diff</h2>
-
-<p>The implementation is not concrete yet, but the current (easiest) way to parse a diff file is as follows.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">string</span> <span class="n">diffContent</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="nf">ReadAllText</span><span class="p">(</span><span class="s">"MyDiffFile.diff"</span><span class="p">);</span>
-
-<span class="n">Diff</span> <span class="n">diff</span> <span class="p">=</span> <span class="n">Diff</span><span class="p">.</span><span class="nf">CreateFrom</span><span class="p">(</span><span class="n">diffContent</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<p>From there you have a compiled version of your diff document. Intellisense will be your friend here, but basically you have a Chunks collection, and a Files collection.</p>
-
-<p>The Wikipedia <a href="http://en.wikipedia.org/wiki/Diff">article on Diffs</a> is worth a read if you’re interested. In short though, chunks are formed as a chunk header containing the affected lines, and the lines themselves.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="gh">@@ -1,3 +1,6 @@
-</span><span class="err">This is a small text file
-</span><span class="gi">+that I quite like,
-</span> with a few lines of text
-<span class="gd">-inside, nothing much.
-</span></code></pre>
-</div>
-
-<p>The chunk header is <code class="highlighter-rouge">@@ -1,3 +1,6 @@</code>. The -1,3 describes the affected lines in the original file, the first number (ignoring the minus) is the start line, and the second number is the total of context lines plus subtraction lines. The second range (+1,6) is in the new file, and that starts on the first line, and has six affected lines; in this case it’s all the context lines plus all addition lines.</p>
-
-<p>All the other lines are the actual changes themselves. A line prefixed with a + is an addition line, a line prefixed with a - is a subtraction line, and lines prefixed with a space are context lines. Context lines are used for aligning the changes in the document. They’re also useful for determining if the document has changed since the diff was created.</p>
-
-<p>In the context of SharpDiff, your Chunks collection contains an instance of a Chunk for every part in the diff that resembles the above. Each chunk has the range info for the original and new file, and a Lines collection of each line.</p>
-
-<h2 id="early-days">Early Days</h2>
-
-<p><strong>WARNING:</strong> SharpDiff is still in early development. I wouldn’t recommend using it in production code yet, as the parser is severely limited, and there’s next to no error handling.</p>
-
-<p>The biggest flaw is that it only supports the standard git-diff output, and doesn’t handle many special circumstances.</p>
-
-<p>It does support:</p>
-
-<ul>
-  <li>Standard git-diff header</li>
-  <li>Index extended header</li>
-  <li>Chunk header</li>
-  <li>Chunk lines (added, removed, and contextual)</li>
-  <li>No newline at end of file</li>
-  <li>Multiple chunks per diff</li>
-  <li>Multiple diff per input string</li>
-</ul>
-
-<p>It doesn’t support:</p>
-
-<ul>
-  <li>Other extended headers</li>
-  <li>Formats other than git-diff</li>
-</ul>
-
-<h2 id="example">Example</h2>
-
-<p>As quick example of what you could use this library for, here’s a screenshot of a git-diff application:</p>
-
-<p><img src="/images/sharpdiff-1.png" alt="Stupidly basic GUI" /></p>
-
-<h2 id="get-involved">Get Involved</h2>
-
-<p>You can find the source on my github account, in the <a href="http://github.com/jagregory/sharpdiff">sharpdiff repository</a>.</p>
-
-<p>If you’re interested in helping with SharpDiff, then let me know. All comments, suggestions, and contributions are welcome. Feel free to contact me either through github, or my e-mail.</p>
+            <p>SharpDiff is a library for parsing the output of various diffing tools. It’s primary purpose is to reduce the time spent by SCM UI developers in handing diff output.</p>
 
  <a class="read-more" href="/writings/sharpdiff-diff-parsing-in-net">Read more &raquo;</a>
         </section>
@@ -147,55 +76,6 @@
         </header>
         <section class="post-excerpt">
             <p>Continuing on from my post about an <a href="/writings/alternative-to-abusing-using/">alternative syntax for the non-disposable using statements</a>, here’s a class I’ve been using lately. It serves as a wrapper around changing the colours in a console window. It’s not a difficult thing to do, it’s just a bit awkward because you have to maintain the original colour in a variable while you do your business.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Start..."</span><span class="p">)</span>
-
-<span class="n">var</span> <span class="n">originalColour</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
-<span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColour</span> <span class="p">=</span> <span class="n">ConsoleColor</span><span class="p">.</span><span class="n">Red</span><span class="p">;</span>
-
-<span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"WARNING!"</span><span class="p">);</span>
-
-<span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColour</span> <span class="p">=</span> <span class="n">originalColour</span><span class="p">;</span>
-</code></pre>
-</div>
-
-<p>It’s not too bad when you’re only doing it once, but when you start swapping colours all over the place, then it can become very noisy. So this is where my class comes into play. Using the same syntax I described in my previous post, I’ve wrapped up the colour changing in a helper method that takes an Action delegate. This allows you to write much more intention revealing code.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">ConsoleColours</span><span class="p">.</span><span class="nf">Foreground</span><span class="p">(</span><span class="n">ConsoleColor</span><span class="p">.</span><span class="n">Yellow</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span>
-<span class="p">{</span>
-  <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Different text"</span><span class="p">);</span>
-<span class="p">});</span>
-</code></pre>
-</div>
-
-<p>I find this much cleaner and the blocks gives my console code some much needed separation.</p>
-
-<p>Here’s the full class code:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ConsoleColours</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Foreground</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span><span class="p">;</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
-
-    <span class="nf">action</span><span class="p">();</span>
-
-    <span class="n">Console</span><span class="p">.</span><span class="n">ForegroundColor</span> <span class="p">=</span> <span class="n">original</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Background</span><span class="p">(</span><span class="n">ConsoleColor</span> <span class="n">colour</span><span class="p">,</span> <span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="n">var</span> <span class="n">original</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span><span class="p">;</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span> <span class="p">=</span> <span class="n">colour</span><span class="p">;</span>
-
-    <span class="nf">action</span><span class="p">();</span>
-
-    <span class="n">Console</span><span class="p">.</span><span class="n">BackgroundColor</span> <span class="p">=</span> <span class="n">original</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
 
  <a class="read-more" href="/writings/console-colours-wrapper">Read more &raquo;</a>
         </section>
@@ -218,66 +98,6 @@
             <p>There’s been a bit of discussion of late about using statements, and how they’re more often being used for purposes other than just releasing resources. As always, there are those people who think it’s a flagrant abuse of a feature and shouldn’t be done, then there are those that like it. I’m in between. I do like what the using statement gives us, but I also think it is a bit of an abuse.</p>
 
 <p>The “traditional” usage of the using statement can be found quite often in the land of files and streams. Take the following example, which opens a file and then closes it when it drops out of the using scope.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="p">(</span><span class="n">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="nf">OpenRead</span><span class="p">(</span><span class="s">"myFile.txt"</span><span class="p">))</span>
-<span class="p">{</span>
-  <span class="c1">// do something with the file
-</span><span class="p">}</span>
-</code></pre>
-</div>
-
-<p>Examples of the alternative usage can be found all over the place, but Rhino Mocks is one that’s close to my heart. Here’s from the record/replay syntax, anything in the scope of the using is recorded, and once it drops out of scope it’s no longer in record mode.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="p">(</span><span class="n">mocks</span><span class="p">.</span><span class="nf">Record</span><span class="p">())</span>
-<span class="p">{</span>
-  <span class="n">Expect</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">Return</span><span class="p">(</span><span class="s">"123 Rester St"</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>Again, I do like what the using statement gives us outside of releasing resources (I’m not disputing it’s usefulness there). However, I think the using keyword itself adds noise and clouds intention.</p>
-
-<p>With the adoption of 3.5, I’ve started using an alternative syntax instead of usings. Actions and anonymous methods to the rescue.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nf">Scope</span><span class="p">(()</span> <span class="p">=&gt;</span>
-<span class="p">{</span>
-  <span class="c1">// do something within this scope
-</span><span class="p">});</span>
-</code></pre>
-</div>
-
-<p>It’s a little bit more noisy in the compiler satisfying department, but because you have full control over naming, you can reveal intention more. No more unclear “using”.</p>
-
-<p>So how does it work? Simple really, the method takes an Action delegate, which it the executes almost immediately. I say almost, because you can execute code before and after the execution. That gives you the benefits of the using statements wrapping ability.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="c1">// do something before
-</span>  <span class="nf">action</span><span class="p">();</span>
-  <span class="c1">// do something after
-</span><span class="p">}</span>
-</code></pre>
-</div>
-
-<p>Some more examples:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">File</span><span class="p">.</span><span class="nf">OpenRead</span><span class="p">(</span><span class="s">"myFile.txt"</span><span class="p">,</span> <span class="n">file</span> <span class="p">=&gt;</span>
-<span class="p">{</span>
-  <span class="c1">// do something with the file
-</span><span class="p">});</span>
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">mocks</span><span class="p">.</span><span class="nf">Record</span><span class="p">(()</span> <span class="p">=&gt;</span>
-<span class="p">{</span>
-  <span class="n">Expect</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">Return</span><span class="p">(</span><span class="s">"123 Rester St"</span><span class="p">);</span>
-<span class="p">});</span>
-</code></pre>
-</div>
-
-<p>I prefer this syntax over the using statement. Of course, it’s only valid for 3.5 projects.</p>
 
  <a class="read-more" href="/writings/alternative-to-abusing-using">Read more &raquo;</a>
         </section>
@@ -305,16 +125,6 @@
 
 <p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
 
-<p>Firstly, I noticed that our logging was set to <code class="highlighter-rouge">DEBUG</code>. Must’ve been a leftover from when we first deployed NHibernate, very sloppy, I know. So I reset that to <code class="highlighter-rouge">WARN</code>, but it had no effect.</p>
-
-<p>When files aren’t being written to, you should always check the directory permissions. Low and behold, it was a permissions problem. Our test server had different users allowed to write to the Logs directory than our production server. I granted the same users access, <code class="highlighter-rouge">NETWORK SERVICE</code> and <code class="highlighter-rouge">IUSR_MACHINENAME</code> in our case.</p>
-
-<p>After I recycled the IIS worker processes, we were flying again. We’re back to having &lt; 1sec page loads.</p>
-
-<p>This is pure speculation, but what I believe was happening is this: Logging was set to <code class="highlighter-rouge">DEBUG</code>, so it was logging <em>a lot</em>. With each log call, the logger was failing to get write access to the files and throwing an exception, that exception would probably have propagated a bit too. The combination of the sheer amount of data being written to the log, and an exception per log call, were responsible for the severe slowdown.</p>
-
-<p>So in short: Always make sure NHibernate has write access to its own log directory!</p>
-
  <a class="read-more" href="/writings/empty-nhibernate-logs-and-poor-performance">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -336,132 +146,6 @@
             <p>I’ve been meaning to write up some of my experiences developing for Visual Studio while I’ve been working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>, but I can never seem to find the time; either that, or when I can I’m not confident enough in what I’m doing to put it out here as a valid resource.</p>
 
 <p>I’ll start small, here’s a quick guide to how I’ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
-
-<p><strong>What exactly is brace matching?</strong> Brace matching is where paired characters are highlighted when one or the other is selected in the editor.</p>
-
-<p><img src="/images/bracematching-1.png" alt="Brace matching" /></p>
-
-<p>There are a couple of things you need to consider when you implement brace matching.</p>
-
-<p>Firstly, there are different types of braces that can be matched (depending on your language). Taking C# as an example, the brace matching works with parentheses (<code class="highlighter-rouge">()</code>), box brackets (<code class="highlighter-rouge">[]</code>), braces (<code class="highlighter-rouge"><span class="p">{}</span></code>), and chevrons (<code class="highlighter-rouge">&lt;&gt;</code>). These all need to be paired independently, as to avoid matching an open parenthesis with a closing brace.</p>
-
-<p>Secondly, the matching has to work bi-directionally. The user can place their caret at either side of the bracket pair, and the highlighting should know where both sides are regardless.</p>
-
-<h2 id="languageservice-implementation">LanguageService implementation</h2>
-
-<p>A lot of the legwork of implementing a language in Visual Studio is done in the LanguageService, and brace matching is no exception. You should already have a <code class="highlighter-rouge">ParseSource</code> method in your LanguageService; this is where we’re going to work.</p>
-
-<p>The <code class="highlighter-rouge">ParseSource</code> method has a <code class="highlighter-rouge">ParseRequest</code> parameter, which exposes a <code class="highlighter-rouge">Reason</code> property. When this property is set to <code class="highlighter-rouge">MatchBraces</code>, that’s when we need to do our processing.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="c1">// match braces here
-</span>  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>What needs to be done is pretty simple: Parse the open document and find the partner to the brace that the caret is on.</p>
-
-<p>In BooLangStudio I’ve implemented this in the following fashion:</p>
-
-<ul>
-  <li>Run the document through a <code class="highlighter-rouge">BracketPairFinder</code>, which creates a list of bracket pairs in the document</li>
-  <li>Get the index of the caret (baring in mind you have to translate between the Request’s Line and Column, and an actual string index)</li>
-  <li>Find the pair that the caret is positioned at</li>
-  <li>Get the opposite bracket from the pair</li>
-  <li>Get the Line and Column of the opposite bracket</li>
-</ul>
-
-<p>It’s up to you how you implement the above steps, as long as you end up with the opposite bracket to the one you started with. I’ll illustrate using the BooLangStudio source.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="c1">// find all pairs
-</span>    <span class="n">var</span> <span class="n">bracketFinder</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">BracketPairFinder</span><span class="p">();</span>
-    <span class="n">var</span> <span class="n">bracketPairs</span> <span class="p">=</span> <span class="n">bracketFinder</span><span class="p">.</span><span class="nf">FindPairs</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Text</span><span class="p">);</span>
-
-    <span class="c1">// get index of caret from source text
-</span>    <span class="n">Source</span> <span class="n">source</span> <span class="p">=</span> <span class="n">languageService</span><span class="p">.</span><span class="nf">GetSource</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">View</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">indexOfCaret</span> <span class="p">=</span> <span class="n">source</span><span class="p">.</span><span class="nf">GetPositionOfLineIndex</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">);</span>
-
-    <span class="c1">// find the partner to the bracket at the caret
-</span>    <span class="kt">int</span><span class="p">?</span> <span class="n">partner</span> <span class="p">=</span> <span class="n">bracketPairs</span><span class="p">.</span><span class="nf">FindPartnerIndex</span><span class="p">(</span><span class="n">indexOfCaret</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="c1">// tell Visual Studio about the pair
-</span>    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<blockquote>
-  <p>The <code class="highlighter-rouge">Source</code> class has a helpful <code class="highlighter-rouge">GetPositionOfLineIndex</code> method, which translates between a Line and Column to a single string index. Very handy!</p>
-</blockquote>
-
-<p>Once you’ve got your indices, we need to inform Visual Studio of our findings. You do that by setting the <code class="highlighter-rouge">request.Sink.FoundMatchingBrace</code> to <code class="highlighter-rouge">true</code>, then calling the <code class="highlighter-rouge">MatchPair</code> method on the Sink. You need to pass two <code class="highlighter-rouge">TextSpan</code> instances to the <code class="highlighter-rouge">MatchPair</code> method; the first is the left brace, and the second the right.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">override</span> <span class="n">AuthoringScope</span> <span class="nf">ParseSource</span><span class="p">(</span><span class="n">ParseRequest</span> <span class="n">request</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Reason</span> <span class="p">==</span> <span class="n">ParseReason</span><span class="p">.</span><span class="n">MatchBraces</span><span class="p">)</span>
-  <span class="p">{</span>
-    <span class="p">...</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">partner</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="c1">// tell Visual Studio about the pair
-</span>      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="n">FoundMatchingBrace</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-
-      <span class="kt">int</span> <span class="n">nextLine</span><span class="p">,</span> <span class="n">nextCol</span><span class="p">;</span>
-
-      <span class="n">source</span><span class="p">.</span><span class="nf">GetLineIndexOfPosition</span><span class="p">(</span><span class="n">partner</span><span class="p">.</span><span class="n">Value</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextLine</span><span class="p">,</span> <span class="k">out</span> <span class="n">nextCol</span><span class="p">);</span>
-
-      <span class="n">request</span><span class="p">.</span><span class="n">Sink</span><span class="p">.</span><span class="nf">MatchPair</span><span class="p">(</span>
-        <span class="k">new</span> <span class="n">TextSpan</span>
-        <span class="p">{</span>
-          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
-          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Line</span><span class="p">,</span>
-          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span><span class="p">,</span>
-          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">Col</span>
-        <span class="p">},</span> 
-        <span class="k">new</span> <span class="n">TextSpan</span>
-        <span class="p">{</span>
-          <span class="n">iStartLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
-          <span class="n">iEndLine</span> <span class="p">=</span> <span class="n">nextLine</span><span class="p">,</span>
-          <span class="n">iStartIndex</span> <span class="p">=</span> <span class="n">nextCol</span><span class="p">,</span>
-          <span class="n">iEndIndex</span> <span class="p">=</span> <span class="n">nextCol</span> <span class="p">+</span> <span class="m">1</span>
-        <span class="p">},</span> <span class="m">0</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="k">new</span> <span class="nf">AuthoringScope</span><span class="p">();</span> <span class="c1">// replace with your implementation
-</span>  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<blockquote>
-  <p>The <code class="highlighter-rouge">Source</code> class has another helpful method: <code class="highlighter-rouge">GetLineIndexOfPosition</code> method, which translates back to Line and Column from a single string index.</p>
-</blockquote>
-
-<p>Finally, just return an empty AuthoringScope, as it isn’t used as part of this parse request.</p>
-
-<p>That’s it! You should have now successfully implemented brace matching. You may need to tweak the TextSpan indexes depending on your parser implementation, but it shouldn’t be far wrong.</p>
-
-<h2 id="boolangstudio-implementation">BooLangStudio implementation</h2>
-
-<p>If you’re interested in seeing how I handle the brace parsing, I may cover that in a future post. However, you can find all the source in my <a href="http://github.com/jagregory/boolangstudio/tree/master">github BooLangStudio fork</a>. Some interesting one’s in particular are:</p>
-
-<ul>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/ParseRequestProcessor.cs#L133">ParseRequestProcessor.HighlightBraces</a> - Delegated to from the LanguageService.ParseSource method.</li>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/BracketPairFinder.cs">BracketPairFinder</a> - Class which parses a document to get all the bracket pairs. Uses <a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/ExcludingStringLiteralsStringWalker.cs">ExcludingStringLiteralsStringWalker</a>.</li>
-  <li><a href="http://github.com/jagregory/boolangstudio/tree/54d4bcef79d4dbd2ff6cf1fbd9b0a15f325f5c41/Source/BooLangService/StringParsing/StringWalker.cs">StringWalker</a> - A simple string parser used by the <code class="highlighter-rouge">BracketPairFinder</code>, which walks over a string maintaining a code-aware state. Basically, it lets you know whether it’s currently inside a bracket or string literal. Handy for not matching characters inside strings.</li>
-</ul>
 
  <a class="read-more" href="/writings/brace-matching-and-your-language-service">Read more &raquo;</a>
         </section>

@@ -40,20 +40,20 @@
 
         <section class="post-content">
             <blockquote>
-  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.&lt;/p&gt;</p>
-</blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
 
-<blockquote>
-  <p><strong>Note:</strong> this was written against <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a> of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, so you need to be at least at that revision to follow along.&lt;/p&gt;</p>
+  <p><strong>Note:</strong> this was written against <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a> of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, so you need to be at least at that revision to follow along.</p>
 </blockquote>
 
 <p>Fluent NHibernate has a concept called Auto Mapping, which is a mechanism for automatically mapping all your entities based on a set of conventions.</p>
 
-<p>Auto mapping utilises the principal of <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a>. Using this principal, the auto mapper inspects your entities and makes assumptions of what particular properties should be. Perhaps you have a property with the name of <code>Id</code> and type of <code>int</code>, the auto mapping might (and will by default) decide that this is an auto-incrementing primary key.</p>
+<p>Auto mapping utilises the principal of <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a>. Using this principal, the auto mapper inspects your entities and makes assumptions of what particular properties should be. Perhaps you have a property with the name of <code class="highlighter-rouge">Id</code> and type of <code class="highlighter-rouge">int</code>, the auto mapping might (and will by default) decide that this is an auto-incrementing primary key.</p>
+
+<!-- more -->
 
 <p>By using the auto mappings, you can map your entire domain with very little code, and certainly no XML. There are still scenarios where it may not be suitable to use the auto mapping, at which point it would be more appropriate to use the standard mapping; however, for most greenfield applications (and quite a few brownfield ones too) auto mapping will be more than capable.</p>
 
-<h2>Getting started with a simple example</h2>
+<h2 id="getting-started-with-a-simple-example">Getting started with a simple example</h2>
 
 <p>Although it isn’t the purpose of this post give an in-depth walkthrough of Auto Mapping, it’s not out of scope for a simple example! So I’ll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
 
@@ -74,15 +74,15 @@
 </code></pre>
 </div>
 
-<p>You can’t get much simpler than that. We’ve got a product, with an auto-incrementing primary key called <code>Id</code>, a <code>Name</code> and a <code>Price</code>. The store has some shelves it fills with products, so there’s a <code>Shelf</code> entity, which has an <code>Id</code> again, and a list of the <code>Product</code>s on it; the <code>Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code>Product</code>.</p>
+<p>You can’t get much simpler than that. We’ve got a product, with an auto-incrementing primary key called <code class="highlighter-rouge">Id</code>, a <code class="highlighter-rouge">Name</code> and a <code class="highlighter-rouge">Price</code>. The store has some shelves it fills with products, so there’s a <code class="highlighter-rouge">Shelf</code> entity, which has an <code class="highlighter-rouge">Id</code> again, and a list of the <code class="highlighter-rouge">Product</code>s on it; the <code class="highlighter-rouge">Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code class="highlighter-rouge">Product</code>.</p>
 
 <blockquote>
   <p>I’m going to make the assumption here that you have <em>an existing NHibernate infrastructure</em>, if you don’t then it’s best you consult a general NHibernate walkthrough before continuing.</p>
 
-  <p>Unless otherwise specified, any code samples are assumed to be placed with your NHibernate <code>SessionFactory</code> initialisation code.</p>
+  <p>Unless otherwise specified, any code samples are assumed to be placed with your NHibernate <code class="highlighter-rouge">SessionFactory</code> initialisation code.</p>
 </blockquote>
 
-<p>We’re going to be using the <code>AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.</t></code></p>
+<p>We’re going to be using the <code class="highlighter-rouge">AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code class="highlighter-rouge">MapEntitiesFromAssemblyOf&lt;T&gt;</code> method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
 </code></pre>
@@ -90,7 +90,7 @@
 
 <p>That’s it, you’ve mapped your domain… Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
 
-<p>The <code>MapEntitiesFromAssemblyOf<t>&lt;/code&gt; method creates an instance of an <code>AutoPersistenceModel</code> that's tied to the assembly that <code>Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.</t></code></p>
+<p>The <code class="highlighter-rouge">MapEntitiesFromAssemblyOf&lt;T&gt;</code> method creates an instance of an <code class="highlighter-rouge">AutoPersistenceModel</code> that’s tied to the assembly that <code class="highlighter-rouge">Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.</p>
 
 <p>A typical NHibernate setup looks something like this:</p>
 
@@ -113,15 +113,15 @@
 </code></pre>
 </div>
 
-<p>Notice the substitution of <code>AddAssembly</code> for <code>AddAutoMappings</code>. This allows us to stop NHibernate from looking for <code>hbm.xml</code> files, and use our auto mapped entities instead.</p>
+<p>Notice the substitution of <code class="highlighter-rouge">AddAssembly</code> for <code class="highlighter-rouge">AddAutoMappings</code>. This allows us to stop NHibernate from looking for <code class="highlighter-rouge">hbm.xml</code> files, and use our auto mapped entities instead.</p>
 
 <blockquote>
-  <p>If you’re dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code>AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.</p>
+  <p>If you’re dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code class="highlighter-rouge">AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.</p>
 </blockquote>
 
-<p>We’re now capable of getting NHibernate to accept our auto mapped entities, there’s just one more thing we need to deal with. The auto mapper doesn’t know which classes are your entities, and which ones are your services (and everything else). The setup we’re using above simply maps every class in your assembly as an entity, which isn’t going to be very useful; so I’ll introduce one final method: <code>Where(Func&lt;Type, bool&gt;)</code>.</p>
+<p>We’re now capable of getting NHibernate to accept our auto mapped entities, there’s just one more thing we need to deal with. The auto mapper doesn’t know which classes are your entities, and which ones are your services (and everything else). The setup we’re using above simply maps every class in your assembly as an entity, which isn’t going to be very useful; so I’ll introduce one final method: <code class="highlighter-rouge">Where(Func&lt;Type, bool&gt;)</code>.</p>
 
-<p>The <code>Where</code> method takes a lambda expression which is used to limit types based on your own criteria. The most common usage is limiting based on a namespace, but you could also look at the type name, or anything else exposed on the <code>Type</code> object.</p>
+<p>The <code class="highlighter-rouge">Where</code> method takes a lambda expression which is used to limit types based on your own criteria. The most common usage is limiting based on a namespace, but you could also look at the type name, or anything else exposed on the <code class="highlighter-rouge">Type</code> object.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
   <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>

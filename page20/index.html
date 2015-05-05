@@ -59,10 +59,6 @@
 
 <p>For said project I’ve been using the <a href="http://ajax.schwarz-interactive.de/csharpsample/default.aspx">Ajax.Net library</a> which, like most others, outputs wrapped calls to a server-side functions in javascript.</p>
 
-<p>With that in mind then, surely anyone can open up the rendered source, see your methods and then execute them at will, potentially causing havoc. Initially I was using Ajax for most of my interaction with the server - something which seems pointless in hindsight. This meant that I had a create user function exposed to the public, potentially anyone could create themselves an account within the system by using the Javascript. This isn’t much of a problem from within the context of this project, because you can only ever view the page with the javascript when you’re authorised to create users; so it doesn’t make any difference. If this was public though, it could be a serious security risk. An example could be a comment form on a blog post, if you expose the method of creating a new comment through javascript then someone, with a little bit of work, could use the javascript to post automated comments.</p>
-
-<p>Once again, nothing major but I think it is definitely something you should bare in mind when creating your pages. I guess the moral of this little story is don’t use Ajax for the sake of it and if you do use it make sure that the functions you are calling are harmless. Anything dealing with security should be left to post-backs but user experience improving features are fine - auto complete text boxes for example.</p>
-
  <a class="read-more" href="/writings/ajax-and-security">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -81,13 +77,11 @@
             <h2 class="post-title"><a href="/writings/prototype-periodicalexecuter-stop-javascript-function">Prototype PeriodicalExecuter.stop() JavaScript function</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>Download: <a href="#" title="Prototype extensions javascript file">prototype-extensions.js</a>. <em>(this download is no longer available, sorry)</em></p>
+            <p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
 
-<p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
+<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
 
-<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html" title=" Robert Hanson's Blog">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
-
-<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js" title="Prototype extensions javascript file">prototype-extensions.js</a> file and referenced it wherever needed.</p>
+<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js">prototype-extensions.js</a> file and referenced it wherever needed.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onTimerEvent</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">frequency</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
@@ -140,38 +134,7 @@
             <h2 class="post-title"><a href="/writings/nested-datagridrepeater-with-key-value-access">Nested DataGrid/Repeater with Key Value access</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code>Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
-
-<pre><code class="language-aspx-vb">&lt;asp:Repeater id="rptLogins" Runat="server"&gt;
-  &lt;ItemTemplate&gt;
-    &lt;%# DataBinder.Eval(Container, "DataItem.Password") %&gt;
-
-    &lt;asp:DataGrid id="dgUsageDetail" Runat="server" DataSource='%# Container.DataItem.Row.GetChildRows("myRelation") %&gt;' AutoGenerateColumns="false"&gt;
-      &lt;Columns&gt;
-        &lt;asp:TemplateColumn HeaderText="Date"&gt;
-          &lt;ItemTemplate&gt;&lt;%# DataBinder.Eval(Container, "DataItem(1)", "{0:dd/MM/yyyy}") %&gt;&lt;/ItemTemplate&gt;
-        &lt;/asp:TemplateColumn&gt;
-        &lt;asp:TemplateColumn HeaderText="Time"&gt;
-          &lt;ItemTemplate&gt;&lt;%# DataBinder.Eval(Container, "DataItem(1)", "{0:T}") %&gt;&lt;/ItemTemplate&gt;
-        &lt;/asp:TemplateColumn&gt;
-        &lt;asp:TemplateColumn HeaderText="Page Visited"&gt;
-          &lt;ItemTemplate&gt;&lt;%# Container.DataItem(2) %&gt;&lt;/ItemTemplate&gt;
-        &lt;/asp:TemplateColumn&gt;
-      &lt;/Columns&gt;
-    &lt;/asp:DataGrid&gt;
-  &lt;/ItemTemplate&gt;
-&lt;/asp:Repeater&gt;
-</code></pre>
-
-<p>I was never happy with this solution, for the above reason. In my opinion if you’re referencing columns you should never, ever reference them by index because it’s making your code reliant on the physical structure of the database. Something you may not have any control over what-so-ever.</p>
-
-<p>Anyway, just now I was working on my own little project (…on my lunch) and I needed to do the same thing; perfect time for some investigation. If you look at the DataSource of the above nested datagrid you’ll see it’s bound to the current rows <code>GetChildRows</code> method, ends up (fairly obviously in hind sight) this returns a simple 1-dimensional array of DataRow objects. These DataRow objects (to my knowledge) basically contain an internal array of values, these values map to their parents <code>Columns</code> collection. There’s no reference to the actual name of the column, hence why the key access doesn’t work.</p>
-
-<p>The solution is quite simple. So simple it’s unbelievable… Replace <code>Row.GetChildRows("myRelation")</code> with <code>Row.CreateChildView("myRelation")</code>. This creates a DataView object of the child rows, so essentially it’s a mini-dataset for you to deal with as if it were standard. Keyed referencing is back in action!</p>
-
-<blockquote>
-  <p>Note: For those that are wondering, a dataview isn’t actually a mini-dataset but a filtered view of its parent dataset.</p>
-</blockquote>
+            <p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code class="highlighter-rouge">Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
 
  <a class="read-more" href="/writings/nested-datagridrepeater-with-key-value-access">Read more &raquo;</a>
         </section>
@@ -200,10 +163,6 @@
 <p>It ran for over 2 hours without any sign of finishing.</p>
 
 <p>I changed the query to do a simple case statement with an <code class="highlighter-rouge">exists</code> on the faults table where <code class="highlighter-rouge">Coded = 0</code> and it’s just finished in 4 minutes. Unbelievable.</p>
-
-<h3 id="update">Update</h3>
-
-<p>I thought I should give a bit of an explanation as to why this is happening. It basically all boils down to the way the two functions operate that makes the biggest difference. A <code class="highlighter-rouge">count</code> statement counts every row that matches the where statement, so even if you only need to know about one record (like in my case) it’ll still read every other row too. On the other hand the <code class="highlighter-rouge">exists</code> function will return as soon as its conditions are met, so if the first row it finds matches it’ll only read one row.</p>
 
  <a class="read-more" href="/writings/sql-server-exists-function-quicker-than-count">Read more &raquo;</a>
         </section>

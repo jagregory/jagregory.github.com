@@ -61,24 +61,6 @@
 
 <p>That all equates to 23 years old, which isn’t too bad I suppose.</p>
 
-<p>It’s not often I talk about myself. I have a lot of opinions, but I generally keep me to myself. On this occasion I’m going to give myself a pat on the back.</p>
-
-<p><strong>I’m pretty proud of myself.</strong></p>
-
-<p>I have no qualifications, I have no A-levels, and only a few GCSEs. I am completely self-taught.</p>
-
-<p>One thing that I’ve learnt is that only you know yourself. If somebody says you can’t do something, fuck them. Who are they to tell you what you can and can’t do? Prove them wrong.</p>
-
-<p>I was told that programming is hard, and it’s not something you can learn in your bedroom any more. I was told I’d not be earning more than £14,000 by the time I was 20. I was told there was no chance I could get a job without any formal qualifications. Two jobs down the line, too many languages to list, and more money than sense - I think I proved them all wrong.</p>
-
-<p>The best thing you can do for yourself is to learn how to learn. It’s the one thing they don’t teach you in school. Since I learnt how to learn, I’ve gained so much knowledge.</p>
-
-<p>Don’t concern yourself with the details, learn the techniques, learn the principals. It can be mistaken for arrogance, but I’m so confident in my ability to <em>learn</em>, that I can safely say that I can use <strong>any programming language</strong>, any operating system, any technology, ever invented and ever to be invented.</p>
-
-<p>I am not scared of change, of new technologies, and I’m not afraid of being left behind. I can adapt, because I can learn.</p>
-
-<p>It’s been a crazy ride so far, I look forward to what the next few years bring.</p>
-
  <a class="read-more" href="/writings/time-time-time">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -105,88 +87,6 @@
 
 <p>We’re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They’re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
 
-<h2 id="the-api">The API</h2>
-
-<p>Take the following simple hbm file:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
-<span class="nt">&lt;hibernate-mapping</span> <span class="na">xmlns=</span><span class="s">"urn:nhibernate-mapping-2.2"</span> <span class="na">namespace=</span><span class="s">"Eg"</span> <span class="na">assembly=</span><span class="s">"Eg"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">"Customer"</span> <span class="na">table=</span><span class="s">"Customers"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">"ID"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">"identity"</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/id&gt;</span>
-
-    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"Name"</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"Credit"</span> <span class="nt">/&gt;</span>
-
-    <span class="nt">&lt;bag</span> <span class="na">name=</span><span class="s">"Products"</span> <span class="na">table=</span><span class="s">"Products"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">"CustomerID"</span><span class="nt">/&gt;</span>
-      <span class="nt">&lt;one-to-many</span> <span class="na">class=</span><span class="s">"Eg.Product, Eg"</span><span class="nt">/&gt;</span>
-    <span class="nt">&lt;/bag&gt;</span>
-
-    <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">"Address"</span> <span class="na">class=</span><span class="s">"Eg.Address, Eg"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"AddressLine1"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"AddressLine2"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"CityName"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"CountryName"</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/component&gt;</span>
-  <span class="nt">&lt;/class&gt;</span>
-<span class="nt">&lt;/hibernate-mapping&gt;</span>
-</code></pre>
-</div>
-
-<p>Then compare it to the same mapping, created using the fluent API:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="n">CustomerMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span>
-<span class="p">{</span>
-  <span class="k">public</span> <span class="nf">CustomerMap</span><span class="p">()</span>
-  <span class="p">{</span>
-    <span class="nf">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">ID</span><span class="p">);</span>
-    <span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-    <span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Credit</span><span class="p">);</span>
-    <span class="n">HasMany</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Products</span><span class="p">)</span>
-      <span class="p">.</span><span class="nf">AsBag</span><span class="p">();</span>
-    <span class="n">Component</span><span class="p">&lt;</span><span class="n">Address</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Address</span><span class="p">,</span> <span class="n">m</span> <span class="p">=&gt;</span>
-    <span class="p">{</span>  
-        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine1</span><span class="p">);</span>  
-        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">AddressLine2</span><span class="p">);</span>  
-        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CityName</span><span class="p">);</span>  
-        <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">CountryName</span><span class="p">);</span>  
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>Firstly, you’ll note that there is a marginal reduction in lines of code, but that’s not what we’re particularly striving for. Instead we’re intent on reducing the verbosity and <strong>noise</strong> of the code. This manifests itself in a <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a> design for the API, where we choose the most common setups and use those as the default. For example with the <code>id</code> element in the hbm file, you’re required to specify what the generator type is; however, in our fluent API we check the type of your identity property and decide what generator we should use. Int’s and longs default to identity, while GUIDs use the guid.comb generator. You can change these explicitly, but when you are using the default, it greatly reduces the verbosity of your mapping.</p>
-
-<h2 id="testability">Testability</h2>
-
-<p>Another one of our goals is to make your mappings more robust. I imagine most people have had the problem where you’ve renamed a property and not updated the mapping file; due to there being no compile time validation, the only way to catch these mistakes are at run time (hopefully you had tests to cover that!). With the way our API is designed, you use the actual properties on your classes to create the mapping, so there’s nothing to forget. If you rename a property, your IDE will either rename the property in the mapping, or fail at compilation.</p>
-
-<p>We also want to help you verify that your mappings are set up properly, not just syntactically valid. So to make your 	integration tests a bit easier, we’re providing an API for testing your mappings.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="na">[Test]</span>
-<span class="k">public</span> <span class="k">void</span> <span class="nf">VerifyCustomerSaves</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">new</span> <span class="n">PersistenceSpecification</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;()</span>
-        <span class="p">.</span><span class="nf">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="s">"James Gregory"</span><span class="p">)</span>
-        <span class="p">.</span><span class="nf">CheckProperty</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Age</span><span class="p">,</span> <span class="m">22</span><span class="p">)</span>
-        <span class="p">.</span><span class="nf">VerifyTheMappings</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>Behind the scenes the <code>PersistenceSpecification</code> creates an instance of your entity, then populates it with the values you specify through the <code>CheckProperty</code> method. This entity is then saved to the database, then reloaded through a separate connection. The returned entity is then compared to the one originally saved, and any differences fail the test. It’s a fairly standard integration test, except we’ve taken the time to write all the wiring up that needs to be done, so you don’t have to.</p>
-
-<h2 id="the-framework">The Framework</h2>
-
-<p>We’re working towards our first official release, which will have a fairly solid implementation of the API. Once that’s out in the wild, we’re going to focus on our Framework.</p>
-
-<p>Our framework is a layer that sits on-top of the API to provide an even better experience. We’re looking to integrate with your favorite container, which will reduce the code you need to write to integrate NHibernate into your system. Then we’re going to tackle extensible conventions, which will allow you to specify your own implied conventions for your application. For example, if you’re <strong>always</strong> going to call your identifier “ID”, then why should you have to specify it every time? <em>You shouldn’t!</em></p>
-
-<p>Development is progressing at a nice pace, and I expect we’ll be able to get our first release out within the next few weeks. The testing API hasn’t been kept quite as up to date as the main API, but we’re working on that too. It’s open-source, so suggestions and patches are welcome.</p>
-
  <a class="read-more" href="/writings/introducing-fluent-nhibernate">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -208,24 +108,6 @@
             <p>It’s been a long time since I’ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we’re steadily working towards our first release.</p>
 
 <p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
-
-<p><img src="/images/bls-1.png" alt="Syntax highlighting" /></p>
-
-<p><a href="http://www.justnbusiness.com/">Justin Chase</a> has been tackling various issues all over the place. Several related to the build process, specifically how the Boo binaries are located on your machine, which has been a bit of a problem when there’s multiple developers working on a project whom both have Boo installed in a different location. He’s also been spiffing up the interface by adding some much needed icons to the projects.</p>
-
-<p><img src="/images/bls-2.png" alt="Project view" /></p>
-
-<p><a href="http://www.codinginstinct.com/">Torkel Ödegaard</a> has been working various issues throughout the project. He’s created a properties dialog for the project which allows you to alter the usual settings for your project, assembly name, default namespace etc… He also managed to get debugging working, which is awesome.</p>
-
-<p>Then there’s me, I’ve been working on the intellisense capabilities. We’ve had intellisense support from day one, but it’s never been very extensive. For a long time it only worked on the current file you had open.</p>
-
-<p>The entire solution is now processed behind-the-scenes to provide intellisense. Import statements are now recognised and imported types appear in the local scope intellisense. Any assemblies or projects that are referenced have their top-level types and namespaces included in the intellisense too.</p>
-
-<p>Additionally I’ve been working on improving the method suggestion logic, which was initially very flakey. It boils down to being able to transform the current line into the desired type, which can be difficult in certain cases (<code>StringBuilder().Append("Hello world").ToString().</code> for example).</p>
-
-<p><img src="/images/bls-3.png" alt="Code completion" /></p>
-
-<p>I believe that about covers what we’ve been upto lately. Our biggest problem currently is that most of these features are implemented in separate branches, and haven’t yet been merged into our central repository. We’re working on this, and I reckon once we’ve done that we’ll be looking at doing a release.</p>
 
  <a class="read-more" href="/writings/latest-on-boolangstudio">Read more &raquo;</a>
         </section>
@@ -249,17 +131,7 @@
 
 <p>None of those are my fault, of course, because they were all before my time; in fact, most were at least a decade before me. That still doesn’t stop me from ocasionally getting the feeling that I missed out on something big.</p>
 
-<p>One more. One that’s pertient to our industry: Smalltalk.</p>
-
-<p>Smalltalk is one of those languages, possibly the most prominent example, that has been idolised over time. It’s often touted as having an excellent programmer experience, properly object-oriented, the source of refactoring, great tools, and a solid virtual machine behind it. It’s one of those languages that people are proud to say they once worked with it. A language that people nosalgicly look back on. It’s also got an air of betamax about it (yeah, I missed that one too), people were sure it was better, but it still didn’t become mainstream.</p>
-
-<blockquote>
-  <p>“We Smalltalkers used to think the advantages of our language were so significant that it would take over the world. We had a huge productivity advantage over C coders. Then C++ came along and gave C coders just enough to let them improve their productivity and their ability to write larger more complex systems. It still wasn’t as good as Smalltalk, but it was better than C, and much more accessible to most programmers than Smalltalk.” - <a href="http://blog.hasmanythrough.com/2008/5/31/quick-railsconf-update">Josh Susser</a> via <a href="http://weblog.raganwald.com/2008/06/bit-of-history-and-interesting.html">Raganwald</a></p>
-</blockquote>
-
-<p>So where am I going with this? Just like I can make myself feel a bit better by watching Star Wars on a large TV, or listening to the Rolling Stones live albums. I’d like to see what all the fuss was about with Smalltalk, by giving it a go.</p>
-
-<p>I’m not sure where to start on this, or how long it’s going to take, or even when I’m going to do it; however, one day in the not too distant future I’m going to do some programming with Smalltalk.</p>
+<p>One more. One that’s pertinent to our industry: Smalltalk.</p>
 
  <a class="read-more" href="/writings/missed-out-on-something-big">Read more &raquo;</a>
         </section>

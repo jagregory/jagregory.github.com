@@ -43,7 +43,9 @@
 
 <p>Mapping multiple subclasses with the same parent wasn’t a very fluent affair, and it was pretty <em>wordy</em> too. You can see a comparison of the old and new syntaxes below.</p>
 
-<h4>Before</h4>
+<!-- more -->
+
+<h3 id="before">Before</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">discriminator</span> <span class="p">=</span> <span class="n">DiscriminateSubClassesOnColumn</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">"Type"</span><span class="p">);</span>
 
@@ -53,7 +55,7 @@
   <span class="p">{</span>
     <span class="n">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">BProperty</span><span class="p">);</span>
   <span class="p">});</span>
-  
+
 <span class="n">discriminator</span><span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">C</span><span class="p">&gt;()</span>
   <span class="p">.</span><span class="nf">IdentifiedBy</span><span class="p">(</span><span class="s">"cID"</span><span class="p">)</span>
   <span class="p">.</span><span class="nf">MapSubClassColumns</span><span class="p">(</span><span class="n">m</span> <span class="p">=&gt;</span>
@@ -63,7 +65,7 @@
 </code></pre>
 </div>
 
-<h4>After</h4>
+<h3 id="after">After</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nf">DiscriminateSubClassesOnColumn</span><span class="p">(</span><span class="s">"Type"</span><span class="p">)</span>
   <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
@@ -80,14 +82,14 @@
 <p>Much nicer! The changes you can see here are:</p>
 
 <ul>
-  <li><code>DiscriminateSubClassesOnColumn</code> now assumes your discriminator is a <code>string</code> if you don't specify a type</li>
-  <li><code>SubClass</code> defaults to using the subclass type name as a discriminator value</li>
-  <li><code>IdentifiedBy</code> and <code>MapSubClassColumns</code> are now merged into <code>SubClass</code> as overloads.</li>
+  <li><code class="highlighter-rouge">DiscriminateSubClassesOnColumn</code> now assumes your discriminator is a <code class="highlighter-rouge">string</code> if you don’t specify a type</li>
+  <li><code class="highlighter-rouge">SubClass</code> defaults to using the subclass type name as a discriminator value</li>
+  <li><code class="highlighter-rouge">IdentifiedBy</code> and <code class="highlighter-rouge">MapSubClassColumns</code> are now merged into <code class="highlighter-rouge">SubClass</code> as overloads.</li>
 </ul>
 
-<p>Nested subclasses were never really supported in Fluent NHibernate, but they were <em>hackable</em>. You could abuse <code>DiscriminateSubClassesOnColumn</code> to let you trick it into creating nested classes. This worked but it led to some really ugly mapping code (and a nasty hack in the Fluent NHibernate codebase). I’ve given some loving to this area and have managed to really sweeten-up the syntax.</p>
+<p>Nested subclasses were never really supported in Fluent NHibernate, but they were <em>hackable</em>. You could abuse <code class="highlighter-rouge">DiscriminateSubClassesOnColumn</code> to let you trick it into creating nested classes. This worked but it led to some really ugly mapping code (and a nasty hack in the Fluent NHibernate codebase). I’ve given some loving to this area and have managed to really sweeten-up the syntax.</p>
 
-<h4>Before</h4>
+<h3 id="before-1">Before</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">DiscriminateSubClassesOnColumn</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="s">"Type"</span><span class="p">)</span>
   <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;()</span>
@@ -106,7 +108,7 @@
 </code></pre>
 </div>
 
-<h4>After</h4>
+<h3 id="after-1">After</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nf">DiscriminateSubClassesOnColumn</span><span class="p">(</span><span class="s">"Type"</span><span class="p">)</span>
   <span class="p">.</span><span class="n">SubClass</span><span class="p">&lt;</span><span class="n">B</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span>
@@ -121,16 +123,18 @@
 </div>
 
 <p>The changes in this one are:</p>
+
 <ul>
-  <li><code>SubClass</code> can now be used within subclasses without having to reuse <code>DiscriminateSubClassesOnColumn</code></li>
+  <li><code class="highlighter-rouge">SubClass</code> can now be used within subclasses without having to reuse <code class="highlighter-rouge">DiscriminateSubClassesOnColumn</code></li>
 </ul>
 
 <p>All in all, these changes serve to make mapping subclasses in Fluent NHibernate a little bit neater.</p>
 
-<h2>Update</h2>
-<p>As requested, here are the domain entites that the above mappings represent.</p>
+<h2 id="update">Update</h2>
 
-<h4>Two subclasses with shared parent</h4>
+<p>As requested, here are the domain entities that the above mappings represent.</p>
+
+<h3 id="two-subclasses-with-shared-parent">Two subclasses with shared parent</h3>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">A</span>
 <span class="p">{}</span>
@@ -147,7 +151,8 @@
 </code></pre>
 </div>
 
-<h4>Subclass of a subclass</h4>
+<h3 id="subclass-of-a-subclass">Subclass of a subclass</h3>
+
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">A</span>
 <span class="p">{}</span>
 

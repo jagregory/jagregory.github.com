@@ -41,7 +41,7 @@
         <section class="post-content">
             <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
 
-<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code>body#profile</code>, when <code>#profile</code> doesn’t exist), a script error occurs; yet using <code>#profile</code> alone works fine.</p>
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="highlighter-rouge">body#profile</code>, when <code class="highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="highlighter-rouge">#profile</code> alone works fine.</p>
 
 <p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
 
@@ -49,7 +49,9 @@
 </code></pre>
 </div>
 
-<p>It’s finding the <code>tagName</code> (<code>body</code>), but element is undefined due to the ID being invalid. A slight change to the above if statement fixes the problem.</p>
+<!-- more -->
+
+<p>It’s finding the <code class="highlighter-rouge">tagName</code> (<code class="highlighter-rouge">body</code>), but element is undefined due to the ID being invalid. A slight change to the above if statement fixes the problem.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">))</span> <span class="p">{</span>
 </code></pre>
@@ -58,7 +60,7 @@
 <p>Maybe somebody will find that useful, I’ve posted it on Simons blog, but incase he doesn’t accept the change you can download the modified version here.</p>
 
 <blockquote>
-  <p>Note: If you’re using Behaviour, as opposed to just <code>getElementsBySelector()</code>, you’ll need to paste the contents of the above file into the bottom of your behaviour.js file, overwriting everything after the <code>Behaviour.start();</code> line.</p>
+  <p>Note: If you’re using Behaviour, as opposed to just <code class="highlighter-rouge">getElementsBySelector()</code>, you’ll need to paste the contents of the above file into the bottom of your behaviour.js file, overwriting everything after the <code class="highlighter-rouge">Behaviour.start();</code> line.</p>
 </blockquote>
 
         </section>

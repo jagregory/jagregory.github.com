@@ -47,14 +47,16 @@
 
 <p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we’re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
 
+<!-- more -->
+
 <p>None of the solutions we have are ideal, we’ll be the first to admit that; but considering Fluent NHibernate was never designed to support these situations, and the limitations C# imposes on us, we’ve got some pretty reasonable choices. Each option comes with it’s own compromises, so it’s important you pick the method that has the compromises you’re more willing to accept; I’ll outline the pros and cons of each approach.</p>
 
-<h2 id="nested_expression_exposition_class">Nested expression exposition class</h2>
+<h2 id="nested-expression-exposition-class">Nested expression exposition class</h2>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
 <span class="p">{</span>
   <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-  
+
   <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Expressions</span>
   <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">Id</span> <span class="p">=</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Id</span><span class="p">;</span>
@@ -71,20 +73,28 @@
 </code></pre>
 </div>
 
-<p>This option takes advantage of an interesting side effect of nested class scope and access modifiers. If you haven’t done something like this before, basically nested classes can access their parent’s private/protected members. We create a nested static class that exposes an <code>Expression</code> for each hidden member. We can then use the expressions declared in this static class to reflect against the hidden members. It’s reasonably clean, made even more so if you separate the <code>Expressions</code> class into a partial class of your entity; so you could have <code>Product.cs</code> and <code>ProductExpressions.cs</code>.</p>
+<p>This option takes advantage of an interesting side effect of nested class scope and access modifiers. If you haven’t done something like this before, basically nested classes can access their parent’s private/protected members. We create a nested static class that exposes an <code class="highlighter-rouge">Expression</code> for each hidden member. We can then use the expressions declared in this static class to reflect against the hidden members. It’s reasonably clean, made even more so if you separate the <code class="highlighter-rouge">Expressions</code> class into a partial class of your entity; so you could have <code class="highlighter-rouge">Product.cs</code> and <code class="highlighter-rouge">ProductExpressions.cs</code>.</p>
 
 <h3 id="pros">Pros</h3>
-<ul><li>Refactoring friendly</li><li>Mappings still readable</li></ul>
+
+<ul>
+  <li>Refactoring friendly</li>
+  <li>Mappings still readable</li>
+</ul>
 
 <h3 id="cons">Cons</h3>
-<ul><li>Modification to entities required</li><li>Need 3 classes to map an entity (entity, expression class, and mapping)</li></ul>
 
-<h2 id="nested_mapping">Nested mapping</h2>
+<ul>
+  <li>Modification to entities required</li>
+  <li>Need 3 classes to map an entity (entity, expression class, and mapping)</li>
+</ul>
+
+<h2 id="nested-mapping">Nested mapping</h2>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
 <span class="p">{</span>
   <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-  
+
   <span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
   <span class="p">{</span>
     <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
@@ -98,13 +108,21 @@
 
 <p>Again using the scope trick, you can wrap your mapping inside your entity. This allows you to use the expressions as normal, without having to do any expression tricks. Like the expression class previously, this can be made neater by using partial classes.</p>
 
-<h3 id="pros">Pros</h3>
-<ul><li>Refactoring friendly</li><li>Can use normal expressions</li></ul>
+<h3 id="pros-1">Pros</h3>
 
-<h3 id="cons">Cons</h3>
-<ul><li>Modification to entities required</li><li>Mapping nested in entity, so can&#8217;t be separated across assemblies/namespaces</li></ul>
+<ul>
+  <li>Refactoring friendly</li>
+  <li>Can use normal expressions</li>
+</ul>
 
-<h2 id="reveal_and_string_names">Reveal static class and string-based names</h2>
+<h3 id="cons-1">Cons</h3>
+
+<ul>
+  <li>Modification to entities required</li>
+  <li>Mapping nested in entity, so can’t be separated across assemblies/namespaces</li>
+</ul>
+
+<h2 id="reveal-static-class-and-string-based-names">Reveal static class and string-based names</h2>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
 <span class="p">{</span>
@@ -123,11 +141,18 @@
 
 <p>Our final option is different to the previous two, in that it utilises an expression generator to create an expression for a private or protected member. This is essentially what the first two are doing, just with strings instead of nesting tricks.</p>
 
-<h3 id="pros">Pros</h3>
-<ul><li>No modifications to entities needed</li><li>Mappings and entity remain separate</li></ul>
+<h3 id="pros-2">Pros</h3>
 
-<h3 id="cons">Cons</h3>
-<ul><li>Potential renaming issues</li></ul>
+<ul>
+  <li>No modifications to entities needed</li>
+  <li>Mappings and entity remain separate</li>
+</ul>
+
+<h3 id="cons-2">Cons</h3>
+
+<ul>
+  <li>Potential renaming issues</li>
+</ul>
 
 <h2 id="conclusion">Conclusion</h2>
 

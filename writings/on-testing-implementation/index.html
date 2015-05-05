@@ -43,6 +43,8 @@
 
 <p>There are a few problems with falling into this trap. Firstly, it’s very brittle. Secondly, you shouldn’t be concerned with the internals. Thirdly, it’s very time consuming.</p>
 
+<!-- more -->
+
 <p>To elaborate…</p>
 
 <p>It’s brittle because you’re essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to <a href="http://martinfowler.com/bliki/TestCancer.html">test cancer</a>, where tests aren’t run or are commented out.</p>

@@ -41,6 +41,8 @@
         <section class="post-content">
             <p>To paint a very black-and-white picture, there are two camps of applications: greenfield and brownfield. Greenfield are generally nice, they have good separation of concerns, probably an IoC container, they may even be covered by unit tests. Brownfield apps are not. They generally don’t have great separation of concerns (they’re usually pretty concerned about everything), they definitely don’t have great unit test coverage (but you’re working on it!), and they don’t have IoC containers.</p>
 
+<!-- more -->
+
 <p>If you’re designing a framework you need to cater for both these markets. Unfortunately, they’re both at odds with each other. A design that caters for inversion of control can sometimes be too verbose or “bitty” to use easily without a container. Similarly, if designed without a container in mind it will fall short for use with one; it’ll be too tightly nit, too hard to break apart.</p>
 
 <p>Although when Fluent NHibernate was started it was heading towards a design for greenfield, when I took over I steered it in the direction I thought was most important - brownfield. Fluent NHibernate has been aimed at being a drop-in replacement for your traditional NHibernate setup, simply replace your <code class="highlighter-rouge">CreateSessionFactory</code> method with ours and you’re away. The problem is, by focussing so hard on brownfield, I’ve neglected the green.</p>

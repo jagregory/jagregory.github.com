@@ -55,9 +55,11 @@
 </code></pre>
 </div>
 
-<p>As always, when something annoys you enough and you’re in the middle of something else, it’s about time you wrote that solution. So I’ve created a simple user-defined function that checks if an object exists then returns a <code>BIT 0</code> or <code>1</code> depending.</p>
+<!-- more -->
 
-<p>To use the function, all you have to do is call <code>dbo.ObjectExists</code> with two parameters, the first being the name of the object you want to check on, the second being the type of object.</p>
+<p>As always, when something annoys you enough and you’re in the middle of something else, it’s about time you wrote that solution. So I’ve created a simple user-defined function that checks if an object exists then returns a <code class="highlighter-rouge">BIT 0</code> or <code class="highlighter-rouge">1</code> depending.</p>
+
+<p>To use the function, all you have to do is call <code class="highlighter-rouge">dbo.ObjectExists</code> with two parameters, the first being the name of the object you want to check on, the second being the type of object.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">IF</span> <span class="n">dbo</span><span class="p">.</span><span class="n">ObjectExists</span><span class="p">(</span><span class="s1">'customers'</span><span class="p">,</span> <span class="s1">'U'</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">customers</span>
@@ -67,11 +69,11 @@
 <dl>
   <dt>Common Object Types:</dt>
   <dd>
-    <p><code>P</code> - Stored Procedure&lt;/dd&gt;</p>
+    <p><code class="highlighter-rouge">P</code> - Stored Procedure&lt;/dd&gt;</p>
     <dd>
-      <p><code>U</code> - User Table&lt;/dd&gt;</p>
+      <p><code class="highlighter-rouge">U</code> - User Table&lt;/dd&gt;</p>
       <dd>
-        <p><code>FN</code> - User-Defined Function&lt;/dd&gt;
+        <p><code class="highlighter-rouge">FN</code> - User-Defined Function&lt;/dd&gt;
 &lt;/dl&gt;</p>
 
         <p>Thanks to this little function, you can now almost match the simplicity of MySQL.</p>

@@ -39,25 +39,27 @@
         </header>
 
         <section class="post-content">
-            <p>I’ve updated the <code>ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code>BoundField</code> implementation:</p>
+            <p>I’ve updated the <code class="highlighter-rouge">ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code class="highlighter-rouge">BoundField</code> implementation:</p>
 
 <blockquote>
-  <p>Using a <code>TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code>DataBinder</code> has the ability to evaluate a hierarchical path.</p>
+  <p>Using a <code class="highlighter-rouge">TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code class="highlighter-rouge">DataBinder</code> has the ability to evaluate a hierarchical path.</p>
 </blockquote>
 
-<p>Which is interesting, because I was using a <code>TypeDescriptor</code> in my <code>ObjectField</code> implementation!</p>
+<p>Which is interesting, because I was using a <code class="highlighter-rouge">TypeDescriptor</code> in my <code class="highlighter-rouge">ObjectField</code> implementation!</p>
 
-<p>Originally, the <code>ObjectField</code> was using the method below to evaluate the hierarchical paths, which to be honest is a bit verbose.</p>
+<!-- more -->
+
+<p>Originally, the <code class="highlighter-rouge">ObjectField</code> was using the method below to evaluate the hierarchical paths, which to be honest is a bit verbose.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">private</span> <span class="kt">object</span> <span class="nf">GetNestedValue</span><span class="p">(</span><span class="kt">object</span> <span class="n">component</span><span class="p">,</span> <span class="kt">string</span> <span class="n">field</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="kt">string</span><span class="p">[]</span> <span class="n">properties</span> <span class="p">=</span> <span class="n">field</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="sc">'.'</span><span class="p">);</span>
-	
+
 	<span class="k">foreach</span> <span class="p">(</span><span class="kt">string</span> <span class="n">property</span> <span class="k">in</span> <span class="n">properties</span><span class="p">)</span>
 	<span class="p">{</span>
 		<span class="n">PropertyDescriptor</span> <span class="n">descriptor</span> <span class="p">=</span>
 			<span class="n">TypeDescriptor</span><span class="p">.</span><span class="nf">GetProperties</span><span class="p">(</span><span class="n">component</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="n">property</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-		
+
 		<span class="k">if</span> <span class="p">(</span><span class="n">descriptor</span> <span class="p">==</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">AllowNulls</span><span class="p">)</span>
 		<span class="p">{</span>
 			<span class="c1">// no descriptor, and we're not allowing nulls so complain that
@@ -71,7 +73,7 @@
 </span>			<span class="n">component</span> <span class="p">=</span> <span class="n">NullValue</span><span class="p">;</span>
 			<span class="k">break</span><span class="p">;</span>
 		<span class="p">}</span>
-		
+
 		<span class="n">component</span> <span class="p">=</span> <span class="n">descriptor</span><span class="p">.</span><span class="nf">GetValue</span><span class="p">(</span><span class="n">component</span><span class="p">);</span>
 	<span class="p">}</span>
 
@@ -80,22 +82,22 @@
 </code></pre>
 </div>
 
-<p>The <code>GetNestedValue</code> method was splitting the <code>DataField</code> value and then recursively evaluating each property.</p>
+<p>The <code class="highlighter-rouge">GetNestedValue</code> method was splitting the <code class="highlighter-rouge">DataField</code> value and then recursively evaluating each property.</p>
 
-<p>Here’s the same implementation using the <code>DataBinder</code>:</p>
+<p>Here’s the same implementation using the <code class="highlighter-rouge">DataBinder</code>:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// looking to bind against child-objects
 </span><span class="kt">object</span> <span class="n">component</span> <span class="p">=</span> <span class="n">DataBinder</span><span class="p">.</span><span class="nf">GetDataItem</span><span class="p">(</span><span class="n">controlContainer</span><span class="p">);</span>
-                
+
 <span class="k">return</span> <span class="n">DataBinder</span><span class="p">.</span><span class="nf">Eval</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">DataField</span><span class="p">);</span>
 </code></pre>
 </div>
 
 <p>Magic!</p>
 
-<p>As a side effect of this change, the <code>ObjectField</code> can now support everything regular data-binding does. So you can use indexers and such in your <code>DataField</code> now.</p>
+<p>As a side effect of this change, the <code class="highlighter-rouge">ObjectField</code> can now support everything regular data-binding does. So you can use indexers and such in your <code class="highlighter-rouge">DataField</code> now.</p>
 
-<p>A couple of other things you should know: the <code>AllowNulls</code> property has been removed because it’s no longer supported, and the <code>NullValue</code> field has also been removed because the <code>BoundField</code> already supported it in the form of <code>NullDisplayText</code>.</p>
+<p>A couple of other things you should know: the <code class="highlighter-rouge">AllowNulls</code> property has been removed because it’s no longer supported, and the <code class="highlighter-rouge">NullValue</code> field has also been removed because the <code class="highlighter-rouge">BoundField</code> already supported it in the form of <code class="highlighter-rouge">NullDisplayText</code>.</p>
 
 <h2 id="downloads">Downloads</h2>
 

@@ -51,6 +51,8 @@
 
 <p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
 
+<!-- more -->
+
 <p>One solution, which I have used time-and-again, is to use a script block at the end of your page where you create a series of variables that contain the actual IDs. You then use these variables to reach the actual elements via JavaScript.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
@@ -64,7 +66,7 @@
 
 <h2 id="javascript-mapping">Javascript Mapping</h2>
 
-<p>I’ve created a simple class that traverses the control structure and outputs an object that contains the mappings, as above, but without any client-side intervention; not a <code>&lt;%= ...ClientID %&gt;</code> in sight.</p>
+<p>I’ve created a simple class that traverses the control structure and outputs an object that contains the mappings, as above, but without any client-side intervention; not a <code class="highlighter-rouge">&lt;%= ...ClientID %&gt;</code> in sight.</p>
 
 <p>An example of the output would be:</p>
 
@@ -75,7 +77,7 @@
 </code></pre>
 </div>
 
-<p>Which enables you to reference elements, that you know are server-controls, by calling <code>ClientIDs.txtUsername</code>.</p>
+<p>Which enables you to reference elements, that you know are server-controls, by calling <code class="highlighter-rouge">ClientIDs.txtUsername</code>.</p>
 
 <h3 id="before">Before:</h3>
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
@@ -85,7 +87,7 @@
   <span class="kd">function</span> <span class="nx">validate</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtUsernameID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">txtPasswordID</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">'james'</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">alert</span><span class="p">(</span><span class="s2">"you shouldn't be here!"</span><span class="p">);</span>
     <span class="p">}</span>
@@ -113,15 +115,15 @@
 
 <h3 id="methods">Methods</h3>
 
-<p><code>void Emit(page)</code> - Builds the controls of the page into a mapped structure, registering a client-side script block for the output.</p>
+<p><code class="highlighter-rouge">void Emit(page)</code> - Builds the controls of the page into a mapped structure, registering a client-side script block for the output.</p>
 
-<p><code>void Emit(control, literal)</code> - Builds the controls of the control into a mapped structure, rendering the output into the literal control supplied. The literal is best suited to being placed into the <code>&lt;head&gt;</code> tag, which helps improve the semantic nature of your page.</p>
+<p><code class="highlighter-rouge">void Emit(control, literal)</code> - Builds the controls of the control into a mapped structure, rendering the output into the literal control supplied. The literal is best suited to being placed into the <code class="highlighter-rouge">&lt;head&gt;</code> tag, which helps improve the semantic nature of your page.</p>
 
 <h3 id="properties">Properties</h3>
 
-<p><code>bool Whitespace</code> - Sets whether the output should contain whitespace, provided only for “prettifying” your code; defaults to off.</p>
+<p><code class="highlighter-rouge">bool Whitespace</code> - Sets whether the output should contain whitespace, provided only for “prettifying” your code; defaults to off.</p>
 
-<p><code>string VariableName</code> - Sets the JavaScript variable name used; defaults to ClientID.</p>
+<p><code class="highlighter-rouge">string VariableName</code> - Sets the JavaScript variable name used; defaults to ClientID.</p>
 
 <h3 id="usage">Usage</h3>
 

@@ -53,6 +53,8 @@
   <li>Must improve maintainability.</li>
 </ol>
 
+<!-- more -->
+
 <h2 id="first-attempt-explicit-mapping">First attempt: Explicit mapping</h2>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">var</span> <span class="n">mapper</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DtoMapper</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">,</span> <span class="n">CustomerDto</span><span class="p">&gt;();</span>
@@ -109,7 +111,7 @@
 <span class="p">{</span>
   <span class="p">[</span><span class="nf">DtoPartner</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Customer</span><span class="p">),</span> <span class="s">"Name"</span><span class="p">)]</span>
   <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-  
+
   <span class="p">[</span><span class="nf">DtoPartner</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Customer</span><span class="p">),</span> <span class="s">"Address"</span><span class="p">)]</span>
   <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerAddress</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">}</span>

@@ -41,6 +41,8 @@
         <section class="post-content">
             <p>The current system I’m working with has a setup whereby the model (data access objects) are being used by the web-services for delivery; this means that the consumers of the web-services are directly tied to our inner implementation of our data access code. On-top of that, it’s old full of bad conventions, and is in need of refactoring.</p>
 
+<!-- more -->
+
 <p>This is my account of how I freed the model from the web-service.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">vehicle_info</span>

@@ -43,6 +43,8 @@
 
 <p>Like everything, they have their place; but as the old analogy says, when you have a hammer everything looks like a nail. <strong>Static methods are being abused.</strong></p>
 
+<!-- more -->
+
 <h2 id="dont-make-me-instantiate">Don’t make me instantiate</h2>
 
 <p>For some reason programmers seem to be allergic to instantiating objects, to the point of where half the functionality is implemented in static classes and methods. You can go for days without seeing an instance in my current project’s code-base.</p>
@@ -75,9 +77,9 @@
 </code></pre>
 </div>
 
-<p>Noticably the first example is one line less than the second. However, it’s compromising readability in removing that line. Instead of using the <code>repos</code> instance, you’re forced to fully-qualify every method call with <code>Repository<customer>&lt;/code&gt;, which is introducing more noise per-line.</customer></code></p>
+<p>Noticeably the first example is one line less than the second. However, it’s compromising readability in removing that line. Instead of using the <code class="highlighter-rouge">repos</code> instance, you’re forced to fully-qualify every method call with <code class="highlighter-rouge">Repository&lt;Customer&gt;</code>, which is introducing more noise per-line.</p>
 
-<p>Even though the methods <code>FindByID</code> and <code>Save</code> don’t have any shared state, they both form a part of the encapsulation of data-access (in this case).</p>
+<p>Even though the methods <code class="highlighter-rouge">FindByID</code> and <code class="highlighter-rouge">Save</code> don’t have any shared state, they both form a part of the encapsulation of data-access (in this case).</p>
 
 <blockquote>
   <p>If a method forms a key part of an encapsulation, then it shouldn’t be static.</p>
@@ -93,7 +95,7 @@
 
 <h2 id="not-all-bad">Not all bad</h2>
 
-<p>So where are the good static methods? <em>The <code>Math</code> class is a good example</em>. It contains a set of functions that are only loosely related (apart from being mathematical), that are guaranteed to be stateless, and most importantly are simple. Architecturally the methods in the <code>Math</code> class could be applied to a wide swath of objects (<code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> etc…) and to have them as instance methods would complicate the class hierarchy more than it would benefit it.</p>
+<p>So where are the good static methods? <em>The <code class="highlighter-rouge">Math</code> class is a good example</em>. It contains a set of functions that are only loosely related (apart from being mathematical), that are guaranteed to be stateless, and most importantly are simple. Architecturally the methods in the <code class="highlighter-rouge">Math</code> class could be applied to a wide swath of objects (<code class="highlighter-rouge">int</code>, <code class="highlighter-rouge">float</code>, <code class="highlighter-rouge">double</code>, <code class="highlighter-rouge">decimal</code> etc…) and to have them as instance methods would complicate the class hierarchy more than it would benefit it.</p>
 
 <blockquote>
   <p>Static methods should be fire-and-forget, disposable, simple, and effective.</p>

@@ -43,7 +43,7 @@
 
 <!-- more -->
 
-<h3>What’s a branch?</h3>
+<h2 id="whats-a-branch">What’s a branch?</h2>
 
 <p>I know what you’re thinking. <em>“C’mon, we know what a branch is”</em>. A branch is a copy of a source tree, that’s maintained separately from it’s parent; that’s what we perceive a branch to be, and that’s how we’re used to dealing with them. Sometimes they’re physical copies (VSS and TFS), other times they’re lightweight copies (SVN), but they’re copies non-the-less. Or are they?</p>
 
@@ -65,17 +65,17 @@
 
 <p>The history is built up by recursing over the commits through each’s parent.</p>
 
-<h3>What’s HEAD?</h3>
+<h2 id="whats-head">What’s HEAD?</h2>
 
-<p>Now that you know what a branch is, this one is easy. <code>HEAD</code> is a reference to the latest commit in the branch you’re in.</p>
+<p>Now that you know what a branch is, this one is easy. <code class="highlighter-rouge">HEAD</code> is a reference to the latest commit in the branch you’re in.</p>
 
 <p>Given these two branches:</p>
 
 <p><img src="/images/GitGuts1_Figure3.png" alt="Figure 3" /></p>
 
-<p>If you had master checked out, <code>HEAD</code> would reference <code>e34fa33</code>, the exact same commit that the master branch itself references. If you had feature checked out, <code>HEAD</code> would reference <code>dde3e1</code>. With that in mind, as both <code>HEAD</code> and a branch is just a reference to a commit, it is sometimes said that <code>HEAD</code> points to the current branch you’re on; while this is not strictly true, in most circumstances it’s close enough.</p>
+<p>If you had master checked out, <code class="highlighter-rouge">HEAD</code> would reference <code class="highlighter-rouge">e34fa33</code>, the exact same commit that the master branch itself references. If you had feature checked out, <code class="highlighter-rouge">HEAD</code> would reference <code class="highlighter-rouge">dde3e1</code>. With that in mind, as both <code class="highlighter-rouge">HEAD</code> and a branch is just a reference to a commit, it is sometimes said that <code class="highlighter-rouge">HEAD</code> points to the current branch you’re on; while this is not strictly true, in most circumstances it’s close enough.</p>
 
-<h3>What’s a fast-forward?</h3>
+<h2 id="whats-a-fast-forward">What’s a fast-forward?</h2>
 
 <p>A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.</p>
 
@@ -87,21 +87,21 @@
 
 <p><img src="/images/GitGuts1_Figure5.png" alt="Figure 5" /></p>
 
-<p>The <code>master</code> branch is still referencing <code>7ddac6c</code>, while <code>feature</code> has advanced by two commits. The <code>feature</code> branch can now be considered ahead of <code>master</code>.</p>
+<p>The <code class="highlighter-rouge">master</code> branch is still referencing <code class="highlighter-rouge">7ddac6c</code>, while <code class="highlighter-rouge">feature</code> has advanced by two commits. The <code class="highlighter-rouge">feature</code> branch can now be considered ahead of <code class="highlighter-rouge">master</code>.</p>
 
-<p>It’s now quite easy to see what’ll happen when Git does a fast-forward. It simply updates the <code>master</code> branch to reference the same commit that <code>feature</code> does. No changes are made to the repository itself, as the commits from <code>feature</code> already contain all the necessary changes.</p>
+<p>It’s now quite easy to see what’ll happen when Git does a fast-forward. It simply updates the <code class="highlighter-rouge">master</code> branch to reference the same commit that <code class="highlighter-rouge">feature</code> does. No changes are made to the repository itself, as the commits from <code class="highlighter-rouge">feature</code> already contain all the necessary changes.</p>
 
 <p>Your repository history would now look like this:</p>
 
 <p><img src="/images/GitGuts1_Figure6.png" alt="Figure 6" /></p>
 
-<h3>When doesn’t a fast-forward happen?</h3>
+<h2 id="when-doesnt-a-fast-forward-happen">When doesn’t a fast-forward happen?</h2>
 
 <p>Fast-forwards don’t happen in situations where changes have been made in the original branch and the new branch.</p>
 
 <p><img src="/images/GitGuts1_Figure7.png" alt="Figure 7" /></p>
 
-<p>If you were to merge or rebase <code>feature</code> onto <code>master</code>, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there’s no way for Git to get the commits from <code>feature</code> into <code>master</code> without changing their parent references.</p>
+<p>If you were to merge or rebase <code class="highlighter-rouge">feature</code> onto <code class="highlighter-rouge">master</code>, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there’s no way for Git to get the commits from <code class="highlighter-rouge">feature</code> into <code class="highlighter-rouge">master</code> without changing their parent references.</p>
 
 <p>For more info on all this object malarky, I’d recommend reading the <a href="http://book.git-scm.com">Git community book</a>.</p>
 
