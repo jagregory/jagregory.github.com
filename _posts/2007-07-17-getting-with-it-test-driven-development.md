@@ -12,11 +12,13 @@ meta:
 ---
 Test-driven development is a practice that has started to make some serious headway into the average developer world of .Net. The tools have reached a stage of maturity where they offer solutions to most (if not all) aspects of test-driven development. Alongside the improved tools there has been a dramatic increase in the quantity and quality of articles addressing the needs of new and established test-driven developers. The combined effect of this is of a reduced learning curve for the average developer.
 
+<!-- more -->
+
 On a personal note, test-driven development is something I should have started doing a long time ago, it's certainly something that I've known about long-enough to be unable to claim ignorance. I take no pride in saying that my sole reason for not learning sooner is laziness. I bet I'm not the only one though. There's a lot to learn, and not all of it is simply new tools, some of it is mental too; rewiring your brain isn't an easy task.
 
 Having broke through the pain barrier, I can now vouch for the other side and say it really is nicer.
 
-So how would I convince my-self from six months ago, that test-driven development is a worthwhile pursuit? Well after a bit of ear twisting about being lazy, I'd have to raise the point of security. I don't mean the "IM <span class="caps">IN UR HARD DRIVE</span>, STEALIN <span class="caps">UR FILEZ</span>" security, but the knowledge that you're the one who'll find bugs in your code, not the tester (or worse, the customer). A record of bugless (or bug-minimal) releases will bode well at your performance reviews. That, and nobody likes people finding problems in their code, so it's best you find them first.
+So how would I convince my-self from six months ago, that test-driven development is a worthwhile pursuit? Well after a bit of ear twisting about being lazy, I'd have to raise the point of security. I don't mean the "IM IN UR HARD DRIVE, STEALIN UR FILEZ" security, but the knowledge that you're the one who'll find bugs in your code, not the tester (or worse, the customer). A record of bugless (or bug-minimal) releases will bode well at your performance reviews. That, and nobody likes people finding problems in their code, so it's best you find them first.
 
 That all sounds rather selfish and egotistical. What about the team, the flexibility, and the clean structured code-base? I'm a big advocate of a clean code-base, and a well oiled team can't be beat, but from experience, not everybody else feels the same way. Developers tend to respond more readily to two things: money, and fun. I'm generalising of course, but your average-joe developer isn't an altruist, he isn't going to go out of his way to help others. Give him the prospect of some extra cash, or even just the chance to break out of the mundane, and it's a whole different game.
 
@@ -30,14 +32,14 @@ One last thing that I haven't mentioned. There's a feeling. A feeling of joy, a 
 
 ## Learning to drive
 
-When learning how to test drive your development, it's important to know that you aren't specifically learning a new tool as many people have put it. Not in the same respect as learning a new <span class="caps">IDE</span> or source control system. Test-driven development isn't something physical. As I mentioned earlier, it requires you to rewire your programming brain. Although to successfully master test-driven development you are required to learn some physical tools (<a href="http://www.nunit.org/">NUnit</a> for example), the primary change will be a
+When learning how to test drive your development, it's important to know that you aren't specifically learning a new tool as many people have put it. Not in the same respect as learning a new IDE or source control system. Test-driven development isn't something physical. As I mentioned earlier, it requires you to rewire your programming brain. Although to successfully master test-driven development you are required to learn some physical tools ([NUnit](http://www.nunit.org/) for example), the primary change will be a
 mental one.
 
-The most basic changes to your mental-model will be that your tests literally drive your code. You've probably heard it before, but you test first<sup><a href="#fn1">1</a></sup>.
+The most basic changes to your mental-model will be that your tests literally drive your code. You've probably heard it before, but you test first<sup>[1](#fn1)</sup>.
 
 What follows is a simple run-through of how you'd test-drive some simple development, and how changes to a system would be handled.
 
-I'm going to try to keep the code as terse as possible, as to not complicate the theory with execution. There will be some boilerplate code that I will not include, such as setting up the fixtures. <a href="http://xprogramming.com">Ron Jeffries</a> provides a <a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">good introduction to NUnit</a> for .Net developers.
+I'm going to try to keep the code as terse as possible, as to not complicate the theory with execution. There will be some boilerplate code that I will not include, such as setting up the fixtures. [Ron Jeffries](http://xprogramming.com) provides a [good introduction to NUnit](http://www.xprogramming.com/xpmag/acsUsingNUnit.htm) for .Net developers.
 
 ### The First Iteration
 
@@ -84,12 +86,11 @@ public double GetPrice(string product)
 
 It passed, that's one test under our belt.
 
-
-You'll notice that this isn't a very good design, but we've written enough code for the method to work for it's current usage. We're letting the tests drive our code, which means we're ending up with only the code we require. <span class="caps">YAGNI</span>: You Aren't Gonna Need It<sup><a href="#fn2">2</a></sup>.
+You'll notice that this isn't a very good design, but we've written enough code for the method to work for it's current usage. We're letting the tests drive our code, which means we're ending up with only the code we require. YAGNI: You Aren't Gonna Need It<sup>[2](#fn2)</sup>.
 
 ### The Second Product
 
-Our implementation of <code>GetPrice</code> is painfully simple, so simple that we don't even support multiple products. This worked fine for us while the customer only had one product, but they've now expanded and have requested their second product be added. Lets write another test to cover this new request.
+Our implementation of `GetPrice` is painfully simple, so simple that we don't even support multiple products. This worked fine for us while the customer only had one product, but they've now expanded and have requested their second product be added. Lets write another test to cover this new request.
 
 ``` csharp
 [Test]
@@ -101,7 +102,7 @@ public void ReturnsCorrectPriceForSausages()
 }
 ```
 
-Once again, if we compile and run this test it will fail, because we've hard-coded the method to always return <code>£0.50</code>. So lets update the method to work for sausages too.
+Once again, if we compile and run this test it will fail, because we've hard-coded the method to always return `£0.50`. So lets update the method to work for sausages too.
 
 ``` csharp
 public double GetPrice(string product)
@@ -124,8 +125,8 @@ Fast forward a couple of months in our systems life. The customer now wants some
 ``` html
 <table>
 	<tr>
-		<td><strong>Product</strong></td>
-		<td><strong>Price</strong></td>
+		<td>**Product**</td>
+		<td>**Price**</td>
 	</tr>
 	<tr>
 		<td>Potatoes</td>
@@ -218,10 +219,10 @@ The customer noticed that after importing the list of products, whenever anyone 
 This exposes a flaw in our testing logic. We've currently just been testing how we expect the method to behave under normal usage, but not actually testing how it will act if we pass it things other than what it's expecting. Our tests should also be testing for invalid data and boundary conditions.
 
 > **Boundary Condition:** A problem or situation that occurs only at a extreme (maximum or minimum) operating parameter.
-> An example of a boundary condition would be supplying <code>1</code> and <code>12</code> to a <code>GetDaysInMonth</code> method.
+> An example of a boundary condition would be supplying `1` and `12` to a `GetDaysInMonth` method.
 
 > **Invalid Input:** Anything outside standard operating expectations.
-> Using the same example as boundary conditions, invalid input would cover supplying <code>-6</code>, <code>0</code> and <code>76</code> to the <code>GetDaysInMonth</code> method.
+> Using the same example as boundary conditions, invalid input would cover supplying `-6`, `0` and `76` to the `GetDaysInMonth` method.
 
 We'll write a test to cover the invalid input the customer encountered, we'll pass in a valid product name, but one that's capitalised incorrectly.
 
@@ -260,7 +261,7 @@ We've modified our constructor to set the product names as lower-case, then modi
 
 Running all our tests should assure us that our existing code still functions, and we're now safe from any case variations from the customer's product list.
 
-While doing this change, it's noticeable that we're also not handling the case for if a price is requested for a product that isn't in the inventory. If this occurs we really should pass a message up to the <span class="caps">GUI</span>, so it can present the user with something.
+While doing this change, it's noticeable that we're also not handling the case for if a price is requested for a product that isn't in the inventory. If this occurs we really should pass a message up to the GUI, so it can present the user with something.
 
 Due to this being an exceptional situation, it's ideally suited to an exception! Let's write a test to handle this case.
 
@@ -274,13 +275,13 @@ public void ThrowsAnExceptionForAnInvalidProduct()
 }
 ```
 
-We've introduced a new attribute to our test in this case, <code>ExpectedException</code>, this simply allows you to specify what exception you want a method to throw in the situation you're testing.
+We've introduced a new attribute to our test in this case, `ExpectedException`, this simply allows you to specify what exception you want a method to throw in the situation you're testing.
 
 > **Note:** This test requires the use of a custom exception, I'm not going to show the implementation here as it's simple stuff. I've chosen to use a custom exception so our "GUI guys" know what to capture for this case.
 
-> It's generally regarded as good practice to wrap your internal errors in something that's meaningful to the rest of the application, hiding the implementation details. An <code>InvalidProductException</code> is much easier to understand and implement than <code>NullReferenceException</code>, <code>IndexOutOfRangeException</code> etc. This is another topic in itself though.
+> It's generally regarded as good practice to wrap your internal errors in something that's meaningful to the rest of the application, hiding the implementation details. An `InvalidProductException` is much easier to understand and implement than `NullReferenceException`, `IndexOutOfRangeException` etc. This is another topic in itself though.
 
-To make this test pass, we need to update our <code>GetPrice</code> method to handle invalid products.
+To make this test pass, we need to update our `GetPrice` method to handle invalid products.
 
 ``` csharp
 public double GetPrice(string product)
@@ -292,7 +293,7 @@ public double GetPrice(string product)
 }
 ```
 
-We're now doing a simple check to see if the internal product Dictionary contains an entry for the requested product, if it doesn't we'll throw one of our <code>InvalidProductException</code>'s.
+We're now doing a simple check to see if the internal product Dictionary contains an entry for the requested product, if it doesn't we'll throw one of our `InvalidProductException`'s.
 
 Running our test again will now assure us that our method throws an exception in these circumstances.
 
@@ -302,12 +303,10 @@ We can now return to integration and the customer can be assured that it all wor
 
 What have we witnessed in running through this little exercise?
 
-<ol>
-	<li><strong>How easy it is to test first</strong> &#8211; It's really not that complicated. Once you've learnt to apply the restraint needed to stop yourself from just diving in, it's easy.</li>
-		<li><strong>The security you get from tests</strong> &#8211; If you've come from an environment that doesn't have any code tests, you're probably enjoying the reassurance that tests bring. You're at least safe in the knowledge that you haven't broken anything existing with your new features. The more tests you introduce, the more solid your base for making changes becomes.</li>
-		<li><strong>Ease of refactoring</strong> &#8211; As with the above, it's easy to refactor your existing code when you've got a suite of tests in-place.</li>
-		<li><strong>Light-weight nature of your code</strong> &#8211; When you're only coding to make your tests pass, you're less likely to code features that aren't required. This makes your code as light as possible.</li>
-</ol>
+  * **How easy it is to test first** -- It's really not that complicated. Once you've learnt to apply the restraint needed to stop yourself from just diving in, it's easy.
+  * **The security you get from tests** -- If you've come from an environment that doesn't have any code tests, you're probably enjoying the reassurance that tests bring. You're at least safe in the knowledge that you haven't broken anything existing with your new features. The more tests you introduce, the more solid your base for making changes becomes.
+  * **Ease of refactoring** -- As with the above, it's easy to refactor your existing code when you've got a suite of tests in-place.
+  * **Light-weight nature of your code** -- When you're only coding to make your tests pass, you're less likely to code features that aren't required. This makes your code as light as possible.
 
 ## Dealing with Legacies
 
@@ -317,23 +316,21 @@ Testing legacy code can be a nightmare in itself, but it is possible. What you n
 
 Your best approach to testing legacy code is an incremental one. If you find a bug in the system, write a test that fails because of it, then fix the code and run your test. That way you have a test that covers that bug, and you're now safe from that bug showing up again. Eventually, if you continue this way, you'll end-up with a nice suite of tests covering your common bugs.
 
-Often the system you're trying to test will be an unstructured mess, it'll be very hard to separate out logical concerns. It may be possible for you to utilise mock and stub objects<sup><a href="#fn3">3</a></sup> in these situations, which will help you break down the barriers. Sometimes even this isn't possible, and these may be the cases where you're either going to have to live with a few hundred lines of setup code for your tests, or live without automated testing, at least until you can rework the code to facilitate testing more readily.
+Often the system you're trying to test will be an unstructured mess, it'll be very hard to separate out logical concerns. It may be possible for you to utilise mock and stub objects<sup>[3](#fn3)</sup> in these situations, which will help you break down the barriers. Sometimes even this isn't possible, and these may be the cases where you're either going to have to live with a few hundred lines of setup code for your tests, or live without automated testing, at least until you can rework the code to facilitate testing more readily.
 
 Another form of legacy that you're no doubt going to encounter is that of the legacy mind. How you write code may have been turned on its head by the introduction of test-driven development, and you're going to slip back into your old ways every now and again. This happens to everyone at some point, but if you can force yourself to maintain your standards then you'll eventually break the barrier and you wont look back. If I code without unit tests now, I feel an overwhelming sense of insecurity and dirtiness. It's a good thing!
 
 ## Recommended Reading
 
-<ul>
-	<li><a href="http://c2.com/cgi/wiki?ExtremeProgrammingRoadmap">Extreme Programming Roadmap</a> Great resource, lots of discussion, including some from the greats.</li>
-		<li><a href="http://www.martinfowler.com/">Martin Fowler</a> Lots of good articles.</li>
-		<li><a href="http://codebetter.com/blogs/jeremy.miller">Jeremy Miller</a> Plenty of reading material, lots of insightful stuff. Rules of <span class="caps">TDD</span>: <a href="http://codebetter.com/blogs/jeremy.miller/archive/2005/10/20/133437.aspx">1</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/03/09/140465.aspx">2</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx">3</a>, <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/04/27/Jeremy_2700_s-Fourth-Law-of-Test-Driven-Development_3A00_-Keep-Your-Tail-Short.aspx">4</a></li>
-		<li><a href="http://www.xprogramming.com/xpmag/acsUsingNUnit.htm">Adventures in C#: Using NUnit</a> Good introduction to using NUnit.</li>
-		<li><cite><a href="http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0735619492">Extreme Programming Adventures in C#</a></cite>, Ron Jeffries &#8211; Honest and friendly introduction to <span class="caps">TDD</span> and XP.</li>
-		<li><cite><a href="http://www.amazon.co.uk/gp/product/0201485672?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0201485672">Refactoring: Improving the Design of Existing Code</a></cite>, Martin Fowler &#8211; Refactoring bible.</li>
-</ul>
+  * [Extreme Programming Roadmap](http://c2.com/cgi/wiki?ExtremeProgrammingRoadmap) Great resource, lots of discussion, including some from the greats.
+  * [Martin Fowler](http://www.martinfowler.com/) Lots of good articles.
+  * [Jeremy Miller](http://codebetter.com/blogs/jeremy.miller) Plenty of reading material, lots of insightful stuff. Rules of TDD: [1](http://codebetter.com/blogs/jeremy.miller/archive/2005/10/20/133437.aspx), [2](http://codebetter.com/blogs/jeremy.miller/archive/2006/03/09/140465.aspx), [3](http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx), [4](http://codebetter.com/blogs/jeremy.miller/archive/2007/04/27/Jeremy_2700_s-Fourth-Law-of-Test-Driven-Development_3A00_-Keep-Your-Tail-Short.aspx)
+  * [Adventures in C#: Using NUnit](http://www.xprogramming.com/xpmag/acsUsingNUnit.htm) Good introduction to using NUnit.
+  * <cite>[Extreme Programming Adventures in C#](http://www.amazon.co.uk/gp/product/0735619492?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0735619492)</cite>, Ron Jeffries -- Honest and friendly introduction to TDD and XP.
+  * <cite>[Refactoring: Improving the Design of Existing Code](http://www.amazon.co.uk/gp/product/0201485672?ie=UTF8&tag=jamegreg-21&linkCode=as2&camp=1634&creative=6738&creativeASIN=0201485672)</cite>, Martin Fowler -- Refactoring bible.
 
 ## References
 
-<p id="fn1"><sup>1</sup> <a href="http://www.extremeprogramming.org/rules/testfirst.html">Extreme Rules: Test First</a>, ExtremeProgramming.org</p>
-<p id="fn2"><sup>2</sup> <a href="http://c2.com/xp/YouArentGonnaNeedIt.html">You Aren't Gonna Need It</a>, Extreme Programming Roadmap</p>
-<p id="fn3"><sup>3</sup> <a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren't Stubs</a>, Martin Fowler</p>
+<p id="fn1"><sup>1</sup> [Extreme Rules: Test First](http://www.extremeprogramming.org/rules/testfirst.html), ExtremeProgramming.org</p>
+<p id="fn2"><sup>2</sup> [You Aren't Gonna Need It](http://c2.com/xp/YouArentGonnaNeedIt.html), Extreme Programming Roadmap</p>
+<p id="fn3"><sup>3</sup> [Mocks Aren't Stubs](http://martinfowler.com/articles/mocksArentStubs.html), Martin Fowler</p>

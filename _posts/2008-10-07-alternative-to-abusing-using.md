@@ -18,6 +18,8 @@ There's been a bit of discussion of late about using statements, and how they're
 
 The "traditional" usage of the using statement can be found quite often in the land of files and streams. Take the following example, which opens a file and then closes it when it drops out of the using scope.
 
+<!-- more -->
+
 ``` csharp
 using (var stream = File.OpenRead("myFile.txt"))
 {

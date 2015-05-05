@@ -20,6 +20,8 @@ The initial aim of this plug-in is to provide a "good enough" experience when us
 
 That's for the initial version anyway.
 
+<!-- more -->
+
 I've found that creating a plugin for Visual Studio isn't that difficult, in-fact that's an understatement, it's stupidly easy. Most of the plugin architecture is successfully created using the project wizard, so there's very little I needed to do from that point of view. The tricky part is getting Boo and Visual Studio to communicate.
 
 I started by spending some time looking at the IronPython Studio implementation, the Boo implementation, abstract syntax trees, antlr, and after getting my head around what I needed to do, I set out on my adventure.
@@ -40,18 +42,15 @@ There's a lot of work to be done, but it's fun and interesting.
 
 In the near future I'd like to get the following done:
 
-<ul>
-  <li>Make intellisense work with everything in the local scope</li>
-  <li>Make intellisense parse import statements</li>
-  <li>Make syntax-highlighting correctly handle multi-line blocks</li>
-  <li>Make syntax-highlighting highlight types (like C# does)</li>
-</ul>
+  * Make intellisense work with everything in the local scope
+  * Make intellisense parse import statements
+  * Make syntax-highlighting correctly handle multi-line blocks
+  * Make syntax-highlighting highlight types (like C# does)
 
 Then at some point tackle these:
-<ul>
-  <li>Get Resharper involved</li>
-  <li>Refactoring support</li>
-</ul>
+
+  * Get Resharper involved
+  * Refactoring support
 
 Hopefully I'll progress on these and report back in a future post.
 

@@ -102,7 +102,7 @@ Those are our specs, there's not much in there but already you can see that we'v
 
 With behaviours we can extract the specs and make them reusable. Lets do that.
 
-Create a class for your behaviour and adorn it with the `Behaviors` attribute &mdash; this ensures MSpec recognises your class as a behaviour definition and not just any old class &mdash; then move your specs into it.
+Create a class for your behaviour and adorn it with the `Behaviors` attribute -- this ensures MSpec recognises your class as a behaviour definition and not just any old class -- then move your specs into it.
 
 ``` csharp
 [Behaviors]

@@ -17,6 +17,8 @@ We've all been in a job where "things are going to get better", not just yet, bu
 
 Assuming you're actually bothered by the non-arrival of your desired improvement, it's very important that you set a cut-off date for it to occur by. Not only that, you also should define what action you're going to take when that date arrives; typically, that'd be "leave".
 
+<!-- more -->
+
 Without a cut-off you can meander on, days turning to weeks, weeks to months, and months to years. Before you know it years have passed without any actual changes having occurred, only the constant dangling carrot of hope.
 
 I'm not advocating that everyone quit their job just because they don't get to do everything they want. This is about when you've done everything in your power to improve things, to instigate change, and when that still has no effect.

@@ -10,9 +10,11 @@ type: post
 published: true
 meta: {}
 ---
-As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn't fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.
+As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn't fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to [Richard Case](http://blogs.geekdojo.net/rcase) for his overview of how to [create a custom NAnt task](http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx).
 
 The `getfilename` task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc...
+
+<!-- more -->
 
 The attributes are as follows:
 
@@ -72,9 +74,9 @@ Foreseeable usage situations revolve around anything where you'd need to get the
 
 ## Downloads
 
-The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_license">new BSD License</a>; read the license for what you’re allowed to do.
+The DeleGrid is open-source under the [new BSD License](http://en.wikipedia.org/wiki/BSD_license); read the license for what you’re allowed to do.
 
-You can download the source here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip">Download Source</a>.
-You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip">Download Binary</a>.
+You can download the source here: [Download Source](http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip).
+You can download the latest binary here: [Download Binary](http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip).
 
-The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/">http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/</a> (using user jagregory-read-only)
+The source is also accessible from Subversion at: [http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/](http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/) (using user jagregory-read-only)

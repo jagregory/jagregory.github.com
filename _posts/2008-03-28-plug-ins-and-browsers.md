@@ -8,9 +8,11 @@ type: post
 published: true
 meta: {}
 ---
-Jeff Atwood (of <a href="http://www.codinghorror.com">Coding Horror</a>) <a href="http://twitter.com/codinghorror/statuses/778279263">tweeted earlier</a>: "On Firefox: 'add-ons aren't a big draw for me -- I just need a browser, not a circus.'". I don't know whether this was a quotation of himself, or someone else; but it's something that I've heard mentioned before.
+Jeff Atwood (of [Coding Horror](http://www.codinghorror.com)) [tweeted earlier](http://twitter.com/codinghorror/statuses/778279263): "On Firefox: 'add-ons aren't a big draw for me -- I just need a browser, not a circus.'". I don't know whether this was a quotation of himself, or someone else; but it's something that I've heard mentioned before.
 
 Just because they're there, doesn't mean you have to install them.
+
+<!-- more -->
 
 A plug-in model in your browser allows you to install as many, or as few, plug-ins as you need. A lot of them are useless, but if there's one that can boost your productivity, isn't that worth it? I'd rather have a browser with a plug-in model, and one really useful plug-in, than a browser without both.
 

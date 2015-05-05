@@ -18,11 +18,11 @@ I quite dislike mapping DTOs to entities, it's a pain, but mostly tedious and ti
 
 My requirements were few but I was determined not to violate any of them.
 
-<ol>
-  <li>Refactoring friendly. No strings for property names, changing names should give compiler errors.</li>
-  <li>Must simplify code.</li>
-  <li>Must improve maintainability.</li>
-</ol>
+  1. Refactoring friendly. No strings for property names, changing names should give compiler errors.
+  2. Must simplify code.
+  3. Must improve maintainability.
+
+<!-- more -->
 
 ## First attempt: Explicit mapping
 
@@ -81,7 +81,7 @@ public class CustomerDto
 {
   [DtoPartner(typeof(Customer), "Name")]
   public string CustomerName { get; set; }
-  
+
   [DtoPartner(typeof(Customer), "Address")]
   public string CustomerAddress { get; set; }
 }

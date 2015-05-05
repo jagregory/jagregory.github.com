@@ -10,7 +10,9 @@ type: post
 published: true
 meta: {}
 ---
-A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller's blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.
+A [comment](http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928) on a [post at Jeremy D. Miller's blog](http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx) caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.
+
+<!-- more -->
 
 He makes a fair point really, we use tools because they solve a problem for us, if we haven't actually experienced what they're solving then their value is appears to be much less than what it is. Similarly, the value of such tools and methodologies is nil when there is a lack of recognition of a problem even existing.
 

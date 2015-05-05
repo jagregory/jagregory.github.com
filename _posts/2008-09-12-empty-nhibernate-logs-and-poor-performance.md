@@ -23,6 +23,8 @@ We had an issue recently where NHibernate was performing very poorly on our prod
 
 I decided to investigate the second symptom first, as it may be causing the first (ends up it was).
 
+<!-- more -->
+
 Firstly, I noticed that our logging was set to `DEBUG`. Must've been a leftover from when we first deployed NHibernate, very sloppy, I know. So I reset that to `WARN`, but it had no effect.
 
 When files aren't being written to, you should always check the directory permissions. Low and behold, it was a permissions problem. Our test server had different users allowed to write to the Logs directory than our production server. I granted the same users access, `NETWORK SERVICE` and `IUSR_MACHINENAME` in our case.

@@ -11,7 +11,7 @@ meta:
   _edit_last: '2'
 ---
 
-Here we go again, explaining the internals of Git with the intention of helping you understand what you're doing day-to-day. Last time I covered <a href="/writings/gits-guts-branches-head-and-fast-forwards">branches, HEAD, and fast-forwarding</a>. Today we'll dive into the guts of merging and rebasing.
+Here we go again, explaining the internals of Git with the intention of helping you understand what you're doing day-to-day. Last time I covered [branches, HEAD, and fast-forwarding](/writings/gits-guts-branches-head-and-fast-forwards). Today we'll dive into the guts of merging and rebasing.
 
 <!-- more -->
 
@@ -55,7 +55,7 @@ Git's commit's are immutable though, so how are the changes that you need to mak
 
 A Git repository is comprised of objects. A file is a blob object with a name attached to it; if you have two files with the same content, that's just two names to a single blob. A directory is a tree object, which is comprised of other trees and blobs. A commit is an object that references a tree object, which is the state of the repository at the time of committing.
 
-> To read more about git objects, I'd definitely recommend you read the <a href="http://book.git-scm.com">Git community book</a>.
+> To read more about git objects, I'd definitely recommend you read the [Git community book](http://book.git-scm.com).
 
 Git objects are immutable. To change an object after it's been created is impossible, you have to recreate the object with any changes made. Even operations that seem to modify objects actually don't; `commit --amend` is a typical example, that deletes and re-creates the commit rather than actually amending it.
 

@@ -11,68 +11,68 @@ meta:
   _edit_last: '2'
 ---
 
-<p>Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I'd post some answers as a mini-series of blog posts. I'll cover some fundamentals, while trying not to retread too much ground that the fantastic <a href="http://book.git-scm.com">Git community book</a> already covers so well. Instead I'm going to talk about things that should help you understand what you and Git are doing day-to-day.</p>
+Lets get some learning done. There are a few questions that keep cropping up when I introduce people to Git, so I thought I'd post some answers as a mini-series of blog posts. I'll cover some fundamentals, while trying not to retread too much ground that the fantastic [Git community book](http://book.git-scm.com) already covers so well. Instead I'm going to talk about things that should help you understand what you and Git are doing day-to-day.
 
 <!-- more -->
 
-<h3>What's a branch?</h3>
+## What's a branch?
 
-<p>I know what you're thinking. <em>"C'mon, we know what a branch is"</em>. A branch is a copy of a source tree, that's maintained separately from it's parent; that's what we perceive a branch to be, and that's how we're used to dealing with them. Sometimes they're physical copies (VSS and TFS), other times they're lightweight copies (SVN), but they're copies non-the-less. Or are they?</p>
+I know what you're thinking. <em>"C'mon, we know what a branch is"</em>. A branch is a copy of a source tree, that's maintained separately from it's parent; that's what we perceive a branch to be, and that's how we're used to dealing with them. Sometimes they're physical copies (VSS and TFS), other times they're lightweight copies (SVN), but they're copies non-the-less. Or are they?
 
-<p>Lets look at it a different way. <em>The Git way</em>.</p>
+Lets look at it a different way. <em>The Git way</em>.
 
-<p>Git works a little differently than most other version control systems. It doesn't store changes using <a href="http://en.wikipedia.org/wiki/Delta_encoding">delta encoding</a>, where complete files are built up by stacking differences contained in each commit. Instead, in Git each commit stores a snapshot of how the repository looked when the commit occurred; a commit also contains a bit of meta-data, author, date, but more importantly a reference to the parent of the commit (the previous commit, usually).</p>
+Git works a little differently than most other version control systems. It doesn't store changes using [delta encoding](http://en.wikipedia.org/wiki/Delta_encoding), where complete files are built up by stacking differences contained in each commit. Instead, in Git each commit stores a snapshot of how the repository looked when the commit occurred; a commit also contains a bit of meta-data, author, date, but more importantly a reference to the parent of the commit (the previous commit, usually).
 
-<p>That's a bit weird, I know, but bare with me.</p>
+That's a bit weird, I know, but bare with me.
 
-<p>So what is a branch? Nothing more than a pointer to a commit (with a name). There's nothing physical about it, nothing is created, moved, copied, nothing. A branch contains no history, and has no idea of what it consists of beyond the reference to a single commit.</p>
+So what is a branch? Nothing more than a pointer to a commit (with a name). There's nothing physical about it, nothing is created, moved, copied, nothing. A branch contains no history, and has no idea of what it consists of beyond the reference to a single commit.
 
-<p>Given a stack of commits:</p>
+Given a stack of commits:
 
 ![Figure 1](/images/GitGuts1_Figure1.png)
 
-<p>The branch references the newest commit. If you were to make another commit in this branch, the branch's reference would be updated to point at the new commit.</p>
+The branch references the newest commit. If you were to make another commit in this branch, the branch's reference would be updated to point at the new commit.
 
 ![Figure 2](/images/GitGuts2_Figure2.png)
 
-<p>The history is built up by recursing over the commits through each's parent.</p>
+The history is built up by recursing over the commits through each's parent.
 
-<h3>What's HEAD?</h3>
+## What's HEAD?
 
-<p>Now that you know what a branch is, this one is easy. <code>HEAD</code> is a reference to the latest commit in the branch you're in.</p>
+Now that you know what a branch is, this one is easy. `HEAD` is a reference to the latest commit in the branch you're in.
 
-<p>Given these two branches:</p>
+Given these two branches:
 
 ![Figure 3](/images/GitGuts1_Figure3.png)
 
-<p>If you had master checked out, <code>HEAD</code> would reference <code>e34fa33</code>, the exact same commit that the master branch itself references. If you had feature checked out, <code>HEAD</code> would reference <code>dde3e1</code>. With that in mind, as both <code>HEAD</code> and a branch is just a reference to a commit, it is sometimes said that <code>HEAD</code> points to the current branch you're on; while this is not strictly true, in most circumstances it's close enough.</p>
+If you had master checked out, `HEAD` would reference `e34fa33`, the exact same commit that the master branch itself references. If you had feature checked out, `HEAD` would reference `dde3e1`. With that in mind, as both `HEAD` and a branch is just a reference to a commit, it is sometimes said that `HEAD` points to the current branch you're on; while this is not strictly true, in most circumstances it's close enough.
 
-<h3>What's a fast-forward?</h3>
+## What's a fast-forward?
 
-<p>A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.</p>
+A fast-forward is what Git does when you merge or rebase against a branch that is simply ahead the one you have checked-out.
 
-<p>Given the following branch setup:</p>
+Given the following branch setup:
 
 ![Figure 4](/images/GitGuts1_Figure4.png)
 
-<p>You've got both branches referencing the same commit. They've both got exactly the same history. Now commit something to feature.</p>
+You've got both branches referencing the same commit. They've both got exactly the same history. Now commit something to feature.
 
 ![Figure 5](/images/GitGuts1_Figure5.png)
 
-<p>The <code>master</code> branch is still referencing <code>7ddac6c</code>, while <code>feature</code> has advanced by two commits. The <code>feature</code> branch can now be considered ahead of <code>master</code>.</p>
+The `master` branch is still referencing `7ddac6c`, while `feature` has advanced by two commits. The `feature` branch can now be considered ahead of `master`.
 
-<p>It's now quite easy to see what'll happen when Git does a fast-forward. It simply updates the <code>master</code> branch to reference the same commit that <code>feature</code> does. No changes are made to the repository itself, as the commits from <code>feature</code> already contain all the necessary changes.</p>
+It's now quite easy to see what'll happen when Git does a fast-forward. It simply updates the `master` branch to reference the same commit that `feature` does. No changes are made to the repository itself, as the commits from `feature` already contain all the necessary changes.
 
-<p>Your repository history would now look like this:</p>
+Your repository history would now look like this:
 
 ![Figure 6](/images/GitGuts1_Figure6.png)
 
-<h3>When doesn't a fast-forward happen?</h3>
+## When doesn't a fast-forward happen?
 
-<p>Fast-forwards don't happen in situations where changes have been made in the original branch and the new branch.</p>
+Fast-forwards don't happen in situations where changes have been made in the original branch and the new branch.
 
 ![Figure 7](/images/GitGuts1_Figure7.png)
 
-<p>If you were to merge or rebase <code>feature</code> onto <code>master</code>, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there's no way for Git to get the commits from <code>feature</code> into <code>master</code> without changing their parent references.</p>
+If you were to merge or rebase `feature` onto `master`, Git would be unable to do a fast-forward because the trees have both diverged. Considering Git commits are immutable, there's no way for Git to get the commits from `feature` into `master` without changing their parent references.
 
-<p>For more info on all this object malarky, I'd recommend reading the <a href="http://book.git-scm.com">Git community book</a>.</p>
+For more info on all this object malarky, I'd recommend reading the [Git community book](http://book.git-scm.com).

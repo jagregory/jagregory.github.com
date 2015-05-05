@@ -14,6 +14,8 @@ meta:
 ---
 Continuing on from my post about an [alternative syntax for the non-disposable using statements](/writings/alternative-to-abusing-using/), here's a class I've been using lately. It serves as a wrapper around changing the colours in a console window. It's not a difficult thing to do, it's just a bit awkward because you have to maintain the original colour in a variable while you do your business.
 
+<!-- more -->
+
 ``` csharp
 Console.WriteLine("Start...")
 

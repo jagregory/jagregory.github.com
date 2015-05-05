@@ -17,11 +17,13 @@ As I said I would be in my previous post, I’ve been working on improving getNe
 
 Any bugs anyone finds don’t fret to email me or post a comment here, i’ll work on fixing them asap.
 
+<!-- more -->
+
 ## The Functions
 
 ### getNextElement & getPreviousElement
 
-Basically this function is a more advanced, flexible version of the “element.nextSibling” and “element.previousSibling” properties. Features include the ability to specify the next element you’e looking for explicitly, so you can return the next list-item in a list (even if it happens to be a child of the current element) or the next matching node type. Also recursion is toggleable.
+Basically this function is a more advanced, flexible version of the "element.nextSibling" and "element.previousSibling" properties. Features include the ability to specify the next element you’e looking for explicitly, so you can return the next list-item in a list (even if it happens to be a child of the current element) or the next matching node type. Also recursion is toggleable.
 
 ### getFirstChild & getLastChild
 
@@ -98,7 +100,7 @@ Would return the H1 tag.
 getNextElement('paragraph', 'li');
 ```
 
-Would return the first list-item, “Your first choice”.
+Would return the first list-item, "Your first choice".
 
 ``` js
 getPreviousElement('secondItem', 'ul');
@@ -163,7 +165,7 @@ Would return the H1 element.
 getFirstChild('popup', 'li');
 ```
 
-Would return the first list-item, “Your first choice”.
+Would return the first list-item, "Your first choice".
 
 ``` js
 getLastChild('popup');
@@ -181,7 +183,7 @@ Would return the UL element.
 getLastChild('popup', 'li');
 ```
 
-Would return the last list-item, “Your second choice”.
+Would return the last list-item, "Your second choice".
 
 ### getNextParent & getPreviousParent
 

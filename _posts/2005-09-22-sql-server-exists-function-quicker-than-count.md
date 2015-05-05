@@ -19,6 +19,8 @@ It ran for over 2 hours without any sign of finishing.
 
 I changed the query to do a simple case statement with an `exists` on the faults table where `Coded = 0` and it’s just finished in 4 minutes. Unbelievable.
 
+<!-- more -->
+
 ### Update
 
 I thought I should give a bit of an explanation as to why this is happening. It basically all boils down to the way the two functions operate that makes the biggest difference. A `count` statement counts every row that matches the where statement, so even if you only need to know about one record (like in my case) it’ll still read every other row too. On the other hand the `exists` function will return as soon as its conditions are met, so if the first row it finds matches it’ll only read one row.

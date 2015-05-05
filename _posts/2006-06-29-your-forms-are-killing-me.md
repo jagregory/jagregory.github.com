@@ -9,9 +9,11 @@ type: post
 published: true
 meta: {}
 ---
-> Note: I have no particular dislike of the website in question, in fact I read it on a regular basis, but what I’m about to talk about is a travesty. Although it does tie in rather nicely with a previous post of mine: <a href="/writings/bloated-forms">Bloated Forms</a>.
+> Note: I have no particular dislike of the website in question, in fact I read it on a regular basis, but what I’m about to talk about is a travesty. Although it does tie in rather nicely with a previous post of mine: [Bloated Forms](/writings/bloated-forms).
 
-I was browsing one of my regular watering holes (water of knowledge, of course!) - <a href="http://www.theserverside.net">The Server Side.Net</a> - and I felt the overwhelming urge to make a reply in the forum. Registration was required, of course, so off to register I went. What followed was purely horrible on so many levels.
+I was browsing one of my regular watering holes (water of knowledge, of course!) - [The Server Side.Net](http://www.theserverside.net) - and I felt the overwhelming urge to make a reply in the forum. Registration was required, of course, so off to register I went. What followed was purely horrible on so many levels.
+
+<!-- more -->
 
 ## Step One
 
@@ -35,11 +37,11 @@ This one is a whopper, scarily so. Baring in mind that all I want to do is make 
 
 Firstly they want my first and last name, fair enough but I’d say even just my name, singular, would suffice. Next are my Company Name and my Title at said company, followed by my full address, postal code, telephone number and fax number. These are a bit odd, especially considering I might be unemployed and/or unwilling to disclose such information.
 
-Based on what the next sections were, <a href="http://www.theserverside.net">The Server Side</a> are seriously interested in <strong>my</strong> company. They’re asking such in-depth questions as what my IT budget is, how many employees are at the company, how many of those are developers, the purchasing scope and the industry of my organisation. Woah. Who even knows that stuff? Never mind wants to disclose it.
+Based on what the next sections were, [The Server Side](http://www.theserverside.net) are seriously interested in **my** company. They’re asking such in-depth questions as what my IT budget is, how many employees are at the company, how many of those are developers, the purchasing scope and the industry of my organisation. Woah. Who even knows that stuff? Never mind wants to disclose it.
 
 Finally I get to choose which technologies are relevant to me, via another big list of checkboxes.
 
-As if that huge list wasn’t bad enough, to put the proverbial icing on the cake, 90% of the fields are <strong>mandatory</strong>! Yes, even the IT Budget and Purchasing Scope. Absolute madness!
+As if that huge list wasn’t bad enough, to put the proverbial icing on the cake, 90% of the fields are **mandatory**! Yes, even the IT Budget and Purchasing Scope. Absolute madness!
 
 ## Step Four
 

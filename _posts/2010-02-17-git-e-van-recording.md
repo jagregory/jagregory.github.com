@@ -17,6 +17,6 @@ Last monday (8th of Feb) I did an [E-VAN on Git](/writings/git-e-van/); an intro
 
 The talk was recorded, so if you haven't already seen it then you can do so at your own leisure.
 
-The video is up on the <a href="http://vimeo.com/user1286822">E-VAN's Vimeo account</a>, specifically <a href="http://vimeo.com/9324683" title="Git E-VAN recording">here</a>.
+The video is up on the [E-VAN's Vimeo account](http://vimeo.com/user1286822), specifically [here](http://vimeo.com/9324683).
 
 <object width="600" height="450"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=9324683&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="600" height="450"></embed></object>

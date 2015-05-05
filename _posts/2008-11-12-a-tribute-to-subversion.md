@@ -19,6 +19,8 @@ Subversion has started receiving some more flak in certain circles, it's no long
 
 Subversion radically changed how people perceive source control, certainly in the environments that I've introduced it into (primarily SourceSafe based). That's no small feat, and I don't think it should be forgotten amid all the hype around newer source control systems.
 
+<!-- more -->
+
 The attitude towards source control prior to Subversion was that of fear; it was a black box that you threw your code into at the end of every day. Nobody really understood what it does, or why it does it, and even in some cases why they're actually doing it. This was probably down to poor user interfaces, but nobody really <em>wanted</em> to use it, they just had to. It was never made a proper part of anyone's workflow, apart from as a part of shutting down your machine at the end of the day (hopefully you remembered to do that!).
 
 Then along came Subversion (sometimes with a bit of force), with it's good tools, it's stable repository, and it's ease of management. You could host it through a webserver, everybody could access it via a URL. It never corrupts itself randomly, and it doesn't require scary maintenance work.

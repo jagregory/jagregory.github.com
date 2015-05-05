@@ -14,19 +14,19 @@ meta:
   _edit_last: '2'
   dsq_thread_id: '644650972'
 ---
-> **Notice:** The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.
+> **Notice:** The content in this post may be out of date, please refer to the [Fluent Configuration](https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration) page in the [Fluent NHibernate Wiki](https://github.com/jagregory/fluent-nhibernate/wiki) for the latest version.
 
-<p>There&#8217;s been a grey area of how to actually configure your application to use <a href='http://www.fluentnhibernate.org'>Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I&#8217;ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+There's been a grey area of how to actually configure your application to use [Fluent NHibernate](http://www.fluentnhibernate.org), and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I've committed a change that should make things clearer. What follows is a few examples of how this new API can be used.
 
-<blockquote>
-<p>I&#8217;m going to assume that you&#8217;ve got an application already set up, or you know how to structure a standard NHibernate application. If you don&#8217;t, I suggest you read up on that first.</p>
-</blockquote>
+<!-- more -->
 
-<p>All the examples that follow are tailored to directly replace your <code>SessionFactory</code> instantiation code.</p>
+> I'm going to assume that you've got an application already set up, or you know how to structure a standard NHibernate application. If you don't, I suggest you read up on that first.
 
-<h2 id='introducing_the_configuration_api'>Introducing the configuration API</h2>
+All the examples that follow are tailored to directly replace your `SessionFactory` instantiation code.
 
-<p>You can now <code>Fluently.Configure</code> your application. The API is broken down into five main methods, three of which are required.</p>
+## Introducing the configuration API
+
+You can now `Fluently.Configure` your application. The API is broken down into five main methods, three of which are required.
 
 ``` csharp
 Fluently.Configure()
@@ -36,13 +36,17 @@ Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<p>You can combine these methods in various ways to setup your application.</p>
+You can combine these methods in various ways to setup your application.
 
-<ol><li><code>Fluently.Configure</code> starts the configuration process</li><li><code>Database</code> is where you specify your database configuration</li><li><code>Mappings</code> is where you supply which mappings you&#8217;re using</li><li><code>ExposeConfiguration</code> is optional, but allows you to alter the raw Configuration object</li><li><code>BuildSessionFactory</code> is the final call, and it creates the NHibernate SessionFactory instance from your configuration.</li></ol>
+  1. `Fluently.Configure` starts the configuration process
+  2. `Database` is where you specify your database configuration
+  3. `Mappings` is where you supply which mappings you're using
+  4. `ExposeConfiguration` is optional, but allows you to alter the raw Configuration object
+  5. `BuildSessionFactory` is the final call, and it creates the NHibernate SessionFactory instance from your configuration.
 
-<h2 id='exclusively_fluent'>Exclusively fluent</h2>
+## Exclusively fluent
 
-<p>If you&#8217;re in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.</p>
+If you're in the situation where your application is exclusively using fluent mappings, then this is the configuration for you.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -53,11 +57,11 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<p>This setup uses the SQLite database configuration, but you can substitute that with your own; it then adds any fluent mappings from the assebly that contains <code>YourEntity</code>.</p>
+This setup uses the SQLite database configuration, but you can substitute that with your own; it then adds any fluent mappings from the assebly that contains `YourEntity`.
 
-<h2 id='automappings'>Automappings</h2>
+## Automappings
 
-<p>If you&#8217;re using only auto mappings, then this config is for you.</p>
+If you're using only auto mappings, then this config is for you.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -70,11 +74,11 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<p>Replace the code inside <code>AutoMappings.Add</code> with your auto mapping configuration. You can see more about auto mappings in my <a href='http://blog.jagregory.com/tag/automapping/'>automapping tag</a>.</p>
+Replace the code inside `AutoMappings.Add` with your auto mapping configuration. You can see more about auto mappings in my [automapping tag](http://blog.jagregory.com/tag/automapping/).
 
-<h2 id='mixed_fluent_mappings_and_auto_mappings'>Mixed fluent mappings and auto mappings</h2>
+## Mixed fluent mappings and auto mappings
 
-<p>If you&#8217;re using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.</p>
+If you're using a combination of standard fluent mappings and auto mappings, then this example should show you how to get started.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -83,7 +87,7 @@ var sessionFactory = Fluently.Configure()
   {
     m.FluentMappings
       .AddFromAssemblyOf<YourEntity>();
-      
+
     m.AutoMappings.Add(
       // your automapping setup here
       AutoPersistenceModel.MapEntitiesFromAssemblyOf<YourEntity>()
@@ -92,11 +96,11 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<p>You can see that this is a combination of the two previous examples, the <code>Mappings</code> method can accept multiple kinds of mappings.</p>
+You can see that this is a combination of the two previous examples, the `Mappings` method can accept multiple kinds of mappings.
 
-<h2 id='hbm_mappings'>HBM mappings</h2>
+## HBM mappings
 
-<p>You&#8217;ve not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.</p>
+You've not yet got around to using Fluent NHibernate fully, but you are configuring your database with it; this configuration will let you configure your database and add your traditional hbm mappings.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -107,11 +111,11 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<p>The <code>HbmMappings</code> property allows you to add HBM XML mappings in a few different ways, this example adds everything from an assembly which defines <code>YourEntity</code>; however, you can add from an assembly instance, or just add single types.</p>
+The `HbmMappings` property allows you to add HBM XML mappings in a few different ways, this example adds everything from an assembly which defines `YourEntity`; however, you can add from an assembly instance, or just add single types.
 
-<h2 id='mixed_hbm_and_fluent_mappings'>Mixed HBM and fluent mappings</h2>
+## Mixed HBM and fluent mappings
 
-<p>You&#8217;re migrating your entities to Fluent NHibernate but haven&#8217;t quite got them all across yet - this is for you.</p>
+You're migrating your entities to Fluent NHibernate but haven't quite got them all across yet - this is for you.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -127,9 +131,9 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<h2 id='the_whole_shebang_fluent_auto_and_hbm_mappings'>The whole shebang: fluent, auto, and hbm mappings</h2>
+## The whole shebang: fluent, auto, and hbm mappings
 
-<p>You&#8217;re a crazy fool and map a bit of everything, then this is how you&#8217;d configure it.</p>
+You're a crazy fool and map a bit of everything, then this is how you'd configure it.
 
 ``` csharp
 var sessionFactory = Fluently.Configure()
@@ -141,7 +145,7 @@ var sessionFactory = Fluently.Configure()
 
     m.FluentMappings
       .AddFromAssemblyOf<YourEntity>();
-      
+
     m.AutoMappings.Add(
       // your automapping setup here
       AutoPersistenceModel.MapEntitiesFromAssemblyOf<YourEntity>()
@@ -150,9 +154,9 @@ var sessionFactory = Fluently.Configure()
   .BuildSessionFactory();
 ```
 
-<h3 id='exporting_hbmxml_mappings'>Exporting hbm.xml mappings</h3>
+### Exporting hbm.xml mappings
 
-<p>In the <code>Mappings</code> call, you can do the following:</p>
+In the `Mappings` call, you can do the following:
 
 ``` csharp
 .Mappings(m =>
@@ -167,11 +171,11 @@ var sessionFactory = Fluently.Configure()
 })
 ```
 
-<p>That will export all of your fluent and automapped mappings in hbm.xml format to whatever location you specify.</p>
+That will export all of your fluent and automapped mappings in hbm.xml format to whatever location you specify.
 
-<h3 id='altering_nonautomapped_conventions'>Altering non-automapped conventions</h3>
+### Altering non-automapped conventions
 
-<p>If you want to override conventions that are used by your non-automapped classes, then you can use the <code>AlterConventions</code> method on <code>FluentMappings</code>.</p>
+If you want to override conventions that are used by your non-automapped classes, then you can use the `AlterConventions` method on `FluentMappings`.
 
 ``` csharp
 .Mappings(m =>
@@ -184,8 +188,8 @@ var sessionFactory = Fluently.Configure()
     }))
 ```
 
-<h3 id='validation'>Validation</h3>
+### Validation
 
-<p>If you forget to setup your database, or don&#8217;t add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the <code>BuildSessionFactory</code> method will throw a more helpful exception to try to point you in the right direction. It&#8217;ll tell you whether you&#8217;ve forgot to add any entities, or not setup your database.</p>
+If you forget to setup your database, or don't add any mappings, instead of pulling out your hair over obscure NHibernate exceptions, the `BuildSessionFactory` method will throw a more helpful exception to try to point you in the right direction. It'll tell you whether you've forgot to add any entities, or not setup your database.
 
-<p>That's it for now, I hope this helps to make configuring your application a little clearer.</p>
+That's it for now, I hope this helps to make configuring your application a little clearer.

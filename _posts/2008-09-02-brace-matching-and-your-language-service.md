@@ -17,9 +17,12 @@ meta:
   aktt_tweeted: '1'
   dsq_thread_id: '644651254'
 ---
+
 I've been meaning to write up some of my experiences developing for Visual Studio while I've been working on [BooLangStudio](http://www.codeplex.com/BooLangStudio), but I can never seem to find the time; either that, or when I can I'm not confident enough in what I'm doing to put it out here as a valid resource.
 
 I'll start small, here's a quick guide to how I've implemented brace matching using the managed Visual Studio extensibility SDK.
+
+<!-- more -->
 
 **What exactly is brace matching?** Brace matching is where paired characters are highlighted when one or the other is selected in the editor.
 
@@ -110,7 +113,7 @@ public override AuthoringScope ParseSource(ParseRequest request)
           iEndLine = request.Line,
           iStartIndex = request.Col,
           iEndIndex = request.Col
-        }, 
+        },
         new TextSpan
         {
           iStartLine = nextLine,

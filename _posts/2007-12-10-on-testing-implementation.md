@@ -13,9 +13,11 @@ I've found my-self in the situation of retro-fitting a library of code with unit
 
 There are a few problems with falling into this trap. Firstly, it's very brittle. Secondly, you shouldn't be concerned with the internals. Thirdly, it's very time consuming.
 
+<!-- more -->
+
 To elaborate...
 
-It's brittle because you're essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to <a href="http://martinfowler.com/bliki/TestCancer.html">test cancer</a>, where tests aren't run or are commented out.
+It's brittle because you're essentially writing a script of how the method is going to execute, which of course will change whenever you do any refactoring. So your tests break every time you make a change to your code, which is not only annoying, but will quickly lead to [test cancer](http://martinfowler.com/bliki/TestCancer.html), where tests aren't run or are commented out.
 
 You shouldn't be concerned with the internals, because as long as your method is doing as requested, you shouldn't really care how it's achieving it's goal. Not bolting down the internals allows methods to be refactored without too much resistance from the tests. This will increase the signal-to-noise ratio, allowing failing tests to be representative of a problem greater than your basic refactorings.
 

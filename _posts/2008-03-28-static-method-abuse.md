@@ -12,7 +12,9 @@ meta:
 ---
 I dislike static methods, there I said it.
 
-Like everything, they have their place; but as the old analogy says, when you have a hammer everything looks like a nail. <strong>Static methods are being abused.</strong>
+Like everything, they have their place; but as the old analogy says, when you have a hammer everything looks like a nail. **Static methods are being abused.**
+
+<!-- more -->
 
 ## Don't make me instantiate
 
@@ -46,9 +48,9 @@ customer.Name = "James";
 repos.Save(customer);
 ```
 
-Noticably the first example is one line less than the second. However, it's compromising readability in removing that line. Instead of using the <code>repos</code> instance, you're forced to fully-qualify every method call with <code>Repository<Customer></code>, which is introducing more noise per-line.
+Noticeably the first example is one line less than the second. However, it's compromising readability in removing that line. Instead of using the `repos` instance, you're forced to fully-qualify every method call with `Repository<Customer>`, which is introducing more noise per-line.
 
-Even though the methods <code>FindByID</code> and <code>Save</code> don't have any shared state, they both form a part of the encapsulation of data-access (in this case).
+Even though the methods `FindByID` and `Save` don't have any shared state, they both form a part of the encapsulation of data-access (in this case).
 
 > If a method forms a key part of an encapsulation, then it shouldn't be static.
 
@@ -60,7 +62,7 @@ While the methods are stateless, they might not always be that way; perhaps the 
 
 ## Not all bad
 
-So where are the good static methods? <em>The <code>Math</code> class is a good example</em>. It contains a set of functions that are only loosely related (apart from being mathematical), that are guaranteed to be stateless, and most importantly are simple. Architecturally the methods in the <code>Math</code> class could be applied to a wide swath of objects (<code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> etc...) and to have them as instance methods would complicate the class hierarchy more than it would benefit it.
+So where are the good static methods? *The `Math` class is a good example*. It contains a set of functions that are only loosely related (apart from being mathematical), that are guaranteed to be stateless, and most importantly are simple. Architecturally the methods in the `Math` class could be applied to a wide swath of objects (`int`, `float`, `double`, `decimal` etc...) and to have them as instance methods would complicate the class hierarchy more than it would benefit it.
 
 > Static methods should be fire-and-forget, disposable, simple, and effective.
 

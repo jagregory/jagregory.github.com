@@ -23,6 +23,8 @@ I considered writing a parser for it, but dismissed that after my dealings with 
 
 Anyway, after 10 minutes down the path of parsing it myself, I cracked and decided to look into alternatives to ANTLR. I came across [OMeta#](http://www.codeplex.com/ometasharp) and (with a reassuring nudge by Jeffery Olson) I went with it.
 
+<!-- more -->
+
 ## So what is OMeta#?
 
 At it's heart, [OMeta](http://www.cs.ucla.edu/~awarth/ometa/) is just a really great string parser, and OMeta# is a .Net implementation of it. Combine that with a fairly decent definition language and codegen'd parser creation, and you're onto a winner.
@@ -85,7 +87,7 @@ One more thing, then we can get going. For this generation to work, we really ne
 
 ``` ocaml
 using OMetaSharp;
- 
+
 ometa GitNumstatParser : Parser {
 }
 ```

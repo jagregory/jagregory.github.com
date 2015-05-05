@@ -9,19 +9,21 @@ type: post
 published: true
 meta: {}
 ---
-Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code>onclick="do_something()"</code>.
+Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like `onclick="do_something()"`.
 
-That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.
+That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the [Prototype](http://prototype.conio.net), [Dojo](http://dojotoolkit.org/) and [Behaviour](http://bennolan.com/behaviour/) libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.
 
 Perfect - clean semantic markup and real event handling.
 
-…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).
+...or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway...).
+
+<!-- more -->
 
 ## Our Problem
 
-The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the <a href="http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content">FOUC</a>, where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.
+The biggest setback for using event listeners is that nothing will fire until the whole of the body has finished loading, including any images that need to be downloaded. This can cause something similar to the [FOUC](http://www.bluerobot.com/web/css/fouc.asp" title="Flash of Unstyled Content), where a page appears in one state for a moment until the javascript executes; not a pretty sight and generally hard to sell as a browser fault.
 
-If you had the following code in your header tag, the element <code>aTable</code> would be visible until the page has finished loading, at which point it would suddenly disappear.
+If you had the following code in your header tag, the element `aTable` would be visible until the page has finished loading, at which point it would suddenly disappear.
 
 ``` html
 <script type="text/javascript">
@@ -33,10 +35,10 @@ If you had the following code in your header tag, the element <code>aTable</code
 </script>
 ```
 
-What we really need is an <code>onBodyRendered</code> event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.
+What we really need is an `onBodyRendered` event to hook to, which fires as soon as the body has been parsed, irrelevant of whether the content has been loaded.
 
 ## The Solution
-The only real solution to this problem, as there isn’t an <code>onBodyRendered</code> event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.
+The only real solution to this problem, as there isn’t an `onBodyRendered` event, is to force the browser to parse our javascript before it has finished loading. The method of doing this is to embed a script block just before the end of the body tag containing the functions you wish to execute. The reason this works is because the browser parses any javascript it encounters within the body tag and evaluates it while rendering.
 
 The following code would hide the table before the page has finished rendering; exactly what we want.
 

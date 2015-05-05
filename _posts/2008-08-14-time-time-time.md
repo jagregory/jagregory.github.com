@@ -17,9 +17,11 @@ I'm about 8,395 days old today, that's roughly 201,480 rotations of the hour han
 
 That all equates to 23 years old, which isn't too bad I suppose.
 
+<!-- more -->
+
 It's not often I talk about myself. I have a lot of opinions, but I generally keep me to myself. On this occasion I'm going to give myself a pat on the back.
 
-<strong>I'm pretty proud of myself.</strong>
+**I'm pretty proud of myself.**
 
 I have no qualifications, I have no A-levels, and only a few GCSEs. I am completely self-taught.
 
@@ -29,7 +31,7 @@ I was told that programming is hard, and it's not something you can learn in you
 
 The best thing you can do for yourself is to learn how to learn. It's the one thing they don't teach you in school. Since I learnt how to learn, I've gained so much knowledge.
 
-Don't concern yourself with the details, learn the techniques, learn the principals. It can be mistaken for arrogance, but I'm so confident in my ability to <em>learn</em>, that I can safely say that I can use <strong>any programming language</strong>, any operating system, any technology, ever invented and ever to be invented.
+Don't concern yourself with the details, learn the techniques, learn the principals. It can be mistaken for arrogance, but I'm so confident in my ability to *learn*, that I can safely say that I can use **any programming language**, any operating system, any technology, ever invented and ever to be invented.
 
 I am not scared of change, of new technologies, and I'm not afraid of being left behind. I can adapt, because I can learn.
 

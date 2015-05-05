@@ -13,6 +13,8 @@ meta:
 ---
 The current system I'm working with has a setup whereby the model (data access objects) are being used by the web-services for delivery; this means that the consumers of the web-services are directly tied to our inner implementation of our data access code. On-top of that, it's old full of bad conventions, and is in need of refactoring.
 
+<!-- more -->
+
 This is my account of how I freed the model from the web-service.
 
 ``` csharp

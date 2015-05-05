@@ -17,9 +17,10 @@ meta:
   aktt_tweeted: '1'
   dsq_thread_id: '644650501'
 ---
-## About SharpDiff
 
 SharpDiff is a library for parsing the output of various diffing tools. It's primary purpose is to reduce the time spent by SCM UI developers in handing diff output.
+
+<!-- more -->
 
 ## Why SharpDiff
 

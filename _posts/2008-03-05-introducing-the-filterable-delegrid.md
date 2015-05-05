@@ -16,6 +16,8 @@ The DeleGrid is a paged GridView control that handles data-binding through the u
 
 What this means is that you have full control over the data that is shown in the currently displayed page. Traditionally you'd retrieve the whole recordset then page it locally, but with the DeleGrid you can utilise your database/ORMs paging features.
 
+<!-- more -->
+
 To quote myself from when I first [introduced the DeleGrid](/writings/delegrid/):
 
 > [The DeleGrid] came about because I wanted a nice way of implementing paging using NHibernate without having the grid know about it. I really didn’t want NHibernate to leave my data layer, so I needed a nice way of the grid calling my DAL with the paging parameters.
@@ -106,7 +108,7 @@ private int grid_TotalRecordCountRequest(object sender, DataRequestEventArgs e)
 }
 ```
 
-I'm using a <a href="http://www.martinfowler.com/eaaCatalog/repository.html">repository pattern</a> to handle data-access. In the PageDataRequest handler we're taking the range, sort, and filter info that the grid passed us and sending it off to the repository to get the data. Similarity the TotalRecordCountRequest handler does a similar thing but without the range or sort info.
+I'm using a [repository pattern](http://www.martinfowler.com/eaaCatalog/repository.html) to handle data-access. In the PageDataRequest handler we're taking the range, sort, and filter info that the grid passed us and sending it off to the repository to get the data. Similarity the TotalRecordCountRequest handler does a similar thing but without the range or sort info.
 
 That's it really for using the DeleGrid, you just need to take the filter info and handle it using your specific ORM.
 
@@ -188,10 +190,10 @@ I've attached a sample project that uses the grid to display a collection of cus
 
 ## Downloads
 
-The DeleGrid is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_license">new BSD License</a>; read the license for what you’re allowed to do.
+The DeleGrid is open-source under the [new BSD License](http://en.wikipedia.org/wiki/BSD_license); read the license for what you’re allowed to do.
 
-You can download the source here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.1-source.zip">Download Source</a>.
-You can download the latest binary here: <a href="http://jagregory.googlecode.com/files/DeleGrid-1.1.zip">Download Binary</a>.
-You can download the example project here: <a href="http://jagregory.googlecode.com/files/DeleGridExample.zip">Download Example</a>.
+You can download the source here: [Download Source](http://jagregory.googlecode.com/files/DeleGrid-1.1-source.zip).
+You can download the latest binary here: [Download Binary](http://jagregory.googlecode.com/files/DeleGrid-1.1.zip).
+You can download the example project here: [Download Example](http://jagregory.googlecode.com/files/DeleGridExample.zip).
 
-The source is also accessible from Subversion at: <a href="http://jagregory.googlecode.com/svn/trunk/DeleGrid/">http://jagregory.googlecode.com/svn/trunk/DeleGrid/</a> (using user jagregory-read-only)
+The source is also accessible from Subversion at: [http://jagregory.googlecode.com/svn/trunk/DeleGrid/](http://jagregory.googlecode.com/svn/trunk/DeleGrid/) (using user jagregory-read-only)

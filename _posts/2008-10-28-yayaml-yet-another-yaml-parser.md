@@ -21,6 +21,8 @@ As a part of a project I'm working on I needed a simple file to store some data 
 
 Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my [recent adventure with OMeta#](/writings/getting-started-with-ometa/), I thought I'd hack on this too.
 
+<!-- more -->
+
 ## Introducing YaYAML: Yet another YAML parser.
 
 Don't get your hopes up, I've only implemented exactly what I needed out of the spec, which is very little indeed. However, it's something I will carry on with when time permits. So what can you parse with YaYAML? Only documents containing a single flat sequence or mapping. **No nesting, no multiple documents in a file, no variables.**

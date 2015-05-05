@@ -20,25 +20,26 @@ Here's a few ways to think about Git and it's distributed nature.
 
 <!-- more -->
 
-<h2>General pushing and pulling</h2>
+## General pushing and pulling
 
 ![Figure 1](/images/remote-1.png)
 
-Pushing your changes to a remote: <code>git push remote_name</code>
+Pushing your changes to a remote: `git push remote_name`
 
 ![Figure 2](/images/remote-2.png)
 
-Pulling changes from a remote: <code>git pull remote_name</code>
+Pulling changes from a remote: `git pull remote_name`
 
 Or if you want to rebase:
-<pre>git fetch remote_name
-git rebase remote_name/branch</pre>
 
-<blockquote>You can change your <code>branch.autosetuprebase</code> to <code>always</code>, to make this the default <code>git pull</code> behaviour.</blockquote>
+    git fetch remote_name
+    git rebase remote_name/branch
+
+> You can change your `branch.autosetuprebase` to `always`, to make this the default `git pull` behaviour.
 
 That's all there is to moving commits around in Git repositories. Any other operations you perform are all combinations of the above.
 
-<h2>Github &mdash; personal repositories</h2>
+## Github -- personal repositories
 
 When you're dealing directly with Github, on a personal project or as the project owner, your repositories will look like this:
 
@@ -46,12 +47,12 @@ When you're dealing directly with Github, on a personal project or as the projec
 
 To push and pull changes between your local and your github repositories, just issue the push and pull commands with the origin remote:
 
-<pre>git push origin
-git pull origin</pre>
+    git push origin
+    git pull origin
 
 You can set the defaults for these commands too, so the origin isn't even necessary in a lot of cases.
 
-<h2>Github &mdash; receiving contributions</h2>
+## Github -- receiving contributions
 
 As a project owner, you'll sometimes have to deal with contributions from other people. Each contributor will have their own github repository, and they'll issue you with a pull request.
 
@@ -71,12 +72,11 @@ git pull contributor branch
 git push
 ```
 
-<h2>Github &mdash; providing contributions</h2>
+## Github -- providing contributions
 
 Do exactly as you would your own personal project. Local changes, pushed up to your github fork; then issue a pull request. That's all there is to it.
 
-
-<h2>Github &mdash; the big picture</h2>
+## Github -- the big picture
 
 Here's how to imagine the whole process, think of it as an N shape.
 
@@ -84,12 +84,10 @@ Here's how to imagine the whole process, think of it as an N shape.
 
 On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.
 
-<ol>
-<li>Contributor makes a commit in their local repository</li>
-<li>Contributor pushes that commit to their github</li>
-<li>Contributor issues a pull request to the project</il>
-<li>Project lead pulls the contributor's change into their local repository</li>
-<li>Project lead pushes the change up to the project github</li>
-</ol>
+  1. Contributor makes a commit in their local repository
+  2. Contributor pushes that commit to their github
+  3. Contributor issues a pull request to the project
+  4. Project lead pulls the contributor's change into their local repository
+  5. Project lead pushes the change up to the project github
 
 That's as complicated as it gets.
