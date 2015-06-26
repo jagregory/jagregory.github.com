@@ -10,6 +10,8 @@ And your container does too?
 
 *It could be inode exhaustion!*
 
+<!-- more -->
+
 ## The symptoms
 
 All of a sudden my CI agent (which is in a Docker container) stopped running builds. Everything went <span style="color:red">red</span>. The failures were inconsistent, happening at different points in the build but always failing.
