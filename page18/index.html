@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/servercontrolids-update">ServerControlIDs Update</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve created a small update for my ServerControlIDs control, which removes the problem caused by controls within Repeaters and DataGrid.</p>
+
+<p>If you had a repeater that for each item contained an Hyperlink control, you’d get a duplicate entry in the ClientIDs object for every record, to avoid this problem I simply don’t output any sub-controls from within repeater style objects.</p>
+
+<p>That may sound like a bit of a hack, maybe it is, but if you want to refer to multiple elements within another, you shouldn’t really be doing it by ID anyway.</p>
+
+<p>You can get the <a href="/downloads/ServerControlIDs-1.1.zip">updated source here</a> or view the <a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/">full article here</a>.</p>
+
+ <a class="read-more" href="/writings/servercontrolids-update">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-04-26">
+                26 Apr 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
         </header>
         <section class="post-excerpt">
@@ -156,28 +182,6 @@
             
             <time class="post-date" datetime="2006-03-24">
                 24 Mar 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/accessibility-for-uk-based-websites">Accessibility for UK based websites</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>As reported by <a href="http://news.bbc.co.uk/">BBC News</a>, a new set of <a href="http://news.bbc.co.uk/1/hi/technology/4783686.stm">accessibility guidelines</a> have been developed for UK websites.</p>
-
-<p>Although this certainly isn’t anything new — being as a law was passed in 1999 for compliance — and it isn’t even legally binding, it may be used in court if a case arises. This is just one more little pebble added to the mounting landslide that will occur when a disabled user finally does the american thing and sues a company for not providing sufficient means to access their website.</p>
-
- <a class="read-more" href="/writings/accessibility-for-uk-based-websites">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-03-08">
-                08 Mar 2006
             </time>
         </footer>
     </article>

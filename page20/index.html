@@ -52,6 +52,28 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/first-working-weekend">First working weekend</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The weekend just past was my first that I’ve had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.</p>
+
+<p>The reason we had to work the weekend was down to us launching (re-launching actually) a product for the Swift Group’s extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.</p>
+
+ <a class="read-more" href="/writings/first-working-weekend">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-01-23">
+                23 Jan 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/javascript-getnextelement-and-getpreviouselement-revised">JavaScript getNextElement and getPreviousElement - revised</a></h2>
         </header>
         <section class="post-excerpt">
@@ -169,34 +191,6 @@
             
             <time class="post-date" datetime="2005-10-20">
                 20 Oct 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/sql-server-exists-function-quicker-than-count">SQL Server: Exists() function quicker than Count()</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>You’ve seen the title; it’s true.</p>
-
-<p>I’ve been running an “administration” query to modify a table with around 190,000 records in. This table, segments, contains a status column called Coded. This value is derived from another table, faults. If any faults belonging to a segment has a coded status of 0 then the segment coded value is also 0.</p>
-
-<p>My query did an update on each row in the segments table, retrieving a <code class="highlighter-rouge">count</code> of how many faults there are with a coded status of <code class="highlighter-rouge">0</code> that belong to the current segment. If the <code class="highlighter-rouge">count</code> is greater than <code class="highlighter-rouge">0</code> then the segment coded is set to <code class="highlighter-rouge">0</code>, otherwise to <code class="highlighter-rouge">1</code>.</p>
-
-<p>It ran for over 2 hours without any sign of finishing.</p>
-
-<p>I changed the query to do a simple case statement with an <code class="highlighter-rouge">exists</code> on the faults table where <code class="highlighter-rouge">Coded = 0</code> and it’s just finished in 4 minutes. Unbelievable.</p>
-
- <a class="read-more" href="/writings/sql-server-exists-function-quicker-than-count">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-09-22">
-                22 Sep 2005
             </time>
         </footer>
     </article>

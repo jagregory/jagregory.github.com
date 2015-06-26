@@ -9,7 +9,108 @@
     <link>http://www.jagregory.com</link>
     <description>Code monkey. ThoughtWorks. Chief Agitator.
 </description>
-    <pubDate>Tue, 05 May 2015 00:00:00 +1000</pubDate>
+    <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
+    <item>
+      <title>Docker container out of disk space</title>
+      <link>http://www.jagregory.com/writings/docker-container-out-of-space</link>
+      <description>&lt;p&gt;Are programs in your Docker container complaining of no free space?  &lt;br /&gt;
+Does your host have loads of space?  &lt;br /&gt;
+And your container does too?&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;It could be inode exhaustion!&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-symptoms&quot;&gt;The symptoms&lt;/h2&gt;
+
+&lt;p&gt;All of a sudden my CI agent (which is in a Docker container) stopped running builds. Everything went &lt;span style=&quot;color:red&quot;&gt;red&lt;/span&gt;. The failures were inconsistent, happening at different points in the build but always failing.&lt;/p&gt;
+
+&lt;p&gt;A typical error looked something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm ERR! ENOSPC, open /var/lib/go-agent/pipelines/{blah}/node_modules/node-sass/node_modules/...
+npm ERR! nospc This is most likely not a problem with npm itself and is related to insufficient space on your system.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;ENOSPC and “Insufficient space on your system” are dead giveaways that something is wrong! So npm thinks there isn’t any space on the disk.&lt;/p&gt;
+
+&lt;p&gt;I best look into this.&lt;/p&gt;
+
+&lt;h2 id=&quot;diagnosing&quot;&gt;Diagnosing&lt;/h2&gt;
+
+&lt;p&gt;I SSH onto the box and have a poke around.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ df -h
+
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1       99G  9.4G   85G  10% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; tells me there’s heaps of space available on the host. This is unsurprising because I’ve just resized the disk, but it’s worth checking.&lt;/p&gt;
+
+&lt;p&gt;Next I run the same command in the agent container.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -h
+
+Filesystem                   Size  Used Avail Use% Mounted on
+/dev/mapper/docker-202:1-... 9.8G  1.8G  7.5G  20% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Container says the same thing, of the &lt;a href=&quot;https://jpetazzo.github.io/2014/01/29/docker-device-mapper-resize/&quot;&gt;10gb Docker allocates a container by default&lt;/a&gt; there’s 7.5gb still available.&lt;/p&gt;
+
+&lt;p&gt;Nothing is out of disk space.&lt;/p&gt;
+
+&lt;p&gt;So what could prevent creating new files and masquerade as lack of free space? &lt;a href=&quot;https://en.wikipedia.org/wiki/Inode&quot;&gt;inodes&lt;/a&gt; can!&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -i
+
+Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
+/dev/mapper/docker-202:1-... 655360 655360       0  100% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Running &lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-i&lt;/code&gt; flag reports on inode usage. Oh no, 100% of inodes within my container are in use. That’s not good. Not good at all. &lt;em&gt;Problem identified&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;finding-where-all-our-inodes-are&quot;&gt;Finding where all our inodes are&lt;/h2&gt;
+
+&lt;p&gt;An inode can be thought of as a pointer to a file or directory with a bit of data about them. All those file permissions and owners you set on files get stored in the file’s inode. Therefore, for every file or directory you have there’ll be a corresponding inode. So if we’ve used all our inodes, we’ve used all our available files. We have too many files. You can have a lot of files, so running out is a sign of &lt;em&gt;something bad happening&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;With this in mind, we have to find where all these mysterious files are and why there are so many. I read a &lt;a href=&quot;http://stackoverflow.com/questions/653096/howto-free-inode-usage&quot;&gt;free inode usage&lt;/a&gt; post on StackOverflow which has some handy commands for answering this question.&lt;/p&gt;
+
+&lt;p&gt;I ran this command:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo find . -xdev -type f | cut -d &quot;/&quot; -f 2 | sort | uniq -c | sort -n
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Which prints out the inode count for all subdirectories of the current directory. It will take a little while, then print out something like this&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   89 opt
+  101 sbin
+  109 bin
+  258 lib
+  651 etc
+  930 root
+23466 usr
+83629 var
+51341 tmp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;OH HELLO &lt;code class=&quot;highlighter-rouge&quot;&gt;tmp&lt;/code&gt; WHY DO YOU HAVE SO MANY INODES?&lt;/p&gt;
+
+&lt;h2 id=&quot;fixing-the-issue&quot;&gt;Fixing the issue&lt;/h2&gt;
+
+&lt;p&gt;One &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -r /tmp&lt;/code&gt; later and &lt;code class=&quot;highlighter-rouge&quot;&gt;df -i&lt;/code&gt; reports a much more healthy 20% inode usage. Easy when you know what the problem is.&lt;/p&gt;
+
+&lt;p&gt;In my case it was a stupid lack of cleaning up some temp files from our builds. An &lt;code class=&quot;highlighter-rouge&quot;&gt;npm install&lt;/code&gt; which downloads the entire world into &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; on every build. We were averaging 10000 inodes per build. Ouch.&lt;/p&gt;
+
+&lt;p&gt;Builds are now &lt;span style=&quot;color:green&quot;&gt;green&lt;/span&gt; again. Pretty anti-climactic; but it’s the journey not the destination which counts, right?&lt;/p&gt;
+
+</description>
+      <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
+      <dc:date>2015-06-26T00:00:00+10:00</dc:date>
+    </item>
     <item>
       <title>Sinopia: a private NPM registry</title>
       <link>http://www.jagregory.com/writings/sinopia-private-npm-registry</link>
@@ -1480,6 +1581,6 @@ before I came across this, bad James!&lt;/p&gt;
       <pubDate>Sun, 05 Dec 2004 00:00:00 +1100</pubDate>
       <dc:date>2004-12-05T00:00:00+11:00</dc:date>
     </item>
-    <dc:date>2015-05-05T00:00:00+10:00</dc:date>
+    <dc:date>2015-06-26T00:00:00+10:00</dc:date>
   </channel>
 </rss>

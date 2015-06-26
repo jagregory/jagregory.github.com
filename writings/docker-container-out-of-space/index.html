@@ -18,39 +18,27 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
 </head>
-<body class="home-template">
+<body class="post-template">
 
-    <header class="main-header no-cover">
-    <div class="vertical">
-        <div class="main-header-content inner">
-            <h1 class="page-title"><a href="/">James Gregory</a></h1>
-            <h2 class="page-description">
-                 Code monkey. ThoughtWorks. Chief Agitator.
- 
-            </h2>
-        </div>
-        <p><a href="https://twitter.com/jagregory" title="I'm @jagregory on Twitter">@jagregory</a> | <a href="mailto:james@jagregory.com" title="Email me at james@jagregory.com">james@jagregory.com</a></p>
-    </div>
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
 </header>
 
-<main id="content" class="content" role="main">
-    <div class="extra-pagination inner">
-        <nav class="pagination" role="pagination">
-    
-    <span class="page-number"> Page 1 of 23 </span>
-     
-        <a class="older-posts" href="/page2/" title="Next Page">Older Posts &raquo;</a>
-     
-</nav>
-    </div>
-
-    
+<main class="content" role="main">
 
     <article class="post">
+
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/docker-container-out-of-space">Docker container out of disk space</a></h2>
+            <h1 class="post-title">Docker container out of disk space</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-06-26">26 Jun 2015</time>
+                
+            </section>
         </header>
-        <section class="post-excerpt">
+
+        <section class="post-content">
             <p>Are programs in your Docker container complaining of no free space?  <br />
 Does your host have loads of space?  <br />
 And your container does too?</p>
@@ -145,115 +133,17 @@ Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 
 <p>Builds are now <span style="color:green">green</span> again. Pretty anti-climactic; but it’s the journey not the destination which counts, right?</p>
 
- <a class="read-more" href="/writings/docker-container-out-of-space">Read more &raquo;</a>
         </section>
-        <footer class="post-meta">
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
             
+
             
-            <time class="post-date" datetime="2015-06-26">
-                26 Jun 2015
-            </time>
         </footer>
     </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/sinopia-private-npm-registry">Sinopia: a private NPM registry</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Not all of our packages can be pushed to the public NPM repository. Proprietary code and uninteresting code we want to keep internal, but until recently the package distribution story for this code has been worse than open-sourcing it. You either modularise it and publish to the world, or you have a bad time.</p>
-
- <a class="read-more" href="/writings/sinopia-private-npm-registry">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2015-05-05">
-                05 May 2015
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/virtualised-development-environments">My ever evolving development virtualisation situation</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Over the past few years I’ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows whilst using a Mac, continued when I refused to sully my machine with some godforsaken Oracle product, and has now reached completion with the arrival of a new laptop and an unwillingness to install RVM again.</p>
-
- <a class="read-more" href="/writings/virtualised-development-environments">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2014-02-12">
-                12 Feb 2014
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book">Converting and preserving Michael Abrash's Graphics Programming Black Book</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>tl;dr</strong> The Markdown source of Michael Abrash’s Graphics Programming Black Book is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a>, there are Epub and Mobi versions on the <a href="https://github.com/jagregory/abrash-black-book/releases">Github Releases list</a>, and you can read an online copy of the book <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</p>
-</blockquote>
-
-<p>It started out as an attempt to read <a href="http://en.wikipedia.org/wiki/Michael_Abrash">Michael Abrash’s</a> Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code class="highlighter-rouge">grep</code>, <code class="highlighter-rouge">sed</code>, and <code class="highlighter-rouge">awk</code>, and a few blisters.</p>
-
- <a class="read-more" href="/writings/converting-and-preserving-michael-abrash-graphics-programming-black-book">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-                gamedev
-            
-            <time class="post-date" datetime="2014-01-20">
-                20 Jan 2014
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/compiled-templates-for-go">Compiled Templates for Go</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p><a href="https://github.com/jagregory/cote">Cote</a> is a compiled templating language for <a href="http://golang.org">Go</a>.</p>
-
-<p>Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don’t care. <a href="https://github.com/jagregory/cote">Cote</a> falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.</p>
-
- <a class="read-more" href="/writings/compiled-templates-for-go">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2013-10-14">
-                14 Oct 2013
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <nav class="pagination" role="pagination">
-    
-    <span class="page-number"> Page 1 of 23 </span>
-     
-        <a class="older-posts" href="/page2/" title="Next Page">Older Posts &raquo;</a>
-     
-</nav>
-
 </main>
 
     <footer class="site-footer clearfix">

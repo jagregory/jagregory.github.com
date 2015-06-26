@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Fluent NHibernate: Mapping private and protected properties</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>There’s been a point of contention for some users of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> since the beginning, and that’s the lack of a method of mapping private and protected properties on their domain entities.</p>
+
+<p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we’re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-13">
+                13 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Fluent NHibernate: Auto Mapping Type Conventions</a></h2>
         </header>
         <section class="post-excerpt">
@@ -148,28 +174,6 @@
             
             <time class="post-date" datetime="2009-01-10">
                 10 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/the-vb-oss-debarkle">The VB OSS debarkle</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Following a discussion last night between myself, several others, and Roy Osherove, which Jeremy Miller <a href="http://codebetter.com/blogs/jeremy.miller/archive/2009/01/07/a-challenge-to-the-vb-net-community-at-large-on-oss.aspx">also commented on</a>.</p>
-
-<p>The problem was incorrectly stated. There isn’t a lack of OSS projects that VB programmers can use, there’s a wealth of projects out there. <em>I’ve personally used IoC containers, ORM tools, unit testing tools, and build automation tools in VB with my most recent employer.</em> The issue is that more recent projects are using some language features of C# that the VB team hasn’t chose to implement. This has got Roy all up in arms because he feels that should be our problem (as the OSS developers).</p>
-
- <a class="read-more" href="/writings/the-vb-oss-debarkle">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-08">
-                08 Jan 2009
             </time>
         </footer>
     </article>

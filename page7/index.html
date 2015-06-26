@@ -52,6 +52,30 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-configuring-your-application">Fluent NHibernate: Configuring your application</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>There’s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I’ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-configuring-your-application">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-03">
+                03 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
         </header>
         <section class="post-excerpt">
@@ -140,32 +164,6 @@
             
             <time class="post-date" datetime="2009-01-19">
                 19 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Fluent NHibernate: Mapping private and protected properties</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-</blockquote>
-
-<p>There’s been a point of contention for some users of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> since the beginning, and that’s the lack of a method of mapping private and protected properties on their domain entities.</p>
-
-<p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we’re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-13">
-                13 Jan 2009
             </time>
         </footer>
     </article>

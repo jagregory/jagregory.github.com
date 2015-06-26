@@ -6,9 +6,112 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 05 May 2015 13:12:50 +1000</pubDate>
-    <lastBuildDate>Tue, 05 May 2015 13:12:50 +1000</lastBuildDate>
+    <pubDate>Fri, 26 Jun 2015 11:25:00 +1000</pubDate>
+    <lastBuildDate>Fri, 26 Jun 2015 11:25:00 +1000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Docker container out of disk space</title>
+        <description>&lt;p&gt;Are programs in your Docker container complaining of no free space?  &lt;br /&gt;
+Does your host have loads of space?  &lt;br /&gt;
+And your container does too?&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;It could be inode exhaustion!&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-symptoms&quot;&gt;The symptoms&lt;/h2&gt;
+
+&lt;p&gt;All of a sudden my CI agent (which is in a Docker container) stopped running builds. Everything went &lt;span style=&quot;color:red&quot;&gt;red&lt;/span&gt;. The failures were inconsistent, happening at different points in the build but always failing.&lt;/p&gt;
+
+&lt;p&gt;A typical error looked something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm ERR! ENOSPC, open /var/lib/go-agent/pipelines/{blah}/node_modules/node-sass/node_modules/...
+npm ERR! nospc This is most likely not a problem with npm itself and is related to insufficient space on your system.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;ENOSPC and “Insufficient space on your system” are dead giveaways that something is wrong! So npm thinks there isn’t any space on the disk.&lt;/p&gt;
+
+&lt;p&gt;I best look into this.&lt;/p&gt;
+
+&lt;h2 id=&quot;diagnosing&quot;&gt;Diagnosing&lt;/h2&gt;
+
+&lt;p&gt;I SSH onto the box and have a poke around.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ df -h
+
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1       99G  9.4G   85G  10% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; tells me there’s heaps of space available on the host. This is unsurprising because I’ve just resized the disk, but it’s worth checking.&lt;/p&gt;
+
+&lt;p&gt;Next I run the same command in the agent container.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -h
+
+Filesystem                   Size  Used Avail Use% Mounted on
+/dev/mapper/docker-202:1-... 9.8G  1.8G  7.5G  20% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Container says the same thing, of the &lt;a href=&quot;https://jpetazzo.github.io/2014/01/29/docker-device-mapper-resize/&quot;&gt;10gb Docker allocates a container by default&lt;/a&gt; there’s 7.5gb still available.&lt;/p&gt;
+
+&lt;p&gt;Nothing is out of disk space.&lt;/p&gt;
+
+&lt;p&gt;So what could prevent creating new files and masquerade as lack of free space? &lt;a href=&quot;https://en.wikipedia.org/wiki/Inode&quot;&gt;inodes&lt;/a&gt; can!&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -i
+
+Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
+/dev/mapper/docker-202:1-... 655360 655360       0  100% /
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Running &lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-i&lt;/code&gt; flag reports on inode usage. Oh no, 100% of inodes within my container are in use. That’s not good. Not good at all. &lt;em&gt;Problem identified&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;finding-where-all-our-inodes-are&quot;&gt;Finding where all our inodes are&lt;/h2&gt;
+
+&lt;p&gt;An inode can be thought of as a pointer to a file or directory with a bit of data about them. All those file permissions and owners you set on files get stored in the file’s inode. Therefore, for every file or directory you have there’ll be a corresponding inode. So if we’ve used all our inodes, we’ve used all our available files. We have too many files. You can have a lot of files, so running out is a sign of &lt;em&gt;something bad happening&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;With this in mind, we have to find where all these mysterious files are and why there are so many. I read a &lt;a href=&quot;http://stackoverflow.com/questions/653096/howto-free-inode-usage&quot;&gt;free inode usage&lt;/a&gt; post on StackOverflow which has some handy commands for answering this question.&lt;/p&gt;
+
+&lt;p&gt;I ran this command:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo find . -xdev -type f | cut -d &quot;/&quot; -f 2 | sort | uniq -c | sort -n
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Which prints out the inode count for all subdirectories of the current directory. It will take a little while, then print out something like this&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   89 opt
+  101 sbin
+  109 bin
+  258 lib
+  651 etc
+  930 root
+23466 usr
+83629 var
+51341 tmp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;OH HELLO &lt;code class=&quot;highlighter-rouge&quot;&gt;tmp&lt;/code&gt; WHY DO YOU HAVE SO MANY INODES?&lt;/p&gt;
+
+&lt;h2 id=&quot;fixing-the-issue&quot;&gt;Fixing the issue&lt;/h2&gt;
+
+&lt;p&gt;One &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -r /tmp&lt;/code&gt; later and &lt;code class=&quot;highlighter-rouge&quot;&gt;df -i&lt;/code&gt; reports a much more healthy 20% inode usage. Easy when you know what the problem is.&lt;/p&gt;
+
+&lt;p&gt;In my case it was a stupid lack of cleaning up some temp files from our builds. An &lt;code class=&quot;highlighter-rouge&quot;&gt;npm install&lt;/code&gt; which downloads the entire world into &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; on every build. We were averaging 10000 inodes per build. Ouch.&lt;/p&gt;
+
+&lt;p&gt;Builds are now &lt;span style=&quot;color:green&quot;&gt;green&lt;/span&gt; again. Pretty anti-climactic; but it’s the journey not the destination which counts, right?&lt;/p&gt;
+</description>
+        <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
+        <link>http://www.jagregory.com//writings/docker-container-out-of-space</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/docker-container-out-of-space</guid>
+        
+        
+      </item>
     
       <item>
         <title>Sinopia: a private NPM registry</title>
@@ -873,39 +976,6 @@ jagregory.sinopia
         <category>Git</category>
         
         <category>ndc</category>
-        
-        <category>Speaking</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Speaking engagements in 2010</title>
-        <description>&lt;p&gt;In an attempt to get out of my shell more this year, I’ve taken up speaking (at conferences, not just in general). First came my &lt;a href=&quot;/writings/git-e-van-recording/&quot;&gt;Git E-VAN&lt;/a&gt;, then came &lt;a href=&quot;http://fiesta.lostechies.com/&quot;&gt;Pablo’s Fiesta&lt;/a&gt;, so what else have I got lined up this year?&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;&lt;strong&gt;24&lt;sup&gt;th&lt;/sup&gt; April&lt;/strong&gt;: &lt;a href=&quot;http://codingday.org/&quot;&gt;Irish Open Spaces Coding Day II&lt;/a&gt; in Dublin, where I’ll be speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;16&lt;sup&gt;th&lt;/sup&gt;-18&lt;sup&gt;th&lt;/sup&gt; June&lt;/strong&gt;: &lt;a href=&quot;http://ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; in Oslo, speaking about &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt; and DVCS with Git.&lt;/p&gt;
-
-&lt;p&gt;The abstracts for my talks can be found below. If you’re interested in hearing me speak, or know of any opportunities that you think I might be interested in, please drop me an email (&lt;a href=&quot;&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#106;&amp;#097;&amp;#109;&amp;#101;&amp;#115;&amp;#064;&amp;#106;&amp;#097;&amp;#103;&amp;#114;&amp;#101;&amp;#103;&amp;#111;&amp;#114;&amp;#121;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&quot;&gt;&amp;#106;&amp;#097;&amp;#109;&amp;#101;&amp;#115;&amp;#064;&amp;#106;&amp;#097;&amp;#103;&amp;#114;&amp;#101;&amp;#103;&amp;#111;&amp;#114;&amp;#121;&amp;#046;&amp;#099;&amp;#111;&amp;#109;&lt;/a&gt;).&lt;/p&gt;
-
-&lt;h2 id=&quot;fluent-nhibernate&quot;&gt;Fluent NHibernate&lt;/h2&gt;
-
-&lt;p&gt;An introduction and overview to object⁄relational mapping using Fluent NHibernate. See how Fluent NHibernate can help you map your domain with the least amount of effort, how you can remain flexible with your database, and how to drive your design through convention–over–configuration; all without writing a single line of XML.&lt;/p&gt;
-
-&lt;p&gt;The talk is an introduction to Fluent NHibernate for those that aren’t familiar with it, and assumes some NHibernate experience and is for .Net developers primarily. The goal is to show people how low–impact NHibernate can be with Fluent NHibernate, and how it can actually speed up development in rapid–change environments.&lt;/p&gt;
-
-&lt;p&gt;I’ll cover an overview of what Fluent NHibernate is, the various parts of it (the fluent interface, the conventions, and the auto–mappings, and the configuration aspect), then expand on how these features can be utilised to improve your NHibernate experience and simplify your development process.&lt;/p&gt;
-
-&lt;h2 id=&quot;introduction-to-git&quot;&gt;Introduction to Git&lt;/h2&gt;
-
-&lt;p&gt;An introduction to distributed version control using Git, and how your VCS should work with you and not against you. How DVCS can completely alter your development process, streamline it, and help you produce better software, faster. Covering how local repositories speed up your development, multiple authoritative sources, distributed teams, multiple workflows, and some of the more distinct features of Git. With experiences from an OSS team on how the migration from SVN to Git has helped the project and changed how the team works (Fluent NHibernate).&lt;/p&gt;
-</description>
-        <pubDate>Wed, 31 Mar 2010 00:00:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/speaking-engagements-2010</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/speaking-engagements-2010</guid>
         
         <category>Speaking</category>
         

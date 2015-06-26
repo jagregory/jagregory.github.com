@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/empty-nhibernate-logs-and-poor-performance">Empty NHibernate logs and poor performance</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>We had an issue recently where NHibernate was performing very poorly on our production server, but not on our developer machines or our test server. I investigated the issue and narrowed it down to two symptoms.</p>
+
+<p><strong>Symptom 1:</strong> Very poor performance. I’m talking 10+ seconds per page load, with no more than 5 queries being executed by NHibernate.</p>
+
+<p><strong>Symptom 2:</strong> Empty log files. None of our log files had any data in on the live server, but they did on our other systems.</p>
+
+<p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
+
+ <a class="read-more" href="/writings/empty-nhibernate-logs-and-poor-performance">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-09-12">
+                12 Sep 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/brace-matching-and-your-language-service">Brace Matching and your Language Service</a></h2>
         </header>
         <section class="post-excerpt">
@@ -138,30 +164,6 @@
             
             <time class="post-date" datetime="2008-08-07">
                 07 Aug 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/missed-out-on-something-big">Missed out on something big</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Ever get the feeling that you’ve missed out on something big? I never got to see Star Wars at the cinema. I missed out on the start of computers, the ASM, the BASIC hacking and what-not. I discovered most of my musical taste way after the bands were gone or going, so I never got to see them in show.</p>
-
-<p>None of those are my fault, of course, because they were all before my time; in fact, most were at least a decade before me. That still doesn’t stop me from ocasionally getting the feeling that I missed out on something big.</p>
-
-<p>One more. One that’s pertinent to our industry: Smalltalk.</p>
-
- <a class="read-more" href="/writings/missed-out-on-something-big">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-07-01">
-                01 Jul 2008
             </time>
         </footer>
     </article>

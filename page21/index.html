@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/sql-server-exists-function-quicker-than-count">SQL Server: Exists() function quicker than Count()</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>You’ve seen the title; it’s true.</p>
+
+<p>I’ve been running an “administration” query to modify a table with around 190,000 records in. This table, segments, contains a status column called Coded. This value is derived from another table, faults. If any faults belonging to a segment has a coded status of 0 then the segment coded value is also 0.</p>
+
+<p>My query did an update on each row in the segments table, retrieving a <code class="highlighter-rouge">count</code> of how many faults there are with a coded status of <code class="highlighter-rouge">0</code> that belong to the current segment. If the <code class="highlighter-rouge">count</code> is greater than <code class="highlighter-rouge">0</code> then the segment coded is set to <code class="highlighter-rouge">0</code>, otherwise to <code class="highlighter-rouge">1</code>.</p>
+
+<p>It ran for over 2 hours without any sign of finishing.</p>
+
+<p>I changed the query to do a simple case statement with an <code class="highlighter-rouge">exists</code> on the faults table where <code class="highlighter-rouge">Coded = 0</code> and it’s just finished in 4 minutes. Unbelievable.</p>
+
+ <a class="read-more" href="/writings/sql-server-exists-function-quicker-than-count">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-09-22">
+                22 Sep 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/datediff-minus-one-visualbasic-assembly">DateDiff() minus one VisualBasic assembly</a></h2>
         </header>
         <section class="post-excerpt">
@@ -154,28 +182,6 @@
             
             <time class="post-date" datetime="2005-07-23">
                 23 Jul 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/exception-logging">Exception Logging</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Something I’ve always been tinkering with for my ASP.Net applications has been exception logging. I often get irritated when users (or applications) supply me with misleading or incorrect error messages, or at least incorrect directions of how to recreate the error.</p>
-
-<p>I worked for quite some time trying to create a Logging system that would cater for my needs, and I got quite close to doing that. I created a small go-between object for the Trace and Debug logging and wrote that to my own XML file. The idea behind it, of course, was to make it easier for my self in debugging problems, if I could supply my self with all the data that I know I would require to trace an issue then, in theory, I could correct it much more quickly. This took me quite some time to create and of course was not perfect.</p>
-
- <a class="read-more" href="/writings/exception-logging">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-07-18">
-                18 Jul 2005
             </time>
         </footer>
     </article>
