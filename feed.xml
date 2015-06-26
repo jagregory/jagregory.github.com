@@ -6,8 +6,8 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 26 Jun 2015 11:25:00 +1000</pubDate>
-    <lastBuildDate>Fri, 26 Jun 2015 11:25:00 +1000</lastBuildDate>
+    <pubDate>Fri, 26 Jun 2015 11:28:17 +1000</pubDate>
+    <lastBuildDate>Fri, 26 Jun 2015 11:28:17 +1000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -17,6 +17,8 @@ Does your host have loads of space?  &lt;br /&gt;
 And your container does too?&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;It could be inode exhaustion!&lt;/em&gt;&lt;/p&gt;
+
+&lt;!-- more --&gt;
 
 &lt;h2 id=&quot;the-symptoms&quot;&gt;The symptoms&lt;/h2&gt;
 
