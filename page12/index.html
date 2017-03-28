@@ -52,6 +52,28 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/latest-on-boolangstudio">Latest on BooLangStudio</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>It’s been a long time since I’ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we’re steadily working towards our first release.</p>
+
+<p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
+
+ <a class="read-more" href="/writings/latest-on-boolangstudio">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-08-07">
+                07 Aug 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/missed-out-on-something-big">Missed out on something big</a></h2>
         </header>
         <section class="post-excerpt">
@@ -136,30 +158,6 @@
             
             <time class="post-date" datetime="2008-05-18">
                 18 May 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/plugin-baby-steps">Plugin baby steps</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Making a Visual Studio 2008 plugin isn’t as hard as it sounds.</p>
-
-<p>Making one that works is a bit more difficult.</p>
-
-<p>Syntax highlighting is fairly straight forward, just run a tokenizer over the text and colour code each token appropriately. It’s the code sense that is causing me to go slightly mad. To determine what methods need to be listed when the intellisense pops up, you need to parse the code that’s in the document, then resolve any classes and references in there to build up a collection of methods to display. It gets more tricky when the document isn’t valid, because you can’t compile it. That’s where I am now, I need to figure out some way of partially compiling the document, or maybe using an AST walker.</p>
-
- <a class="read-more" href="/writings/plugin-baby-steps">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-05-12">
-                12 May 2008
             </time>
         </footer>
     </article>

@@ -9,7 +9,20 @@
     <link>http://www.jagregory.com</link>
     <description>Code monkey. ThoughtWorks. Chief Agitator.
 </description>
-    <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
+    <pubDate>Wed, 29 Mar 2017 00:00:00 +1100</pubDate>
+    <item>
+      <title>InfluxDB Kapacitor subscription errors</title>
+      <link>http://www.jagregory.com/writings/influxdb-kapacitor-subscription-error</link>
+      <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Post http://kapacitor.default:9092/write?consistency=&amp;amp;db=telegraf&amp;amp;precision=ns&amp;amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If you’re seeing something like this error in your &lt;a href=&quot;https://github.com/influxdata/influxdb&quot;&gt;InfluxDB&lt;/a&gt; logs, and don’t know what it means: &lt;a href=&quot;https://github.com/influxdata/kapacitor&quot;&gt;Kapacitor&lt;/a&gt; has created one or more subscriptions in your InfluxDB database, and InfluxDB is trying to POST to the Kapacitor endpoint; however, Kapacitor is unreachable. Kapacitor might be unreachable because it’s down, or you have a network partition or other connectivity issue, or in my case you’ve actually just destroyed your Kapacitor instance.&lt;/p&gt;
+
+</description>
+      <pubDate>Wed, 29 Mar 2017 00:00:00 +1100</pubDate>
+      <dc:date>2017-03-29T00:00:00+11:00</dc:date>
+    </item>
     <item>
       <title>Docker container out of disk space</title>
       <link>http://www.jagregory.com/writings/docker-container-out-of-space</link>
@@ -1493,6 +1506,6 @@ before I came across this, bad James!&lt;/p&gt;
       <pubDate>Sun, 05 Dec 2004 00:00:00 +1100</pubDate>
       <dc:date>2004-12-05T00:00:00+11:00</dc:date>
     </item>
-    <dc:date>2015-06-26T00:00:00+10:00</dc:date>
+    <dc:date>2017-03-29T00:00:00+11:00</dc:date>
   </channel>
 </rss>

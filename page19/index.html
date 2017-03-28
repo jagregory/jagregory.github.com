@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">JavaScript Behaviour & getElementsBySelector() mini-fix</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
+
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="highlighter-rouge">body#profile</code>, when <code class="highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="highlighter-rouge">#profile</code> alone works fine.</p>
+
+<p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+</code></pre>
+</div>
+
+ <a class="read-more" href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-03-24">
+                24 Mar 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/accessibility-for-uk-based-websites">Accessibility for UK based websites</a></h2>
         </header>
         <section class="post-excerpt">
@@ -130,30 +158,6 @@
             
             <time class="post-date" datetime="2006-03-07">
                 07 Mar 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/venkman-for-firefox-1501-javascript-debugger">Venkman for Firefox 1.5.0.1 (Javascript Debugger)</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Once again the guys at Mozilla have broken quite possibly the best plug-in for Firefox: the <a href="http://www.mozilla.org/projects/venkman/">Venkman Javascript Debugger</a>. This is becoming quite commonplace, with every update for firefox disabling the debugger until a fix is released.</p>
-
-<p>Anyway, even though both the extensions manager and Venkmans official website both say there aren’t any updates available, Joe Walker from <a href="http://getahead.ltd.uk/home">Getahead</a> has created and update that contains some bug fixes from Bugzilla, but most importantly Venkman now works with Firefox 1.5.0.1!</p>
-
-<p>Source: <a href="http://getahead.ltd.uk/ajax/venkman">Venkman for Firefox 1.5</a></p>
-
- <a class="read-more" href="/writings/venkman-for-firefox-1501-javascript-debugger">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-02-07">
-                07 Feb 2006
             </time>
         </footer>
     </article>

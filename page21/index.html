@@ -52,6 +52,26 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/nested-datagridrepeater-with-key-value-access">Nested DataGrid/Repeater with Key Value access</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code class="highlighter-rouge">Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
+
+ <a class="read-more" href="/writings/nested-datagridrepeater-with-key-value-access">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-10-20">
+                20 Oct 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/sql-server-exists-function-quicker-than-count">SQL Server: Exists() function quicker than Count()</a></h2>
         </header>
         <section class="post-excerpt">
@@ -160,28 +180,6 @@
             
             <time class="post-date" datetime="2005-07-27">
                 27 Jul 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/error-logging-modules-ampamp-handlers-elmah">ELMAH: Error Logging Modules & Handlers</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>In my previous post I talked about my exception logging system that I laid to rest. Fortunately for me that doesn’t mean my applications are logless, quite the contrary. I’ll explain…</p>
-
-<p>When I came to terms with my logging system being inadequate and hard to maintain, I began looking for a replacement. To my delight I came across <a href="http://www.raboof.com/Projects/Elmah/Elmah.aspx">ELMAH</a>  written by <a href="http://www.raboof.com">Atif Aziz</a>. ELMAH is basically a couple of HttpModules and a HttpHandler that intercept any unhandled exceptions from within your application and log them. This is where the fun begins…</p>
-
- <a class="read-more" href="/writings/error-logging-modules-ampamp-handlers-elmah">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-07-23">
-                23 Jul 2005
             </time>
         </footer>
     </article>

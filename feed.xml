@@ -6,9 +6,49 @@
 </description>
     <link>http://www.jagregory.com//</link>
     <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 26 Jun 2015 11:28:17 +1000</pubDate>
-    <lastBuildDate>Fri, 26 Jun 2015 11:28:17 +1000</lastBuildDate>
+    <pubDate>Wed, 29 Mar 2017 10:41:31 +1100</pubDate>
+    <lastBuildDate>Wed, 29 Mar 2017 10:41:31 +1100</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>InfluxDB Kapacitor subscription errors</title>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Post http://kapacitor.default:9092/write?consistency=&amp;amp;db=telegraf&amp;amp;precision=ns&amp;amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If you’re seeing something like this error in your &lt;a href=&quot;https://github.com/influxdata/influxdb&quot;&gt;InfluxDB&lt;/a&gt; logs, and don’t know what it means: &lt;a href=&quot;https://github.com/influxdata/kapacitor&quot;&gt;Kapacitor&lt;/a&gt; has created one or more subscriptions in your InfluxDB database, and InfluxDB is trying to POST to the Kapacitor endpoint; however, Kapacitor is unreachable. Kapacitor might be unreachable because it’s down, or you have a network partition or other connectivity issue, or in my case you’ve actually just destroyed your Kapacitor instance.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;To fix this error, you need to remove the subscriptions; you can remove subscriptions by issuing a few commands to InfluxDB via your favourite interface (for me, it’s &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; into a container and running the &lt;code class=&quot;highlighter-rouge&quot;&gt;influx&lt;/code&gt; cli tool, but you can also use the API).&lt;/p&gt;
+
+&lt;p&gt;First, find the subscription(s) you need to remove.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SHOW SUBSCRIPTIONS
+
+name: telegraf
+retention_policy name          mode destinations
+---------------- ----          ---- ------------
+autogen          kapacitor-abc ANY  [http://kapacitor.default:9092]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then just drop the subscription (you might need to drop a few, if you have multiple databases).&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;DROP SUBSCRIPTION kapacitor-abc ON telegraf.autogen
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The format of the command is: &lt;code class=&quot;highlighter-rouge&quot;&gt;DROP SUBSCRIPTION &amp;lt;subscription&amp;gt; ON &amp;lt;database&amp;gt;.&amp;lt;retention_policy&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;That’s it, the error should stop occurring now. If you destroy a Kapacitor instance, remember to remove it’s subscriptions until there’s resolution on &lt;a href=&quot;https://github.com/influxdata/kapacitor/issues/870&quot;&gt;subscription cleanups&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 29 Mar 2017 00:00:00 +1100</pubDate>
+        <link>http://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</link>
+        <guid isPermaLink="true">http://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</guid>
+        
+        
+      </item>
     
       <item>
         <title>Docker container out of disk space</title>
@@ -941,45 +981,6 @@ jagregory.sinopia
         <category>licensing</category>
         
         <category>OpenSource</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>NDC 2010</title>
-        <description>&lt;p&gt;&lt;a href=&quot;http://www.ndc2010.no&quot;&gt;NDC 2010&lt;/a&gt; was a huge success, if you ask me. This was largely down to the NDC team, who deserve all the praise they’re getting (and much more). Unlike conferences I’ve been to in the past, NDC was truely by the people, for the people. &lt;a href=&quot;http://blog.scottbellware.com&quot;&gt;Scott Bellware&lt;/a&gt; put it much better than I could, with his &lt;a href=&quot;http://blog.scottbellware.com/2010/06/praise-for-norwegian-developers.html&quot;&gt;praise for Norwegian Developers&lt;/a&gt; (and Kjersti Sandberg). Herself and the rest of the team were there because they wanted to be, not because they had to. The whole attitude surrounding this conference was one of learning, not plugging products or motives.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;I could go into great detail about the individual aspects of the conference, but it’s much easier to say that there’s nothing I’d change.&lt;/p&gt;
-
-&lt;p&gt;If there’s one conference you should go to next year, make it NDC 2011.&lt;/p&gt;
-
-&lt;h2 id=&quot;my-part-in-all-this&quot;&gt;My part in all this…&lt;/h2&gt;
-
-&lt;p&gt;I presented on two topics at NDC; the first was an introduction to &lt;a href=&quot;http://fluentnhibernate.org&quot;&gt;Fluent NHibernate&lt;/a&gt;, and the second an introduction and demo of &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;. Fluent NHibernate was on the Thursday, and Git the Friday. It was a great experience speaking at an event of this size, and the number of people who seemed genuinely interested in what I had to say (by either turning up to my talks, or approaching me afterwards) was quite humbling. If you’re interested in seeing what I presented, the talks will be on the NDC website before too long.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The videos are becoming available at &lt;a href=&quot;http://streaming.ndc2010.no&quot;&gt;streaming.ndc2010.no&lt;/a&gt;, but they’re suffering from bandwidth issues. If you do want to watch the videos, please stream them until the issues are resolved.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Due to me speaking, and also being woefully unprepared, I didn’t get to see as many talks as I would’ve liked – regardless of how well rehearsed and prepared my talks are, it seems I always end up rewriting them an hour before I go on – I did end up catching Lisa Crispin, Steve Strong, Eric Evans, Greg Young, Jon Skeet, Roy Osherove, Michael Feathers, Sebastian Lambla, and Mark Nijhof. I recommend you catch their talks online when they’re published. The quality of the talks at NDC have been significantly higher than I’ve seen elsewhere, and (more importantly) the technical level seems to be higher too; there was very few basic talks (a few introductions, mine included, but no pandering), but the majority were pretty in-depth. This is quite a contrast to the all-too-often “Microsoft technology of the week” presentations you can get at conferences.&lt;/p&gt;
-
-&lt;p&gt;Of course, a big part of any conference is what happens between (and after) the talks. Meeting other developers is a big part of why I go to these things, after all I don’t get out much normally. The socialising aspect of NDC was excellent, good drinks and food was had by all (I have a good idea they did anyway, at least one place we ate refused to serve us as a group anything other than the same meal for everyone!). I can’t possibly list everyone who I met while I was out there, but it was really good to meet up with some people who I’ve known on Twitter for a long time; specifically Hadi Hariri, Steve Strong, Greg Young, Ben Hall, Seb Lambla, Mark Nijhof, and Rob Conery are ones that stand out to me right now.&lt;/p&gt;
-
-&lt;p&gt;NDC 2011 will be next year, and it’s looking like it’ll be in May this time. If there’s anyone that’s on the fence about going, I would whole heartedly recommend you do. Even more so, I’d recommend you submit a talk of your own. It’s a great way to test yourself, if nothing else. I’ll definitely be going next year; hopefully I’ll speak again, but if not I’ll still be there. Hope to see you there!&lt;/p&gt;
-</description>
-        <pubDate>Tue, 22 Jun 2010 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/ndc-2010</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/ndc-2010</guid>
-        
-        <category>FluentNHibernate</category>
-        
-        <category>Git</category>
-        
-        <category>ndc</category>
-        
-        <category>Speaking</category>
         
         
       </item>

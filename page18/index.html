@@ -52,6 +52,28 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/uncrippling-windows-xps-iis-51">Uncrippling Windows XP's IIS 5.1</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I apparently got around to reading <a href="http://www.codinghorror.com">Coding Horror</a> a bit too late, as I missed <a href="http://www.codinghorror.com/blog/archives/000329.html&quot; title=&quot;Uncrippling Windows XP's IIS 5.1">this gem</a>. It’s an article about a small application used to bend XP’s IIS to your every whim, perfect for those of us suffering at the hands of Microsoft.</p>
+
+<p>The basic gist of the application is that it removes the limits of XP’s IIS, namely the problem of only being allowed one website and 10 concurrent users. It takes a bit of getting used to, especially if you’re using Visual Studio; if you are, remember to reset IIS to it’s default website before opening a website created prior to using IISAdmin.</p>
+
+ <a class="read-more" href="/writings/uncrippling-windows-xps-iis-51">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-04-26">
+                26 Apr 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/servercontrolids-update">ServerControlIDs Update</a></h2>
         </header>
         <section class="post-excerpt">
@@ -154,34 +176,6 @@
             
             <time class="post-date" datetime="2006-04-04">
                 04 Apr 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">JavaScript Behaviour & getElementsBySelector() mini-fix</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
-
-<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="highlighter-rouge">body#profile</code>, when <code class="highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="highlighter-rouge">#profile</code> alone works fine.</p>
-
-<p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
-</code></pre>
-</div>
-
- <a class="read-more" href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-03-24">
-                24 Mar 2006
             </time>
         </footer>
     </article>

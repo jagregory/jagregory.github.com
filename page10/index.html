@@ -52,6 +52,30 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/yayaml-yet-another-yaml-parser">YaYAML: Yet another YAML parser</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I don’t want to make much ceremony around this, but I thought I’d mention it incase anybody else is interested.</p>
+
+<p>As a part of a project I’m working on I needed a simple file to store some data in, and I didn’t want it to be XML (for no reason other than the verbosity). I could have used my own format, but instead I’ve gone for <a href="http://yaml.net">YAML</a>. If you’ve worked with Ruby on Rails at all, then you’ll be familiar with YAML. It’s a human readable (and writable) text format.</p>
+
+<p>Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my <a href="/writings/getting-started-with-ometa/">recent adventure with OMeta#</a>, I thought I’d hack on this too.</p>
+
+ <a class="read-more" href="/writings/yayaml-yet-another-yaml-parser">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-28">
+                28 Oct 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/getting-started-with-ometa">Getting started with OMeta#</a></h2>
         </header>
         <section class="post-excerpt">
@@ -128,28 +152,6 @@
             <p>Continuing on from my post about an <a href="/writings/alternative-to-abusing-using/">alternative syntax for the non-disposable using statements</a>, here’s a class I’ve been using lately. It serves as a wrapper around changing the colours in a console window. It’s not a difficult thing to do, it’s just a bit awkward because you have to maintain the original colour in a variable while you do your business.</p>
 
  <a class="read-more" href="/writings/console-colours-wrapper">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-07">
-                07 Oct 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/alternative-to-abusing-using">Alternative to abusing using</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>There’s been a bit of discussion of late about using statements, and how they’re more often being used for purposes other than just releasing resources. As always, there are those people who think it’s a flagrant abuse of a feature and shouldn’t be done, then there are those that like it. I’m in between. I do like what the using statement gives us, but I also think it is a bit of an abuse.</p>
-
-<p>The “traditional” usage of the using statement can be found quite often in the land of files and streams. Take the following example, which opens a file and then closes it when it drops out of the using scope.</p>
-
- <a class="read-more" href="/writings/alternative-to-abusing-using">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             

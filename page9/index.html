@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-introduction">Fluent NHibernate: Auto Mapping Introduction</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+
+  <p><strong>Note:</strong> this was written against <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a> of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, so you need to be at least at that revision to follow along.</p>
+</blockquote>
+
+<p>Fluent NHibernate has a concept called Auto Mapping, which is a mechanism for automatically mapping all your entities based on a set of conventions.</p>
+
+<p>Auto mapping utilises the principal of <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a>. Using this principal, the auto mapper inspects your entities and makes assumptions of what particular properties should be. Perhaps you have a property with the name of <code class="highlighter-rouge">Id</code> and type of <code class="highlighter-rouge">int</code>, the auto mapping might (and will by default) decide that this is an auto-incrementing primary key.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-introduction">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-10">
+                10 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/the-vb-oss-debarkle">The VB OSS debarkle</a></h2>
         </header>
         <section class="post-excerpt">
@@ -136,30 +164,6 @@
             
             <time class="post-date" datetime="2008-11-12">
                 12 Nov 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/yayaml-yet-another-yaml-parser">YaYAML: Yet another YAML parser</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I don’t want to make much ceremony around this, but I thought I’d mention it incase anybody else is interested.</p>
-
-<p>As a part of a project I’m working on I needed a simple file to store some data in, and I didn’t want it to be XML (for no reason other than the verbosity). I could have used my own format, but instead I’ve gone for <a href="http://yaml.net">YAML</a>. If you’ve worked with Ruby on Rails at all, then you’ll be familiar with YAML. It’s a human readable (and writable) text format.</p>
-
-<p>Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my <a href="/writings/getting-started-with-ometa/">recent adventure with OMeta#</a>, I thought I’d hack on this too.</p>
-
- <a class="read-more" href="/writings/yayaml-yet-another-yaml-parser">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-28">
-                28 Oct 2008
             </time>
         </footer>
     </article>
