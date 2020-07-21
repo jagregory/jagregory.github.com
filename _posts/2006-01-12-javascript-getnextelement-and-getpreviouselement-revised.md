@@ -7,9 +7,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  _edit_last: '2'
-  dsq_thread_id: '644650759'
 ---
 > This is a very old post. Please, stop reading and just <a href="http://jquery.com/">download jQuery</a>.
 

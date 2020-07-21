@@ -10,7 +10,7 @@ meta: {}
 ---
 The weekend just past was my first that I've had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.
 
-The reason we had to work the weekend was down to us launching (re-launching actually) a product for the Swift Group's extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.
+The reason we had to work the weekend was down to us launching (re-launching actually) a product for a customer's extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.
 
 <!-- more -->
 

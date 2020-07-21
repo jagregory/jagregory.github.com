@@ -7,11 +7,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  _wp_old_slug: prototype-periodicalexecuterstop-javascript-function
-  _edit_last: '2'
-  aktt_tweeted: '1'
-  dsq_thread_id: '644650371'
 ---
 I've been playing with the [prototype framework](http://prototype.conio.net/) for a while now and am very impressed, the file size is a bit of a down point but that aside it's excellent.
 
@@ -50,4 +45,3 @@ Here's an example implementation where I fire the PeriodicalExecuter when a key 
 </script>
 ```
 
-I'm sure this method of extension is probably frowned upon from within the community and changes are expected to be submitted for the actual library, but I needed a fix asap and I'm sure a few other people might too.

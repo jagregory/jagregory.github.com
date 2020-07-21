@@ -7,9 +7,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  _edit_last: '2'
-  aktt_tweeted: '1'
 ---
 Ever get the feeling that you've missed out on something big? I never got to see Star Wars at the cinema. I missed out on the start of computers, the ASM, the BASIC hacking and what-not. I discovered most of my musical taste way after the bands were gone or going, so I never got to see them in show.
 

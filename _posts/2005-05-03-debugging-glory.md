@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Debugging Glory
+title: Debugging Internet Explorer and Stored Procedures
 tags:
 - .Net
 - SQL
@@ -9,6 +9,19 @@ type: post
 published: true
 meta: {}
 ---
+
+> Note from future James: There's nothing practically useful here for you now, this has been long-since
+> made irrelevant; however, it is an interesting insight into what things used to be like! Kids these
+> days etc...
+>
+> Having a debugger for JavaScript wasn't part of the browser itself yet, Firebug was the first good
+> example of this and but only came out the year of this post, and Chrome wasn't a thing for another
+> 4 years. Instead you had to connect Visual Studio to Internet Explorer, and debug JavaScript that way.
+>
+> Similarly, Visual Studio could debug Stored Procedures. I remember this being particularly painful
+> and involving copy-and-pasting DLLs into various directories in your system. I'm glad we don't
+> work with Stored Procedures much anymore.
+
 Debugging is a great thing... Often though I've dreamt of some greater, more useful debugger. It would have helped if I'd actually gone out and looked for such a thing.
 
 Anyway, I haven't found a better debugger. I've found how to use the current one better! I've enabled client-side script debugging, which is fantastic. No more using IE or Firefoxes vague error messages, I can now step through code just as you would VB/C#.Net. The big one for me though has to be the ability to debug Stored Procedures, yes SQL Server Stored Procedures. Breakpoints, step-through, the lot.

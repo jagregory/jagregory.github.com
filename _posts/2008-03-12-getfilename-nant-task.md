@@ -74,9 +74,4 @@ Foreseeable usage situations revolve around anything where you'd need to get the
 
 ## Downloads
 
-The DeleGrid is open-source under the [new BSD License](http://en.wikipedia.org/wiki/BSD_license); read the license for what you’re allowed to do.
-
-You can download the source here: [Download Source](http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0-source.zip).
-You can download the latest binary here: [Download Binary](http://jagregory.googlecode.com/files/JAGregory.NAntTasks-1.0.zip).
-
-The source is also accessible from Subversion at: [http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/](http://jagregory.googlecode.com/svn/trunk/JAGregory.NAntTasks/) (using user jagregory-read-only)
+> Note from Future James: This is long gone.

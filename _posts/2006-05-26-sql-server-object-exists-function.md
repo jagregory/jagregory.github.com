@@ -7,8 +7,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  dsq_thread_id: '644650633'
 ---
 > **Update:** Added separate versions for SQL Server 2000 and SQL Server 2005, due to the differences in the system objects tables.It may just be me, but when writing migration/create scripts for use with SQL Server I get quite agitated at having to write an ugly, long-winded, drop statement at the start of every object definition.
 

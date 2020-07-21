@@ -8,10 +8,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  _wp_old_slug: aspnet-clientids-ids-and-their-javascript-companion
-  _edit_last: '2'
-  dsq_thread_id: '644650614'
 ---
 ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent's ID.
 
@@ -110,8 +106,4 @@ To use this class, simply create an instance in the PreRender event for your pag
 
 ## Download
 
-That's all there is to it, use the link below to get the latest version of ServerControlIDs.
-
-Please note that this code isn't pretty and it could probably do with some revising, but it works and that's what's important to me. I'm open to suggestions and feature requests.
-
-[Current Version (1.1)](http://www.jagregory.com/downloads/ServerControlIDs-1.1.zip)
+> Future James: This is all gone folks. Left here for curiosity.

@@ -6,10 +6,6 @@ tags:
 status: publish
 type: post
 published: true
-meta:
-  _edit_last: '2'
-  aktt_tweeted: '1'
-  dsq_thread_id: '644650742'
 ---
 This was a task and a half! As I mentioned earlier I somehow managed to get my [Trust Wireless Scroll Tablet](http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661) working on a dual monitor system, mapped to only the primary monitor; so here's my little guide on how I managed it.
 

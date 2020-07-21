@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Accessibility, standards and my say
+title: Accessibility and browser standards
 tags:
 - Accessibility
 - Web Design
