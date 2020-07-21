@@ -6,12 +6,12 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 21 Jul 2020 11:52:37 +1000</pubDate>
-    <lastBuildDate>Tue, 21 Jul 2020 11:52:37 +1000</lastBuildDate>
+    <pubDate>Tue, 21 Jul 2020 11:54:39 +1000</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2020 11:54:39 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
-        <title>Bulk rename Kinesis Firehose files in S3</title>
+        <title>The anatomy of a quick bash script (bulk rename Kinesis Firehose files in S3)</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;Also known as&lt;/strong&gt;: how to move hundreds of files in S3 that you accidentally put in the wrong place because you misconfigured a Kinesis Firehose.&lt;/p&gt;
 &lt;/blockquote&gt;
