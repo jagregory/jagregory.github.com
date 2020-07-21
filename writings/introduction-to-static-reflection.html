@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Introduction to static reflection</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-01-26">26 Jan 2009</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <blockquote>
+  <p>This post could’ve also been called “Fluent NHibernate secrets exposed!” but it sounded a bit sensationalist.</p>
+</blockquote>
+
+<p>You may have heard people mention static reflection recently, quite possibly because it’s used extensively in <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, <a href="http://ayende.com/projects/rhino-mocks.aspx">Rhino Mocks</a>, and I believe <a href="http://www.lostechies.com/blogs/jimmy_bogard/">Jimmy Bogard’s</a> new <a href="http://www.codeplex.com/AutoMapper">AutoMapper</a> also uses it; pretty much any of the new “fluent” interfaces use some kind of static reflection.</p>
+
+<p><strong>So what actually is static reflection?</strong> Well, it’s a statically compiled way of utilising the Reflection API.</p>
+
+<!-- more -->
+
+<p>Traditionally, if you wanted to use the Reflection API to interrogate your classes, you’d need to utilise strings to refer to properties and methods; this can make your design quite brittle, because you have to make sure these strings are kept up-to-date whenever you rename anything. What’s worse is that because reflection is late-bound, you aren’t aware of the problems until the code is actually executed, so this renaming could introduce hidden bugs that don’t appear until runtime. With the growing popularity of refactoring techniques, it’s becoming more important that we can use reflection without having to worry about this problem.</p>
+
+<blockquote>
+  <p>It’s very true that tools like Resharper can certainly help with refactoring reflection-based code, but none of them are perfect and they only help the people that use them.</p>
+</blockquote>
+
+<p>In C# 3 we were introduced to lambda expressions and Linq, and with them came the <code class="language-plaintext highlighter-rouge">Func&lt;&gt;</code> and <code class="language-plaintext highlighter-rouge">Expression&lt;&gt;</code> classes; these are the key to static reflection. The <code class="language-plaintext highlighter-rouge">Func&lt;&gt;</code> set of classes allow you to use lambda expressions that return a value, while an <code class="language-plaintext highlighter-rouge">Expression&lt;&gt;</code> can be used to programatically access the contents of a delegate.</p>
+
+<p>Combining <code class="language-plaintext highlighter-rouge">Func&lt;&gt;</code> and <code class="language-plaintext highlighter-rouge">Expression&lt;&gt;</code> can give us a very powerful way to statically retrieve <code class="language-plaintext highlighter-rouge">PropertyInfo</code> (and similar) instances from a lambda expression. For example <code class="language-plaintext highlighter-rouge">Expression&lt;Func&lt;Customer, object&gt;&gt;</code> represents an expression that contains a delegate that returns a value (of type object), with a <code class="language-plaintext highlighter-rouge">Customer</code> parameter; I’ll illustrate:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// method to receive an expression</span>
+<span class="k">public</span> <span class="n">PropertyInfo</span> <span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">&gt;(</span><span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">expression</span><span class="p">)</span>
+
+<span class="c1">// usage</span>
+<span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;(</span><span class="n">customer</span> <span class="p">=&gt;</span> <span class="n">customer</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>What this is actually doing is creating a lambda that returns a value, the value of <code class="language-plaintext highlighter-rouge">customer.Name</code> in this case. Here’s the trick, we don’t actually care about the value that’s returned! In-fact, we don’t even evaluate this expression at all.</p>
+
+<blockquote>
+  <p>The reason we use <code class="language-plaintext highlighter-rouge">object</code> in the <code class="language-plaintext highlighter-rouge">Func</code> signature, rather than a more specific type, is because we want to allow <em>any</em> property to be used; however, if you were only interested in <code class="language-plaintext highlighter-rouge">string</code> properties, then you could restrict it by replacing this parameter.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">Expression</code> API itself is very in-depth, so I won’t go into the intricacies of it but here’s a very simple implementation of static reflection.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">PropertyInfo</span> <span class="n">GetProperty</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">&gt;(</span><span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">TEntity</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">expression</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">var</span> <span class="n">memberExpression</span> <span class="p">=</span> <span class="n">expression</span><span class="p">.</span><span class="n">Body</span> <span class="k">as</span> <span class="n">MemberExpression</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">memberExpression</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">"Not a member access."</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">memberExpression</span><span class="p">.</span><span class="n">Member</span> <span class="k">as</span> <span class="n">PropertyInfo</span><span class="p">;</span> <span class="c1">// Should account for FieldInfo too</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Stepping through this code, we start by getting the body of the expression which we cast to a <code class="language-plaintext highlighter-rouge">MemberExpression</code>; this is us grabbing the <code class="language-plaintext highlighter-rouge">customer.Name</code> part of our expression. Now we can get the member itself and cast it to a <code class="language-plaintext highlighter-rouge">PropertyInfo</code>, this is the <code class="language-plaintext highlighter-rouge">Name</code> part of the expression body. That’s it! We’ve not evaluated the expression, but we’ve inspected it and retrieved the property.</p>
+
+<blockquote>
+  <p>This example is for illustrative purposes, there are many different types of expressions which would be excluded by this. If you are to implement your own static reflection parser, you should cater for these other types of expressions.</p>
+</blockquote>
+
+<p>As this example shows, we’re able to use reflection without having to resort to strings. The great thing about this is that if you change the name of a member inside a lambda, you’ll get a compile error if you haven’t updated all the references! No more hidden bugs.</p>
+
+<p>So that’s how the magic behind Fluent NHibernate (and others) works, simple when you know how!</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

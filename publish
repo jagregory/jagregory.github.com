@@ -2,7 +2,7 @@
 
 set -e
 
-jekyll build
+bundle exec jekyll build
 git checkout master
 git rm -qr .
 git checkout master -- .gitignore

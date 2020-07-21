@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>James Gregory</title>
-    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+    <meta name="description" content="I like turtles.
 " />
 
     <meta name="HandheldFriendly" content="True" />
@@ -25,7 +25,7 @@
         <div class="main-header-content inner">
             <h1 class="page-title"><a href="/">James Gregory</a></h1>
             <h2 class="page-description">
-                 Code monkey. ThoughtWorks. Chief Agitator.
+                 I like turtles.
  
             </h2>
         </div>
@@ -41,7 +41,7 @@
             <a class="newer-posts" href="/page16/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 17 of 23 </span>
+    <span class="page-number"> Page 17 of 20 </span>
      
         <a class="older-posts" href="/page18/" title="Next Page">Older Posts &raquo;</a>
      
@@ -52,20 +52,24 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/bloated-forms">Bloated forms</a></h2>
+            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I don’t know what it is, but there seems to be an inherent urge of web developers (or designers, managers or whomever) to create forms that are hugely bloated and pointless, even for simple things such as sending a contact e-mail.</p>
+            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="language-plaintext highlighter-rouge">onclick="do_something()"</code>.</p>
 
-<p>This fascination with bloated forms is incomprehensible to me, I just can’t understand why anybody would want to know the gender or official title of somebody who’s simply trying to say “Hello”; it’s irrelevant, all I personally care about is what they’ve got to say. Is it supposed to portray the company in an intelligent, professional manner? (<em>These people want my title, they obviously mean business!</em>) I don’t know, but it needs to stop.</p>
+<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
 
- <a class="read-more" href="/writings/bloated-forms">Read more &raquo;</a>
+<p>Perfect - clean semantic markup and real event handling.</p>
+
+<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
+
+ <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-06-15">
-                15 Jun 2006
+            <time class="post-date" datetime="2006-04-12">
+                12 Apr 2006
             </time>
         </footer>
     </article>
@@ -74,35 +78,27 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/amusing-quotrecommend-a-friendquot-usage">Amusing "Recommend a Friend" usage</a></h2>
+            <h2 class="post-title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">How-to use ClientIDs in JavaScript without the ugliness</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>We’ve been sending out a (rather successful) e-mail campaign for <a href="http://www.swiftleisure.co.uk">Swift</a> over the past few days, a good experience and definitely an eye opener. Something that amused me over the course of the project was the way people were using the “Recommend a Friend” feature of the e-mail.</p>
+            <p>ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent’s ID.</p>
 
-<p>If you’re presented by a form, which asks for your friends name, e-mail address and some form of comment from yourself, what would you put in the name field? Common sense says that you should put their full name in, as generally that’s what people want; not these people though! Over 50% of the recommendations were supplied with first names only or nicknames - the most wonderful being “MUM”; yes, block capitals too.</p>
+<p><code class="language-plaintext highlighter-rouge">&lt;asp:TextBox ID="txtUsername" Runat="server" /&gt;</code> within a standard page simply has an ID of <code class="language-plaintext highlighter-rouge">txtUsername</code> within the HTML output. On the other hand, the following example would result in something along the lines of <code class="language-plaintext highlighter-rouge">_parent_txtUsername</code> as the ID:</p>
 
-<p>So we have a nice collection of recommendations along the lines of:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"parent"</span> <span class="na">runat=</span><span class="s">"server"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;asp:TextBox</span> <span class="na">ID=</span><span class="s">"txtUsername"</span> <span class="na">Runat=</span><span class="s">"server"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
 
-<ul>
-  <li>George</li>
-  <li>Sally</li>
-  <li>Geoff</li>
-  <li>
-    <p>liz</p>
-  </li>
-  <li>MUM<br />
-How very helpful.</li>
-</ul>
+<p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
 
-<p>They’ll love the targeted e-mails they’re bound to receive too; “Dear MUM, we think…”.</p>
-
- <a class="read-more" href="/writings/amusing-quotrecommend-a-friendquot-usage">Read more &raquo;</a>
+ <a class="read-more" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-06-15">
-                15 Jun 2006
+            <time class="post-date" datetime="2006-04-12">
+                12 Apr 2006
             </time>
         </footer>
     </article>
@@ -111,32 +107,25 @@ How very helpful.</li>
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/sql-server-object-exists-function">SQL Server Object Exists Function</a></h2>
+            <h2 class="post-title"><a href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">JavaScript Behaviour & getElementsBySelector() mini-fix</a></h2>
         </header>
         <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Update:</strong> Added separate versions for SQL Server 2000 and SQL Server 2005, due to the differences in the system objects tables.It may just be me, but when writing migration/create scripts for use with SQL Server I get quite agitated at having to write an ugly, long-winded, drop statement at the start of every object definition.</p>
-</blockquote>
+            <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
 
-<p>The support for dropping objects is one of the few things I would say MySQL has SQL Server over the barrel for.Baring in mind that if you try to drop an object that doesn’t exist, you’ll get an execution error; here’s how to drop a table in MySQL:</p>
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="language-plaintext highlighter-rouge">body#profile</code>, when <code class="language-plaintext highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="language-plaintext highlighter-rouge">#profile</code> alone works fine.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">customers</span>
-</code></pre>
-</div>
+<p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
 
-<p>Here’s how to drop the same table, if you’re using SQL Server:</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+</code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">IF</span> <span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span> <span class="mi">1</span> <span class="k">FROM</span> <span class="n">sys</span><span class="p">.</span><span class="n">objects</span> <span class="k">WHERE</span> <span class="n">OBJECT_ID</span> <span class="o">=</span> <span class="n">OBJECT_ID</span><span class="p">(</span><span class="n">N</span><span class="s1">'customers'</span><span class="p">)</span> <span class="k">AND</span> <span class="k">type</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="s1">'U'</span><span class="p">))</span>    <span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">customers</span>
-</code></pre>
-</div>
-
- <a class="read-more" href="/writings/sql-server-object-exists-function">Read more &raquo;</a>
+ <a class="read-more" href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-05-26">
-                26 May 2006
+            <time class="post-date" datetime="2006-03-24">
+                24 Mar 2006
             </time>
         </footer>
     </article>
@@ -145,29 +134,19 @@ How very helpful.</li>
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/javascript-console-in-safari">JavaScript Console in Safari</a></h2>
+            <h2 class="post-title"><a href="/writings/accessibility-for-uk-based-websites">Accessibility for UK based websites</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>Just a quick tip to enable the Debug menu in Safari, the main reason being to get the JavaScript Console (ala Firefox).</p>
+            <p>As reported by <a href="http://news.bbc.co.uk/">BBC News</a>, a new set of <a href="http://news.bbc.co.uk/1/hi/technology/4783686.stm">accessibility guidelines</a> have been developed for UK websites.</p>
 
-<p>Simply close down your open instances of Safari and enter this into the Terminal:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>defaults write com.apple.Safari IncludeDebugMenu 1
-</code></pre>
-</div>
-
-<p>That’ll enable a new Debug menu next time you start Safari, simple as that. I was on the verge of loading up Firefox on the Mac<br />
-before I came across this, bad James!</p>
-
-<p>Also, just in-case, running the above again with 0 will turn off the menu.</p>
-
- <a class="read-more" href="/writings/javascript-console-in-safari">Read more &raquo;</a>
+<p>Although this certainly isn’t anything new — being as a law was passed in 1999 for compliance — and it isn’t even legally binding, it may be used in court if a case arises. This is just one more little pebble added to the mounting landslide that will occur when a disabled user finally does the american thing and sues a company for not providing sufficient means to access their website.</p>
+ <a class="read-more" href="/writings/accessibility-for-uk-based-websites">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-05-15">
-                15 May 2006
+            <time class="post-date" datetime="2006-03-08">
+                08 Mar 2006
             </time>
         </footer>
     </article>
@@ -176,20 +155,18 @@ before I came across this, bad James!</p>
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/ruby-on-rails-recognition-failed-in-production-mode">Ruby on Rails Recognition Failed in Production mode</a></h2>
+            <h2 class="post-title"><a href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Trust Wireless Scroll Tablet with Dual Monitors</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>The title pretty much covers it, but i’ll elaborate.</p>
+            <p>This was a task and a half! As I mentioned earlier I somehow managed to get my <a href="http://www.amazon.co.uk/exec/obidos/ASIN/B0002DCL6G/202-4350795-3732661">Trust Wireless Scroll Tablet</a> working on a dual monitor system, mapped to only the primary monitor; so here’s my little guide on how I managed it.</p>
 
-<p>A few days ago I decided it was about time I had a tinker with <a href="http://www.google.com/webmasters/sitemaps">Google Sitemaps</a>, part of which involves uploading a temporary file so google can be sure the website you’re trying to claim is actually yours. Anyway, fun things aside, google gave me an error message (“We’ve detected that your 404 (file not found) error page returns a status of 200 (OK) in the header.”) when it tried to read the file.</p>
-
- <a class="read-more" href="/writings/ruby-on-rails-recognition-failed-in-production-mode">Read more &raquo;</a>
+ <a class="read-more" href="/writings/trust-wireless-scroll-tablet-ampamp-dual-monitors">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-04-29">
-                29 Apr 2006
+            <time class="post-date" datetime="2006-03-07">
+                07 Mar 2006
             </time>
         </footer>
     </article>
@@ -202,7 +179,7 @@ before I came across this, bad James!</p>
             <a class="newer-posts" href="/page16/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 17 of 23 </span>
+    <span class="page-number"> Page 17 of 20 </span>
      
         <a class="older-posts" href="/page18/" title="Next Page">Older Posts &raquo;</a>
      
@@ -213,7 +190,7 @@ before I came across this, bad James!</p>
     <footer class="site-footer clearfix">
       <section class="copyright">
         <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
-               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
       </section>
     </footer>
 

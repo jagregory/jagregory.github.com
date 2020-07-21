@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>James Gregory</title>
-    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+    <meta name="description" content="I like turtles.
 " />
 
     <meta name="HandheldFriendly" content="True" />
@@ -25,7 +25,7 @@
         <div class="main-header-content inner">
             <h1 class="page-title"><a href="/">James Gregory</a></h1>
             <h2 class="page-description">
-                 Code monkey. ThoughtWorks. Chief Agitator.
+                 I like turtles.
  
             </h2>
         </div>
@@ -41,58 +41,12 @@
             <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 12 of 23 </span>
+    <span class="page-number"> Page 12 of 20 </span>
      
         <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/latest-on-boolangstudio">Latest on BooLangStudio</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>It’s been a long time since I’ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we’re steadily working towards our first release.</p>
-
-<p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
-
- <a class="read-more" href="/writings/latest-on-boolangstudio">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-08-07">
-                07 Aug 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/missed-out-on-something-big">Missed out on something big</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Ever get the feeling that you’ve missed out on something big? I never got to see Star Wars at the cinema. I missed out on the start of computers, the ASM, the BASIC hacking and what-not. I discovered most of my musical taste way after the bands were gone or going, so I never got to see them in show.</p>
-
-<p>None of those are my fault, of course, because they were all before my time; in fact, most were at least a decade before me. That still doesn’t stop me from ocasionally getting the feeling that I missed out on something big.</p>
-
-<p>One more. One that’s pertinent to our industry: Smalltalk.</p>
-
- <a class="read-more" href="/writings/missed-out-on-something-big">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-07-01">
-                01 Jul 2008
-            </time>
-        </footer>
-    </article>
 
     
 
@@ -106,7 +60,6 @@
 <p>Our combined code-bases have now got syntax highlighting, intellisense, single file and project support. Not bad going.</p>
 
 <p>We’ve now got a nice little team going as well, which is a big improvement from what was the one man band of my self. One of the contributors, <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">Torkel Ödegaard</a>, has written a <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">nice overview</a> of our progress and processes as-well.</p>
-
  <a class="read-more" href="/writings/boo-visual-studio-plugin-progress">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
@@ -164,13 +117,68 @@
 
     
 
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/plugin-baby-steps">Plugin baby steps</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Making a Visual Studio 2008 plugin isn’t as hard as it sounds.</p>
+
+<p>Making one that works is a bit more difficult.</p>
+
+<p>Syntax highlighting is fairly straight forward, just run a tokenizer over the text and colour code each token appropriately. It’s the code sense that is causing me to go slightly mad. To determine what methods need to be listed when the intellisense pops up, you need to parse the code that’s in the document, then resolve any classes and references in there to build up a collection of methods to display. It gets more tricky when the document isn’t valid, because you can’t compile it. That’s where I am now, I need to figure out some way of partially compiling the document, or maybe using an AST walker.</p>
+ <a class="read-more" href="/writings/plugin-baby-steps">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-12">
+                12 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/futility-transforming-entities-into-dtos">Futility: Transforming entities into DTOs</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>Future James: This is pretty much describing <a href="http://automapper.codeplex.com/">AutoMapper</a>, just take a look at that instead.</p>
+</blockquote>
+
+<p>I quite dislike mapping DTOs to entities, it’s a pain, but mostly tedious and tiresome rather than difficult. I decided to try to ease things by creating a library that would resolve entity instances to their DTO counterparts.</p>
+
+<p>My requirements were few but I was determined not to violate any of them.</p>
+
+<ol>
+  <li>Refactoring friendly. No strings for property names, changing names should give compiler errors.</li>
+  <li>Must simplify code.</li>
+  <li>Must improve maintainability.</li>
+</ol>
+
+ <a class="read-more" href="/writings/futility-transforming-entities-into-dtos">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-06">
+                06 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 12 of 23 </span>
+    <span class="page-number"> Page 12 of 20 </span>
      
         <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
      
@@ -181,7 +189,7 @@
     <footer class="site-footer clearfix">
       <section class="copyright">
         <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
-               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
       </section>
     </footer>
 

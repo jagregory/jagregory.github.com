@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Preventing debugger property evaluation for side-effect laden properties</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-08-18">18 Aug 2009</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Property getters with side-effects, now there’s a controversial subject if ever I saw one. Don’t do it is the rule; as with any rule though, there’s generally an exception that proves it. If you’re in this situation and you genuinely do have a scenario that requires a property getter to have side-effects, then there’s a side-effect (ha!) that you should be aware of.</p>
+
+<!-- more -->
+
+<p><strong>The debugger evaluates property getters when showing it’s locals and autos windows.</strong> While this feature is indispensable in most cases, it plays havoc with our property-with-side-effects. What the debugger does is call the getter to present it’s value in the autos window, at the same time firing our code that has a side-effect. From there you have pretty confusing behavior with code seemingly running itself.</p>
+
+<p>My exception to the rule is mutator properties in a fluent interface. You can often find properties in fluent interfaces that when touched alter the behavior of the next method called.</p>
+
+<p>For example:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">string</span> <span class="k">value</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+
+<span class="n">Is</span><span class="p">.</span><span class="nf">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>      <span class="c1">// returns true</span>
+<span class="n">Is</span><span class="p">.</span><span class="n">Not</span><span class="p">.</span><span class="nf">Null</span><span class="p">(</span><span class="k">value</span><span class="p">)</span>  <span class="c1">// returns false</span>
+</code></pre></div></div>
+
+<p>The Is class would contain a value tracking whether the next call would be inverted or not, and the Not property would flip that value when called.</p>
+
+<p>Now assume this, you’re using <code class="language-plaintext highlighter-rouge">Is.Null(value)</code> and you set a breakpoint on it. Your autos window has expanded Is and shows the Not property, what’s just happened? The debugger has now called Not and altered your state! Undesirable.</p>
+
+<p><a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debuggerbrowsableattribute.aspx">DebuggerBrowsable attribute</a> to the rescue; this attribute when used with the DebuggerBrowsableState.Never parameter instructs Visual Studio to never inspect the property you apply it to. Your property won’t appear in the autos or locals window, and if you expand the tree of an instance containing the property it will show up with a Browsing Disabled message; you can then force it to evaluate the property, but at least it doesn’t do it automatically.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="kt">bool</span> <span class="n">inverted</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+
+<span class="p">[</span><span class="nf">DebuggerBrowsable</span><span class="p">(</span><span class="n">DebuggerBrowsableState</span><span class="p">.</span><span class="n">Never</span><span class="p">)]</span>
+<span class="k">public</span> <span class="n">Is</span> <span class="n">Not</span>
+<span class="p">{</span>
+  <span class="k">get</span>
+  <span class="p">{</span>
+    <span class="n">inverted</span> <span class="p">=</span> <span class="p">!</span><span class="n">inverted</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Sticking the DebuggerBrowsable attribute on your Not property prevents the debugger from hitting it and inverting the switch.</p>
+
+<p>So there you go, if your property-with-side-effects is being invoked by the debugger, you can use the DebuggerBrowsableAttribute to prevent it.</p>
+
+<blockquote>
+  <p>By the way, I’m not advocating properties with side-effects…</p>
+</blockquote>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

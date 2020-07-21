@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Alternative to abusing using</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-10-07">07 Oct 2008</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>There’s been a bit of discussion of late about using statements, and how they’re more often being used for purposes other than just releasing resources. As always, there are those people who think it’s a flagrant abuse of a feature and shouldn’t be done, then there are those that like it. I’m in between. I do like what the using statement gives us, but I also think it is a bit of an abuse.</p>
+
+<p>The “traditional” usage of the using statement can be found quite often in the land of files and streams. Take the following example, which opens a file and then closes it when it drops out of the using scope.</p>
+
+<!-- more -->
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="nf">OpenRead</span><span class="p">(</span><span class="s">"myFile.txt"</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="c1">// do something with the file</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Examples of the alternative usage can be found all over the place, but Rhino Mocks is one that’s close to my heart. Here’s from the record/replay syntax, anything in the scope of the using is recorded, and once it drops out of scope it’s no longer in record mode.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="p">(</span><span class="n">mocks</span><span class="p">.</span><span class="nf">Record</span><span class="p">())</span>
+<span class="p">{</span>
+  <span class="n">Expect</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">Return</span><span class="p">(</span><span class="s">"123 Rester St"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Again, I do like what the using statement gives us outside of releasing resources (I’m not disputing it’s usefulness there). However, I think the using keyword itself adds noise and clouds intention.</p>
+
+<p>With the adoption of 3.5, I’ve started using an alternative syntax instead of usings. Actions and anonymous methods to the rescue.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">Scope</span><span class="p">(()</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="c1">// do something within this scope</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>It’s a little bit more noisy in the compiler satisfying department, but because you have full control over naming, you can reveal intention more. No more unclear “using”.</p>
+
+<p>So how does it work? Simple really, the method takes an Action delegate, which it the executes almost immediately. I say almost, because you can execute code before and after the execution. That gives you the benefits of the using statements wrapping ability.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">Scope</span><span class="p">(</span><span class="n">Action</span> <span class="n">action</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// do something before</span>
+  <span class="nf">action</span><span class="p">();</span>
+  <span class="c1">// do something after</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Some more examples:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">File</span><span class="p">.</span><span class="nf">OpenRead</span><span class="p">(</span><span class="s">"myFile.txt"</span><span class="p">,</span> <span class="n">file</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="c1">// do something with the file</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mocks</span><span class="p">.</span><span class="nf">Record</span><span class="p">(()</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">Expect</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">Address</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">Return</span><span class="p">(</span><span class="s">"123 Rester St"</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>I prefer this syntax over the using statement. Of course, it’s only valid for 3.5 projects.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

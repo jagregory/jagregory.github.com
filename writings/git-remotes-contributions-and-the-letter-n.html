@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Git: Remotes, contributions, and the letter N</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2010-02-07">07 Feb 2010</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Here’s a few ways to think about Git and it’s distributed nature.</p>
+
+<ul>
+  <li>You deal with multiples of repositories, not a single central repository</li>
+  <li>Updates come from a remote repository, and changes are pushed to a remote; none of these repositories have to be the same</li>
+  <li><em>Origin</em> is the canonical name for the repository you cloned from</li>
+  <li><em>Upstream</em> is the canonical name for the original project repository you forked from</li>
+</ul>
+
+<!-- more -->
+
+<h2 id="general-pushing-and-pulling">General pushing and pulling</h2>
+
+<p><img src="/images/remote-1.png" alt="Figure 1" /></p>
+
+<p>Pushing your changes to a remote: <code class="language-plaintext highlighter-rouge">git push remote_name</code></p>
+
+<p><img src="/images/remote-2.png" alt="Figure 2" /></p>
+
+<p>Pulling changes from a remote: <code class="language-plaintext highlighter-rouge">git pull remote_name</code></p>
+
+<p>Or if you want to rebase:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch remote_name
+git rebase remote_name/branch
+</code></pre></div></div>
+
+<blockquote>
+  <p>You can change your <code class="language-plaintext highlighter-rouge">branch.autosetuprebase</code> to <code class="language-plaintext highlighter-rouge">always</code>, to make this the default <code class="language-plaintext highlighter-rouge">git pull</code> behaviour.</p>
+</blockquote>
+
+<p>That’s all there is to moving commits around in Git repositories. Any other operations you perform are all combinations of the above.</p>
+
+<h2 id="github--personal-repositories">Github – personal repositories</h2>
+
+<p>When you’re dealing directly with Github, on a personal project or as the project owner, your repositories will look like this:</p>
+
+<p><img src="/images/remote-3.png" alt="Figure 3" /></p>
+
+<p>To push and pull changes between your local and your github repositories, just issue the push and pull commands with the origin remote:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin
+git pull origin
+</code></pre></div></div>
+
+<p>You can set the defaults for these commands too, so the origin isn’t even necessary in a lot of cases.</p>
+
+<h2 id="github--receiving-contributions">Github – receiving contributions</h2>
+
+<p>As a project owner, you’ll sometimes have to deal with contributions from other people. Each contributor will have their own github repository, and they’ll issue you with a pull request.</p>
+
+<p><img src="/images/remote-4.png" alt="Figure 4" /></p>
+
+<p>There’s no direct link to push between these two repositories; they’re unmanned. To manage changes from contributors, you need to involve your local repository.</p>
+
+<p>You can think of this as taking the shape of a V.</p>
+
+<p><img src="/images/remote-5.png" alt="Figure 5" /></p>
+
+<p>You need to register their github repository as a remote on your local, pull in their changes, merge them, and push them up to your github. This can be done as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add contributor contributor_repository.git
+git pull contributor branch
+git push
+</code></pre></div></div>
+
+<h2 id="github--providing-contributions">Github – providing contributions</h2>
+
+<p>Do exactly as you would your own personal project. Local changes, pushed up to your github fork; then issue a pull request. That’s all there is to it.</p>
+
+<h2 id="github--the-big-picture">Github – the big picture</h2>
+
+<p>Here’s how to imagine the whole process, think of it as an N shape.</p>
+
+<p><img src="/images/remote-6.png" alt="Figure 6" /></p>
+
+<p>On the left is the contributor, and the right is the project. Flow goes from bottom left, along the lines to the top right.</p>
+
+<ol>
+  <li>Contributor makes a commit in their local repository</li>
+  <li>Contributor pushes that commit to their github</li>
+  <li>Contributor issues a pull request to the project</li>
+  <li>Project lead pulls the contributor’s change into their local repository</li>
+  <li>Project lead pushes the change up to the project github</li>
+</ol>
+
+<p>That’s as complicated as it gets.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

@@ -2,58 +2,55 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>James Gregory</title>
-    <description>Code monkey. ThoughtWorks. Chief Agitator.
+    <description>I like turtles.
 </description>
-    <link>http://www.jagregory.com//</link>
-    <atom:link href="http://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 29 Mar 2017 10:41:31 +1100</pubDate>
-    <lastBuildDate>Wed, 29 Mar 2017 10:41:31 +1100</lastBuildDate>
-    <generator>Jekyll v2.5.3</generator>
+    <link>https://www.jagregory.com//</link>
+    <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 21 Jul 2020 11:18:57 +1000</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2020 11:18:57 +1000</lastBuildDate>
+    <generator>Jekyll v4.1.1</generator>
     
       <item>
         <title>InfluxDB Kapacitor subscription errors</title>
-        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Post http://kapacitor.default:9092/write?consistency=&amp;amp;db=telegraf&amp;amp;precision=ns&amp;amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+        <description>&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Post http://kapacitor.default:9092/write?consistency=&amp;amp;db=telegraf&amp;amp;precision=ns&amp;amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;If you’re seeing something like this error in your &lt;a href=&quot;https://github.com/influxdata/influxdb&quot;&gt;InfluxDB&lt;/a&gt; logs, and don’t know what it means: &lt;a href=&quot;https://github.com/influxdata/kapacitor&quot;&gt;Kapacitor&lt;/a&gt; has created one or more subscriptions in your InfluxDB database, and InfluxDB is trying to POST to the Kapacitor endpoint; however, Kapacitor is unreachable. Kapacitor might be unreachable because it’s down, or you have a network partition or other connectivity issue, or in my case you’ve actually just destroyed your Kapacitor instance.&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
-&lt;p&gt;To fix this error, you need to remove the subscriptions; you can remove subscriptions by issuing a few commands to InfluxDB via your favourite interface (for me, it’s &lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt; into a container and running the &lt;code class=&quot;highlighter-rouge&quot;&gt;influx&lt;/code&gt; cli tool, but you can also use the API).&lt;/p&gt;
+&lt;p&gt;To fix this error, you need to remove the subscriptions; you can remove subscriptions by issuing a few commands to InfluxDB via your favourite interface (for me, it’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; into a container and running the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;influx&lt;/code&gt; cli tool, but you can also use the API).&lt;/p&gt;
 
 &lt;p&gt;First, find the subscription(s) you need to remove.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SHOW SUBSCRIPTIONS
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SHOW SUBSCRIPTIONS
 
 name: telegraf
 retention_policy name          mode destinations
 ---------------- ----          ---- ------------
 autogen          kapacitor-abc ANY  [http://kapacitor.default:9092]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Then just drop the subscription (you might need to drop a few, if you have multiple databases).&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;DROP SUBSCRIPTION kapacitor-abc ON telegraf.autogen
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;DROP SUBSCRIPTION kapacitor-abc ON telegraf.autogen
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;The format of the command is: &lt;code class=&quot;highlighter-rouge&quot;&gt;DROP SUBSCRIPTION &amp;lt;subscription&amp;gt; ON &amp;lt;database&amp;gt;.&amp;lt;retention_policy&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The format of the command is: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DROP SUBSCRIPTION &amp;lt;subscription&amp;gt; ON &amp;lt;database&amp;gt;.&amp;lt;retention_policy&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;That’s it, the error should stop occurring now. If you destroy a Kapacitor instance, remember to remove it’s subscriptions until there’s resolution on &lt;a href=&quot;https://github.com/influxdata/kapacitor/issues/870&quot;&gt;subscription cleanups&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Wed, 29 Mar 2017 00:00:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</guid>
+        <link>https://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</guid>
         
         
       </item>
     
       <item>
         <title>Docker container out of disk space</title>
-        <description>&lt;p&gt;Are programs in your Docker container complaining of no free space?  &lt;br /&gt;
-Does your host have loads of space?  &lt;br /&gt;
+        <description>&lt;p&gt;Are programs in your Docker container complaining of no free space?&lt;br /&gt;
+Does your host have loads of space?&lt;br /&gt;
 And your container does too?&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;It could be inode exhaustion!&lt;/em&gt;&lt;/p&gt;
@@ -66,10 +63,9 @@ And your container does too?&lt;/p&gt;
 
 &lt;p&gt;A typical error looked something like this:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm ERR! ENOSPC, open /var/lib/go-agent/pipelines/{blah}/node_modules/node-sass/node_modules/...
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm ERR! ENOSPC, open /var/lib/go-agent/pipelines/{blah}/node_modules/node-sass/node_modules/...
 npm ERR! nospc This is most likely not a problem with npm itself and is related to insufficient space on your system.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;ENOSPC and “Insufficient space on your system” are dead giveaways that something is wrong! So npm thinks there isn’t any space on the disk.&lt;/p&gt;
 
@@ -79,23 +75,21 @@ npm ERR! nospc This is most likely not a problem with npm itself and is related 
 
 &lt;p&gt;I SSH onto the box and have a poke around.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ df -h
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ df -h
 
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/xvda1       99G  9.4G   85G  10% /
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; tells me there’s heaps of space available on the host. This is unsurprising because I’ve just resized the disk, but it’s worth checking.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df&lt;/code&gt; tells me there’s heaps of space available on the host. This is unsurprising because I’ve just resized the disk, but it’s worth checking.&lt;/p&gt;
 
 &lt;p&gt;Next I run the same command in the agent container.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -h
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -h
 
 Filesystem                   Size  Used Avail Use% Mounted on
 /dev/mapper/docker-202:1-... 9.8G  1.8G  7.5G  20% /
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Container says the same thing, of the &lt;a href=&quot;https://jpetazzo.github.io/2014/01/29/docker-device-mapper-resize/&quot;&gt;10gb Docker allocates a container by default&lt;/a&gt; there’s 7.5gb still available.&lt;/p&gt;
 
@@ -103,14 +97,13 @@ Filesystem                   Size  Used Avail Use% Mounted on
 
 &lt;p&gt;So what could prevent creating new files and masquerade as lack of free space? &lt;a href=&quot;https://en.wikipedia.org/wiki/Inode&quot;&gt;inodes&lt;/a&gt; can!&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -i
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker exec agent-1 df -i
 
 Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 /dev/mapper/docker-202:1-... 655360 655360       0  100% /
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Running &lt;code class=&quot;highlighter-rouge&quot;&gt;df&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-i&lt;/code&gt; flag reports on inode usage. Oh no, 100% of inodes within my container are in use. That’s not good. Not good at all. &lt;em&gt;Problem identified&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df&lt;/code&gt; with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-i&lt;/code&gt; flag reports on inode usage. Oh no, 100% of inodes within my container are in use. That’s not good. Not good at all. &lt;em&gt;Problem identified&lt;/em&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;finding-where-all-our-inodes-are&quot;&gt;Finding where all our inodes are&lt;/h2&gt;
 
@@ -120,13 +113,12 @@ Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 
 &lt;p&gt;I ran this command:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo find . -xdev -type f | cut -d &quot;/&quot; -f 2 | sort | uniq -c | sort -n
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo find . -xdev -type f | cut -d &quot;/&quot; -f 2 | sort | uniq -c | sort -n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Which prints out the inode count for all subdirectories of the current directory. It will take a little while, then print out something like this&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   89 opt
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   89 opt
   101 sbin
   109 bin
   258 lib
@@ -135,22 +127,21 @@ Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 23466 usr
 83629 var
 51341 tmp
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;OH HELLO &lt;code class=&quot;highlighter-rouge&quot;&gt;tmp&lt;/code&gt; WHY DO YOU HAVE SO MANY INODES?&lt;/p&gt;
+&lt;p&gt;OH HELLO &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tmp&lt;/code&gt; WHY DO YOU HAVE SO MANY INODES?&lt;/p&gt;
 
 &lt;h2 id=&quot;fixing-the-issue&quot;&gt;Fixing the issue&lt;/h2&gt;
 
-&lt;p&gt;One &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -r /tmp&lt;/code&gt; later and &lt;code class=&quot;highlighter-rouge&quot;&gt;df -i&lt;/code&gt; reports a much more healthy 20% inode usage. Easy when you know what the problem is.&lt;/p&gt;
+&lt;p&gt;One &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm -r /tmp&lt;/code&gt; later and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df -i&lt;/code&gt; reports a much more healthy 20% inode usage. Easy when you know what the problem is.&lt;/p&gt;
 
-&lt;p&gt;In my case it was a stupid lack of cleaning up some temp files from our builds. An &lt;code class=&quot;highlighter-rouge&quot;&gt;npm install&lt;/code&gt; which downloads the entire world into &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; on every build. We were averaging 10000 inodes per build. Ouch.&lt;/p&gt;
+&lt;p&gt;In my case it was a stupid lack of cleaning up some temp files from our builds. An &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm install&lt;/code&gt; which downloads the entire world into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; on every build. We were averaging 10000 inodes per build. Ouch.&lt;/p&gt;
 
 &lt;p&gt;Builds are now &lt;span style=&quot;color:green&quot;&gt;green&lt;/span&gt; again. Pretty anti-climactic; but it’s the journey not the destination which counts, right?&lt;/p&gt;
 </description>
         <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/docker-container-out-of-space</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/docker-container-out-of-space</guid>
+        <link>https://www.jagregory.com//writings/docker-container-out-of-space</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/docker-container-out-of-space</guid>
         
         
       </item>
@@ -179,18 +170,17 @@ Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 
 &lt;p&gt;If you just want to run Sinopia locally and aren’t interested in how it works, you can:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/jagregory/sinopia-ansible.git
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/jagregory/sinopia-ansible.git
 cd sinopia-ansible
 ansible-galaxy install -r requirements.txt
 vagrant up
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Once this completes Sinopia will be available on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Once this completes Sinopia will be available on port &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4873&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;vagrant-setup&quot;&gt;Vagrant setup&lt;/h2&gt;
 
-&lt;p&gt;Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant init&lt;/code&gt; to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.&lt;/p&gt;
+&lt;p&gt;Vagrant uses a Vagrantfile to define how your Virtual Machine (or machines) will be configured. You can run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vagrant init&lt;/code&gt; to create a Vagrantfile. Once you have that file, we’ll make some changes inside the config block.&lt;/p&gt;
 
 &lt;section class=&quot;side-by-side&quot;&gt;
   &lt;div&gt;
@@ -199,23 +189,21 @@ vagrant up
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu-14.04-amd64-vbox&quot;&lt;/span&gt;
+  &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu-14.04-amd64-vbox&quot;&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box_url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
 &lt;section class=&quot;side-by-side&quot;&gt;
   &lt;div&gt;
 
-    &lt;p&gt;When Sinopia starts it will listen on port &lt;code class=&quot;highlighter-rouge&quot;&gt;4873&lt;/code&gt; in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.&lt;/p&gt;
+    &lt;p&gt;When Sinopia starts it will listen on port &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4873&lt;/code&gt; in the guest machine, but we need to forward that port to a port on our host. For convinience, we’ll just use the same port on both.&lt;/p&gt;
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;network&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forwarded_port&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;guest: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+  &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;network&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forwarded_port&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;guest: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host: &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4873&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
@@ -226,11 +214,10 @@ vagrant up
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ansible&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ansible&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;ansible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;playbook&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;site.yml&quot;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
@@ -245,13 +232,12 @@ vagrant up
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.
+  &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.
 ├── Vagrantfile
 ├── hosts
 ├── requirements.txt
 └── site.yml
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
@@ -264,15 +250,14 @@ vagrant up
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+  &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
 - name: Install Sinopia
   hosts: all
   sudo: True
   roles:
     - nodesource.node
     - jagregory.sinopia
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
@@ -285,14 +270,13 @@ vagrant up
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nodesource.node
+  &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nodesource.node
 jagregory.sinopia
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
-&lt;p&gt;To install these dependencies you can run: &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-galaxy install -r requirements.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To install these dependencies you can run: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ansible-galaxy install -r requirements.txt&lt;/code&gt;&lt;/p&gt;
 
 &lt;section class=&quot;side-by-side&quot;&gt;
   &lt;div&gt;
@@ -301,9 +285,8 @@ jagregory.sinopia
 
   &lt;/div&gt;
 
-  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm.jagregory.com
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/div&gt;
+  &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;npm.jagregory.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
 
 &lt;/section&gt;
 
@@ -311,17 +294,16 @@ jagregory.sinopia
 
 &lt;p&gt;If you want to run a Sinopia instance in the cloud it’s as easy as launching an instance in EC2 (or your preferred provider), adding it’s public IP address to the inventory file and running Ansible.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook site.yml -i hosts
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook site.yml -i hosts
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;This will run Ansible against all the hosts in our inventory (hosts file) and execute the site.yml playbook.&lt;/p&gt;
 
 &lt;p&gt;You can read more about running Sinopia &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;on their website&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Tue, 05 May 2015 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/sinopia-private-npm-registry</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/sinopia-private-npm-registry</guid>
+        <link>https://www.jagregory.com//writings/sinopia-private-npm-registry</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/sinopia-private-npm-registry</guid>
         
         
       </item>
@@ -334,33 +316,30 @@ jagregory.sinopia
 
 &lt;p&gt;The first attempt used &lt;a href=&quot;http://www.vagrantup.com/&quot;&gt;Vagrant&lt;/a&gt; to create a simple Virtual Machine which acted as a surrogate development environment. All my current project’s development dependencies would be installed on the box, and I’d SSH into it to start servers or run tests etc…&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;2&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;CentOS-6.4-x86_64-v20130731&#39;&lt;/span&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'CentOS-6.4-x86_64-v20130731'&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[postgresql]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[rvm::system]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[java]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[nodejs::install_from_package]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[postgresql]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[rvm::system]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;It had its perks such as developing on an OS which would be used for the production servers and the obvious protecting my host machine from project specific software; nevertheless, doing everything on the VM itself quickly became painful. LiveReload? &lt;em&gt;No.&lt;/em&gt; Customised Sublime Text? &lt;em&gt;Nope.&lt;/em&gt; Photoshop? &lt;em&gt;No way.&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;Vagrant’s &lt;a href=&quot;http://docs.vagrantup.com/v2/synced-folders/basic_usage.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;synched_folder&lt;/code&gt;&lt;/a&gt; feature allows you to share a directory from your host and expose it in the VMs file system, acting much like a regular symlink. By adding this I had my source code on my host system and could use my native editors all while still executing the code within the VM. The best of both worlds.&lt;/p&gt;
+&lt;p&gt;Vagrant’s &lt;a href=&quot;http://docs.vagrantup.com/v2/synced-folders/basic_usage.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;synched_folder&lt;/code&gt;&lt;/a&gt; feature allows you to share a directory from your host and expose it in the VMs file system, acting much like a regular symlink. By adding this I had my source code on my host system and could use my native editors all while still executing the code within the VM. The best of both worlds.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Another optimisation was using &lt;a href=&quot;http://docs.vagrantup.com/v2/vagrantfile/ssh_settings.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;forward_agent&lt;/code&gt;&lt;/a&gt;, which forwards the VM’s SSH via your host ssh-agent. You can use your ssh keys from your host box within the VM without doing any &lt;code class=&quot;highlighter-rouge&quot;&gt;cp ~/.ssh&lt;/code&gt; nastiness. This means I can push and pull with git whether I’m inside or outside my VM. It doesn’t sound all that amazing until you’ve failed at running &lt;code class=&quot;highlighter-rouge&quot;&gt;git pull&lt;/code&gt; for the tenth time from within your VM.&lt;/p&gt;
+&lt;p&gt;Another optimisation was using &lt;a href=&quot;http://docs.vagrantup.com/v2/vagrantfile/ssh_settings.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;forward_agent&lt;/code&gt;&lt;/a&gt;, which forwards the VM’s SSH via your host ssh-agent. You can use your ssh keys from your host box within the VM without doing any &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cp ~/.ssh&lt;/code&gt; nastiness. This means I can push and pull with git whether I’m inside or outside my VM. It doesn’t sound all that amazing until you’ve failed at running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git pull&lt;/code&gt; for the tenth time from within your VM.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Other than that, all this is really doing is spinning up a VM and installing all the dependencies. The up side is those dependencies are no longer on my host, so I can just bin the VM when I leave a client.&lt;/p&gt;
 
@@ -372,71 +351,67 @@ jagregory.sinopia
 
 &lt;p&gt;And so my Vagrantfile grew.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;2&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;CentOS-6.4-x86_64-v20130731&#39;&lt;/span&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'CentOS-6.4-x86_64-v20130731'&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
 
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;app&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'app'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
       &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[rvm::system]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;'recipe[java]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;'recipe[nodejs::install_from_package]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;'recipe[rvm::system]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
       &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;db&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'db'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
       &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&#39;recipe[postgresql]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s1&quot;&gt;'recipe[postgresql]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
       &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;And then there were two. I had a VM for my app and a VM for the database. My development environment had acquired some of the qualities of “real” environments through the forced separation of app and database. This had the added benefit of pushing some considerations of service resolution and dealing with different environments into development space-and-time.&lt;/p&gt;
 
 &lt;p&gt;And then it grew again.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;smtp-stub&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'smtp-stub'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[java]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[java]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;And again.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;admin-app&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'admin-app'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nodejs::install_from_package]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[nodejs::install_from_package]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;And again.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;reverse-proxy&#39;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'reverse-proxy'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&#39;recipe[nginx]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'recipe[nginx]'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;My virtualised development environment was now complete. The Vagrantfile resembles a production-like environment–warts and all–whilst maintaining the ability to develop on it. Separate VMs for each application, configured only with the languages and tools needed for that particular application. Services were localised which had only existed as shared resources, and others split out when they’d been lumped in with the main application for convenience. Other hidden bits of infrastructure started making their way into VMs too, such as the mysterious &lt;code class=&quot;highlighter-rouge&quot;&gt;reverse-proxy&lt;/code&gt; box which had never made an appearance in development until now. The Chef cookbooks which were creating these development VMs were also now being used to provision our other “real” environments, and vice-versa.&lt;/p&gt;
+&lt;p&gt;My virtualised development environment was now complete. The Vagrantfile resembles a production-like environment–warts and all–whilst maintaining the ability to develop on it. Separate VMs for each application, configured only with the languages and tools needed for that particular application. Services were localised which had only existed as shared resources, and others split out when they’d been lumped in with the main application for convenience. Other hidden bits of infrastructure started making their way into VMs too, such as the mysterious &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reverse-proxy&lt;/code&gt; box which had never made an appearance in development until now. The Chef cookbooks which were creating these development VMs were also now being used to provision our other “real” environments, and vice-versa.&lt;/p&gt;
 
 &lt;p&gt;This is by no means a simple setup, it has a lot of moving parts, and its more complex to maintain; but guess what? That’s because the app has a lot of moving parts and is quite complex!&lt;/p&gt;
 
@@ -445,19 +420,19 @@ jagregory.sinopia
 &lt;p&gt;It’s also quite cathartic to delete a VM when I’m done with a project. Not seeing the Java Updater pop-up ever again isn’t too bad either.&lt;/p&gt;
 </description>
         <pubDate>Wed, 12 Feb 2014 23:15:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/virtualised-development-environments</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/virtualised-development-environments</guid>
+        <link>https://www.jagregory.com//writings/virtualised-development-environments</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/virtualised-development-environments</guid>
         
         
       </item>
     
       <item>
-        <title>Converting and preserving Michael Abrash&#39;s Graphics Programming Black Book</title>
+        <title>Converting and preserving Michael Abrash's Graphics Programming Black Book</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt; The Markdown source of Michael Abrash’s Graphics Programming Black Book is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;, there are Epub and Mobi versions on the &lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Github Releases list&lt;/a&gt;, and you can read an online copy of the book &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;It started out as an attempt to read &lt;a href=&quot;http://en.wikipedia.org/wiki/Michael_Abrash&quot;&gt;Michael Abrash’s&lt;/a&gt; Graphics Programming Black Book over the Christmas period. It turned into a epic mission of &lt;code class=&quot;highlighter-rouge&quot;&gt;grep&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sed&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;awk&lt;/code&gt;, and a few blisters.&lt;/p&gt;
+&lt;p&gt;It started out as an attempt to read &lt;a href=&quot;http://en.wikipedia.org/wiki/Michael_Abrash&quot;&gt;Michael Abrash’s&lt;/a&gt; Graphics Programming Black Book over the Christmas period. It turned into a epic mission of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt;, and a few blisters.&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
@@ -519,7 +494,7 @@ jagregory.sinopia
   &lt;li&gt;Markdown source is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;.&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Each Github release&lt;/a&gt; has a download in ePub and Mobi format.&lt;/li&gt;
   &lt;li&gt;There’s a mirror of the current HTML version over &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;The source has a &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; for compiling your own ePub and Mobi’s, if you’ve got &lt;a href=&quot;http://johnmacfarlane.net/pandoc/&quot;&gt;pandoc&lt;/a&gt; installed.&lt;/li&gt;
+  &lt;li&gt;The source has a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; for compiling your own ePub and Mobi’s, if you’ve got &lt;a href=&quot;http://johnmacfarlane.net/pandoc/&quot;&gt;pandoc&lt;/a&gt; installed.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;If you spot any issues whilst reading the book, please raise an issue on Github or send a Pull Request.&lt;/p&gt;
@@ -527,8 +502,8 @@ jagregory.sinopia
 &lt;p&gt;All rights, of course, still belong to Michael Abrash. Any errors are probably down to me.&lt;/p&gt;
 </description>
         <pubDate>Mon, 20 Jan 2014 06:45:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</guid>
+        <link>https://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</guid>
         
         
         <category>gamedev</category>
@@ -585,9 +560,9 @@ jagregory.sinopia
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;Cote uses the same tokens as ERB and ASP.Net (and I imagine quite a few other languages), specificically &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;%= %&amp;gt;&lt;/code&gt; for any code which should write to the output stream and &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;% %&amp;gt;&lt;/code&gt; for code which doesn’t. Inside a code block you can write any valid Go code, outside can be anything.&lt;/p&gt;
+&lt;p&gt;Cote uses the same tokens as ERB and ASP.Net (and I imagine quite a few other languages), specificically &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;%= %&amp;gt;&lt;/code&gt; for any code which should write to the output stream and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;% %&amp;gt;&lt;/code&gt; for code which doesn’t. Inside a code block you can write any valid Go code, outside can be anything.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;language-erb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;title&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;%=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Title&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
@@ -600,59 +575,56 @@ jagregory.sinopia
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;As mentioned previously, Cote templates are compiled. A template is converted into pure Go and compiled into your package. No dependency on Cote is needed outside of your build pipeline. This adds some overhead to development (a template change requires a recompile), but it makes the impact on runtime as minimal as possible.&lt;/p&gt;
 
-&lt;p&gt;There’s an executable (aptly named &lt;code class=&quot;highlighter-rouge&quot;&gt;cote&lt;/code&gt;) which will take a template and spit out a Go function which can be called to render the template. Cote uses a very simplistic form of code generation to build your templates. It’s really simple.&lt;/p&gt;
+&lt;p&gt;There’s an executable (aptly named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cote&lt;/code&gt;) which will take a template and spit out a Go function which can be called to render the template. Cote uses a very simplistic form of code generation to build your templates. It’s really simple.&lt;/p&gt;
 
-&lt;p&gt;Given the above template, &lt;code class=&quot;highlighter-rouge&quot;&gt;cote&lt;/code&gt; would produce a Go file roughly like:&lt;/p&gt;
+&lt;p&gt;Given the above template, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cote&lt;/code&gt; would produce a Go file roughly like:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;package&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;
 
-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;byte&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;byte&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;
 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;h1&amp;gt;Products&amp;lt;/h1&amp;gt;&amp;lt;ul&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;h1&amp;gt;Products&amp;lt;/h1&amp;gt;&amp;lt;ul&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-  &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+  &lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Brute force. Ugly. Fast, very fast.&lt;/p&gt;
 
-&lt;p&gt;Each template produces a &lt;code class=&quot;highlighter-rouge&quot;&gt;[]byte&lt;/code&gt; which can easily be written to your HTTP response.&lt;/p&gt;
+&lt;p&gt;Each template produces a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[]byte&lt;/code&gt; which can easily be written to your HTTP response.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;templates&quot;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;templates&quot;&lt;/span&gt;
 
-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Products listing&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Products listing&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+  &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;To learn more about Cote, take a look at the README on Github: &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;https://github.com/jagregory/cote&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Mon, 14 Oct 2013 16:12:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/compiled-templates-for-go</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/compiled-templates-for-go</guid>
+        <link>https://www.jagregory.com//writings/compiled-templates-for-go</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/compiled-templates-for-go</guid>
         
         <category>golang</category>
         
@@ -682,43 +654,43 @@ jagregory.sinopia
 &lt;/div&gt;
 
 &lt;script type=&quot;text/javascript&quot;&gt;
-  var array = document.getElementById(&#39;array&#39;)
-  var overlay = document.getElementById(&#39;sliceOverlay&#39;)
-  var error = document.getElementById(&#39;error&#39;)
+  var array = document.getElementById('array')
+  var overlay = document.getElementById('sliceOverlay')
+  var error = document.getElementById('error')
 
   var slice = {
     length: 10
   }
 
   for (var i = 0; i &lt; slice.length; i++) {
-    var div = document.createElement(&#39;div&#39;)
-    div.innerText = &#39;&quot;&#39; + String.fromCharCode(97 + i) + &#39;&quot;&#39;
+    var div = document.createElement('div')
+    div.innerText = '&quot;' + String.fromCharCode(97 + i) + '&quot;'
     array.appendChild(div)
   }
 
   var repositionSlice = function(low, high) {
-    if (typeof low === &#39;undefined&#39; || low === null) low = 0
-    if (typeof high === &#39;undefined&#39; || high === null) high = slice.length
-    if (low &lt; 0) throw &#39;invalid slice index &#39; + low + &#39; (index must be non-negative)&#39;
-    if (high &lt; 0) throw &#39;invalid slice index &#39; + high + &#39; (index must be non-negative)&#39;
-    if (high &lt; low) throw &#39;inverted slice index &#39; + low + &#39; &gt; &#39; + high
-    if (slice.length &lt; high) throw &#39;slice bounds out of range&#39;
+    if (typeof low === 'undefined' || low === null) low = 0
+    if (typeof high === 'undefined' || high === null) high = slice.length
+    if (low &lt; 0) throw 'invalid slice index ' + low + ' (index must be non-negative)'
+    if (high &lt; 0) throw 'invalid slice index ' + high + ' (index must be non-negative)'
+    if (high &lt; low) throw 'inverted slice index ' + low + ' &gt; ' + high
+    if (slice.length &lt; high) throw 'slice bounds out of range'
 
-    overlay.style.left = (low * 56) + &#39;px&#39;
-    overlay.style.width = ((high - low) * 56) + 2 + &#39;px&#39;
-    overlay.style.display = &#39;block&#39;
+    overlay.style.left = (low * 56) + 'px'
+    overlay.style.width = ((high - low) * 56) + 2 + 'px'
+    overlay.style.display = 'block'
   }
 
-  var input = document.getElementById(&#39;sliceInput&#39;)
-  input.addEventListener(&#39;keyup&#39;, function() {
-    error.innerText = &#39;&#39;
-    overlay.style.display = &#39;none&#39;
+  var input = document.getElementById('sliceInput')
+  input.addEventListener('keyup', function() {
+    error.innerText = ''
+    overlay.style.display = 'none'
 
     try {
-      if (input.value.indexOf(&#39;:&#39;) &gt;= 0) {
-        var split = input.value.split(&#39;:&#39;)
-        var start = split[0] === &#39;&#39; ? null : parseInt(split[0])
-        var end = split[1] === &#39;&#39; ? null : parseInt(split[1])
+      if (input.value.indexOf(':') &gt;= 0) {
+        var split = input.value.split(':')
+        var start = split[0] === '' ? null : parseInt(split[0])
+        var end = split[1] === '' ? null : parseInt(split[1])
         repositionSlice(start, end)
       } else {
         repositionSlice(parseInt(input.value), parseInt(input.value) + 1)
@@ -731,8 +703,8 @@ jagregory.sinopia
 
 </description>
         <pubDate>Sun, 07 Jul 2013 16:30:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/go-slice-visualiser</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/go-slice-visualiser</guid>
+        <link>https://www.jagregory.com//writings/go-slice-visualiser</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/go-slice-visualiser</guid>
         
         <category>golang</category>
         
@@ -749,19 +721,19 @@ jagregory.sinopia
 
 &lt;!-- more --&gt;
 
-&lt;p&gt;Regardless of my configuration, Rails was always displaying the production page for 500 errors (e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;public/500.html&lt;/code&gt;) even in development mode.&lt;/p&gt;
+&lt;p&gt;Regardless of my configuration, Rails was always displaying the production page for 500 errors (e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;public/500.html&lt;/code&gt;) even in development mode.&lt;/p&gt;
 
 &lt;p&gt;I poked around for a while and eventually found it to be this:&lt;/p&gt;
 
-&lt;p&gt;I’d redefined &lt;code class=&quot;highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; somewhere (don’t ask!), and my implementation didn’t handle arrays of strings. That’s it, that’s why the detailed error page wasn’t being shown in development.&lt;/p&gt;
+&lt;p&gt;I’d redefined &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; somewhere (don’t ask!), and my implementation didn’t handle arrays of strings. That’s it, that’s why the detailed error page wasn’t being shown in development.&lt;/p&gt;
 
-&lt;p&gt;Ends up, &lt;code class=&quot;highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; is used by the development error page, and when something on that error page itself raises an error Rails will just fall back and show the 500.html and not log anything.&lt;/p&gt;
+&lt;p&gt;Ends up, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; is used by the development error page, and when something on that error page itself raises an error Rails will just fall back and show the 500.html and not log anything.&lt;/p&gt;
 
 &lt;p&gt;Moral of the story: If you’re seeing this behaviour, check you haven’t (badly) monkey patched something that the error page is using.&lt;/p&gt;
 </description>
         <pubDate>Thu, 05 Jul 2012 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/rails-500-error-showing-in-dev</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/rails-500-error-showing-in-dev</guid>
+        <link>https://www.jagregory.com//writings/rails-500-error-showing-in-dev</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/rails-500-error-showing-in-dev</guid>
         
         <category>ruby</category>
         
@@ -771,7 +743,7 @@ jagregory.sinopia
       </item>
     
       <item>
-        <title>Learning. It ain&#39;t hard.</title>
+        <title>Learning. It ain't hard.</title>
         <description>&lt;p&gt;“I don’t have enough free time to learn a new language!”, or tool, or framework, etc. I hear this often. I appreciate we all handle things differently, but here’s my take on it.&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -809,8 +781,8 @@ jagregory.sinopia
 &lt;/blockquote&gt;
 </description>
         <pubDate>Wed, 06 Jul 2011 00:00:00 +1000</pubDate>
-        <link>http://www.jagregory.com//writings/learning-it-aint-hard</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/learning-it-aint-hard</guid>
+        <link>https://www.jagregory.com//writings/learning-it-aint-hard</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/learning-it-aint-hard</guid>
         
         <category>learning</category>
         
@@ -833,7 +805,7 @@ jagregory.sinopia
 
 &lt;p&gt;The format of the license that Rhino Licensing generates is an XML document, plain and simple. By default, it includes the user’s name, an expiration date, the type of license (trial, standard, floating, etc…), and most importantly the cryptographic signature. Below is an example Rhino Licensing generated license.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;license&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ae4c05b5-c188-47f8-852f-b4e5375621f7&quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;expiration=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;2011-01-01T00:00:00.0000000&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Standard&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;name&amp;gt;&lt;/span&gt;Bilbo&lt;span class=&quot;nt&quot;&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
@@ -856,8 +828,7 @@ jagregory.sinopia
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;/SignatureValue&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Signature&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/license&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;blockquote&gt;
   &lt;h2 id=&quot;whats-a-signature&quot;&gt;What’s a signature?&lt;/h2&gt;
@@ -879,11 +850,11 @@ jagregory.sinopia
 
 &lt;p&gt;The first thing we need to do is generate a public/private key pair for us to use in our license generation. Rhino Licensing uses the RSACryptoServiceProvider for it’s keys, so we can use that ourselves to generate our keys. One of the simplest ways to do that is to knock up a really quick console application.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RSACryptoServiceProvider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RSACryptoServiceProvider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
@@ -892,13 +863,12 @@ jagregory.sinopia
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;That program will generate a new key for you and write out the public and private parts to two separate XML files (publicKey.xml and privateKey.xml). Keep these two files handy!&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;You will probably want to change the &lt;code class=&quot;highlighter-rouge&quot;&gt;1024&lt;/code&gt; value in the &lt;code class=&quot;highlighter-rouge&quot;&gt;RSACryptoServiceProvider&lt;/code&gt; constructor to something larger. This is the size of the key that will be generated. The larger the better really, but larger numbers require longer to generate.&lt;/p&gt;
+  &lt;p&gt;You will probably want to change the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1024&lt;/code&gt; value in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RSACryptoServiceProvider&lt;/code&gt; constructor to something larger. This is the size of the key that will be generated. The larger the better really, but larger numbers require longer to generate.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h2 id=&quot;update-your-application&quot;&gt;Update your application&lt;/h2&gt;
@@ -907,11 +877,11 @@ jagregory.sinopia
 
 &lt;p&gt;Assuming a really simple app, here’s a Program.cs with Rhino Licensing:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
     &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseValidator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;license.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
       &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AssertValidLicense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
@@ -920,8 +890,7 @@ jagregory.sinopia
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;If the license.xml file doesn’t exist, or if it’s invalid, Rhino Licensing will throw an exception. Of course, as we haven’t generated a license yet we’ll get an exception. That’s the client done though, so we can move on to our final step now. Once we complete that step, you will be able to just drop a license.xml into the same directory as your application and everything will work as expected.&lt;/p&gt;
 
@@ -933,34 +902,33 @@ jagregory.sinopia
 
 &lt;p&gt;For a really simple license generator all you need is the above for each license, and the private key. We’ll wrap that up in a simple console app which’ll prompt for the required info:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Guid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;NewGuid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseGenerator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;private_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Guid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;NewGuid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseGenerator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;private_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Name: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Date: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Type: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 
-    &lt;span class=&quot;c1&quot;&gt;// generate the license
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;license&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Generate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// generate the license&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;license&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Generate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;license&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;That’s it, you’ve got a license generator. Remember, this will exist behind your firewall, the users will (and must) never see your private key.&lt;/p&gt;
 
@@ -975,8 +943,8 @@ jagregory.sinopia
 &lt;/ul&gt;
 </description>
         <pubDate>Tue, 11 Jan 2011 00:00:00 +1100</pubDate>
-        <link>http://www.jagregory.com//writings/rhino-licensing</link>
-        <guid isPermaLink="true">http://www.jagregory.com//writings/rhino-licensing</guid>
+        <link>https://www.jagregory.com//writings/rhino-licensing</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/rhino-licensing</guid>
         
         <category>licensing</category>
         

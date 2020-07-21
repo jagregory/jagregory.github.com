@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">ObjectField - A GridView field</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-02-17">17 Feb 2008</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <blockquote>
+  <p>The version of the ObjectField that this post refers to is now out of date. Please go to the <a href="/writings/objectfield-11/">ObjectField 1.1</a> post for the latest version.</p>
+</blockquote>
+
+<p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn’t support specifying a nested value in it’s DataField property. So if you have a list of Customer’s, and want to display the TelephoneNumber property from inside the customer’s ContactDetails property, you’re out of luck.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>The above would fall over with an exception along the lines of:
+<code class="language-plaintext highlighter-rouge">A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
+
+<!-- more -->
+
+<p>This is a mind-boggling flaw in the BoundField, with the main solution being to create a nested GridView, which is just overkill for most situations. This problem especially rears it’s ugly head if you’re using an ORM layer such as <a href="http://www.nhibernate.org/">NHibernate</a> or <a href="http://www.subsonicproject.com">SubSonic</a>.</p>
+
+<p>So what have I done? I’ve just gone and created a solution to this problem.</p>
+
+<p>Introducing the ObjectField, a GridView field that allows binding against hierarchical structured objects. In short, it takes a BoundField and splits it on full-stops (periods!) using each element to find an object.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;jag:ObjectField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>The above is now possible! Huzzah.</p>
+
+<h2 id="extras">Extras</h2>
+
+<p>There’s one extra thing you should know about. The field has a couple of additional properties that can be useful.</p>
+
+<p>The first is <code class="language-plaintext highlighter-rouge">AllowNulls</code> which defaults to <code class="language-plaintext highlighter-rouge">true</code>, this will make the field return silently when a null is encountered anywhere along the object hierarchy; this can be useful if you know that there might be a null somewhere along the lines.</p>
+
+<p>The second property is <code class="language-plaintext highlighter-rouge">NullValue</code>, which is displayed by the field when <code class="language-plaintext highlighter-rouge">AllowNulls</code> is <code class="language-plaintext highlighter-rouge">true</code> and a null is encountered. Setting this value allows you to give a user-friendly message if a value is null.</p>
+
+<h2 id="downloads">Downloads</h2>
+
+<p>The ObjectField is open-source under the <a href="http://en.wikipedia.org/wiki/BSD_licenses">new BSD License</a>; read the license for what you’re allowed to do.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

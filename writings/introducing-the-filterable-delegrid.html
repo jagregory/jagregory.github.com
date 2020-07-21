@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Introducing the filterable DeleGrid</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2008-03-05">05 Mar 2008</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>The DeleGrid is a paged GridView control that handles data-binding through the use of events and delegates rather than with a traditional collection.</p>
+
+<p>What this means is that you have full control over the data that is shown in the currently displayed page. Traditionally you’d retrieve the whole recordset then page it locally, but with the DeleGrid you can utilise your database/ORMs paging features.</p>
+
+<!-- more -->
+
+<p>To quote myself from when I first <a href="/writings/delegrid/">introduced the DeleGrid</a>:</p>
+
+<blockquote>
+  <p>[The DeleGrid] came about because I wanted a nice way of implementing paging using NHibernate without having the grid know about it. I really didn’t want NHibernate to leave my data layer, so I needed a nice way of the grid calling my DAL with the paging parameters.</p>
+</blockquote>
+
+<h2 id="whats-new">What’s new?</h2>
+
+<p>The biggest change in version 1.1 is the introduction of filtering. The filter isn’t generated in some black-box fashion, instead it’s defined by the programmer. It’s built up from the columns in the grid, which define their own filtering behaviour.</p>
+
+<p>The filter acts upon any columns in the grid that implement the IFilterableField interface. Implementing this interface in your own fields is easy, so you’re quickly able to create custom filtering behavior for your grid. An example would be a date column, that has a date-picker as a filter control.</p>
+
+<p><img src="/images/fd-1.png" alt="Filter Screenshot" /></p>
+
+<p>I’ve chosen not to implement the wealth of appearance customisations that are available in the normal templated controls. This is down to two reasons, firstly I don’t agree with it, appearance should be controlled solely through CSS. Secondly, there are so many, I couldn’t be bothered. So you’re only able to attach CSS classes to the buttons and cells, and specify the image urls for the buttons.</p>
+
+<h2 id="an-example-implementation">An example implementation</h2>
+
+<p>The grid now has a companion project, it’s own data library. This separation is to keep you from having to reference System.Web in your data-layer. To use the DeleGrid in your project you’ll need to reference <code class="language-plaintext highlighter-rouge">JAGregory.Controls.DeleGrid.dll</code> and the <code class="language-plaintext highlighter-rouge">JAGregory.Controls.Data.dll</code> in your web project, then reference <code class="language-plaintext highlighter-rouge">JAGregory.Controls.Data.dll</code> in your data layer, if they’re separate projects.</p>
+
+<p>So to begin with, add the reference to <code class="language-plaintext highlighter-rouge">JAGregory.Controls.DeleGrid.dll</code> and <code class="language-plaintext highlighter-rouge">JAGregory.Controls.Data.dll</code> into your web project. This will allow you to use the DeleGrid in your page. Once you’ve done that, you’ll need to reference the control in your page, you can either do this using a Register tag in your page, or in the web.config as so:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;pages&gt;</span>
+  <span class="nt">&lt;controls&gt;</span>
+    <span class="nt">&lt;add</span> <span class="na">tagPrefix=</span><span class="s">"jag"</span> <span class="na">namespace=</span><span class="s">"JAGregory.Controls"</span>
+      <span class="na">assembly=</span><span class="s">"JAGregory.Controls.DeleGrid"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/controls&gt;</span>
+<span class="nt">&lt;/pages&gt;</span>
+</code></pre></div></div>
+
+<p>With that in place, you can now put the DeleGrid into your page:</p>
+
+<pre><code class="language-aspx-cs">&lt;jag:DeleGrid ID="grid" Runat="server" AllowFiltering="true"
+  AutoGenerateColumns="false"&gt;
+    &lt;FilterStyle ToggleOnImageUrl="img/find.png" ToggleOffImageUrl="img/find.png"
+      ExecuteImageUrl="img/go.png" /&gt;
+    &lt;Columns&gt;
+        &lt;jag:FilterableTextField HeaderText="Name" DataField="Name" /&gt;
+        &lt;jag:FilterableBooleanField HeaderText="Active" DataField="Active" /&gt;
+    &lt;/Columns&gt;
+&lt;/jag:DeleGrid&gt;
+</code></pre>
+
+<p>In this example I’m using a Customer object to bind against it, which simply has the Name and Active properties.</p>
+
+<p>For this grid we’ve set AllowFiltering to true, which enables the filter, then we’ve set AutoGenerateColumns to false so we can add our own custom columns. The two columns both implement the aforementioned IFilterableField interface, which allows them to define their own filtering behaviour.</p>
+
+<p>I’ve also set the image urls so the buttons will be visible.</p>
+
+<p>Now that the page is set up, we need to get down to the binding. In your code-behind:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnInit</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">base</span><span class="p">.</span><span class="nf">OnInit</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+  <span class="c1">// attach the events for requesting the data and totals</span>
+  <span class="n">grid</span><span class="p">.</span><span class="n">TotalRecordCountRequest</span> <span class="p">+=</span> <span class="n">grid_TotalRecordCountRequest</span><span class="p">;</span>
+  <span class="n">grid</span><span class="p">.</span><span class="n">PageDataRequest</span> <span class="p">+=</span> <span class="n">grid_PageDataRequest</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnLoad</span><span class="p">(</span><span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">base</span><span class="p">.</span><span class="nf">OnLoad</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(!</span><span class="n">IsPostBack</span><span class="p">)</span>
+    <span class="n">grid</span><span class="p">.</span><span class="nf">DataBind</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>What’ve just done is attach the TotalRecordCountRequest and PageDataRequest handlers to the grid, which respectively fetch the total record count for the full grid, and fetch the current page of data from the database; the implementations are below.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="n">IEnumerable</span> <span class="nf">grid_PageDataRequest</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">PageDataRequestEventArgs</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">CustomerRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">CustomerRepository</span><span class="p">();</span>
+
+  <span class="c1">// get the requested page of data from the database</span>
+  <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="nf">FindAllPaged</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">Range</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">Sort</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">Filters</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="kt">int</span> <span class="nf">grid_TotalRecordCountRequest</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">DataRequestEventArgs</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">CustomerRepository</span> <span class="n">repos</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">CustomerRepository</span><span class="p">();</span>
+
+  <span class="c1">// get the total records</span>
+  <span class="k">return</span> <span class="n">repos</span><span class="p">.</span><span class="nf">GetAllCount</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">Filters</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>I’m using a <a href="http://www.martinfowler.com/eaaCatalog/repository.html">repository pattern</a> to handle data-access. In the PageDataRequest handler we’re taking the range, sort, and filter info that the grid passed us and sending it off to the repository to get the data. Similarity the TotalRecordCountRequest handler does a similar thing but without the range or sort info.</p>
+
+<p>That’s it really for using the DeleGrid, you just need to take the filter info and handle it using your specific ORM.</p>
+
+<h2 id="repository-implementation">Repository implementation</h2>
+
+<p>Ok I’ll throw you a bone, here’s the repository implementation to show how easy it is using NHibernate:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerRepository</span>
+<span class="p">{</span>
+  <span class="c1">/// &lt;summary&gt;</span>
+  <span class="c1">/// Creates a NHibernate ICriteria based on the filters.</span>
+  <span class="c1">/// &lt;/summary&gt;</span>
+  <span class="c1">/// &lt;param name="filters"&gt;Filters to apply.&lt;/param&gt;</span>
+  <span class="c1">/// &lt;returns&gt;ICriteria&lt;/returns&gt;</span>
+  <span class="k">private</span> <span class="n">ICriteria</span> <span class="nf">CreateFilteredCriteria</span><span class="p">(</span><span class="n">FilterCriterionCollection</span> <span class="n">filters</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">ICriteria</span> <span class="n">criteria</span> <span class="p">=</span> <span class="n">SessionManager</span><span class="p">.</span><span class="n">CurrentSession</span>
+      <span class="p">.</span><span class="nf">CreateCriteria</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Customer</span><span class="p">));</span>
+
+    <span class="c1">// criterion handling - write this yourself depending on how your</span>
+    <span class="c1">// db filters (and what filter types you're supporting)</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="n">FilterCriterion</span> <span class="n">filter</span> <span class="k">in</span> <span class="n">filters</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">filter</span><span class="p">.</span><span class="n">Type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">))</span>
+        <span class="n">criteria</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">Expression</span><span class="p">.</span><span class="nf">Like</span><span class="p">(</span><span class="n">filter</span><span class="p">.</span><span class="n">FieldName</span><span class="p">,</span> <span class="s">"%"</span> <span class="p">+</span> <span class="n">filter</span><span class="p">.</span><span class="n">Value</span> <span class="p">+</span> <span class="s">"%"</span><span class="p">));</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">filter</span><span class="p">.</span><span class="n">Type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">bool</span><span class="p">))</span>
+        <span class="n">criteria</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">Expression</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="n">filter</span><span class="p">.</span><span class="n">FieldName</span><span class="p">,</span> <span class="n">filter</span><span class="p">.</span><span class="n">Value</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">criteria</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">/// &lt;summary&gt;</span>
+  <span class="c1">/// Gets the total record count from the database using the filters.</span>
+  <span class="c1">/// &lt;/summary&gt;</span>
+  <span class="c1">/// &lt;param name="filters"&gt;Filters to apply before getting the count.&lt;/param&gt;</span>
+  <span class="c1">/// &lt;returns&gt;Total number of records in the filtered list&lt;/returns&gt;</span>
+  <span class="k">public</span> <span class="kt">int</span> <span class="nf">GetAllCount</span><span class="p">(</span><span class="n">FilterCriterionCollection</span> <span class="n">filters</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">CreateFilteredCriteria</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">SetProjection</span><span class="p">(</span><span class="n">Projections</span><span class="p">.</span><span class="nf">Count</span><span class="p">(</span><span class="s">"ID"</span><span class="p">))</span>
+      <span class="p">.</span><span class="n">UniqueResult</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;();</span>
+  <span class="p">}</span>
+
+  <span class="c1">/// &lt;summary&gt;</span>
+  <span class="c1">/// Gets one page of data from the database.</span>
+  <span class="c1">/// &lt;/summary&gt;</span>
+  <span class="c1">/// &lt;param name="range"&gt;Select range (start ID and number of records).&lt;/param&gt;</span>
+  <span class="c1">/// &lt;param name="sort"&gt;Sorting to apply.&lt;/param&gt;</span>
+  <span class="c1">/// &lt;param name="filters"&gt;Filters to apply.&lt;/param&gt;</span>
+  <span class="c1">/// &lt;returns&gt;List for one page of data.&lt;/returns&gt;</span>
+  <span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span> <span class="nf">FindAllPaged</span><span class="p">(</span><span class="n">SelectRange</span> <span class="n">range</span><span class="p">,</span> <span class="n">SortInfo</span> <span class="n">sort</span><span class="p">,</span> <span class="n">FilterCriterionCollection</span> <span class="n">filters</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// create the criteria using the filters, then set the range</span>
+    <span class="n">ICriteria</span> <span class="n">criteria</span> <span class="p">=</span> <span class="nf">CreateFilteredCriteria</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">SetFirstResult</span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">Start</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">SetMaxResults</span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">Size</span><span class="p">);</span>
+
+    <span class="c1">// only add the sort if one is specified</span>
+    <span class="k">if</span> <span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="nf">IsNullOrEmpty</span><span class="p">(</span><span class="n">sort</span><span class="p">.</span><span class="n">Field</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">sort</span><span class="p">.</span><span class="n">Direction</span> <span class="p">==</span> <span class="n">Direction</span><span class="p">.</span><span class="n">Asc</span><span class="p">)</span>
+        <span class="n">criteria</span><span class="p">.</span><span class="nf">AddOrder</span><span class="p">(</span><span class="n">Order</span><span class="p">.</span><span class="nf">Asc</span><span class="p">(</span><span class="n">sort</span><span class="p">.</span><span class="n">Field</span><span class="p">));</span>
+      <span class="k">else</span>
+        <span class="n">criteria</span><span class="p">.</span><span class="nf">AddOrder</span><span class="p">(</span><span class="n">Order</span><span class="p">.</span><span class="nf">Desc</span><span class="p">(</span><span class="n">sort</span><span class="p">.</span><span class="n">Field</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">criteria</span><span class="p">.</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code>CreateFilteredCriteria</code> method is doing most of the leg work. It takes creates an NHibernate criteria, then adds any filter criterions to it. It iterates the filters collection, checking their type and adding the appropriate NHibernate criterion. Simple!</p>
+
+<h2 id="the-example-project">The example project</h2>
+
+<p>I’ve attached a sample project that uses the grid to display a collection of customers that are paged and filtered. The example uses a SQLite database with NHibernate for data-access, I’ve done this to keep the extraneous code to a minimum.</p>
+
+<h2 id="downloads">Downloads</h2>
+
+<blockquote>
+  <p>Note from Future James: this is long gone.</p>
+</blockquote>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

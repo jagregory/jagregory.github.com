@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Ruby on Rails Recognition Failed in Production mode</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2006-04-29">29 Apr 2006</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>The title pretty much covers it, but i’ll elaborate.</p>
+
+<p>A few days ago I decided it was about time I had a tinker with <a href="http://www.google.com/webmasters/sitemaps">Google Sitemaps</a>, part of which involves uploading a temporary file so google can be sure the website you’re trying to claim is actually yours. Anyway, fun things aside, google gave me an error message (“We’ve detected that your 404 (file not found) error page returns a status of 200 (OK) in the header.”) when it tried to read the file.</p>
+
+<!-- more -->
+
+<p>The error message was caused by a feature of Ruby on Rails, which when in Development mode, invalid pages are still served by Rails and sent with a 200 header, but logged as having a Routing error of “Recognition failed”.</p>
+
+<p>All information pointed to a simple fix of setting the rails environment (<code class="language-plaintext highlighter-rouge">ENV['RAILS_ENV']</code>) to production mode, which would disable the aforementioned feature. Unfortunately for me, my environment was <em>already</em> set to production! I double checked this, logged into the ruby console on my web-server and checked the variables, then even checked which log file was being written to; everything was pointing to it being in production mode.</p>
+
+<p>After a lot of browsing of forums and chatting in IRC channels, I succumbed to randomly trying anything, which is when i noticed in my environment.rb file there was a line of code that I couldn’t for the life of me remember why it was in there, or what it was doing; removing this line of code worked a treat, everything snapped back to how it should be functioning.</p>
+
+<p>For future reference, the line in question was:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'error_handler_basic'</span> <span class="c1"># defines AC::Base#rescue_action_in_public</span>
+</code></pre></div></div>
+
+<p>So there you go, now I have a 404 page and google accepted my site map, so we can all live happily ever after.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Rhino Licensing</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2011-01-11">11 Jan 2011</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p><a href="https://github.com/ayende/rhino-licensing">Rhino Licensing</a> is an open-source licensing framework by <a href="http://ayende.com">Ayende Rahien</a>, and it grew out of his frustration with other license providers while creating <a href="http://nhprof.com/">NHibernate Profiler</a>.</p>
+
+<!-- more -->
+
+<p>Rhino Licensing uses asymmetric encryption–also known as <a href="http://en.wikipedia.org/wiki/Public-key_cryptography">public-key cryptography</a>–specifically the <a href="http://en.wikipedia.org/wiki/RSA">RSA algorithm</a>. In cryptography, asymmetric means there are two parts to each key, one public and one private. You encrypt a value using the one key, and it can only be decrypted using the other key. In the case of license key generation, we store our private key on the server (and never tell anyone it!), and distribute the public key with our application. When the user receives a license key, the application is able to verify that it came from us by using the public key. If someone tries to use a license key they’ve generated themselves, it wouldn’t work unless they had our exact private key.</p>
+
+<blockquote>
+  <p>Other systems that use asymmetric encryption include <abbr title="Secure Shell">SSH</abbr>, <abbr title="Secure Sockets Layer">SSL</abbr>, <abbr title="Pretty Good Privacy">PGP</abbr>, and among others, Git uses asymmetric encryption for its security due to it using SSH.</p>
+</blockquote>
+
+<p>The format of the license that Rhino Licensing generates is an XML document, plain and simple. By default, it includes the user’s name, an expiration date, the type of license (trial, standard, floating, etc…), and most importantly the cryptographic signature. Below is an example Rhino Licensing generated license.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;license</span> <span class="na">id=</span><span class="s">"ae4c05b5-c188-47f8-852f-b4e5375621f7"</span>
+    <span class="na">expiration=</span><span class="s">"2011-01-01T00:00:00.0000000"</span> <span class="na">type=</span><span class="s">"Standard"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;name&gt;</span>Bilbo<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;Signature</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2000/09/xmldsig#"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;SignedInfo&gt;</span>
+      <span class="nt">&lt;CanonicalizationMethod</span> <span class="na">Algorithm=</span><span class="s">"http://www.w3.org/TR/2001/REC-xml-c14n-20010315"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SignatureMethod</span> <span class="na">Algorithm=</span><span class="s">"http://www.w3.org/2000/09/xmldsig#rsa-sha1"</span> <span class="nt">/&gt;</span>
+
+      <span class="nt">&lt;Reference</span> <span class="na">URI=</span><span class="s">""</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Transforms&gt;</span>
+          <span class="nt">&lt;Transform</span> <span class="na">Algorithm=</span><span class="s">"http://www.w3.org/2000/09/xmldsig#enveloped-signature"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Transforms&gt;</span>
+        <span class="nt">&lt;DigestMethod</span> <span class="na">Algorithm=</span><span class="s">"http://www.w3.org/2000/09/xmldsig#sha1"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;DigestValue&gt;</span>sKDT7gzgedzmh1AMxxLbfcF1Hsw=<span class="nt">&lt;/DigestValue&gt;</span>
+      <span class="nt">&lt;/Reference&gt;</span>
+    <span class="nt">&lt;/SignedInfo&gt;</span>
+    <span class="nt">&lt;SignatureValue&gt;</span>
+        SfkvCGv1+EdLTvaROv27ymDumS0y02fPANTVhr0Yxd/
+        AxxVH0q0BQ6w8Ou5L7gyLYLvnSckgjhrGnGpiifdvbg==
+    <span class="nt">&lt;/SignatureValue&gt;</span>
+  <span class="nt">&lt;/Signature&gt;</span>
+<span class="nt">&lt;/license&gt;</span>
+</code></pre></div></div>
+
+<blockquote>
+  <h2 id="whats-a-signature">What’s a signature?</h2>
+
+  <p>A cryptographic signature is a string of bytes used to aid in verification of the source of a document. In most cases–and in the case of Rhino Licensing–the signature is generated by hashing the content of the file using SHA1 (or another suitable hashing algorithm), and encrypting that hash using the private key. The resulting string of bytes is the signature.</p>
+
+  <p>When the client receives a file with a signature, it creates a hash of the file (sans-signature) and compares that hash to the decrypted value of the signature. Baring in mind that the signature is an encrypted hash of the file, if either of the public or private keys were invalid or the file had been tampered with, then the decrypted string would not match the hash of the file. When the client generated hash and the decrypted signature match, you can be confident the sender of the message is who you think it is.</p>
+</blockquote>
+
+<p>The great part about using the hash of the document as the signature is that if the user tampers with the license–such as changing the expiration date or the licensee name–the signature will no longer match the hash the client generates, and BAM, instant invalid license.</p>
+
+<blockquote>
+  <p>One particular aspect I like with this approach is that the licensee name is clearly visible in the license. This simple act can be quite dissuasive when it comes to piracy; after all, who would want their name visible on all the torrent websites out there?</p>
+</blockquote>
+
+<p>Enough with the waffle, let’s start using Rhino Licensing.</p>
+
+<h2 id="create-your-key">Create your key</h2>
+
+<p>The first thing we need to do is generate a public/private key pair for us to use in our license generation. Rhino Licensing uses the RSACryptoServiceProvider for it’s keys, so we can use that ourselves to generate our keys. One of the simplest ways to do that is to knock up a really quick console application.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">rsa</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">RSACryptoServiceProvider</span><span class="p">(</span><span class="m">1024</span><span class="p">);</span>
+
+    <span class="n">File</span><span class="p">.</span><span class="nf">WriteAllText</span><span class="p">(</span><span class="s">"publicKey.xml"</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="nf">ToXmlString</span><span class="p">(</span><span class="k">false</span><span class="p">));</span>
+    <span class="n">File</span><span class="p">.</span><span class="nf">WriteAllText</span><span class="p">(</span><span class="s">"privateKey.xml"</span><span class="p">,</span> <span class="n">rsa</span><span class="p">.</span><span class="nf">ToXmlString</span><span class="p">(</span><span class="k">true</span><span class="p">));</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Done"</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">ReadKey</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That program will generate a new key for you and write out the public and private parts to two separate XML files (publicKey.xml and privateKey.xml). Keep these two files handy!</p>
+
+<blockquote>
+  <p>You will probably want to change the <code class="language-plaintext highlighter-rouge">1024</code> value in the <code class="language-plaintext highlighter-rouge">RSACryptoServiceProvider</code> constructor to something larger. This is the size of the key that will be generated. The larger the better really, but larger numbers require longer to generate.</p>
+</blockquote>
+
+<h2 id="update-your-application">Update your application</h2>
+
+<p>Now we’ll update your application to complain if it doesn’t have a license. In your entry-point for your application you need to assert the license. Before we do that, make sure you’ve got your public key handy from the previous step. Rhino Licensing needs the <em>content</em> of this file, so you can either embed it directly into a constant or as a resource. Secondly, it needs to know where to look for a license that the user will have been given.</p>
+
+<p>Assuming a really simple app, here’s a Program.cs with Rhino Licensing:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">publicKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="nf">ReadAllText</span><span class="p">(</span><span class="s">"publicKey.xml"</span><span class="p">);</span>
+
+    <span class="k">new</span> <span class="nf">LicenseValidator</span><span class="p">(</span><span class="n">publicKey</span><span class="p">,</span> <span class="s">"license.xml"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">AssertValidLicense</span><span class="p">();</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">ReadKey</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If the license.xml file doesn’t exist, or if it’s invalid, Rhino Licensing will throw an exception. Of course, as we haven’t generated a license yet we’ll get an exception. That’s the client done though, so we can move on to our final step now. Once we complete that step, you will be able to just drop a license.xml into the same directory as your application and everything will work as expected.</p>
+
+<h2 id="create-the-license-generator">Create the license generator</h2>
+
+<p>We need something to actually generate a license for your users. If you were being all fancy you could do this as a web-service that gets integrated with your payment provider; however, for simplicity’s sake we’ll just create another console application that spits out a license.</p>
+
+<p>Rhino Licensing has a few prerequisites for a license: A name, an id of the license, an expiration date, and a license type. You can also supply a dictionary of custom values, but we wont be using that in this example.</p>
+
+<p>For a really simple license generator all you need is the above for each license, and the private key. We’ll wrap that up in a simple console app which’ll prompt for the required info:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">privateKey</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="nf">ReadAllText</span><span class="p">(</span><span class="s">"privateKey.xml"</span><span class="p">);</span>
+
+    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="nf">NewGuid</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">generator</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">LicenseGenerator</span><span class="p">(</span><span class="n">private_key</span><span class="p">);</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="s">"Name: "</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">name</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="nf">ReadLine</span><span class="p">();</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="s">"Date: "</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">expirationDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="n">Console</span><span class="p">.</span><span class="nf">ReadLine</span><span class="p">());</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="s">"Type: "</span><span class="p">);</span>
+    <span class="n">LicenseType</span> <span class="n">licenseType</span> <span class="p">=</span> <span class="p">(</span><span class="n">LicenseType</span><span class="p">)</span><span class="n">Enum</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">LicenseType</span><span class="p">),</span> <span class="n">Console</span><span class="p">.</span><span class="nf">ReadLine</span><span class="p">());</span>
+
+    <span class="c1">// generate the license</span>
+    <span class="kt">var</span> <span class="n">license</span> <span class="p">=</span> <span class="n">generator</span><span class="p">.</span><span class="nf">Generate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">expirationDate</span><span class="p">,</span> <span class="n">licenseType</span><span class="p">);</span>
+
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">();</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="n">license</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">ReadKey</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That’s it, you’ve got a license generator. Remember, this will exist behind your firewall, the users will (and must) never see your private key.</p>
+
+<p>If you take the output of this application and save it in a license.xml file in your client, your application should stop throwing license exceptions and run normally! You’ve officially just licensed your app.</p>
+
+<h2 id="what-have-we-just-done">What have we just done?</h2>
+
+<ul>
+  <li>Created a private key generator, purely for convenience than anything else. We should only need to run this once before we start generating our keys. You could run it once per major release to ensure your 1.0 licenses are never compatible with 2.0.</li>
+  <li>Updated our client application to validate the presence and validity of a license (and to explode if there isn’t one).</li>
+  <li>Created a “server” to generate licenses for us. This is very primitive but could easily be adapted to a web server. You might want to look at the Rhino Licensing <a href="https://github.com/ayende/rhino-licensing/blob/master/Rhino.Licensing/LicensingService.cs">LicensingService</a> before you continue.</li>
+</ul>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

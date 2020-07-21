@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Fluent NHibernate: Auto mapping and base-classes</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-01-26">26 Jan 2009</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>Carrying on with the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> Auto Mapping theme, I’ll now demonstrate how to map inheritance hierarchies.</p>
+
+<p>There are two main things that you’d want to do with inherited classes, either ignore the base class all together, or map them using an inheritance strategy. I’m going to start with the former, then move on to the latter.</p>
+
+<!-- more -->
+
+<h2 id="ignoring-base-types">Ignoring base-types</h2>
+
+<p>This scenario is where you may have a base class in your domain that you use to simplify your entities, you’ve moved common properties into it so you don’t have to recreate them on every entity; typically this would be the Id and perhaps some audit information. So lets start with a model that has a base class we’d like to ignore.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">Entities</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Entity</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span> <span class="p">:</span> <span class="n">Entity</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">Animal</span> <span class="p">:</span> <span class="n">Entity</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Species</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Relatively simple model here, we’ve got an <code class="language-plaintext highlighter-rouge">Entity</code> base class that defines the <code class="language-plaintext highlighter-rouge">Id</code>, then the <code class="language-plaintext highlighter-rouge">Person</code> and <code class="language-plaintext highlighter-rouge">Animal</code> entities. We have no desire to have <code class="language-plaintext highlighter-rouge">Entity</code> mapped by NHibernate, so we need a way to tell the auto mapper to ignore it.</p>
+
+<p>For those individuals from traditional XML mapping land, this is what we’re going to be recreating:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">"Person"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">"Id"</span> <span class="na">type=</span><span class="s">"Int32"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">"identity"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/id&gt;</span>
+
+  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"FirstName"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"LastName"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/class&gt;</span>
+
+<span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">"Animal"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">"Id"</span> <span class="na">type=</span><span class="s">"Int32"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">"identity"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/id&gt;</span>
+
+  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"Species"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/class&gt;</span>
+</code></pre></div></div>
+
+<p>We need to initialise the NHibernate configuration, and supply it with any auto mappings we’re going to create:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>  
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>  
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Entities"</span><span class="p">);</span>  
+
+<span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>  
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>  
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>  
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>The first section is the configuration of Fluent NHibernate, which we’re telling to map anything in the <code class="language-plaintext highlighter-rouge">Entities</code> namespace from the assembly that contains our <code class="language-plaintext highlighter-rouge">Entity</code> base-class; then we configure NHibernate and inject our auto mappings.</p>
+
+<p>If we were to run this now, we wouldn’t get the mapping we desire. Fluent NHibernate would see <code class="language-plaintext highlighter-rouge">Entity</code> as an actual entity and map it with <code class="language-plaintext highlighter-rouge">Animal</code> and <code class="language-plaintext highlighter-rouge">Person</code> as subclasses; this is not what we desire, so we need to modify our auto mapping configuration to reflect that.</p>
+
+<p>After <code class="language-plaintext highlighter-rouge">MapEntitiesFromAssemblyOf&lt;Entity&gt;()</code> we need to alter the conventions that the auto mapper is using so it can identify our base-class.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>  
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Entity</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">WithConventions</span><span class="p">(</span><span class="n">convention</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="n">convention</span><span class="p">.</span><span class="n">IsBaseType</span> <span class="p">=</span>
+      <span class="n">type</span> <span class="p">=&gt;</span> <span class="n">type</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Entity</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Entities"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>We’ve added the <code class="language-plaintext highlighter-rouge">WithConventions</code> call in which we replace the <code class="language-plaintext highlighter-rouge">IsBaseType</code> convention with our own. This convention is used to identify whether a type is simply a base-type for abstraction purposes, or a legitimate storage requirement. In our case we’ve set it to return <code class="language-plaintext highlighter-rouge">true</code> if the type is an <code class="language-plaintext highlighter-rouge">Entity</code>.</p>
+
+<p>With this change, we now get our desired mapping. <code class="language-plaintext highlighter-rouge">Entity</code> is ignored as far is Fluent NHibernate is concerned, and all the properties (<code class="language-plaintext highlighter-rouge">Id</code> in our case) are treated as if they were on the specific subclasses.</p>
+
+<h2 id="basetype_as_an_inheritance_strategy">Base-type as an inheritance strategy</h2>
+
+<p>What we’re going to do is create a simple model that we’ll map as a <a href="http://www.hibernate.org/hib_docs/nhibernate/html/inheritance.html">table-per-subclass</a> inheritance strategy, which is the equivalent of the NHibernate <code class="language-plaintext highlighter-rouge">joined-subclass</code> mapping.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">Entities</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">FirstName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">Employee</span> <span class="p">:</span> <span class="n">Person</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="n">DateTime</span> <span class="n">StartDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">Guest</span> <span class="p">:</span> <span class="n">Person</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">GuestPassId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Relatively simple model here, we’ve got an <code class="language-plaintext highlighter-rouge">Person</code> class that defines the <code class="language-plaintext highlighter-rouge">Id</code> and name properties, then the <code class="language-plaintext highlighter-rouge">Employee</code> and <code class="language-plaintext highlighter-rouge">Guest</code> subclass entities.</p>
+
+<p>The XML equivalent is as follows:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;class</span> <span class="na">name=</span><span class="s">"Person"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id</span> <span class="na">name=</span><span class="s">"Id"</span> <span class="na">type=</span><span class="s">"Int32"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;generator</span> <span class="na">class=</span><span class="s">"identity"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/id&gt;</span>
+
+  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"FirstName"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"LastName"</span> <span class="nt">/&gt;</span>
+
+  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">"Employee"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">"PersonId"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"StartDate"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/joined-subclass&gt;</span>
+
+  <span class="nt">&lt;joined-subclass</span> <span class="na">name=</span><span class="s">"Guest"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;key</span> <span class="na">column=</span><span class="s">"PersonId"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"GuestPassId"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/joined-subclass&gt;</span>
+<span class="nt">&lt;/class&gt;</span>
+</code></pre></div></div>
+
+<p>Again we configure NHibernate session factory to integrate with the auto mapping:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>  
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;()</span>  
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Entities"</span><span class="p">);</span>  
+
+<span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>  
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>  
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>  
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>This is the same configuration that I used in the first example, except that if you recall the reason we had to change the last example was because it was mapping it as a joined-subclass - that’s right, we don’t need to do anything now! Our mapping is complete, Fluent NHibernate automatically assumes that any inherited classes (that haven’t had their base-type excluded by the <code class="language-plaintext highlighter-rouge">IsBaseType</code> convention) should be mapped as joined-subclasses.</p>
+
+<p>That’s how to deal with base-classes with Fluent NHibernate’s auto mapping.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

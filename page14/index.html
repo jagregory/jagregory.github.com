@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>James Gregory</title>
-    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+    <meta name="description" content="I like turtles.
 " />
 
     <meta name="HandheldFriendly" content="True" />
@@ -25,7 +25,7 @@
         <div class="main-header-content inner">
             <h1 class="page-title"><a href="/">James Gregory</a></h1>
             <h2 class="page-description">
-                 Code monkey. ThoughtWorks. Chief Agitator.
+                 I like turtles.
  
             </h2>
         </div>
@@ -41,7 +41,7 @@
             <a class="newer-posts" href="/page13/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 14 of 23 </span>
+    <span class="page-number"> Page 14 of 20 </span>
      
         <a class="older-posts" href="/page15/" title="Next Page">Older Posts &raquo;</a>
      
@@ -52,60 +52,16 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/getfilename-nant-task">getfilename NAnt task</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn’t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
-
-<p>The <code class="highlighter-rouge">getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc…</p>
-
- <a class="read-more" href="/writings/getfilename-nant-task">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-03-12">
-                12 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/introducing-the-filterable-delegrid">Introducing the filterable DeleGrid</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>The DeleGrid is a paged GridView control that handles data-binding through the use of events and delegates rather than with a traditional collection.</p>
-
-<p>What this means is that you have full control over the data that is shown in the currently displayed page. Traditionally you’d retrieve the whole recordset then page it locally, but with the DeleGrid you can utilise your database/ORMs paging features.</p>
-
- <a class="read-more" href="/writings/introducing-the-filterable-delegrid">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-03-05">
-                05 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
             <h2 class="post-title"><a href="/writings/objectfield-11">ObjectField 1.1</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I’ve updated the <code class="highlighter-rouge">ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code class="highlighter-rouge">BoundField</code> implementation:</p>
+            <p>I’ve updated the <code class="language-plaintext highlighter-rouge">ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code class="language-plaintext highlighter-rouge">BoundField</code> implementation:</p>
 
 <blockquote>
-  <p>Using a <code class="highlighter-rouge">TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code class="highlighter-rouge">DataBinder</code> has the ability to evaluate a hierarchical path.</p>
+  <p>Using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code class="language-plaintext highlighter-rouge">DataBinder</code> has the ability to evaluate a hierarchical path.</p>
 </blockquote>
 
-<p>Which is interesting, because I was using a <code class="highlighter-rouge">TypeDescriptor</code> in my <code class="highlighter-rouge">ObjectField</code> implementation!</p>
+<p>Which is interesting, because I was using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> in my <code class="language-plaintext highlighter-rouge">ObjectField</code> implementation!</p>
 
  <a class="read-more" href="/writings/objectfield-11">Read more &raquo;</a>
         </section>
@@ -127,10 +83,10 @@
         <section class="post-excerpt">
             <p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I’d elaborate a bit on why it’s necessary.</p>
 
-<p>When you’re data binding against an object that isn’t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code class="highlighter-rouge">BoundField</code> incorrectly handling a hierarchical object path.</p>
+<p>When you’re data binding against an object that isn’t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code class="language-plaintext highlighter-rouge">BoundField</code> incorrectly handling a hierarchical object path.</p>
 
 <blockquote>
-  <p>A field or property with the name <code class="highlighter-rouge">MySubObject.PropertyName</code> was not found on the selected data source.</p>
+  <p>A field or property with the name <code class="language-plaintext highlighter-rouge">MySubObject.PropertyName</code> was not found on the selected data source.</p>
 </blockquote>
 
  <a class="read-more" href="/writings/data-binding-hierarchical-objects">Read more &raquo;</a>
@@ -157,12 +113,11 @@
 
 <p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn’t support specifying a nested value in it’s DataField property. So if you have a list of Customer’s, and want to display the TelephoneNumber property from inside the customer’s ContactDetails property, you’re out of luck.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
-</code></pre>
-</div>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
 
-<p>The above would fall over with an exception along the lines of:<br />
-<code class="highlighter-rouge">A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
+<p>The above would fall over with an exception along the lines of:
+<code class="language-plaintext highlighter-rouge">A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
 
  <a class="read-more" href="/writings/objectfield">Read more &raquo;</a>
         </section>
@@ -177,13 +132,79 @@
 
     
 
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/nhibernate-and-the-sqltypeexception">NHibernate and the SqlTypeException</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I’ve had trouble it’s actually ended up being my own fault. <em>This is one of those times.</em></p>
+
+<p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
+
+<p>Upon execution of the second query, NHibernate was throwing a <code class="language-plaintext highlighter-rouge">SqlTypeException</code> for a <code class="language-plaintext highlighter-rouge">SqlDateTime</code> overflow. <code class="language-plaintext highlighter-rouge">SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
+
+<p>A good place to start for NHibernate debugging is always the logs, so I delved in. I discovered NHibernate was attempting to execute an update statement just before it tried the second query. It just kept getting stranger, why would a straightforward query cause an update?</p>
+
+<p>I thought i’d investigate why the update statement was failing first, then I’d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code class="language-plaintext highlighter-rouge">DateTime</code> column that was trying to be set to <code class="language-plaintext highlighter-rouge">DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code class="language-plaintext highlighter-rouge">DateTime</code> should be.</p>
+
+<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn’t. So because <code class="language-plaintext highlighter-rouge">DateTime</code> is a value type and cannot be set to <code class="language-plaintext highlighter-rouge">null</code>, NHibernate was populating it with the closest value to <code class="language-plaintext highlighter-rouge">null</code> as it could manage.</p>
+
+<p>That was the key, as soon as I had that realisation, it was obvious what the problem was.</p>
+
+<p>NHibernate knew that the database had a nullable column, but it had to manage with the non-nullable field on the object. When it came to run the second query, it noticed that the property wasn’t null as the mapping file said it should be, so it determined the value must have changed. It then attempted to persist those changes before executing the query!</p>
+
+<h2 id="to-break-it-down">To break it down</h2>
+
+<ol>
+  <li>Nullable column pulled into a non-nullable field forces NHibernate to create the smallest value it can.</li>
+  <li>NHibernate then checks for any changes, expecting a <code class="language-plaintext highlighter-rouge">null</code> on that field but finding a value.</li>
+  <li>Object now considered dirty because value has allegedly changed.</li>
+  <li>NHibernate performs an update before it pulls back the data agian.</li>
+</ol>
+
+<p>So the fix was simply to make the <code class="language-plaintext highlighter-rouge">DateTime</code> in the object a <code class="language-plaintext highlighter-rouge">DateTime?</code>, a nullable <code class="language-plaintext highlighter-rouge">DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
+
+<p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
+ <a class="read-more" href="/writings/nhibernate-and-the-sqltypeexception">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2007-12-18">
+                18 Dec 2007
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/percieved-value-and-developer-education">Percieved value and developer education</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>A <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx#171928">comment</a> on a <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/12/12/my-pick-for-altnetconf-quote-of-the-day.aspx">post at Jeremy D. Miller’s blog</a> caught my eye. To paraphrase, Jeff Tucker says that part of the problem of the lack of perceived value of ORM/TDD/IOC etc is down to the developers in question not having experienced the reason these tools exist.</p>
+
+ <a class="read-more" href="/writings/percieved-value-and-developer-education">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2007-12-12">
+                12 Dec 2007
+            </time>
+        </footer>
+    </article>
+
+    
+
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page13/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 14 of 23 </span>
+    <span class="page-number"> Page 14 of 20 </span>
      
         <a class="older-posts" href="/page15/" title="Next Page">Older Posts &raquo;</a>
      
@@ -194,7 +215,7 @@
     <footer class="site-footer clearfix">
       <section class="copyright">
         <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
-               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
       </section>
     </footer>
 

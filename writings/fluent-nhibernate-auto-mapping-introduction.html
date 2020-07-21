@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Fluent NHibernate: Auto Mapping Introduction</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-01-10">10 Jan 2009</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+
+  <p><strong>Note:</strong> this was written against <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=190">r190</a> of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, so you need to be at least at that revision to follow along.</p>
+</blockquote>
+
+<p>Fluent NHibernate has a concept called Auto Mapping, which is a mechanism for automatically mapping all your entities based on a set of conventions.</p>
+
+<p>Auto mapping utilises the principal of <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">convention over configuration</a>. Using this principal, the auto mapper inspects your entities and makes assumptions of what particular properties should be. Perhaps you have a property with the name of <code class="language-plaintext highlighter-rouge">Id</code> and type of <code class="language-plaintext highlighter-rouge">int</code>, the auto mapping might (and will by default) decide that this is an auto-incrementing primary key.</p>
+
+<!-- more -->
+
+<p>By using the auto mappings, you can map your entire domain with very little code, and certainly no XML. There are still scenarios where it may not be suitable to use the auto mapping, at which point it would be more appropriate to use the standard mapping; however, for most greenfield applications (and quite a few brownfield ones too) auto mapping will be more than capable.</p>
+
+<h2 id="getting-started-with-a-simple-example">Getting started with a simple example</h2>
+
+<p>Although it isn’t the purpose of this post give an in-depth walkthrough of Auto Mapping, it’s not out of scope for a simple example! So I’ll go through how to map a simple domain using the Fluent NHibernate AutoMapper.</p>
+
+<p>Imagine what the entities might be like for a simple shop; in-fact, let me show you.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Shelf</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="k">virtual</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">Products</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>You can’t get much simpler than that. We’ve got a product, with an auto-incrementing primary key called <code class="language-plaintext highlighter-rouge">Id</code>, a <code class="language-plaintext highlighter-rouge">Name</code> and a <code class="language-plaintext highlighter-rouge">Price</code>. The store has some shelves it fills with products, so there’s a <code class="language-plaintext highlighter-rouge">Shelf</code> entity, which has an <code class="language-plaintext highlighter-rouge">Id</code> again, and a list of the <code class="language-plaintext highlighter-rouge">Product</code>s on it; the <code class="language-plaintext highlighter-rouge">Product</code> collection is a <em>one-to-many</em> or <em>Has Many</em> relationship to the <code class="language-plaintext highlighter-rouge">Product</code>.</p>
+
+<blockquote>
+  <p>I’m going to make the assumption here that you have <em>an existing NHibernate infrastructure</em>, if you don’t then it’s best you consult a general NHibernate walkthrough before continuing.</p>
+
+  <p>Unless otherwise specified, any code samples are assumed to be placed with your NHibernate <code class="language-plaintext highlighter-rouge">SessionFactory</code> initialisation code.</p>
+</blockquote>
+
+<p>We’re going to be using the <code class="language-plaintext highlighter-rouge">AutoPersistenceModel</code> to do our mapping. To begin with we should take a look at the static <code class="language-plaintext highlighter-rouge">MapEntitiesFromAssemblyOf&lt;T&gt;</code> method; this method takes a generic type parameter from which we determine which assembly to look in for mappable entities.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">AutoPersistenceModel</span><span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+</code></pre></div></div>
+
+<p>That’s it, you’ve mapped your domain… Ok, there might be a <em>little</em> bit more to do than that. Let me explain.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">MapEntitiesFromAssemblyOf&lt;T&gt;</code> method creates an instance of an <code class="language-plaintext highlighter-rouge">AutoPersistenceModel</code> that’s tied to the assembly that <code class="language-plaintext highlighter-rouge">Product</code> is declared. No mappings are actually generated until you come to  your entities into NHibernate.</p>
+
+<p>A typical NHibernate setup looks something like this:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Product</span><span class="p">).</span><span class="n">Assembly</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>What we need to do is get our auto mappings in the middle of that.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+
+<span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>Notice the substitution of <code class="language-plaintext highlighter-rouge">AddAssembly</code> for <code class="language-plaintext highlighter-rouge">AddAutoMappings</code>. This allows us to stop NHibernate from looking for <code class="language-plaintext highlighter-rouge">hbm.xml</code> files, and use our auto mapped entities instead.</p>
+
+<blockquote>
+  <p>If you’re dealing with an existing system, it might not be feasible to completely replace your existing entities with auto mapped ones; in this scenario, you can leave the <code class="language-plaintext highlighter-rouge">AddAssembly</code> call in there, and Fluent NHibernate will quite happily work with existing mappings.</p>
+</blockquote>
+
+<p>We’re now capable of getting NHibernate to accept our auto mapped entities, there’s just one more thing we need to deal with. The auto mapper doesn’t know which classes are your entities, and which ones are your services (and everything else). The setup we’re using above simply maps every class in your assembly as an entity, which isn’t going to be very useful; so I’ll introduce one final method: <code class="language-plaintext highlighter-rouge">Where(Func&lt;Type, bool&gt;)</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Where</code> method takes a lambda expression which is used to limit types based on your own criteria. The most common usage is limiting based on a namespace, but you could also look at the type name, or anything else exposed on the <code class="language-plaintext highlighter-rouge">Type</code> object.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Bringing all that together leaves us with this NHibernate setup:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">autoMappings</span> <span class="p">=</span> <span class="n">AutoPersistenceModel</span>
+  <span class="p">.</span><span class="n">MapEntitiesFromAssemblyOf</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;()</span>
+  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Namespace</span> <span class="p">==</span> <span class="s">"Storefront.Entities"</span><span class="p">);</span>
+
+<span class="kt">var</span> <span class="n">sessionFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="p">()</span>
+  <span class="p">.</span><span class="nf">AddProperty</span><span class="p">(</span><span class="n">ConnectionString</span><span class="p">,</span> <span class="n">ApplicationConnectionString</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">AddAutoMappings</span><span class="p">(</span><span class="n">autoMappings</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">BuildSessionFactory</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>That’s all there is to automatically mapping your domain entities. It’s all a lot easier than writing out mappings, isn’t it? There’s much more to the auto mapping that I haven’t covered here, and I hope to write about those soon. Until then, enjoy!</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

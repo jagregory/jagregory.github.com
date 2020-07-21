@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Nested DataGrid/Repeater with Key Value access</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2005-10-20">20 Oct 2005</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code class="language-plaintext highlighter-rouge">Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
+
+<!-- more -->
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;asp:Repeater</span> <span class="na">id=</span><span class="s">"rptLogins"</span> <span class="na">Runat=</span><span class="s">"server"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ItemTemplate&gt;</span>
+    <span class="err">&lt;</span>%# DataBinder.Eval(Container, "DataItem.Password") %&gt;
+
+    <span class="nt">&lt;asp:DataGrid</span> <span class="na">id=</span><span class="s">"dgUsageDetail"</span> <span class="na">Runat=</span><span class="s">"server"</span> <span class="na">DataSource=</span><span class="s">'%# Container.DataItem.Row.GetChildRows("myRelation") %&gt;'</span> <span class="na">AutoGenerateColumns=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Columns&gt;</span>
+        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">"Date"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;ItemTemplate&gt;</span><span class="err">&lt;</span>%# DataBinder.Eval(Container, "DataItem(1)", "{0:dd/MM/yyyy}") %&gt;<span class="nt">&lt;/ItemTemplate&gt;</span>
+        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">"Time"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;ItemTemplate&gt;</span><span class="err">&lt;</span>%# DataBinder.Eval(Container, "DataItem(1)", "{0:T}") %&gt;<span class="nt">&lt;/ItemTemplate&gt;</span>
+        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+        <span class="nt">&lt;asp:TemplateColumn</span> <span class="na">HeaderText=</span><span class="s">"Page Visited"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;ItemTemplate&gt;</span><span class="err">&lt;</span>%# Container.DataItem(2) %&gt;<span class="nt">&lt;/ItemTemplate&gt;</span>
+        <span class="nt">&lt;/asp:TemplateColumn&gt;</span>
+      <span class="nt">&lt;/Columns&gt;</span>
+    <span class="nt">&lt;/asp:DataGrid&gt;</span>
+  <span class="nt">&lt;/ItemTemplate&gt;</span>
+<span class="nt">&lt;/asp:Repeater&gt;</span>
+</code></pre></div></div>
+
+<p>I was never happy with this solution, for the above reason. In my opinion if you’re referencing columns you should never, ever reference them by index because it’s making your code reliant on the physical structure of the database. Something you may not have any control over what-so-ever.</p>
+
+<p>Anyway, just now I was working on my own little project (…on my lunch) and I needed to do the same thing; perfect time for some investigation. If you look at the DataSource of the above nested datagrid you’ll see it’s bound to the current rows <code class="language-plaintext highlighter-rouge">GetChildRows</code> method, ends up (fairly obviously in hind sight) this returns a simple 1-dimensional array of DataRow objects. These DataRow objects (to my knowledge) basically contain an internal array of values, these values map to their parents <code class="language-plaintext highlighter-rouge">Columns</code> collection. There’s no reference to the actual name of the column, hence why the key access doesn’t work.</p>
+
+<p>The solution is quite simple. So simple it’s unbelievable… Replace <code class="language-plaintext highlighter-rouge">Row.GetChildRows("myRelation")</code> with <code class="language-plaintext highlighter-rouge">Row.CreateChildView("myRelation")</code>. This creates a DataView object of the child rows, so essentially it’s a mini-dataset for you to deal with as if it were standard. Keyed referencing is back in action!</p>
+
+<blockquote>
+  <p>Note: For those that are wondering, a dataview isn’t actually a mini-dataset but a filtered view of its parent dataset.</p>
+</blockquote>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

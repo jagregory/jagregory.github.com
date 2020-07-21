@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Converting and preserving Michael Abrash's Graphics Programming Black Book</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2014-01-20">20 Jan 2014</time>
+                
+                    gamedev
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <blockquote>
+  <p><strong>tl;dr</strong> The Markdown source of Michael Abrash’s Graphics Programming Black Book is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a>, there are Epub and Mobi versions on the <a href="https://github.com/jagregory/abrash-black-book/releases">Github Releases list</a>, and you can read an online copy of the book <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</p>
+</blockquote>
+
+<p>It started out as an attempt to read <a href="http://en.wikipedia.org/wiki/Michael_Abrash">Michael Abrash’s</a> Graphics Programming Black Book over the Christmas period. It turned into a epic mission of <code class="language-plaintext highlighter-rouge">grep</code>, <code class="language-plaintext highlighter-rouge">sed</code>, and <code class="language-plaintext highlighter-rouge">awk</code>, and a few blisters.</p>
+
+<!-- more -->
+
+<p>But first…</p>
+
+<h2 id="a-brief-history-of-3d-gaming">A brief history of 3D gaming</h2>
+
+<p>The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like <a href="http://en.wikipedia.org/wiki/Wolfenstein_3D">Wolfenstein 3D</a>, to hardware accelerated full 3D multi-player online games like <a href="http://en.wikipedia.org/wiki/Quake_III_Arena">Quake III Arena</a>. That’s progress for you.</p>
+
+<p>In 1992 <a href="http://en.wikipedia.org/wiki/Id_Software">id Software</a> released Wolfenstein 3D.</p>
+
+<p><img src="/images/abrash-black-book-1.png" alt="" /></p>
+
+<p>Then a year later in 1993 came <a href="http://en.wikipedia.org/wiki/Doom_\(video_game\)">Doom</a>.</p>
+
+<p><img src="/images/abrash-black-book-2.jpg" alt="" /></p>
+
+<p>The team at id Software were now furiously working on a sequel to Doom reusing the same engine. Everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time lighting. 3D particle effects. Portals. Water. It was going to amaze.</p>
+
+<p>This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was finished.</p>
+
+<p>In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.</p>
+
+<p><img src="/images/abrash-black-book-3.jpg" alt="" /></p>
+
+<p>If you’re interested in learning more this period in gaming, you must read <a href="http://en.wikipedia.org/wiki/Masters_of_Doom">Masters of Doom</a> by David Kushner.</p>
+
+<h2 id="whats-this-all-about-then">What’s this all about then?</h2>
+
+<p>In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly–blogging before blogging was a thing–and other parts were wrote about his work on Quake. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. <a href="http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html">Jeff Atwood wrote a lovely little tribute</a> to this book a few years ago.</p>
+
+<blockquote>
+  <p>I know what you’re thinking. “This book is about graphics. And assembly language. Plus it’s from, like, 1996, which is approximately 1928 in computer years. It’s of no interest to me as a programmer.” Admit it. You are. But you know what you’re going to do? You’re going to click through anyway and read some of it. Just like in college, <strong>the class topic doesn’t matter when the instructor is a brilliant teacher</strong>. And that’s exactly what Abrash is.</p>
+</blockquote>
+
+<p><img src="/images/abrash-black-book-4.png" alt="" /></p>
+
+<p>Come Christmas 2013 and I’d entered my annual contemplation on course correcting towards building video games, a desire I’ve had ever since I got the shareware version of Wolfenstein 3D back in the early 90s. As usual, this lead me to reading a bunch on game development and rendering engines in particular. Mostly indulgent. It was Christmas, after all.</p>
+
+<p>One of the articles I was reading, I can’t remember which now, referenced Michael Abrash’s Graphics Programming Black Book. And a flood of memories came back. I’d tried to read this book once before, I’d even owned it at one point. “I should read it again”, my brain said.</p>
+
+<p>My physical copy of the book was long gone. I turned to the Internet to try to buy it, out of print and over $200 on ebay. Even if I were willing to pay that, by the time it arrived my Christmas would be over (and probably my annual game developing desire too). “Ebooks, they’re a thing now!” Sadly, the publisher had shut down a few years ago, so they’ve been struggling to keep up with the times. Thankfully, in 2001, Michael and Dr. Dobbs <a href="http://www.drdobbs.com/parallel/graphics-programming-black-book/184404919">released a PDF version of the book online</a> for free. Gotta love these nerdy types, always giving their stuff away.</p>
+
+<p>Unfortunately–and we’re heading firmly into first-world problems here–the PDFs weren’t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren’t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grep’d, and I awk’d, and I sed’d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.</p>
+
+<p>As with any yak shaving exercise, I missed the exit for <em>Good Enough</em> by a long margin. I invested more time than I’d originally planned. I think I was up to two days, casually, now. At this point I’d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.</p>
+
+<blockquote>
+  <p>It does make me a little sad that books and online works like this–which influenced so many–can so easily fall away and be forgotten. Not just forgotten, but lost.</p>
+</blockquote>
+
+<p>What I’ve ended up with is the book converted into Markdown, in a style which lends itself to ebook publishing. It wasn’t my intention to preserve the layout or style of the book, just the content. In theory, you could read the pure Markdown files and get a quite enjoyable experience. If you choose to read the prepared versions, you benefit from a web-browser and e-reader compatible layout and some modern tweaks like syntax highlighting.</p>
+
+<p>I contacted Michael about the work I’ve been doing on his book, and asked him if he’d have any issue with me releasing it on Github. His reaction was obvious, in hind sight, “The more people can read it, the better!”.</p>
+
+<h2 id="getting-your-hands-on-it">Getting your hands on it</h2>
+
+<ul>
+  <li>Markdown source is available <a href="https://github.com/jagregory/abrash-black-book">on Github</a>.</li>
+  <li><a href="https://github.com/jagregory/abrash-black-book/releases">Each Github release</a> has a download in ePub and Mobi format.</li>
+  <li>There’s a mirror of the current HTML version over <a href="http://www.jagregory.com/abrash-black-book/">on my website</a>.</li>
+  <li>The source has a <code class="language-plaintext highlighter-rouge">Makefile</code> for compiling your own ePub and Mobi’s, if you’ve got <a href="http://johnmacfarlane.net/pandoc/">pandoc</a> installed.</li>
+</ul>
+
+<p>If you spot any issues whilst reading the book, please raise an issue on Github or send a Pull Request.</p>
+
+<p>All rights, of course, still belong to Michael Abrash. Any errors are probably down to me.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

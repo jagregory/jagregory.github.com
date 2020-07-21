@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>James Gregory</title>
-    <meta name="description" content="Code monkey. ThoughtWorks. Chief Agitator.
+    <meta name="description" content="I like turtles.
 " />
 
     <meta name="HandheldFriendly" content="True" />
@@ -25,7 +25,7 @@
         <div class="main-header-content inner">
             <h1 class="page-title"><a href="/">James Gregory</a></h1>
             <h2 class="page-description">
-                 Code monkey. ThoughtWorks. Chief Agitator.
+                 I like turtles.
  
             </h2>
         </div>
@@ -41,7 +41,7 @@
             <a class="newer-posts" href="/page17/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 18 of 23 </span>
+    <span class="page-number"> Page 18 of 20 </span>
      
         <a class="older-posts" href="/page19/" title="Next Page">Older Posts &raquo;</a>
      
@@ -52,20 +52,19 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/uncrippling-windows-xps-iis-51">Uncrippling Windows XP's IIS 5.1</a></h2>
+            <h2 class="post-title"><a href="/writings/behaviour-javascript-library">Behaviour JavaSctipt library</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I apparently got around to reading <a href="http://www.codinghorror.com">Coding Horror</a> a bit too late, as I missed <a href="http://www.codinghorror.com/blog/archives/000329.html&quot; title=&quot;Uncrippling Windows XP's IIS 5.1">this gem</a>. It’s an article about a small application used to bend XP’s IIS to your every whim, perfect for those of us suffering at the hands of Microsoft.</p>
+            <p>Recently, while working on my website I’ve become exposed to the <a href="http://bennolan.com/behaviour/">Behaviour JavaScript library</a>, which I may say is absolutely wonderful. Very simple and straight forward, completely removes the need for those cursed script tags appended to the bottom of a page; something which I’ve never liked doing but became a bit of a necessary burden! In short it allows you to execute arbitrary code on elements in the DOM using CSS selectors; so, for example, you can apply an <code class="language-plaintext highlighter-rouge">onclick</code> event only to elements which match <code class="language-plaintext highlighter-rouge">form fieldset div#items a.add</code><sup>1</sup>, very handy indeed!</p>
 
-<p>The basic gist of the application is that it removes the limits of XP’s IIS, namely the problem of only being allowed one website and 10 concurrent users. It takes a bit of getting used to, especially if you’re using Visual Studio; if you are, remember to reset IIS to it’s default website before opening a website created prior to using IISAdmin.</p>
-
- <a class="read-more" href="/writings/uncrippling-windows-xps-iis-51">Read more &raquo;</a>
+<p><sup>1</sup> Any anchors with a class of “add”, within a div with an ID of “items” that itself is within a fieldset in a form tag.</p>
+ <a class="read-more" href="/writings/behaviour-javascript-library">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-04-26">
-                26 Apr 2006
+            <time class="post-date" datetime="2006-03-07">
+                07 Mar 2006
             </time>
         </footer>
     </article>
@@ -74,24 +73,21 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/servercontrolids-update">ServerControlIDs Update</a></h2>
+            <h2 class="post-title"><a href="/writings/venkman-for-firefox-1501-javascript-debugger">Venkman for Firefox 1.5.0.1 (Javascript Debugger)</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I’ve created a small update for my ServerControlIDs control, which removes the problem caused by controls within Repeaters and DataGrid.</p>
+            <p>Once again the guys at Mozilla have broken quite possibly the best plug-in for Firefox: the <a href="http://www.mozilla.org/projects/venkman/">Venkman Javascript Debugger</a>. This is becoming quite commonplace, with every update for firefox disabling the debugger until a fix is released.</p>
 
-<p>If you had a repeater that for each item contained an Hyperlink control, you’d get a duplicate entry in the ClientIDs object for every record, to avoid this problem I simply don’t output any sub-controls from within repeater style objects.</p>
+<p>Anyway, even though both the extensions manager and Venkmans official website both say there aren’t any updates available, Joe Walker from <a href="http://getahead.ltd.uk/home">Getahead</a> has created and update that contains some bug fixes from Bugzilla, but most importantly Venkman now works with Firefox 1.5.0.1!</p>
 
-<p>That may sound like a bit of a hack, maybe it is, but if you want to refer to multiple elements within another, you shouldn’t really be doing it by ID anyway.</p>
-
-<p>You can get the <a href="/downloads/ServerControlIDs-1.1.zip">updated source here</a> or view the <a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness/">full article here</a>.</p>
-
- <a class="read-more" href="/writings/servercontrolids-update">Read more &raquo;</a>
+<p>Source: <a href="http://getahead.ltd.uk/ajax/venkman">Venkman for Firefox 1.5</a></p>
+ <a class="read-more" href="/writings/venkman-for-firefox-1501-javascript-debugger">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-04-26">
-                26 Apr 2006
+            <time class="post-date" datetime="2006-02-07">
+                07 Feb 2006
             </time>
         </footer>
     </article>
@@ -100,24 +96,20 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
+            <h2 class="post-title"><a href="/writings/first-working-weekend">First working weekend</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="highlighter-rouge">onclick="do_something()"</code>.</p>
+            <p>The weekend just past was my first that I’ve had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.</p>
 
-<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
+<p>The reason we had to work the weekend was down to us launching (re-launching actually) a product for a customer’s extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.</p>
 
-<p>Perfect - clean semantic markup and real event handling.</p>
-
-<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
- <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
+ <a class="read-more" href="/writings/first-working-weekend">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-04-12">
-                12 Apr 2006
+            <time class="post-date" datetime="2006-01-23">
+                23 Jan 2006
             </time>
         </footer>
     </article>
@@ -126,56 +118,77 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">How-to use ClientIDs in JavaScript without the ugliness</a></h2>
+            <h2 class="post-title"><a href="/writings/javascript-getnextelement-and-getpreviouselement-revised">JavaScript getNextElement and getPreviousElement - revised</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent’s ID.</p>
-
-<p><code class="highlighter-rouge">&lt;asp:TextBox ID="txtUsername" Runat="server" /&gt;</code> within a standard page simply has an ID of <code class="highlighter-rouge">txtUsername</code> within the HTML output. On the other hand, the following example would result in something along the lines of <code class="highlighter-rouge">_parent_txtUsername</code> as the ID:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"parent"</span> <span class="na">runat=</span><span class="s">"server"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;asp:TextBox</span> <span class="na">ID=</span><span class="s">"txtUsername"</span> <span class="na">Runat=</span><span class="s">"server"</span> <span class="nt">/&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre>
-</div>
-
-<p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
-
- <a class="read-more" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-04-12">
-                12 Apr 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/hello-from-jagregorycom">Hello from JAGregory.com!</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>You should now be receiving this syndicated content from my new(ish) website <a href="http://www.jagregory.com">http://www.jagregory.com</a>. I’ve finally moved away from the .Text powered blogging system I’ve been using for the past few years in favour of Typo, a Ruby on Rails system.</p>
-
-<p>I have a few reasons for doing this but the main one is that my blog as well as my personal website both validate to <acronym title="Extensible Hypertext Markup Language">XHTML</acronym> 1.0. On top of that, with the dynamic nature of Ruby on Rails, I can make changes to the layouts without having to recompile.</p>
-
-<p>Please drop me a line if you spot anything out of place.</p>
-
-<blockquote>
-  <p>Future James: Isn’t this cute?</p>
+            <blockquote>
+  <p>This is a very old post. Please, stop reading and just <a href="http://jquery.com/">download jQuery</a>.</p>
 </blockquote>
 
- <a class="read-more" href="/writings/hello-from-jagregorycom">Read more &raquo;</a>
+<p>As I said I would be in my previous post, I’ve been working on improving getNextElement. I’ve improved the overall performance of the function and also created a few others with similar purpose; including the sister function getPrevious element. I outline all the functions and their uses below; you can find the download link at the top and bottom of this post.</p>
+
+<p>Any bugs anyone finds don’t fret to email me or post a comment here, i’ll work on fixing them asap.</p>
+
+ <a class="read-more" href="/writings/javascript-getnextelement-and-getpreviouselement-revised">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             
             
-            <time class="post-date" datetime="2006-04-04">
-                04 Apr 2006
+            <time class="post-date" datetime="2006-01-12">
+                12 Jan 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/prototype-periodicalexecuter-stop-javascript-function">Prototype PeriodicalExecuter.stop() JavaScript function</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
+
+<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
+
+<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js">prototype-extensions.js</a> file and referenced it wherever needed.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onTimerEvent</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">frequency</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There’s really nothing much going on in this code, all it does is take the current registerCallback function (which creates the actual timer) and stores its returned interval ID which we then use in the new stop function with the native clearInterval method.</p>
+
+<p>Here’s an example implementation where I fire the PeriodicalExecuter when a key is released in a text box and then stop it once the call completes, this was the main reason I created this extension, my aim was to have a waiting period of a few seconds before a ajax lookup is performed; mainly to cut down on server calls. Each time the textbox changes the PeriodicalExecuter gets reset and started again which means the function will only ever fire once the countdown is complete.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">id=</span><span class="s">"changer"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">pe</span><span class="p">;</span>
+
+  <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">changer</span><span class="dl">'</span><span class="p">).</span><span class="nx">onkeyup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pe</span><span class="p">)</span> <span class="nx">pe</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+    <span class="nx">pe</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PeriodicalExecuter</span><span class="p">(</span><span class="nx">textChange</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">textChange</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="dl">'</span><span class="s1">check textbox content against database here</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">pe</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+ <a class="read-more" href="/writings/prototype-periodicalexecuter-stop-javascript-function">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-01-09">
+                09 Jan 2006
             </time>
         </footer>
     </article>
@@ -188,7 +201,7 @@
             <a class="newer-posts" href="/page17/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 18 of 23 </span>
+    <span class="page-number"> Page 18 of 20 </span>
      
         <a class="older-posts" href="/page19/" title="Next Page">Older Posts &raquo;</a>
      
@@ -199,7 +212,7 @@
     <footer class="site-footer clearfix">
       <section class="copyright">
         <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
-               &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
       </section>
     </footer>
 

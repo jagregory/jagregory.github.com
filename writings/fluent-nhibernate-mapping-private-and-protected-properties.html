@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Fluent NHibernate: Mapping private and protected properties</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2009-01-13">13 Jan 2009</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>There’s been a point of contention for some users of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> since the beginning, and that’s the lack of a method of mapping private and protected properties on their domain entities.</p>
+
+<p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we’re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
+
+<!-- more -->
+
+<p>None of the solutions we have are ideal, we’ll be the first to admit that; but considering Fluent NHibernate was never designed to support these situations, and the limitations C# imposes on us, we’ve got some pretty reasonable choices. Each option comes with it’s own compromises, so it’s important you pick the method that has the compromises you’re more willing to accept; I’ll outline the pros and cons of each approach.</p>
+
+<h2 id="nested-expression-exposition-class">Nested expression exposition class</h2>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+<span class="p">{</span>
+  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Expressions</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Expression</span><span class="p">&lt;</span><span class="n">Func</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="n">Id</span> <span class="p">=</span> <span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Id</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="nf">Id</span><span class="p">(</span><span class="n">Product</span><span class="p">.</span><span class="n">Expressions</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This option takes advantage of an interesting side effect of nested class scope and access modifiers. If you haven’t done something like this before, basically nested classes can access their parent’s private/protected members. We create a nested static class that exposes an <code class="language-plaintext highlighter-rouge">Expression</code> for each hidden member. We can then use the expressions declared in this static class to reflect against the hidden members. It’s reasonably clean, made even more so if you separate the <code class="language-plaintext highlighter-rouge">Expressions</code> class into a partial class of your entity; so you could have <code class="language-plaintext highlighter-rouge">Product.cs</code> and <code class="language-plaintext highlighter-rouge">ProductExpressions.cs</code>.</p>
+
+<h3 id="pros">Pros</h3>
+
+<ul>
+  <li>Refactoring friendly</li>
+  <li>Mappings still readable</li>
+</ul>
+
+<h3 id="cons">Cons</h3>
+
+<ul>
+  <li>Modification to entities required</li>
+  <li>Need 3 classes to map an entity (entity, expression class, and mapping)</li>
+</ul>
+
+<h2 id="nested-mapping">Nested mapping</h2>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+<span class="p">{</span>
+  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+    <span class="p">{</span>
+      <span class="nf">Id</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Again using the scope trick, you can wrap your mapping inside your entity. This allows you to use the expressions as normal, without having to do any expression tricks. Like the expression class previously, this can be made neater by using partial classes.</p>
+
+<h3 id="pros-1">Pros</h3>
+
+<ul>
+  <li>Refactoring friendly</li>
+  <li>Can use normal expressions</li>
+</ul>
+
+<h3 id="cons-1">Cons</h3>
+
+<ul>
+  <li>Modification to entities required</li>
+  <li>Mapping nested in entity, so can’t be separated across assemblies/namespaces</li>
+</ul>
+
+<h2 id="reveal-static-class-and-string-based-names">Reveal static class and string-based names</h2>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Product</span>
+<span class="p">{</span>
+  <span class="k">private</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="n">ProductMap</span> <span class="p">:</span> <span class="n">ClassMap</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">ProductMap</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="nf">Id</span><span class="p">(</span><span class="n">Reveal</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="s">"Id"</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Our final option is different to the previous two, in that it utilises an expression generator to create an expression for a private or protected member. This is essentially what the first two are doing, just with strings instead of nesting tricks.</p>
+
+<h3 id="pros-2">Pros</h3>
+
+<ul>
+  <li>No modifications to entities needed</li>
+  <li>Mappings and entity remain separate</li>
+</ul>
+
+<h3 id="cons-2">Cons</h3>
+
+<ul>
+  <li>Potential renaming issues</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>You have the power, now pick the one that suits you best. Compile time safety, or entity purity? You’re now free to make the decision, instead of us.</p>
+
+<p>I don’t think anyone on the Fluent NHibernate team is particularly happy with that we have to write these hacks, but we’re doing the best with what we’ve got. We all have different preferences, but at least there’s something for everyone now.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2020 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
