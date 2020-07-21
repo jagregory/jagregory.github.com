@@ -10,9 +10,9 @@ module Jekyll
         [
           "<section class=\"side-by-side\">",
           "<div>",
-          render_all(@nodelist[1..-1], context),
+          nodelist[1..-1],
           "</div>",
-          render_all([@nodelist[0...1]], context),
+          nodelist[0...1],
           "</section>"
         ].join("\n")
       end
