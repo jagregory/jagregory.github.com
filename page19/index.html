@@ -52,6 +52,59 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/prototype-periodicalexecuter-stop-javascript-function">Prototype PeriodicalExecuter.stop() JavaScript function</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve been playing with the <a href="http://prototype.conio.net/">prototype framework</a> for a while now and am very impressed, the file size is a bit of a down point but that aside it’s excellent.</p>
+
+<p>The one thing that has slightly irritated me (and <a href="http://roberthanson.blogspot.com/2005/11/prototypejs-periodicalexecuter.html">others it seems</a>) is that there isn’t a stop function built into the PeriodicalExecuter object. Seems something strangly simple to miss out, especially as the Ajax.PeriodicalUpdater has one built in. With that in mind I’ve made an extension my self to perform this function.</p>
+
+<p>I’ve simply placed the following code in a <a href="http://www.jagregory.com/downloads/prototype-extensions.js">prototype-extensions.js</a> file and referenced it wherever needed.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onTimerEvent</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">frequency</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">PeriodicalExecuter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">intervalID</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There’s really nothing much going on in this code, all it does is take the current registerCallback function (which creates the actual timer) and stores its returned interval ID which we then use in the new stop function with the native clearInterval method.</p>
+
+<p>Here’s an example implementation where I fire the PeriodicalExecuter when a key is released in a text box and then stop it once the call completes, this was the main reason I created this extension, my aim was to have a waiting period of a few seconds before a ajax lookup is performed; mainly to cut down on server calls. Each time the textbox changes the PeriodicalExecuter gets reset and started again which means the function will only ever fire once the countdown is complete.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">id=</span><span class="s">"changer"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">pe</span><span class="p">;</span>
+
+  <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">changer</span><span class="dl">'</span><span class="p">).</span><span class="nx">onkeyup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pe</span><span class="p">)</span> <span class="nx">pe</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+    <span class="nx">pe</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PeriodicalExecuter</span><span class="p">(</span><span class="nx">textChange</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">textChange</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="dl">'</span><span class="s1">check textbox content against database here</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">pe</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+ <a class="read-more" href="/writings/prototype-periodicalexecuter-stop-javascript-function">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-01-09">
+                09 Jan 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/nested-datagridrepeater-with-key-value-access">Nested DataGrid/Repeater with Key Value access</a></h2>
         </header>
         <section class="post-excerpt">
@@ -145,28 +198,6 @@
             
             <time class="post-date" datetime="2005-07-23">
                 23 Jul 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/exception-logging">Exception Logging</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Something I’ve always been tinkering with for my ASP.Net applications has been exception logging. I often get irritated when users (or applications) supply me with misleading or incorrect error messages, or at least incorrect directions of how to recreate the error.</p>
-
-<p>I worked for quite some time trying to create a Logging system that would cater for my needs, and I got quite close to doing that. I created a small go-between object for the Trace and Debug logging and wrote that to my own XML file. The idea behind it, of course, was to make it easier for my self in debugging problems, if I could supply my self with all the data that I know I would require to trace an issue then, in theory, I could correct it much more quickly. This took me quite some time to create and of course was not perfect.</p>
-
- <a class="read-more" href="/writings/exception-logging">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-07-18">
-                18 Jul 2005
             </time>
         </footer>
     </article>

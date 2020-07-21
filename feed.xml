@@ -6,9 +6,157 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 21 Jul 2020 11:18:57 +1000</pubDate>
-    <lastBuildDate>Tue, 21 Jul 2020 11:18:57 +1000</lastBuildDate>
+    <pubDate>Tue, 21 Jul 2020 11:52:37 +1000</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2020 11:52:37 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Bulk rename Kinesis Firehose files in S3</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Also known as&lt;/strong&gt;: how to move hundreds of files in S3 that you accidentally put in the wrong place because you misconfigured a Kinesis Firehose.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;I have a Kinesis Firehose streaming change capture data into an S3 bucket so I can query it using Athena. This has been working great for months, but I just realised the default configuration of Firehose does not put the files in a structure that Athena can partition on, so my Athena queries are scanning the entire dataset instead of partitioning on date.&lt;/p&gt;
+
+&lt;p&gt;Kinesis Firehose by default delivers files in a structure like: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2020/07/20/16/Filename-2020-07-20-16-00-00-hash&lt;/code&gt;. But Athena wants files in a structure compatible with Hive’s partition format, which uses a variable-based convention: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year=2020/month=07/day=20/hour=16/Filename-2020-07-20-16-00-00-hash&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In my case, I’ve decided having the hour in the path is making my partitions too small (not enough data per-hour) so I’m going to use a structure of just the date as a single variable: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dt=2020-07-20/Filename-2020-07-20-16-00-00-hash&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now I just need to move hundreds of files from the old structure into the new structure!&lt;/p&gt;
+
+&lt;h2 id=&quot;the-commands&quot;&gt;The commands&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws s3 &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--recursive&lt;/span&gt; s3://bucket-name/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print $4 }'&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-E&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;p;s/([0-9]{4})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;([0-9]{2})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;([0-9]{2})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[0-9]{2}/dt=&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\3&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-E&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;s/^/s3:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;bucket-name&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  | xargs &lt;span class=&quot;nt&quot;&gt;-n2&lt;/span&gt; aws s3 &lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Running this script will move all files from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://bucket-name/year/month/day/hour/filename&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://bucket-name/dt=year-month-day/filename&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: this is not particularly elegant: you could likely combine several of these lines together but I’ve favoured readability over efficiency, and it’s also not particularly fast so probably don’t use it for millions of files.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;the-breakdown&quot;&gt;The breakdown&lt;/h2&gt;
+
+&lt;p&gt;Start by listing all the files in the bucket:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls --recursive s3://bucket-name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This produces an output like:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;2020-07-16 15:12:29 10016 2020/07/16/05/Snapshot-2020-07-16-05-07-26
+2020-07-17 09:21:12 10838 2020/07/16/23/Snapshot-2020-07-16-23-16-10
+2020-07-17 09:27:52  5790 2020/07/16/23/Snapshot-2020-07-16-23-22-50
+2020-07-17 09:55:43  5409 2020/07/16/23/Snapshot-2020-07-16-23-50-41
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’m truncating the filenames in this post just to make it a bit more readable. Imagine there being
+a hash at the end of each line too.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Next, extract just the filename from the output, which is the 4th column:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print $4 }'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’m using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt; here because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; doesn’t deal well with space delimited columns and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls&lt;/code&gt; doesn’t let you control the output format. If the output was tab delimited &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; would’ve worked too.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This produces an output of just the filenames:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;2020/07/16/05/Snapshot-2020-07-16-05-07-26
+2020/07/16/23/Snapshot-2020-07-16-23-16-10
+2020/07/16/23/Snapshot-2020-07-16-23-22-50
+2020/07/16/23/Snapshot-2020-07-16-23-50-41
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next is the fun part. We need to take that filename and transform it into our new format &lt;em&gt;whilst also preserving the original filename so both can be passed to a move command together&lt;/em&gt;. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt; works well for this:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-E&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;p;s/([0-9]{4})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;([0-9]{2})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;([0-9]{2})&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[0-9]{2}/dt=&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\1&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\2&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\3&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s a pretty dense command, but most of that is a regular expression. To break it down:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-E&lt;/code&gt; enable extended regular expressions, this gives us the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;()&lt;/code&gt; group match support.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;p;&lt;/code&gt; you might not see this part very often, this prints the input as well as the replacement, so for one line in you get two lines out: the original, and whatever the replacement produced. This is key for being able to build the move command easily later as it requires a source and a destination.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s/&lt;/code&gt; start the regular expression.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;([0-9]{4})\/([0-9]{2})\/([0-9]{2})\/[0-9]{2}&lt;/code&gt; match the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year/month/day/hour&lt;/code&gt; part of the path, capturing the year, month, and day as groups so they can be reused later.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dt=\1-\2-\3&lt;/code&gt; specify the replacement; we replace the whole match (year/month/day/hour) with a pattern of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dt=year-month-day&lt;/code&gt; where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\1&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\2&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\3&lt;/code&gt; are references to the capture groups in the regular expression.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Optimisation: This could probably have done in our previous &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt; command which has regular expression support, but it was looking pretty ugly and I’d prefer to waste a few CPU cycles than bend my brain too much.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The output now looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;2020/07/16/05/Snapshot-2020-07-16-05-07-26
+dt=2020-07-16/Snapshot-2020-07-16-05-07-26
+2020/07/16/23/Snapshot-2020-07-16-23-16-10
+dt=2020-07-16/Snapshot-2020-07-16-23-16-10
+2020/07/16/23/Snapshot-2020-07-16-23-22-50
+dt=2020-07-16/Snapshot-2020-07-16-23-22-50
+2020/07/16/23/Snapshot-2020-07-16-23-50-41
+dt=2020-07-16/Snapshot-2020-07-16-23-50-41
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You’ll notice there are twice as many lines now, due to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;p;&lt;/code&gt; setting of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt;. For each original line there’s now that line plus the reformatted line.&lt;/p&gt;
+
+&lt;p&gt;Next up is to prefix each line with the bucket name. The move command expects all filenames to be fully-qualified with their bucket:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-E&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;s/^/s3:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;bucket-name&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Optimisation: With some smarter regular expressions, this could’ve been folded into the previous &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt; statement.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The output now looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;s3://bucket-name/2020/07/16/05/Snapshot-2020-07-16-05-07-26
+s3://bucket-name/dt=2020-07-16/Snapshot-2020-07-16-05-07-26
+s3://bucket-name/2020/07/16/23/Snapshot-2020-07-16-23-16-10
+s3://bucket-name/dt=2020-07-16/Snapshot-2020-07-16-23-16-10
+s3://bucket-name/2020/07/16/23/Snapshot-2020-07-16-23-22-50
+s3://bucket-name/dt=2020-07-16/Snapshot-2020-07-16-23-22-50
+s3://bucket-name/2020/07/16/23/Snapshot-2020-07-16-23-50-41
+s3://bucket-name/dt=2020-07-16/Snapshot-2020-07-16-23-50-41
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The same as before, but now prefixed with the bucket name.&lt;/p&gt;
+
+&lt;p&gt;One final step to go, the actual move:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xargs &lt;span class=&quot;nt&quot;&gt;-n2&lt;/span&gt; aws s3 &lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We use xargs (an absolute cornerstone of shell scripting) to execute the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 mv&lt;/code&gt; command and finish the job. Let’s break this one down too:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; reads from stdin and executes a command with the stdin lines as arguments. So &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo hi | xargs cowsay&lt;/code&gt; is the equivalent to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cowsay hi&lt;/code&gt;. In our case, we take the filenames we’ve been processing and pass them to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 mv&lt;/code&gt; as arguments.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n2&lt;/code&gt; this tells xargs to take &lt;em&gt;two lines&lt;/em&gt; instead of just one, and pass them both to our command. Because we have one line with the original and a second line with the transformed, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; calls the move command like so: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 mv original-line transformed-line&lt;/code&gt;, which is exactly what’s need to move a file from one place to another.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 mv&lt;/code&gt; as already mentioned, is the command &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; is going to call.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Running that command will take a list of original filenames, transform them into pairs of original and transformed filenames, prepend the filenames with the bucket, and then pass the pairs to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 mv&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;And that’s it, done! Files moved.&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 21 Jul 2020 00:00:00 +1000</pubDate>
+        <link>https://www.jagregory.com//writings/bulk-s3-move</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/bulk-s3-move</guid>
+        
+        
+      </item>
     
       <item>
         <title>InfluxDB Kapacitor subscription errors</title>
@@ -787,168 +935,6 @@ jagregory.sinopia
         <category>learning</category>
         
         <category>rant</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Rhino Licensing</title>
-        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/ayende/rhino-licensing&quot;&gt;Rhino Licensing&lt;/a&gt; is an open-source licensing framework by &lt;a href=&quot;http://ayende.com&quot;&gt;Ayende Rahien&lt;/a&gt;, and it grew out of his frustration with other license providers while creating &lt;a href=&quot;http://nhprof.com/&quot;&gt;NHibernate Profiler&lt;/a&gt;.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;Rhino Licensing uses asymmetric encryption–also known as &lt;a href=&quot;http://en.wikipedia.org/wiki/Public-key_cryptography&quot;&gt;public-key cryptography&lt;/a&gt;–specifically the &lt;a href=&quot;http://en.wikipedia.org/wiki/RSA&quot;&gt;RSA algorithm&lt;/a&gt;. In cryptography, asymmetric means there are two parts to each key, one public and one private. You encrypt a value using the one key, and it can only be decrypted using the other key. In the case of license key generation, we store our private key on the server (and never tell anyone it!), and distribute the public key with our application. When the user receives a license key, the application is able to verify that it came from us by using the public key. If someone tries to use a license key they’ve generated themselves, it wouldn’t work unless they had our exact private key.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Other systems that use asymmetric encryption include &lt;abbr title=&quot;Secure Shell&quot;&gt;SSH&lt;/abbr&gt;, &lt;abbr title=&quot;Secure Sockets Layer&quot;&gt;SSL&lt;/abbr&gt;, &lt;abbr title=&quot;Pretty Good Privacy&quot;&gt;PGP&lt;/abbr&gt;, and among others, Git uses asymmetric encryption for its security due to it using SSH.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The format of the license that Rhino Licensing generates is an XML document, plain and simple. By default, it includes the user’s name, an expiration date, the type of license (trial, standard, floating, etc…), and most importantly the cryptographic signature. Below is an example Rhino Licensing generated license.&lt;/p&gt;
-
-&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;license&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ae4c05b5-c188-47f8-852f-b4e5375621f7&quot;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;expiration=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;2011-01-01T00:00:00.0000000&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Standard&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;name&amp;gt;&lt;/span&gt;Bilbo&lt;span class=&quot;nt&quot;&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Signature&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignedInfo&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;&amp;lt;CanonicalizationMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignatureMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#rsa-sha1&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
-
-      &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;URI=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;nt&quot;&gt;&amp;lt;Transforms&amp;gt;&lt;/span&gt;
-          &lt;span class=&quot;nt&quot;&gt;&amp;lt;Transform&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#enveloped-signature&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Transforms&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;nt&quot;&gt;&amp;lt;DigestMethod&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Algorithm=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://www.w3.org/2000/09/xmldsig#sha1&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;nt&quot;&gt;&amp;lt;DigestValue&amp;gt;&lt;/span&gt;sKDT7gzgedzmh1AMxxLbfcF1Hsw=&lt;span class=&quot;nt&quot;&gt;&amp;lt;/DigestValue&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/SignedInfo&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SignatureValue&amp;gt;&lt;/span&gt;
-        SfkvCGv1+EdLTvaROv27ymDumS0y02fPANTVhr0Yxd/
-        AxxVH0q0BQ6w8Ou5L7gyLYLvnSckgjhrGnGpiifdvbg==
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/SignatureValue&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Signature&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/license&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id=&quot;whats-a-signature&quot;&gt;What’s a signature?&lt;/h2&gt;
-
-  &lt;p&gt;A cryptographic signature is a string of bytes used to aid in verification of the source of a document. In most cases–and in the case of Rhino Licensing–the signature is generated by hashing the content of the file using SHA1 (or another suitable hashing algorithm), and encrypting that hash using the private key. The resulting string of bytes is the signature.&lt;/p&gt;
-
-  &lt;p&gt;When the client receives a file with a signature, it creates a hash of the file (sans-signature) and compares that hash to the decrypted value of the signature. Baring in mind that the signature is an encrypted hash of the file, if either of the public or private keys were invalid or the file had been tampered with, then the decrypted string would not match the hash of the file. When the client generated hash and the decrypted signature match, you can be confident the sender of the message is who you think it is.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The great part about using the hash of the document as the signature is that if the user tampers with the license–such as changing the expiration date or the licensee name–the signature will no longer match the hash the client generates, and BAM, instant invalid license.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;One particular aspect I like with this approach is that the licensee name is clearly visible in the license. This simple act can be quite dissuasive when it comes to piracy; after all, who would want their name visible on all the torrent websites out there?&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Enough with the waffle, let’s start using Rhino Licensing.&lt;/p&gt;
-
-&lt;h2 id=&quot;create-your-key&quot;&gt;Create your key&lt;/h2&gt;
-
-&lt;p&gt;The first thing we need to do is generate a public/private key pair for us to use in our license generation. Rhino Licensing uses the RSACryptoServiceProvider for it’s keys, so we can use that ourselves to generate our keys. One of the simplest ways to do that is to knock up a really quick console application.&lt;/p&gt;
-
-&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;RSACryptoServiceProvider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToXmlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Done&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;That program will generate a new key for you and write out the public and private parts to two separate XML files (publicKey.xml and privateKey.xml). Keep these two files handy!&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;You will probably want to change the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1024&lt;/code&gt; value in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RSACryptoServiceProvider&lt;/code&gt; constructor to something larger. This is the size of the key that will be generated. The larger the better really, but larger numbers require longer to generate.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;update-your-application&quot;&gt;Update your application&lt;/h2&gt;
-
-&lt;p&gt;Now we’ll update your application to complain if it doesn’t have a license. In your entry-point for your application you need to assert the license. Before we do that, make sure you’ve got your public key handy from the previous step. Rhino Licensing needs the &lt;em&gt;content&lt;/em&gt; of this file, so you can either embed it directly into a constant or as a resource. Secondly, it needs to know where to look for a license that the user will have been given.&lt;/p&gt;
-
-&lt;p&gt;Assuming a really simple app, here’s a Program.cs with Rhino Licensing:&lt;/p&gt;
-
-&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;publicKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseValidator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;license.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AssertValidLicense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;If the license.xml file doesn’t exist, or if it’s invalid, Rhino Licensing will throw an exception. Of course, as we haven’t generated a license yet we’ll get an exception. That’s the client done though, so we can move on to our final step now. Once we complete that step, you will be able to just drop a license.xml into the same directory as your application and everything will work as expected.&lt;/p&gt;
-
-&lt;h2 id=&quot;create-the-license-generator&quot;&gt;Create the license generator&lt;/h2&gt;
-
-&lt;p&gt;We need something to actually generate a license for your users. If you were being all fancy you could do this as a web-service that gets integrated with your payment provider; however, for simplicity’s sake we’ll just create another console application that spits out a license.&lt;/p&gt;
-
-&lt;p&gt;Rhino Licensing has a few prerequisites for a license: A name, an id of the license, an expiration date, and a license type. You can also supply a dictionary of custom values, but we wont be using that in this example.&lt;/p&gt;
-
-&lt;p&gt;For a really simple license generator all you need is the above for each license, and the private key. We’ll wrap that up in a simple console app which’ll prompt for the required info:&lt;/p&gt;
-
-&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Program&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAllText&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;privateKey.xml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Guid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;NewGuid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LicenseGenerator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;private_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Name: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Date: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Type: &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Enum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LicenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// generate the license&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;license&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Generate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirationDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;licenseType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;license&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;That’s it, you’ve got a license generator. Remember, this will exist behind your firewall, the users will (and must) never see your private key.&lt;/p&gt;
-
-&lt;p&gt;If you take the output of this application and save it in a license.xml file in your client, your application should stop throwing license exceptions and run normally! You’ve officially just licensed your app.&lt;/p&gt;
-
-&lt;h2 id=&quot;what-have-we-just-done&quot;&gt;What have we just done?&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Created a private key generator, purely for convenience than anything else. We should only need to run this once before we start generating our keys. You could run it once per major release to ensure your 1.0 licenses are never compatible with 2.0.&lt;/li&gt;
-  &lt;li&gt;Updated our client application to validate the presence and validity of a license (and to explode if there isn’t one).&lt;/li&gt;
-  &lt;li&gt;Created a “server” to generate licenses for us. This is very primitive but could easily be adapted to a web server. You might want to look at the Rhino Licensing &lt;a href=&quot;https://github.com/ayende/rhino-licensing/blob/master/Rhino.Licensing/LicensingService.cs&quot;&gt;LicensingService&lt;/a&gt; before you continue.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Tue, 11 Jan 2011 00:00:00 +1100</pubDate>
-        <link>https://www.jagregory.com//writings/rhino-licensing</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/rhino-licensing</guid>
-        
-        <category>licensing</category>
-        
-        <category>OpenSource</category>
         
         
       </item>
