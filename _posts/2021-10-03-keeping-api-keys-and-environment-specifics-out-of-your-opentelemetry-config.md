@@ -7,6 +7,8 @@ published: true
 
 When I was setting up [Honeycomb](https://www.honeycomb.io/) with my Lambda functions there was something that bothered me: the [OpenTelemetry](https://opentelemetry.io/) config file contained my API keys and environment-specific details. I needed to keep my bundle environment-agnostic, and I really didn't want to be committing API keys to version control. You can read more about the adventure itself in [my other post](/writings/getting-honeycomb-working-with-my-aws-lambda-functions), or continue reading this post for my solution.
 
+<!-- more -->
+
 OpenTelemetry supports environment variables to override parts of the config file, such as `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_EXPORTER_OTLP_HEADERS`. In theory, you could use these to customise your config file. Unfortunately, the AWS Distro for OpenTelemetry on AWS Lambda doesn't seem to honour these variables.
 
 Fortunately, the [OpenTelemetry Collector documentation](https://opentelemetry.io/docs/collector/configuration) has a section on [environment variables](https://opentelemetry.io/docs/collector/configuration/#configuration-environment-variables) which says "the use and expansion of environment variables is supported in the Collector configuration".

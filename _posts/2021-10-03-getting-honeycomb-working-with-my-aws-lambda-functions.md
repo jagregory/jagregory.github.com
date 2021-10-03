@@ -5,11 +5,15 @@ date: 2021-10-03
 published: true
 ---
 
-I have several existing Lambda functions which are all built on Node.js which I wanted to connect to [Honeycomb](https://www.honeycomb.io/). I spent some time over the weekend working through it, and this is my stream-of-consciousness. If you'd like to read just the solution you can jump to [Honeycomb and OpenTelemetry with Lambda and Node.js (reference)](/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference), and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in [Keeping API keys and environment-specifics out of your OpenTelemetry config](/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config).
+I have several existing Lambda functions which are all built on Node.js which I wanted to connect to [Honeycomb](https://www.honeycomb.io/). I spent some time over the weekend working through it, and this is my stream-of-consciousness.
+
+<!-- more -->
+
+If you'd like to read just the solution you can jump to [Honeycomb and OpenTelemetry with Lambda and Node.js (reference)](/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference), and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in [Keeping API keys and environment-specifics out of your OpenTelemetry config](/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config).
 
 So, where do I start connecting these Lambdas to Honeycomb?
 
-# Starting with OpenTelemetry
+## Starting with OpenTelemetry
 
 Honeycomb [encourage you to use OpenTelemetry](https://docs.honeycomb.io/getting-data-in/opentelemetry/beelines-and-otel/) to send data to them. It's nice to see a vendor encourage the use of open standards over their own client libraries (which they also have if you need them).
 
@@ -19,7 +23,7 @@ This is my first point of confusion. I pause here for a bit and reach out to a c
 
 My confusion about Node.js support will return later, but for now Liz's suggestion sends me off in a positive direction.
 
-# AWS Distro for OpenTelemetry
+## AWS Distro for OpenTelemetry
 
 [AWS Distro for OpenTelemetry](https://aws.amazon.com/otel) (aka ADOT, just rolls off the tongue) provides several pre-built [Lambda Layers](https://aws-otel.github.io/docs/getting-started/lambda/lambda-js) which you can add to your Lambda functions to configure OpenTelemetry for you. There's a Node.js one, so that's positive.
 
@@ -33,7 +37,7 @@ Most of my Lambdas are working, but there's a handful which I've deployed with t
 
 If I look in the Lambda's logs, there's signs of an OpenTelemetry Collector running and it's printing about receiving traces. The traces are still going to X-Ray but it's a step in the right direction.
 
-# Connecting to Honeycomb
+## Connecting to Honeycomb
 
 Now to actually get the traces to Honeycomb. The AWS Distro for OpenTelemetry comes pre-packaged with a config file for the Collector which points to X-Ray. If you want your telemetry to go anywhere else you need to provide your own config file.
 
@@ -68,7 +72,7 @@ That wasn't so hard. Ok it wasn't easy either, but you don't use Node.js without
 
 At this point I have auto-instrumented code sending traces to Honeycomb. The final step is to get manual instrumentation working.
 
-# Manual instrumentation with OpenTelemetry
+## Manual instrumentation with OpenTelemetry
 
 This is the bit that I was stuck on for the longest, I think.
 
@@ -96,7 +100,7 @@ My Lambda functions now just need the Lambda Layer attached and configured, and 
 
 But there is one last thing on my mind. The config file that AWS Distro needs you to create. That config file is where you put your API Keys and other exporter settings. That's not ideal.
 
-# Making the OpenTelemetry config free of API keys and environment-specifics
+## Making the OpenTelemetry config free of API keys and environment-specifics
 
 To add some extra context, it's important to understand that I bundle my Lambda functions *once* and only once. I don't build environment-specific bundles, instead the one bundle is "promoted" to different environments. Where this becomes an issue is OpenTelemetry needs me to embed the Honeycomb settings in the config file.
 
@@ -135,7 +139,7 @@ I'm not a big fan of storing secrets in environment variables, but until there's
 
 That's it. All done. I can rest now.
 
-# Conclusion
+## Conclusion
 
 To summarise:
 
