@@ -41,12 +41,82 @@
             <a class="newer-posts" href="/page9/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 10 of 20 </span>
+    <span class="page-number"> Page 10 of 21 </span>
      
         <a class="older-posts" href="/page11/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/the-vb-oss-debarkle">The VB OSS debarkle</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Following a discussion last night between myself, several others, and Roy Osherove, which Jeremy Miller <a href="http://codebetter.com/blogs/jeremy.miller/archive/2009/01/07/a-challenge-to-the-vb-net-community-at-large-on-oss.aspx">also commented on</a>.</p>
+
+<p>The problem was incorrectly stated. There isn’t a lack of OSS projects that VB programmers can use, there’s a wealth of projects out there. <em>I’ve personally used IoC containers, ORM tools, unit testing tools, and build automation tools in VB with my most recent employer.</em> The issue is that more recent projects are using some language features of C# that the VB team hasn’t chose to implement. This has got Roy all up in arms because he feels that should be our problem (as the OSS developers).</p>
+
+ <a class="read-more" href="/writings/the-vb-oss-debarkle">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-08">
+                08 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-subclass-syntax-changes">Fluent NHibernate SubClass syntax changes</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve just committed a breaking change to <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> (as of <a href="http://code.google.com/p/fluent-nhibernate/source/detail?r=184" title="Revision 184">r184</a>), which I thought I’d document here for anyone interested; it’s a reworking of the subclass syntax.</p>
+
+<p>Mapping multiple subclasses with the same parent wasn’t a very fluent affair, and it was pretty <em>wordy</em> too. You can see a comparison of the old and new syntaxes below.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-subclass-syntax-changes">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-05">
+                05 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/a-tribute-to-subversion">A Tribute to Subversion</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>Note: This is based on my personal experiences, and is not specifically “fact”. If your experiences differ, fine, but these are mine.</p>
+</blockquote>
+
+<p>Subversion has started receiving some more flak in certain circles, it’s no longer in-vogue, no longer cool. Distributed version control is the big thing now, Git, Mecurial, Bazaar etc. Well I’m a huge Git fan, and I’m finding myself slowly transitioning away from Subversion project by project. However, I think I need to address something.</p>
+
+<p>Subversion radically changed how people perceive source control, certainly in the environments that I’ve introduced it into (primarily SourceSafe based). That’s no small feat, and I don’t think it should be forgotten amid all the hype around newer source control systems.</p>
+
+ <a class="read-more" href="/writings/a-tribute-to-subversion">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-11-12">
+                12 Nov 2008
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -102,75 +172,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Smart Indentation for Visual Studio Extensibility projects</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I said previously in my <a href="/writings/brace-matching-and-your-language-service/">Brace Matching post</a> that I want to try to document some of my findings while working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Well this is my second post on the subject.</p>
-
-<p>When you’re implementing a custom language in Visual Studio, there’s a very good chance that you’re going to want to handle indentation slightly differently to the defaults. Every language has it’s own rules, after all.</p>
-
- <a class="read-more" href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-19">
-                19 Oct 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/sharpdiff-diff-parsing-in-net">SharpDiff - Diff Parsing in .NET</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>SharpDiff is a library for parsing the output of various diffing tools. It’s primary purpose is to reduce the time spent by SCM UI developers in handing diff output.</p>
-
- <a class="read-more" href="/writings/sharpdiff-diff-parsing-in-net">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-19">
-                19 Oct 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/console-colours-wrapper">Console colours wrapper</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Continuing on from my post about an <a href="/writings/alternative-to-abusing-using/">alternative syntax for the non-disposable using statements</a>, here’s a class I’ve been using lately. It serves as a wrapper around changing the colours in a console window. It’s not a difficult thing to do, it’s just a bit awkward because you have to maintain the original colour in a variable while you do your business.</p>
-
- <a class="read-more" href="/writings/console-colours-wrapper">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-07">
-                07 Oct 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page9/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 10 of 20 </span>
+    <span class="page-number"> Page 10 of 21 </span>
      
         <a class="older-posts" href="/page11/" title="Next Page">Older Posts &raquo;</a>
      

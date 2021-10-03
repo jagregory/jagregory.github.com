@@ -6,9 +6,241 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 Oct 2021 10:22:18 +1100</pubDate>
-    <lastBuildDate>Mon, 04 Oct 2021 10:22:18 +1100</lastBuildDate>
+    <pubDate>Mon, 04 Oct 2021 10:25:50 +1100</pubDate>
+    <lastBuildDate>Mon, 04 Oct 2021 10:25:50 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Keeping API keys and environment-specifics out of your OpenTelemetry config</title>
+        <description>&lt;p&gt;When I was setting up &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt; with my Lambda functions there was something that bothered me: the &lt;a href=&quot;https://opentelemetry.io/&quot;&gt;OpenTelemetry&lt;/a&gt; config file contained my API keys and environment-specific details. I needed to keep my bundle environment-agnostic, and I really didn’t want to be committing API keys to version control. You can read more about the adventure itself in &lt;a href=&quot;/writings/getting-honeycomb-working-with-my-aws-lambda-functions&quot;&gt;my other post&lt;/a&gt;, or continue reading this post for my solution.&lt;/p&gt;
+
+&lt;p&gt;OpenTelemetry supports environment variables to override parts of the config file, such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_ENDPOINT&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_HEADERS&lt;/code&gt;. In theory, you could use these to customise your config file. Unfortunately, the AWS Distro for OpenTelemetry on AWS Lambda doesn’t seem to honour these variables.&lt;/p&gt;
+
+&lt;p&gt;Fortunately, the &lt;a href=&quot;https://opentelemetry.io/docs/collector/configuration&quot;&gt;OpenTelemetry Collector documentation&lt;/a&gt; has a section on &lt;a href=&quot;https://opentelemetry.io/docs/collector/configuration/#configuration-environment-variables&quot;&gt;environment variables&lt;/a&gt; which says “the use and expansion of environment variables is supported in the Collector configuration”.&lt;/p&gt;
+
+&lt;p&gt;If you update your config file to reference other environment variables, you can keep the config file environment-agnostic and remove the need to embed API keys. For example, with Honeycomb you can configure your exporter like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;exporters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;endpoint&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;api.honeycomb.io:443&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-team&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$HONEYCOMB_TEAM_KEY&quot;&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-dataset&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$HONEYCOMB_DATASET$&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’d prefer if I didn’t have to store a sensitive key in an environment variable either, but it’s a step in the right direction and is better than committing it to version control. There’s an &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-collector/issues/2469&quot;&gt;open design document on external secret management in OpenTelemetry&lt;/a&gt; which I’ll be keeping an eye on. I’d be much happier if I could just reference an AWS Secrets Manager secret by name in the config, one can dream. Until then, I think this is the best I can do.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
+        <link>https://www.jagregory.com//writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Honeycomb and OpenTelemetry with AWS Lambda and Node.js (reference)</title>
+        <description>&lt;p&gt;I had a few struggles when getting &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt; and &lt;a href=&quot;https://opentelemetry.io/&quot;&gt;OpenTelemetry&lt;/a&gt; working with my existing Node.js Lambda functions, which rely on automatic and manual instrumentation. You can read more about that &lt;a href=&quot;/writings/getting-honeycomb-working-with-my-aws-lambda-functions&quot;&gt;over here&lt;/a&gt; and the page you’re on right now is the condensed version with my working solution.&lt;/p&gt;
+
+&lt;h1 id=&quot;step-1-get-auto-instrumentation-working-with-your-lambda-function&quot;&gt;Step 1: Get auto-instrumentation working with your Lambda function&lt;/h1&gt;
+
+&lt;p&gt;The first part is getting auto-instrumentation working with OpenTelemetry. This is pretty easy, although I did hit a couple of issues related to bundling.&lt;/p&gt;
+
+&lt;p&gt;Use the &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda/lambda-js&quot;&gt;Lambda Layer&lt;/a&gt; provided by &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda&quot;&gt;AWS Distro for OpenTelemetry Lambda&lt;/a&gt;. Add the layer to your Lambda function and set an environment variable to enable OpenTelemetry. Invoke your function and you should see in your CloudWatch logs a heap of new logs from the OpenTelemetry Collector.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Or if you’re like me you’ll hit a &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;known issue&lt;/a&gt; and have to tweak your bundling config, and &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;another one&lt;/a&gt; about CDK and esbuild.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point you have made no modifications to your application code and auto-instrumentation should be working. The traces will be sent to X-Ray by default, so next is to configure OpenTelemetry to send data to Honeycomb.&lt;/p&gt;
+
+&lt;h1 id=&quot;step-2-customise-your-configuration-to-point-to-honeycomb&quot;&gt;Step 2: Customise your configuration to point to Honeycomb&lt;/h1&gt;
+
+&lt;p&gt;To customise AWS Distro for OpenTelemetry you have to add your own config file to your Lambda functions and set an environment variable to tell OpenTelemetry to use your overriden config file. Read &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda#custom-configuration-for-the-adot-collector-on-lambda&quot;&gt;custom configuration for the ADOT Collector on Lambda&lt;/a&gt; for more information. There’s also &lt;a href=&quot;https://aws-otel.github.io/docs/components/otlp-exporter#honeycomb&quot;&gt;instructions for Honeycomb&lt;/a&gt; on the AWS Distro site.&lt;/p&gt;
+
+&lt;p&gt;If you redeploy your Lambda function now you should start seeing traces appear in Honeycomb.&lt;/p&gt;
+
+&lt;p&gt;At this point, I wasn’t very happy with having API Keys and environment-specific information in the OpenTelemetry config file. If you’re feeling like that, have a read of my &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;Keeping API keys and environment-specifics out of your OpenTelemetry config&lt;/a&gt; post.&lt;/p&gt;
+
+&lt;h1 id=&quot;step-3-manual-instrumentation-support&quot;&gt;Step 3: Manual instrumentation support&lt;/h1&gt;
+
+&lt;p&gt;Until now you haven’t made any changes to your application code; however, if you want to create your own spans and add extra metadata to your traces you’re going to need to add the OpenTelemetry libraries to your application.&lt;/p&gt;
+
+&lt;p&gt;This was a source of confusion for me. It wasn’t clear how you were supposed to use the NodeSDK with the AWS Distro for OpenTelemetry Lambda Layer. The examples either demonstrated a non-Lambda Node setup (with clear application start and end hooks) or an auto-instrumented Lambda function.&lt;/p&gt;
+
+&lt;p&gt;After a bit of trial and error what I realised is: you don’t need to initialise the OpenTelemetry SDK or configure any providers. The AWS Distro for OpenTelemetry Lambda Layer has done all the configuration and loaded the relevant libraries for you already. Instead, in your application code you can immediately start using the OpenTelemetry API.&lt;/p&gt;
+
+&lt;p&gt;Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@opentelemetry/api&lt;/code&gt; to your application and use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.active()&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;trace.getSpan&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;trace.setSpan&lt;/code&gt; functions. No other configuration needed.&lt;/p&gt;
+
+&lt;p&gt;Scatter a few custom traces around your functions and redeploy. You should now start seeing these in Honeycomb too. Done.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;In hindsight there’s not a lot involved in setting all this up, and it’s quite impressive once I got over a few little hurdles.&lt;/p&gt;
+
+&lt;p&gt;The biggest challenge was that there’s a &lt;em&gt;lot of documentation&lt;/em&gt;, but nothing that fit exactly what I needed. There’s documentation on AWS Distro for OpenTelemetry with Lambda, manual instrumentation of Node.js with OpenTelemetry, auto-instrumentation of Node.js lambdas etc… and it all overlaps, but nothing gave the full picture.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
+        <link>https://www.jagregory.com//writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Getting Honeycomb working with my AWS Lambda functions</title>
+        <description>&lt;p&gt;I have several existing Lambda functions which are all built on Node.js which I wanted to connect to &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt;. I spent some time over the weekend working through it, and this is my stream-of-consciousness. If you’d like to read just the solution you can jump to &lt;a href=&quot;/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference&quot;&gt;Honeycomb and OpenTelemetry with Lambda and Node.js (reference)&lt;/a&gt;, and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;Keeping API keys and environment-specifics out of your OpenTelemetry config&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, where do I start connecting these Lambdas to Honeycomb?&lt;/p&gt;
+
+&lt;h1 id=&quot;starting-with-opentelemetry&quot;&gt;Starting with OpenTelemetry&lt;/h1&gt;
+
+&lt;p&gt;Honeycomb &lt;a href=&quot;https://docs.honeycomb.io/getting-data-in/opentelemetry/beelines-and-otel/&quot;&gt;encourage you to use OpenTelemetry&lt;/a&gt; to send data to them. It’s nice to see a vendor encourage the use of open standards over their own client libraries (which they also have if you need them).&lt;/p&gt;
+
+&lt;p&gt;So I start look at the &lt;a href=&quot;https://opentelemetry.io/docs/js/getting_started/nodejs/&quot;&gt;OpenTelemetry documentation for Node.js&lt;/a&gt; and it’s apparent that they are stateful application oriented, the usual set of Express web servers with their easy opportunities to run code before the server launches. Anyone who’s worked with Lambda for a while has a natural spidey-sense when you see things like this. Is this going to work in Lambda?&lt;/p&gt;
+
+&lt;p&gt;This is my first point of confusion. I pause here for a bit and reach out to a couple of people on Twitter, and &lt;a href=&quot;https://twitter.com/lizthegrey&quot;&gt;Liz Fong-Jones&lt;/a&gt; &lt;a href=&quot;https://twitter.com/lizthegrey/status/1443588721018748936&quot;&gt;points me&lt;/a&gt; at the &lt;a href=&quot;https://aws.amazon.com/blogs/opensource/aws-distro-for-opentelemetry-adds-lambda-layers-for-more-languages-and-collector/&quot;&gt;AWS Distro for OpenTelemetry on Lambda&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;My confusion about Node.js support will return later, but for now Liz’s suggestion sends me off in a positive direction.&lt;/p&gt;
+
+&lt;h1 id=&quot;aws-distro-for-opentelemetry&quot;&gt;AWS Distro for OpenTelemetry&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/otel&quot;&gt;AWS Distro for OpenTelemetry&lt;/a&gt; (aka ADOT, just rolls off the tongue) provides several pre-built &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda/lambda-js&quot;&gt;Lambda Layers&lt;/a&gt; which you can add to your Lambda functions to configure OpenTelemetry for you. There’s a Node.js one, so that’s positive.&lt;/p&gt;
+
+&lt;p&gt;Naturally, the Lambda Layer is pre-configured to export traces to X-Ray by default (which I already have in place, so not particularly helpful) but I figure it’s still valuable to see OpenTelemetry working first.&lt;/p&gt;
+
+&lt;p&gt;I add the Lambda Layer and set the environment variables and… 💥bang💥, it falls over.&lt;/p&gt;
+
+&lt;p&gt;I seem to have hit a &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;known issue&lt;/a&gt; where one of the underlying OpenTelemetry JavaScript libraries seems to do something clever and try to find your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package.json&lt;/code&gt; file which I’m not including in my bundle. I update my bundler to include the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package.json&lt;/code&gt; in my Lambdas and… partial success?&lt;/p&gt;
+
+&lt;p&gt;Most of my Lambdas are working, but there’s a handful which I’ve deployed with the &lt;a href=&quot;https://docs.aws.amazon.com/cdk/latest/guide/home.html&quot;&gt;AWS CDK&lt;/a&gt; that are still failing. It turns out I’ve hit &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;a different issue&lt;/a&gt;, something about how CDK uses esbuild to package the Lambdas prevents the Lambda Layer from being able to do some meta-programming to rewire the Lambda’s handler function. I’m not really sure why this is a problem because all my other functions are also bundled with esbuild. Anyway, there’s a workaround in the Github issue and away I go. One more redeploy and…&lt;/p&gt;
+
+&lt;p&gt;If I look in the Lambda’s logs, there’s signs of an OpenTelemetry Collector running and it’s printing about receiving traces. The traces are still going to X-Ray but it’s a step in the right direction.&lt;/p&gt;
+
+&lt;h1 id=&quot;connecting-to-honeycomb&quot;&gt;Connecting to Honeycomb&lt;/h1&gt;
+
+&lt;p&gt;Now to actually get the traces to Honeycomb. The AWS Distro for OpenTelemetry comes pre-packaged with a config file for the Collector which points to X-Ray. If you want your telemetry to go anywhere else you need to provide your own config file.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’m not 100% happy with the config file approach, which I’ll come back to later.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I place an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;otpl.yaml&lt;/code&gt; in the root of each of my Lambda functions which looks something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;receivers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;protocols&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;grpc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;exporters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;endpoint&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;api.honeycomb.io:443&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-team&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;my-api-key&quot;&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-dataset&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;environment-name&quot;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pipelines&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;traces&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;receivers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;exporters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;…and I set the appropriate environment variable to let the Lambda Layer know I’m providing my own config and redeploy. I invoke my function and a few seconds later data starts appearing in Honeycomb! 🎉&lt;/p&gt;
+
+&lt;p&gt;That wasn’t so hard. Ok it wasn’t easy either, but you don’t use Node.js without expecting every new thing you try to fail with some half-baked library &lt;em&gt;laughcry&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;At this point I have auto-instrumented code sending traces to Honeycomb. The final step is to get manual instrumentation working.&lt;/p&gt;
+
+&lt;h1 id=&quot;manual-instrumentation-with-opentelemetry&quot;&gt;Manual instrumentation with OpenTelemetry&lt;/h1&gt;
+
+&lt;p&gt;This is the bit that I was stuck on for the longest, I think.&lt;/p&gt;
+
+&lt;p&gt;So far, all of my code is auto-instrumented and there’s no sign of OpenTelemetry in my application code. Whilst this is a great start, I also want to be able to manually instrument certain aspects of my code-bases.&lt;/p&gt;
+
+&lt;p&gt;The examples weren’t very helpful here:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-js/tree/main/examples/basic-tracer-node&quot;&gt;simple manual setups&lt;/a&gt; rely on being able to execute code at application start time&lt;/li&gt;
+  &lt;li&gt;Similarly the more complex &lt;a href=&quot;https://opentelemetry.io/docs/js/getting_started/nodejs/#setup&quot;&gt;application servers&lt;/a&gt; examples do the same&lt;/li&gt;
+  &lt;li&gt;Any Lambda examples I could find relied on &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-lambda/blob/2a9c393f1fa0cc873bbe8dc8d5aa32d9eb46c158/nodejs/sample-apps/aws-sdk/src/index.ts&quot;&gt;using auto-instrumentation&lt;/a&gt; and had no use of the OpenTelemetry SDK.&lt;/li&gt;
+  &lt;li&gt;Similarly, Honecomb’s examples are of &lt;a href=&quot;https://docs.honeycomb.io/getting-data-in/javascript/opentelemetry/#initialization&quot;&gt;the stateful variety&lt;/a&gt; for Node.js&lt;/li&gt;
+  &lt;li&gt;And Honeycomb’s docs on AWS Lambda are &lt;a href=&quot;https://docs.honeycomb.io/getting-data-in/integrations/aws/aws-lambda/&quot;&gt;about their own Lambda Layer&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I went around in circles for a bit here. Do I need to initialise the NodeSDK like the examples are doing? If I do, how am I supposed to do that in a Lambda function (assuming I don’t want to initialise on every invocation)?&lt;/p&gt;
+
+&lt;p&gt;Eventually, I thought I’d dig through how the Lambda Layer actually works to see if that reveals anything.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Starting at the AWS Distro for OpenTelemetry entrypoint: &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/blob/main/nodejs/scripts/otel-handler&quot;&gt;otel-handler&lt;/a&gt;. This script is invoked instead of your Lambda’s entrypoint. It doesn’t do much except pass-on to the base OpenTelemetry Layer.&lt;/li&gt;
+  &lt;li&gt;In the base OpenTelemetry Layer there’s an entrypoint too: &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-lambda/blob/2a9c393f1fa0cc873bbe8dc8d5aa32d9eb46c158/nodejs/packages/layer/scripts/otel-handler&quot;&gt;otel-handler&lt;/a&gt; and this one looks a little more interesting, it requires an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/wrapper.js&lt;/code&gt; before it invokes your own Lambda handler. So this &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wrapper.js&lt;/code&gt; will be the first thing to execute (which is a common requirement of setting instrumentation, so this is getting interesting)&lt;/li&gt;
+  &lt;li&gt;If we dig into the &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-lambda/blob/2a9c393f1fa0cc873bbe8dc8d5aa32d9eb46c158/nodejs/packages/layer/src/wrapper.ts&quot;&gt;wrapper.js&lt;/a&gt;… we’ve struck gold. A whole lot of calls to the OpenTelemetry JavaScript SDK.  Setting up a provider. Configuring the tracer etc…&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once I’d seen that wrapper script I thought, perhaps if OpenTelemetry has already been initialised all I need to do is just start using the OpenTelemetry API in my code and it’ll all just magically work? And I was correct! I can grab the active context with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;opentelemetry.context.active()&lt;/code&gt; and start adding spans to it. No further configuration needed.&lt;/p&gt;
+
+&lt;p&gt;My Lambda functions now just need the Lambda Layer attached and configured, and then my instrumentation code calls the OpenTelemetry API and the rest is as you’d expect. Now I have auto-instrumented code and manual instrumented code, all going via OpenTelemetry and being pushed to Honeycomb. Nice 👍&lt;/p&gt;
+
+&lt;p&gt;But there is one last thing on my mind. The config file that AWS Distro needs you to create. That config file is where you put your API Keys and other exporter settings. That’s not ideal.&lt;/p&gt;
+
+&lt;h1 id=&quot;making-the-opentelemetry-config-free-of-api-keys-and-environment-specifics&quot;&gt;Making the OpenTelemetry config free of API keys and environment-specifics&lt;/h1&gt;
+
+&lt;p&gt;To add some extra context, it’s important to understand that I bundle my Lambda functions &lt;em&gt;once&lt;/em&gt; and only once. I don’t build environment-specific bundles, instead the one bundle is “promoted” to different environments. Where this becomes an issue is OpenTelemetry needs me to embed the Honeycomb settings in the config file.&lt;/p&gt;
+
+&lt;p&gt;The first problem is the Honeycomb Dataset setting which controls how your data is bucketed in Honeycomb, and ideally should be unique for each environment. This Dataset setting has to be defined as a header on the Exporter config.&lt;/p&gt;
+
+&lt;p&gt;I initially resolved this by creating multiple config files, one per environment, and bundling them all into the Lambda environment-agnostic package. I could then choose which file to use by setting a different &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OPENTELEMETRY_COLLECTOR_CONFIG_FILE&lt;/code&gt; environment variable value per-environment. This approach wasn’t viable long-term as I have ephemeral environments and can’t really create a config file for each environment ahead of time.&lt;/p&gt;
+
+&lt;p&gt;The second problem is the API Key itself. I don’t want to be embedding that in a config file and committing it to my Git repo. I could generate the config file dynamically at build time and inject the API key only in the build step, but that sounded like hard work (especially if I had one file per environment).&lt;/p&gt;
+
+&lt;p&gt;I thought there must be a way to customise the config file at runtime somehow, but the examples are &lt;em&gt;sparse&lt;/em&gt; for anything beyond the most basic use of the AWS Distro for OpenTelemetry.&lt;/p&gt;
+
+&lt;p&gt;After a bit of searching I came across a reference to an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_ENDPOINT&lt;/code&gt; environment variable in an &lt;a href=&quot;https://github.com/aws-observability/aws-otel-collector/issues/646&quot;&gt;open Github issue&lt;/a&gt; which sent me off down a rabbit hole. If there’s one environment variable, there must be more, right? Turns out there are, there’s &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md&quot;&gt;quite a lot of them&lt;/a&gt;. One environment variable which looked particularly promising was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_HEADERS&lt;/code&gt; which you can set to provide a list of key-value pairs which are used as the HTTP Headers in any Exporter requests; this sounds perfect as those headers are where you set the Honeycomb Team API Key and the Dataset name. Perfect!&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, I could not get any of those environment variables to work with the AWS Distro for OpenTelemetry Lambda Layer. No combination of them seemed to make any difference. As far as I can tell, these environment variables are ignored in the Lambda Layer.&lt;/p&gt;
+
+&lt;p&gt;The idea of environment variables stuck in my head though, and I wondered if perhaps the config parser had handling for referencing other environment variables. I found my way to the &lt;a href=&quot;https://opentelemetry.io/docs/collector/configuration&quot;&gt;OpenTelemetry Collector documentation&lt;/a&gt; which has a section on &lt;a href=&quot;https://opentelemetry.io/docs/collector/configuration/#configuration-environment-variables&quot;&gt;environment variables&lt;/a&gt; and contained these magic words:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The use and expansion of environment variables is supported in the Collector configuration.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is sounding promising. I updated my Exporter config to reference some custom environment variables which I can set per Lambda without changing the bundled config file:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;exporters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;otlp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;endpoint&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;api.honeycomb.io:443&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-team&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$HONEYCOMB_TEAM_KEY&quot;&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x-honeycomb-dataset&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$HONEYCOMB_DATASET$&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;…and it works! Success.&lt;/p&gt;
+
+&lt;p&gt;I can now revert to a single config file which has no secrets or environment-specific information in. Each lambda then has a couple of additional environment variables which set the API key and the Dataset.&lt;/p&gt;
+
+&lt;p&gt;I’m not a big fan of storing secrets in environment variables, but until there’s support for &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-collector/issues/2469&quot;&gt;external secret management in OpenTelemetry&lt;/a&gt; I think this is the best I’m going to get.&lt;/p&gt;
+
+&lt;p&gt;That’s it. All done. I can rest now.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;To summarise:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Use the &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda/lambda-js&quot;&gt;AWS Distro for OpenTelemetry Lambda Layer&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Resolve any awkward issues with the newness of Node.js support (&lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;bundle your package.json&lt;/a&gt; and &lt;a href=&quot;https://github.com/aws-observability/aws-otel-lambda/issues/99&quot;&gt;resolve any CDK issues&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Use the OpenTelemetry API library directly, no need to initialise it yourself as the layer does it for you. Just grab the tracer and start creating spans.&lt;/li&gt;
+  &lt;li&gt;Create a custom config file pointing to Honeycomb, and use environment variable expansion to &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;keep the config file environment-agnostic and API keys&lt;/a&gt; out of your version control.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
+        <link>https://www.jagregory.com//writings/getting-honeycomb-working-with-my-aws-lambda-functions</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/getting-honeycomb-working-with-my-aws-lambda-functions</guid>
+        
+        
+      </item>
     
       <item>
         <title>The anatomy of a quick bash script (bulk rename Kinesis Firehose files in S3)</title>
@@ -775,166 +1007,6 @@ jagregory.sinopia
         <guid isPermaLink="true">https://www.jagregory.com//writings/compiled-templates-for-go</guid>
         
         <category>golang</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Go Slice Visualiser</title>
-        <description>&lt;p&gt;I’ve been learning &lt;a href=&quot;http://golang.org&quot;&gt;Go&lt;/a&gt; recently; it’s been fun.&lt;/p&gt;
-
-&lt;p&gt;An interesting aspect of Go is &lt;a href=&quot;http://blog.golang.org/go-slices-usage-and-internals&quot;&gt;Slices&lt;/a&gt;, which are lightweight views of an array. Why these are useful and necessary makes more sense when you understand Go’s &lt;a href=&quot;http://golang.org/doc/faq#pass_by_value&quot;&gt;pass-by-value&lt;/a&gt; semantics.&lt;/p&gt;
-
-&lt;p&gt;Whilst playing with slices, I put together a little visualiser to help understand their behaviour (the act of building it was probably more useful than the end result).&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;h2 id=&quot;the-slice-visualiser&quot;&gt;The Slice Visualiser&lt;/h2&gt;
-
-&lt;p&gt;This is a tool to help you get your head around how the slice operations work &lt;em&gt;visually&lt;/em&gt;. The ten boxes below represent an array that you’re creating slices of, the input below them is your slice operation, and the black box you’ll see is the resulting slice.&lt;/p&gt;
-
-&lt;div id=&quot;slice&quot;&gt;
-  &lt;div id=&quot;sliceOverlay&quot;&gt;&lt;/div&gt;
-  &lt;div id=&quot;array&quot;&gt;&lt;/div&gt;
-  &lt;p id=&quot;error&quot;&gt;&lt;/p&gt;
-  &lt;p&gt;slice[&lt;input id=&quot;sliceInput&quot; type=&quot;text&quot; /&gt;]&lt;/p&gt;
-  &lt;p&gt;// e.g. slice[0], slice[:3], slice[1:3]&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script type=&quot;text/javascript&quot;&gt;
-  var array = document.getElementById('array')
-  var overlay = document.getElementById('sliceOverlay')
-  var error = document.getElementById('error')
-
-  var slice = {
-    length: 10
-  }
-
-  for (var i = 0; i &lt; slice.length; i++) {
-    var div = document.createElement('div')
-    div.innerText = '&quot;' + String.fromCharCode(97 + i) + '&quot;'
-    array.appendChild(div)
-  }
-
-  var repositionSlice = function(low, high) {
-    if (typeof low === 'undefined' || low === null) low = 0
-    if (typeof high === 'undefined' || high === null) high = slice.length
-    if (low &lt; 0) throw 'invalid slice index ' + low + ' (index must be non-negative)'
-    if (high &lt; 0) throw 'invalid slice index ' + high + ' (index must be non-negative)'
-    if (high &lt; low) throw 'inverted slice index ' + low + ' &gt; ' + high
-    if (slice.length &lt; high) throw 'slice bounds out of range'
-
-    overlay.style.left = (low * 56) + 'px'
-    overlay.style.width = ((high - low) * 56) + 2 + 'px'
-    overlay.style.display = 'block'
-  }
-
-  var input = document.getElementById('sliceInput')
-  input.addEventListener('keyup', function() {
-    error.innerText = ''
-    overlay.style.display = 'none'
-
-    try {
-      if (input.value.indexOf(':') &gt;= 0) {
-        var split = input.value.split(':')
-        var start = split[0] === '' ? null : parseInt(split[0])
-        var end = split[1] === '' ? null : parseInt(split[1])
-        repositionSlice(start, end)
-      } else {
-        repositionSlice(parseInt(input.value), parseInt(input.value) + 1)
-      }
-    } catch (ex) {
-      error.innerText = ex
-    }
-  })
-&lt;/script&gt;
-
-</description>
-        <pubDate>Sun, 07 Jul 2013 16:30:00 +1000</pubDate>
-        <link>https://www.jagregory.com//writings/go-slice-visualiser</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/go-slice-visualiser</guid>
-        
-        <category>golang</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Rails production 500 error page showing in dev</title>
-        <description>&lt;blockquote&gt;
-  &lt;p&gt;We’re sorry, but something went wrong!&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I’ve been seeing some strange behaviour on the development environment for &lt;a href=&quot;http://www.getonthegame.com.au&quot;&gt;On the Game&lt;/a&gt; recently. I’ve just spent an hour combing through every line of code that varies from a standard Rails app, and I’ve finally found the issue. I’m putting it here for posterity.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;Regardless of my configuration, Rails was always displaying the production page for 500 errors (e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;public/500.html&lt;/code&gt;) even in development mode.&lt;/p&gt;
-
-&lt;p&gt;I poked around for a while and eventually found it to be this:&lt;/p&gt;
-
-&lt;p&gt;I’d redefined &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; somewhere (don’t ask!), and my implementation didn’t handle arrays of strings. That’s it, that’s why the detailed error page wasn’t being shown in development.&lt;/p&gt;
-
-&lt;p&gt;Ends up, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enumerable#sum&lt;/code&gt; is used by the development error page, and when something on that error page itself raises an error Rails will just fall back and show the 500.html and not log anything.&lt;/p&gt;
-
-&lt;p&gt;Moral of the story: If you’re seeing this behaviour, check you haven’t (badly) monkey patched something that the error page is using.&lt;/p&gt;
-</description>
-        <pubDate>Thu, 05 Jul 2012 00:00:00 +1000</pubDate>
-        <link>https://www.jagregory.com//writings/rails-500-error-showing-in-dev</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/rails-500-error-showing-in-dev</guid>
-        
-        <category>ruby</category>
-        
-        <category>rails</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Learning. It ain't hard.</title>
-        <description>&lt;p&gt;“I don’t have enough free time to learn a new language!”, or tool, or framework, etc. I hear this often. I appreciate we all handle things differently, but here’s my take on it.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;I remember years ago, some friends and I were talking about money and our savings accounts. They were flabbergasted at how I, a 19 year old at the time, were able to have nearly £10,000 saved (sadly which I’ve since spent!). I explained that it’s easy to save money if you do it slowly and consistently. £50 a week over the course of three years adds up. Obvious, right?&lt;/p&gt;
-
-&lt;p&gt;You don’t sit down and decide “I’m going to save £10,000” and then promptly spend one month working yourself to death to put away the whole amount in one go. It’d be nice to have the option to do that occasionally, but that’s not how most of us work. The same applies to learning.&lt;/p&gt;
-
-&lt;p&gt;You don’t need to read a 300 page book to learn something. Read a blog post (or an article, mailing list thread, commit discussion). One. Pick a subject and read a single article on it. Do this once a week, every week. That’s it, that’s my secret to learning.&lt;/p&gt;
-
-&lt;p&gt;Knowledge isn’t a substitute for experience, but it’ll certainly get you a lot further down the road, faster, than you would get without it.&lt;/p&gt;
-
-&lt;p&gt;Take Ruby as the typical example. Ruby on Rails has been around for 6 years now (and Ruby for nearly 15, but not visibly), if you’d have read one article on Ruby a week, you’d have read 312 by now. Three hundred and twelve. Combine that with the occasional Sunday afternoon playing around and I’m confident you’d be pretty proficient by now.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Javascript is around 15 years old.&lt;/li&gt;
-  &lt;li&gt;Haskell, 20 years.&lt;/li&gt;
-  &lt;li&gt;Erlang, 25 years.&lt;/li&gt;
-  &lt;li&gt;Python, 20 years.&lt;/li&gt;
-  &lt;li&gt;Clojure, 4 years. Scheme? 36 years.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Of course, we’ve not all been trying to learn those languages for as long as they’ve existed. Consider this though, in one year you could be proficient in a new language if you commit to just 15 minutes a week, or you could be in exactly the same place you are now still unable to find time to learn anything.&lt;/p&gt;
-
-&lt;p&gt;How do you eat an elephant? &lt;em&gt;One bite at a time.&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;addendum-but-everything-moves-so-fast&quot;&gt;Addendum: but everything moves so fast!&lt;/h3&gt;
-
-&lt;p&gt;No, it doesn’t. It just feels like that from the inside.&lt;/p&gt;
-
-&lt;p&gt;Learn something fundamental and your knowledge will transcend trends. Learning a new language is a great way to do that whilst also feeling cool and trendy. Ruby or Python will help you understand dynamic languages, Scala will make you appreciate how powerful and unobtrusive static languages can be, and Clojure will introduce the code-as-data mindset. All those things will be useful beyond the scope of the language you’re learning.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;em&gt;Stealth edit: Fixed my amazing saving ability.&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
-        <pubDate>Wed, 06 Jul 2011 00:00:00 +1000</pubDate>
-        <link>https://www.jagregory.com//writings/learning-it-aint-hard</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/learning-it-aint-hard</guid>
-        
-        <category>learning</category>
-        
-        <category>rant</category>
         
         
       </item>

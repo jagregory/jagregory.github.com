@@ -41,12 +41,114 @@
             <a class="newer-posts" href="/page14/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 15 of 20 </span>
+    <span class="page-number"> Page 15 of 21 </span>
      
         <a class="older-posts" href="/page16/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/data-binding-hierarchical-objects">Data-binding hierarchical objects</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>After my post about <a href="/writings/objectfield/">my ObjectField column</a>, I thought I’d elaborate a bit on why it’s necessary.</p>
+
+<p>When you’re data binding against an object that isn’t flat (i.e. has properties that are more than simple types - namely classes), you are bound to encounter the following exception, which is caused by the <code class="language-plaintext highlighter-rouge">BoundField</code> incorrectly handling a hierarchical object path.</p>
+
+<blockquote>
+  <p>A field or property with the name <code class="language-plaintext highlighter-rouge">MySubObject.PropertyName</code> was not found on the selected data source.</p>
+</blockquote>
+
+ <a class="read-more" href="/writings/data-binding-hierarchical-objects">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-02-21">
+                21 Feb 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/objectfield">ObjectField - A GridView field</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>The version of the ObjectField that this post refers to is now out of date. Please go to the <a href="/writings/objectfield-11/">ObjectField 1.1</a> post for the latest version.</p>
+</blockquote>
+
+<p>I encountered a problem while binding a complex object to a GridView, in that the BoundField doesn’t support specifying a nested value in it’s DataField property. So if you have a list of Customer’s, and want to display the TelephoneNumber property from inside the customer’s ContactDetails property, you’re out of luck.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;asp:BoundField</span> <span class="na">DataField=</span><span class="s">"ContactDetails.TelephoneNumber"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>The above would fall over with an exception along the lines of:
+<code class="language-plaintext highlighter-rouge">A field or property with the name 'ContactDetails.TelephoneNumber' was not found on the selected data source.</code></p>
+
+ <a class="read-more" href="/writings/objectfield">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-02-17">
+                17 Feb 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/nhibernate-and-the-sqltypeexception">NHibernate and the SqlTypeException</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I’ve had trouble it’s actually ended up being my own fault. <em>This is one of those times.</em></p>
+
+<p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
+
+<p>Upon execution of the second query, NHibernate was throwing a <code class="language-plaintext highlighter-rouge">SqlTypeException</code> for a <code class="language-plaintext highlighter-rouge">SqlDateTime</code> overflow. <code class="language-plaintext highlighter-rouge">SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
+
+<p>A good place to start for NHibernate debugging is always the logs, so I delved in. I discovered NHibernate was attempting to execute an update statement just before it tried the second query. It just kept getting stranger, why would a straightforward query cause an update?</p>
+
+<p>I thought i’d investigate why the update statement was failing first, then I’d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code class="language-plaintext highlighter-rouge">DateTime</code> column that was trying to be set to <code class="language-plaintext highlighter-rouge">DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code class="language-plaintext highlighter-rouge">DateTime</code> should be.</p>
+
+<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn’t. So because <code class="language-plaintext highlighter-rouge">DateTime</code> is a value type and cannot be set to <code class="language-plaintext highlighter-rouge">null</code>, NHibernate was populating it with the closest value to <code class="language-plaintext highlighter-rouge">null</code> as it could manage.</p>
+
+<p>That was the key, as soon as I had that realisation, it was obvious what the problem was.</p>
+
+<p>NHibernate knew that the database had a nullable column, but it had to manage with the non-nullable field on the object. When it came to run the second query, it noticed that the property wasn’t null as the mapping file said it should be, so it determined the value must have changed. It then attempted to persist those changes before executing the query!</p>
+
+<h2 id="to-break-it-down">To break it down</h2>
+
+<ol>
+  <li>Nullable column pulled into a non-nullable field forces NHibernate to create the smallest value it can.</li>
+  <li>NHibernate then checks for any changes, expecting a <code class="language-plaintext highlighter-rouge">null</code> on that field but finding a value.</li>
+  <li>Object now considered dirty because value has allegedly changed.</li>
+  <li>NHibernate performs an update before it pulls back the data agian.</li>
+</ol>
+
+<p>So the fix was simply to make the <code class="language-plaintext highlighter-rouge">DateTime</code> in the object a <code class="language-plaintext highlighter-rouge">DateTime?</code>, a nullable <code class="language-plaintext highlighter-rouge">DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
+
+<p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
+ <a class="read-more" href="/writings/nhibernate-and-the-sqltypeexception">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2007-12-18">
+                18 Dec 2007
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -92,83 +194,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/delegrid">DeleGrid - a paged GridView control</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>The DeleGrid is a control derived from the ASP.Net GridView, that delegates its data retrieval back out of the control. This allows the developer full control over the records that are retrieved, thus allowing proper paging to be implemented using whatever collection type you prefer.</p>
-
- <a class="read-more" href="/writings/delegrid">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2007-12-09">
-                09 Dec 2007
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/test-drive-properly-test-fully">Test-drive properly, test fully</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I started writing this as a comment, but I felt it’s own post was deserved.</p>
-
-<p><a href="http://rickyclarkson.blogspot.com/">Ricky Clarkson</a> left me a link in a comment to one of <a href="http://rickyclarkson.blogspot.com/2007/05/you-dont-need-tdd-you-need-repl.html">his posts</a> that ties in quite nicely to my recent <a href="http://blog.jagregory.com/2007/07/17/getting-with-it-test-driven-development/">Getting with it: Test Driven Development</a> post.</p>
-
-<p>Ricky makes the point that TDD can be dangerous, and can lull you into a false sense of security. <em>I agree.</em></p>
-
-<p>As with any technology, when used incorrectly it can cause more damage than not using it at all.</p>
-
-<p>Ricky’s example should serve as a double-barreled warning. You can’t be test-driven only when it’s convenient, and you need to have good test coverage.</p>
-
- <a class="read-more" href="/writings/test-drive-properly-test-fully">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2007-07-21">
-                21 Jul 2007
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/applying-a-bit-of-xp-to-hobby-projects">Applying a bit of XP to hobby projects</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Hobby projects, everybody has one or two on the go. They’re fun little side-steps from the mundane routine of developing for a living. These projects usually get a fair bit of thought put into them, but precious little time–an unfortunate side-effect of having a life outside work.</p>
-
-<p>We’re all used to working within limited time-frames, but the limitations are much more noticeable when you only have a few hours on a Sunday afternoon. This time is precious, but unfortunately we often find ourselves spending the time doing much less than we would like. That might be because you’ve hit a design aspect you can’t solve yet, or more often because your time is spent flitting between tasks. This lack of visible progress has a demoralising effect, next time you get some free time you may be less inclined to spend it on your project because you know you’ll not make much headway.</p>
-
- <a class="read-more" href="/writings/applying-a-bit-of-xp-to-hobby-projects">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2007-07-18">
-                18 Jul 2007
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page14/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 15 of 20 </span>
+    <span class="page-number"> Page 15 of 21 </span>
      
         <a class="older-posts" href="/page16/" title="Next Page">Older Posts &raquo;</a>
      

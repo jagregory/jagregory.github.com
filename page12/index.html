@@ -41,12 +41,82 @@
             <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 12 of 20 </span>
+    <span class="page-number"> Page 12 of 21 </span>
      
         <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/brace-matching-and-your-language-service">Brace Matching and your Language Service</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve been meaning to write up some of my experiences developing for Visual Studio while I’ve been working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>, but I can never seem to find the time; either that, or when I can I’m not confident enough in what I’m doing to put it out here as a valid resource.</p>
+
+<p>I’ll start small, here’s a quick guide to how I’ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
+
+ <a class="read-more" href="/writings/brace-matching-and-your-language-service">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-09-02">
+                02 Sep 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/introducing-fluent-nhibernate">Introducing Fluent NHibernate</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>A couple of people have already covered this already, specifically <a href="http://www.IAmNotMyself.com/2008/08/07/SkinningTheCatWithFluentNHibernate.aspx">Bobby Johnson</a>, <a href="http://mhinze.com/fluent-nhibernate-project/">Matt Hinze</a>, and <a href="http://zachariahyoung.com/zy/post/2008/08/fluent-nhibernate-for-creating-entity-mapping-files.aspx">Zachariah Young</a>. I figure I should say something on it anyway.</p>
+</blockquote>
+
+<p>I’ve adopted a project from <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a> that I think has the potential to be a really useful tool. It’s called <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and it’s primarily a fluent API for mapping classes with NHibernate.</p>
+
+<p>We’re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They’re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
+
+ <a class="read-more" href="/writings/introducing-fluent-nhibernate">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-08-08">
+                08 Aug 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/latest-on-boolangstudio">Latest on BooLangStudio</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>It’s been a long time since I’ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we’re steadily working towards our first release.</p>
+
+<p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
+
+ <a class="read-more" href="/writings/latest-on-boolangstudio">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-08-07">
+                07 Aug 2008
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -97,80 +167,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Freeing the model from its evil web-service oppressors</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>The current system I’m working with has a setup whereby the model (data access objects) are being used by the web-services for delivery; this means that the consumers of the web-services are directly tied to our inner implementation of our data access code. On-top of that, it’s old full of bad conventions, and is in need of refactoring.</p>
-
- <a class="read-more" href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-05-18">
-                18 May 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/boo-visual-studio-plug-in-1-complete">Boo Visual Studio plug-in: 1% complete</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>What do we want? <em>A Boo plug-in for Visual Studio</em>. When do we want it? <em>Sooner, rather than later</em>.</p>
-
-<p>The initial aim of this plug-in is to provide a “good enough” experience when using Boo files within other projects. I’m not currently focussing on doing full-scale development with Boo; so the target is DSLs and Binsor. There won’t be any assemblies created, or anything else that would affect your project. The only difference between how you work now would be that you could write Boo using Visual Studio, with syntax highlighting and intellisense.</p>
-
-<p>That’s for the initial version anyway.</p>
-
- <a class="read-more" href="/writings/boo-visual-studio-plug-in-1-complete">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-05-18">
-                18 May 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/plugin-baby-steps">Plugin baby steps</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Making a Visual Studio 2008 plugin isn’t as hard as it sounds.</p>
-
-<p>Making one that works is a bit more difficult.</p>
-
-<p>Syntax highlighting is fairly straight forward, just run a tokenizer over the text and colour code each token appropriately. It’s the code sense that is causing me to go slightly mad. To determine what methods need to be listed when the intellisense pops up, you need to parse the code that’s in the document, then resolve any classes and references in there to build up a collection of methods to display. It gets more tricky when the document isn’t valid, because you can’t compile it. That’s where I am now, I need to figure out some way of partially compiling the document, or maybe using an AST walker.</p>
- <a class="read-more" href="/writings/plugin-baby-steps">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-05-12">
-                12 May 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page11/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 12 of 20 </span>
+    <span class="page-number"> Page 12 of 21 </span>
      
         <a class="older-posts" href="/page13/" title="Next Page">Older Posts &raquo;</a>
      

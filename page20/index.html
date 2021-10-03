@@ -41,10 +41,93 @@
             <a class="newer-posts" href="/page19/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 20 of 20 </span>
+    <span class="page-number"> Page 20 of 21 </span>
+     
+        <a class="older-posts" href="/page21/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/sql-server-exists-function-quicker-than-count">SQL Server: Exists() function quicker than Count()</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>You’ve seen the title; it’s true.</p>
+
+<p>I’ve been running an “administration” query to modify a table with around 190,000 records in. This table, segments, contains a status column called Coded. This value is derived from another table, faults. If any faults belonging to a segment has a coded status of 0 then the segment coded value is also 0.</p>
+
+<p>My query did an update on each row in the segments table, retrieving a <code class="language-plaintext highlighter-rouge">count</code> of how many faults there are with a coded status of <code class="language-plaintext highlighter-rouge">0</code> that belong to the current segment. If the <code class="language-plaintext highlighter-rouge">count</code> is greater than <code class="language-plaintext highlighter-rouge">0</code> then the segment coded is set to <code class="language-plaintext highlighter-rouge">0</code>, otherwise to <code class="language-plaintext highlighter-rouge">1</code>.</p>
+
+<p>It ran for over 2 hours without any sign of finishing.</p>
+
+<p>I changed the query to do a simple case statement with an <code class="language-plaintext highlighter-rouge">exists</code> on the faults table where <code class="language-plaintext highlighter-rouge">Coded = 0</code> and it’s just finished in 4 minutes. Unbelievable.</p>
+
+ <a class="read-more" href="/writings/sql-server-exists-function-quicker-than-count">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-09-22">
+                22 Sep 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/accessibility-standards-and-my-say">Accessibility and browser standards</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The web has come a long way in the past few years, but it is still hindered greatly by the methodology of the “previous generation” of web-designers. People are still designing with the mentality of serving everyone with a page that is specifically tailored to suit their particular browser and operating system. While this did get the job done originally, it was most certainly a lot more work than it needed to be. That’s why I find the idea of generating one (and only one) document to serve all users very interesting. Most browsers are conforming to standards in some way shape or form, the majority support CSS2 and XHTML 1.1 and the ones that don’t (mostly) degrade gracefully. It’s no longer about serving a page that is pixel perfect on every system; it’s about making sure all users get a good experience from your site.</p>
+
+<p>Another branch of this takes the form of Accessibility. Accessibility has recently been highlighted by governments as a priority for websites; the US and UK both have their own take on the situation with relating laws and amendments. It basically boils down to any website that is providing a service should have a bare minimum of accessibility; otherwise they are discriminating against their less able customers. This means businesses are required, by law, to provide for all their customers (whether or not they have disabilities). Just as you would expect a shop to provide wheelchair ramps for disabled shoppers, you should expect pages to be designed to aid disabled web-users.</p>
+
+<p>Recently I equipped my self with a screen-reader (<a href="http://www.freedomscientific.com/fs_products/software_jaws.asp">JAWS</a>) and was appalled — but not particularly shocked — at the amount of sites that are simply unusable with anything other than a standard browser. Most pages are so full of invalid markup that the screen-readers simply mumble on continuously and any actual content is undecipherable. If websites complied to the standards then their experience would be tolerable at the very least. Unfortunately the majority of website designers simply do not know (or often care) about creating accessible pages.</p>
+
+<blockquote>
+  <p>Note: Screen-readers, for those that don’t know, take a web page and read it out using a synthesised voice. A perfectly accessible site would read the same as a printed document.</p>
+</blockquote>
+
+<p>One of the largest problems with the way pages have been designed in the past has been using the supplied tags for their appearance rather than their actual purpose. The <code class="language-plaintext highlighter-rouge">&lt;b&gt;</code> tags have been used to create bold headings, the <code class="language-plaintext highlighter-rouge">&lt;font&gt;</code> tags used to change styles of fonts and worst of all the <code class="language-plaintext highlighter-rouge">&lt;table&gt;</code> tags for layout. This means when a screen reader parses these pages it emphasises the wrong words and spouts nonsense when encountering these convoluted tags. What a properly designed page would have is a distinct separation of content and layout, of HTML and CSS. The HTML document should use be structured like a standard plain text print document; with appropriate headings, sub-headings, lists and paragraphs. These tags can then be styled using CSS to any manner to which they like. So when a screen reader encounters this page it reads the unstyled version; a perfectly formed document.</p>
+
+<p>That’s the end of my little rant, maybe together we learned something.</p>
+ <a class="read-more" href="/writings/accessibility-standards-and-my-say">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-07-27">
+                27 Jul 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/error-logging-modules-ampamp-handlers-elmah">ELMAH: Error Logging Modules & Handlers</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>In my previous post I talked about my exception logging system that I laid to rest. Fortunately for me that doesn’t mean my applications are logless, quite the contrary. I’ll explain…</p>
+
+<p>When I came to terms with my logging system being inadequate and hard to maintain, I began looking for a replacement. To my delight I came across <a href="http://www.raboof.com/Projects/Elmah/Elmah.aspx">ELMAH</a>  written by <a href="http://www.raboof.com">Atif Aziz</a>. ELMAH is basically a couple of HttpModules and a HttpHandler that intercept any unhandled exceptions from within your application and log them. This is where the fun begins…</p>
+
+ <a class="read-more" href="/writings/error-logging-modules-ampamp-handlers-elmah">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-07-23">
+                23 Jul 2005
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -106,108 +189,15 @@ work with Stored Procedures much anymore.</p>
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/goodbye-tesco">Goodbye Tesco</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>Future James note: Again, super cute in a the internet-is-still-small kinda way.</p>
-</blockquote>
-
-<p>I’m outta there, finally free from the bounds of a supermarket job. I’ve been taken in by Evolution Interactive, a web/multimedia design company.</p>
-
-<p>I’m now a ‘New Media Developer’, nicer than ‘Checkout Assistant’ if I do say so my self. It’s very strange to be in a real job, doing something that I actually want to do (and like doing). This is going to take some getting used to…</p>
- <a class="read-more" href="/writings/goodbye-tesco">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-04-11">
-                11 Apr 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/caesar-and-delphi">Caesar and Delphi</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>Note from James 15 years later: I’m leaving this here because it’s cute and an early example of my
-experimentation in multiple languages that would serve me well throughout my career. I find the
-casualness of it amusing now. The download link is long since dead, and who’d want to run a Delphi
-program that a 20 year old wrote?</p>
-</blockquote>
-
-<p>While bored yesterday I decided to have a go with programming in Delphi, something which I’ve been intending to do for quite some time now. Anyway, here is the result.</p>
-
-<p>Download CaesarShift.zip 244kb <em>(this download is no longer available, sorry)</em></p>
-
-<p>It’s a simple cryptography program based on the shifting letters (Caesar Shift) methods. Took me about two hours, not bad to say I’ve never programmed in Delphi before.</p>
-
-<p>Delphi seems nice, I’m not too keen on the syntax of the language though. Its all rather too much like VB for my likings, messy and unstructured. Maybe that’s just me though.</p>
- <a class="read-more" href="/writings/caesar-and-delphi">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-01-07">
-                07 Jan 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/host-problems-again">Host Problems... Again</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>Note from Future James: I’m leaving this here because it’s cute and my first blog post (at least
-on this domain). Don’t judge me on the banality of it.</p>
-</blockquote>
-
-<p>I’m back again (I know this post is a bit late), my ex-host returned my domain name to the registrar and I’ve had to re-jiggle things to get it pointed at the right place.</p>
-
-<p>It all happened something like this:</p>
-
-<ol>
-  <li>Web-host returns domain name.</li>
-  <li>I contact Nominet regarding re-tagging my now de-tagged domain.</li>
-  <li>I fill out a form.</li>
-  <li>I fax the form with proof of ID.</li>
-  <li>I wait 5 days for them to do anything.</li>
-  <li>Upon re-tagging, I contact a new domain management company to take care of my domain.</li>
-  <li>I wait a day for them to change my nameservers.</li>
-</ol>
-
-<p>The end!</p>
- <a class="read-more" href="/writings/host-problems-again">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2004-12-05">
-                05 Dec 2004
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page19/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 20 of 20 </span>
+    <span class="page-number"> Page 20 of 21 </span>
+     
+        <a class="older-posts" href="/page21/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
 

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="I like turtles.
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Honeycomb and OpenTelemetry with AWS Lambda and Node.js (reference)</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2021-10-03">03 Oct 2021</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>I had a few struggles when getting <a href="https://www.honeycomb.io/">Honeycomb</a> and <a href="https://opentelemetry.io/">OpenTelemetry</a> working with my existing Node.js Lambda functions, which rely on automatic and manual instrumentation. You can read more about that <a href="/writings/getting-honeycomb-working-with-my-aws-lambda-functions">over here</a> and the page you’re on right now is the condensed version with my working solution.</p>
+
+<h1 id="step-1-get-auto-instrumentation-working-with-your-lambda-function">Step 1: Get auto-instrumentation working with your Lambda function</h1>
+
+<p>The first part is getting auto-instrumentation working with OpenTelemetry. This is pretty easy, although I did hit a couple of issues related to bundling.</p>
+
+<p>Use the <a href="https://aws-otel.github.io/docs/getting-started/lambda/lambda-js">Lambda Layer</a> provided by <a href="https://aws-otel.github.io/docs/getting-started/lambda">AWS Distro for OpenTelemetry Lambda</a>. Add the layer to your Lambda function and set an environment variable to enable OpenTelemetry. Invoke your function and you should see in your CloudWatch logs a heap of new logs from the OpenTelemetry Collector.</p>
+
+<blockquote>
+  <p>Or if you’re like me you’ll hit a <a href="https://github.com/aws-observability/aws-otel-lambda/issues/99">known issue</a> and have to tweak your bundling config, and <a href="https://github.com/aws-observability/aws-otel-lambda/issues/99">another one</a> about CDK and esbuild.</p>
+</blockquote>
+
+<p>At this point you have made no modifications to your application code and auto-instrumentation should be working. The traces will be sent to X-Ray by default, so next is to configure OpenTelemetry to send data to Honeycomb.</p>
+
+<h1 id="step-2-customise-your-configuration-to-point-to-honeycomb">Step 2: Customise your configuration to point to Honeycomb</h1>
+
+<p>To customise AWS Distro for OpenTelemetry you have to add your own config file to your Lambda functions and set an environment variable to tell OpenTelemetry to use your overriden config file. Read <a href="https://aws-otel.github.io/docs/getting-started/lambda#custom-configuration-for-the-adot-collector-on-lambda">custom configuration for the ADOT Collector on Lambda</a> for more information. There’s also <a href="https://aws-otel.github.io/docs/components/otlp-exporter#honeycomb">instructions for Honeycomb</a> on the AWS Distro site.</p>
+
+<p>If you redeploy your Lambda function now you should start seeing traces appear in Honeycomb.</p>
+
+<p>At this point, I wasn’t very happy with having API Keys and environment-specific information in the OpenTelemetry config file. If you’re feeling like that, have a read of my <a href="/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config">Keeping API keys and environment-specifics out of your OpenTelemetry config</a> post.</p>
+
+<h1 id="step-3-manual-instrumentation-support">Step 3: Manual instrumentation support</h1>
+
+<p>Until now you haven’t made any changes to your application code; however, if you want to create your own spans and add extra metadata to your traces you’re going to need to add the OpenTelemetry libraries to your application.</p>
+
+<p>This was a source of confusion for me. It wasn’t clear how you were supposed to use the NodeSDK with the AWS Distro for OpenTelemetry Lambda Layer. The examples either demonstrated a non-Lambda Node setup (with clear application start and end hooks) or an auto-instrumented Lambda function.</p>
+
+<p>After a bit of trial and error what I realised is: you don’t need to initialise the OpenTelemetry SDK or configure any providers. The AWS Distro for OpenTelemetry Lambda Layer has done all the configuration and loaded the relevant libraries for you already. Instead, in your application code you can immediately start using the OpenTelemetry API.</p>
+
+<p>Add <code class="language-plaintext highlighter-rouge">@opentelemetry/api</code> to your application and use the <code class="language-plaintext highlighter-rouge">context.active()</code> and <code class="language-plaintext highlighter-rouge">trace.getSpan</code> and <code class="language-plaintext highlighter-rouge">trace.setSpan</code> functions. No other configuration needed.</p>
+
+<p>Scatter a few custom traces around your functions and redeploy. You should now start seeing these in Honeycomb too. Done.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>In hindsight there’s not a lot involved in setting all this up, and it’s quite impressive once I got over a few little hurdles.</p>
+
+<p>The biggest challenge was that there’s a <em>lot of documentation</em>, but nothing that fit exactly what I needed. There’s documentation on AWS Distro for OpenTelemetry with Lambda, manual instrumentation of Node.js with OpenTelemetry, auto-instrumentation of Node.js lambdas etc… and it all overlaps, but nothing gave the full picture.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2021 &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>

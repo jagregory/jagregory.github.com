@@ -41,12 +41,89 @@
             <a class="newer-posts" href="/page17/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 18 of 20 </span>
+    <span class="page-number"> Page 18 of 21 </span>
      
         <a class="older-posts" href="/page19/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">How-to use ClientIDs in JavaScript without the ugliness</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>ASP.Net has an interesting way of handing the potential ID conflicts caused by embedding third-party controls within your web-page; it prefixes any sub-controls with their parent’s ID.</p>
+
+<p><code class="language-plaintext highlighter-rouge">&lt;asp:TextBox ID="txtUsername" Runat="server" /&gt;</code> within a standard page simply has an ID of <code class="language-plaintext highlighter-rouge">txtUsername</code> within the HTML output. On the other hand, the following example would result in something along the lines of <code class="language-plaintext highlighter-rouge">_parent_txtUsername</code> as the ID:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"parent"</span> <span class="na">runat=</span><span class="s">"server"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;asp:TextBox</span> <span class="na">ID=</span><span class="s">"txtUsername"</span> <span class="na">Runat=</span><span class="s">"server"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>This isn’t really much of a problem when all you are working with is server-side code, but when you start tinkering with JavaScript, things become quite annoying and get an overall feeling of hackiness.</p>
+
+ <a class="read-more" href="/writings/how-to-use-clientids-in-javascript-without-the-ugliness">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-04-12">
+                12 Apr 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">JavaScript Behaviour & getElementsBySelector() mini-fix</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p><a href="http://bennolan.com/behaviour/">Behaviour</a>, great bit of JavaScript!</p>
+
+<p>While using it lately I came across a small bug in the code it’s based-on, <a href="http://simon.incutio.com/">Simon Willison</a>’s <a href="http://simon.incutio.com/archive/2003/03/25/getElementsBySelector">getElementsBySelector()</a>, when you use a selector that references an invalid ID paired with a tag name (e.g. <code class="language-plaintext highlighter-rouge">body#profile</code>, when <code class="language-plaintext highlighter-rouge">#profile</code> doesn’t exist), a script error occurs; yet using <code class="language-plaintext highlighter-rouge">#profile</code> alone works fine.</p>
+
+<p>After a little bit of digging I found a solution, the source of the error is line 89:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+</code></pre></div></div>
+
+ <a class="read-more" href="/writings/javascript-behaviour-amp-getelementsbyselector-mini-fix">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-03-24">
+                24 Mar 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/accessibility-for-uk-based-websites">Accessibility for UK based websites</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>As reported by <a href="http://news.bbc.co.uk/">BBC News</a>, a new set of <a href="http://news.bbc.co.uk/1/hi/technology/4783686.stm">accessibility guidelines</a> have been developed for UK websites.</p>
+
+<p>Although this certainly isn’t anything new — being as a law was passed in 1999 for compliance — and it isn’t even legally binding, it may be used in court if a case arises. This is just one more little pebble added to the mounting landslide that will occur when a disabled user finally does the american thing and sues a company for not providing sufficient means to access their website.</p>
+ <a class="read-more" href="/writings/accessibility-for-uk-based-websites">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-03-08">
+                08 Mar 2006
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -91,84 +168,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/venkman-for-firefox-1501-javascript-debugger">Venkman for Firefox 1.5.0.1 (Javascript Debugger)</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Once again the guys at Mozilla have broken quite possibly the best plug-in for Firefox: the <a href="http://www.mozilla.org/projects/venkman/">Venkman Javascript Debugger</a>. This is becoming quite commonplace, with every update for firefox disabling the debugger until a fix is released.</p>
-
-<p>Anyway, even though both the extensions manager and Venkmans official website both say there aren’t any updates available, Joe Walker from <a href="http://getahead.ltd.uk/home">Getahead</a> has created and update that contains some bug fixes from Bugzilla, but most importantly Venkman now works with Firefox 1.5.0.1!</p>
-
-<p>Source: <a href="http://getahead.ltd.uk/ajax/venkman">Venkman for Firefox 1.5</a></p>
- <a class="read-more" href="/writings/venkman-for-firefox-1501-javascript-debugger">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-02-07">
-                07 Feb 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/first-working-weekend">First working weekend</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>The weekend just past was my first that I’ve had to work since I left Tesco. Not an entirely unpleasant experience, although I would have much rather had my weekend.</p>
-
-<p>The reason we had to work the weekend was down to us launching (re-launching actually) a product for a customer’s extranet, something that a lot of people had been rather worried about. Mainly because, apparently, the previous time this product was launched it corrupted important data for six months without anyone noticing. Wonderful.</p>
-
- <a class="read-more" href="/writings/first-working-weekend">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-01-23">
-                23 Jan 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/javascript-getnextelement-and-getpreviouselement-revised">JavaScript getNextElement and getPreviousElement - revised</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>This is a very old post. Please, stop reading and just <a href="http://jquery.com/">download jQuery</a>.</p>
-</blockquote>
-
-<p>As I said I would be in my previous post, I’ve been working on improving getNextElement. I’ve improved the overall performance of the function and also created a few others with similar purpose; including the sister function getPrevious element. I outline all the functions and their uses below; you can find the download link at the top and bottom of this post.</p>
-
-<p>Any bugs anyone finds don’t fret to email me or post a comment here, i’ll work on fixing them asap.</p>
-
- <a class="read-more" href="/writings/javascript-getnextelement-and-getpreviouselement-revised">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-01-12">
-                12 Jan 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page17/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 18 of 20 </span>
+    <span class="page-number"> Page 18 of 21 </span>
      
         <a class="older-posts" href="/page19/" title="Next Page">Older Posts &raquo;</a>
      

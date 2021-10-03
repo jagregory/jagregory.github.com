@@ -41,12 +41,74 @@
             <a class="newer-posts" href="/page10/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 11 of 20 </span>
+    <span class="page-number"> Page 11 of 21 </span>
      
         <a class="older-posts" href="/page12/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Smart Indentation for Visual Studio Extensibility projects</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I said previously in my <a href="/writings/brace-matching-and-your-language-service/">Brace Matching post</a> that I want to try to document some of my findings while working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Well this is my second post on the subject.</p>
+
+<p>When you’re implementing a custom language in Visual Studio, there’s a very good chance that you’re going to want to handle indentation slightly differently to the defaults. Every language has it’s own rules, after all.</p>
+
+ <a class="read-more" href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-19">
+                19 Oct 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/sharpdiff-diff-parsing-in-net">SharpDiff - Diff Parsing in .NET</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>SharpDiff is a library for parsing the output of various diffing tools. It’s primary purpose is to reduce the time spent by SCM UI developers in handing diff output.</p>
+
+ <a class="read-more" href="/writings/sharpdiff-diff-parsing-in-net">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-19">
+                19 Oct 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/console-colours-wrapper">Console colours wrapper</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Continuing on from my post about an <a href="/writings/alternative-to-abusing-using/">alternative syntax for the non-disposable using statements</a>, here’s a class I’ve been using lately. It serves as a wrapper around changing the colours in a console window. It’s not a difficult thing to do, it’s just a bit awkward because you have to maintain the original colour in a variable while you do your business.</p>
+
+ <a class="read-more" href="/writings/console-colours-wrapper">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-07">
+                07 Oct 2008
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -98,83 +160,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/brace-matching-and-your-language-service">Brace Matching and your Language Service</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I’ve been meaning to write up some of my experiences developing for Visual Studio while I’ve been working on <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>, but I can never seem to find the time; either that, or when I can I’m not confident enough in what I’m doing to put it out here as a valid resource.</p>
-
-<p>I’ll start small, here’s a quick guide to how I’ve implemented brace matching using the managed Visual Studio extensibility SDK.</p>
-
- <a class="read-more" href="/writings/brace-matching-and-your-language-service">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-09-02">
-                02 Sep 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/introducing-fluent-nhibernate">Introducing Fluent NHibernate</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>A couple of people have already covered this already, specifically <a href="http://www.IAmNotMyself.com/2008/08/07/SkinningTheCatWithFluentNHibernate.aspx">Bobby Johnson</a>, <a href="http://mhinze.com/fluent-nhibernate-project/">Matt Hinze</a>, and <a href="http://zachariahyoung.com/zy/post/2008/08/fluent-nhibernate-for-creating-entity-mapping-files.aspx">Zachariah Young</a>. I figure I should say something on it anyway.</p>
-</blockquote>
-
-<p>I’ve adopted a project from <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a> that I think has the potential to be a really useful tool. It’s called <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and it’s primarily a fluent API for mapping classes with NHibernate.</p>
-
-<p>We’re all well aware how awesome NHibernate is, but I think we all also have a bit of a dislike for the amount of XML you need to write to get your classes mapped; not only that, but also how the mappings are distinctly separate from the rest of your application. They’re often neglected and untested. One of the core tenets of the project is that we need a more succinct, readable, and testable way of writing your mappings.</p>
-
- <a class="read-more" href="/writings/introducing-fluent-nhibernate">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-08-08">
-                08 Aug 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/latest-on-boolangstudio">Latest on BooLangStudio</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>It’s been a long time since I’ve written anything about <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. Let me assure you that the development is still very much underway, and we’re steadily working towards our first release.</p>
-
-<p>To fill you in a bit on what’s been going on. Jeffery Olson has completely rewritten the syntax highlighting to use the more flexible Boo.Pegs lexer, which allows us to overcome some of the obstacles we were facing with the traditional Boo lexer. There were limitations to what we could do with the traditional lexer, without modifying the Boo source. This was leading us down a road we weren’t keen on, one of maintaining a fork of the Boo source that contained our specific changes. With the move to the Boo.Pegs lexer, we’re free of this scenario!</p>
-
- <a class="read-more" href="/writings/latest-on-boolangstudio">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-08-07">
-                07 Aug 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page10/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 11 of 20 </span>
+    <span class="page-number"> Page 11 of 21 </span>
      
         <a class="older-posts" href="/page12/" title="Next Page">Older Posts &raquo;</a>
      

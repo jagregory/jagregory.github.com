@@ -41,12 +41,79 @@
             <a class="newer-posts" href="/page12/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 13 of 20 </span>
+    <span class="page-number"> Page 13 of 21 </span>
      
         <a class="older-posts" href="/page14/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Freeing the model from its evil web-service oppressors</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The current system I’m working with has a setup whereby the model (data access objects) are being used by the web-services for delivery; this means that the consumers of the web-services are directly tied to our inner implementation of our data access code. On-top of that, it’s old full of bad conventions, and is in need of refactoring.</p>
+
+ <a class="read-more" href="/writings/freeing-the-model-from-its-evil-web-service-oppressors">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-18">
+                18 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/boo-visual-studio-plug-in-1-complete">Boo Visual Studio plug-in: 1% complete</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>What do we want? <em>A Boo plug-in for Visual Studio</em>. When do we want it? <em>Sooner, rather than later</em>.</p>
+
+<p>The initial aim of this plug-in is to provide a “good enough” experience when using Boo files within other projects. I’m not currently focussing on doing full-scale development with Boo; so the target is DSLs and Binsor. There won’t be any assemblies created, or anything else that would affect your project. The only difference between how you work now would be that you could write Boo using Visual Studio, with syntax highlighting and intellisense.</p>
+
+<p>That’s for the initial version anyway.</p>
+
+ <a class="read-more" href="/writings/boo-visual-studio-plug-in-1-complete">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-18">
+                18 May 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/plugin-baby-steps">Plugin baby steps</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Making a Visual Studio 2008 plugin isn’t as hard as it sounds.</p>
+
+<p>Making one that works is a bit more difficult.</p>
+
+<p>Syntax highlighting is fairly straight forward, just run a tokenizer over the text and colour code each token appropriately. It’s the code sense that is causing me to go slightly mad. To determine what methods need to be listed when the intellisense pops up, you need to parse the code that’s in the document, then resolve any classes and references in there to build up a collection of methods to display. It gets more tricky when the document isn’t valid, because you can’t compile it. That’s where I am now, I need to figure out some way of partially compiling the document, or maybe using an AST walker.</p>
+ <a class="read-more" href="/writings/plugin-baby-steps">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-05-12">
+                12 May 2008
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -110,79 +177,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/static-method-abuse">Static method abuse</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I dislike static methods, there I said it.</p>
-
-<p>Like everything, they have their place; but as the old analogy says, when you have a hammer everything looks like a nail. <strong>Static methods are being abused.</strong></p>
-
- <a class="read-more" href="/writings/static-method-abuse">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-03-28">
-                28 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/plug-ins-and-browsers">Plug-in's and browsers</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Jeff Atwood (of <a href="http://www.codinghorror.com">Coding Horror</a>) <a href="http://twitter.com/codinghorror/statuses/778279263">tweeted earlier</a>: “On Firefox: ‘add-ons aren’t a big draw for me – I just need a browser, not a circus.’”. I don’t know whether this was a quotation of himself, or someone else; but it’s something that I’ve heard mentioned before.</p>
-
-<p>Just because they’re there, doesn’t mean you have to install them.</p>
-
- <a class="read-more" href="/writings/plug-ins-and-browsers">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-03-28">
-                28 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/getfilename-nant-task">getfilename NAnt task</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn’t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
-
-<p>The <code class="language-plaintext highlighter-rouge">getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc…</p>
-
- <a class="read-more" href="/writings/getfilename-nant-task">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-03-12">
-                12 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page12/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 13 of 20 </span>
+    <span class="page-number"> Page 13 of 21 </span>
      
         <a class="older-posts" href="/page14/" title="Next Page">Older Posts &raquo;</a>
      

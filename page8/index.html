@@ -41,12 +41,86 @@
             <a class="newer-posts" href="/page7/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 8 of 20 </span>
+    <span class="page-number"> Page 8 of 21 </span>
      
         <a class="older-posts" href="/page9/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-configuring-your-application">Fluent NHibernate: Configuring your application</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-configuration">Fluent Configuration</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+</blockquote>
+
+<p>There’s been a grey area of how to actually configure your application to use <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, and also how to configure some more complicated situations (such as mixing fluent and non-fluent mappings). After some thought I’ve committed a change that should make things clearer. What follows is a few examples of how this new API can be used.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-configuring-your-application">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-02-03">
+                03 Feb 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/i-think-you-mean-a-many-to-one-sir">I think you mean a many-to-one, sir</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>This is a question that crops up <strong>a lot</strong>, in various forms, on the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> and <a href="http://groups.google.com/group/nhusers">NHibernate Users</a> mailing lists. <em>My one-to-one mapping isn’t working, what’s wrong?</em> aka Incorrectly using a one-to-one relationship when you actually need a many-to-one.</p>
+</blockquote>
+
+<p>There’s a common misunderstanding where people try to use a one-to-one relationship where a many-to-one is appropriate. I believe this is because people tend to get tunnel vision when designing their entities, which leads them to make incorrect assumptions. They focus on one entity at a time, and when that has a single entity related to it, they jump to the conclusion it’s a one-to-one they need; after all, there’s their current entity (one) and the related entity (to-one). They’re actually forgetting that there can be multiple instances of their <em>current entity</em>.</p>
+
+ <a class="read-more" href="/writings/i-think-you-mean-a-many-to-one-sir">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-27">
+                27 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/introduction-to-static-reflection">Introduction to static reflection</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>This post could’ve also been called “Fluent NHibernate secrets exposed!” but it sounded a bit sensationalist.</p>
+</blockquote>
+
+<p>You may have heard people mention static reflection recently, quite possibly because it’s used extensively in <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>, <a href="http://ayende.com/projects/rhino-mocks.aspx">Rhino Mocks</a>, and I believe <a href="http://www.lostechies.com/blogs/jimmy_bogard/">Jimmy Bogard’s</a> new <a href="http://www.codeplex.com/AutoMapper">AutoMapper</a> also uses it; pretty much any of the new “fluent” interfaces use some kind of static reflection.</p>
+
+<p><strong>So what actually is static reflection?</strong> Well, it’s a statically compiled way of utilising the Reflection API.</p>
+
+ <a class="read-more" href="/writings/introduction-to-static-reflection">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-26">
+                26 Jan 2009
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -96,87 +170,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Fluent NHibernate: Mapping private and protected properties</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Fluent-mapping">Fluent Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-</blockquote>
-
-<p>There’s been a point of contention for some users of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> since the beginning, and that’s the lack of a method of mapping private and protected properties on their domain entities.</p>
-
-<p>The issue stems from our use of lambda expressions for static reflection of your entities, one of the appealing properties of Fluent NHibernate; by utilising expressions we’re able to protect your mappings from refactoring side-effects. However, lambda expressions can only reference properties that are public on an object, so that makes it difficult to use against protected or private properties.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-mapping-private-and-protected-properties">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-13">
-                13 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Fluent NHibernate: Auto Mapping Type Conventions</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post may be out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-</blockquote>
-
-<p>I’ve already covered how to auto map a basic domain, as well as how to customise some of the conventions that the auto mapper uses. There are some more in-depth customisations you can do to the conventions that I’ll cover now.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-type-conventions">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-11">
-                11 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-entity-conventions">Fluent NHibernate: Auto Mapping Entity Conventions</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post is out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-</blockquote>
-
-<p>This post should be short and sweet. We want to alter our <strong>has many</strong> relationship from <code class="language-plaintext highlighter-rouge">Shelf</code> to <code class="language-plaintext highlighter-rouge">Product</code> so that it has a cascade set on it. We don’t want this to affect all one-to-many’s in our domain, so we need to do this alteration only on the <code class="language-plaintext highlighter-rouge">Shelf</code> entity rather than with an <code class="language-plaintext highlighter-rouge">ITypeConvention</code>.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-entity-conventions">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-11">
-                11 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page7/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 8 of 20 </span>
+    <span class="page-number"> Page 8 of 21 </span>
      
         <a class="older-posts" href="/page9/" title="Next Page">Older Posts &raquo;</a>
      
