@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>James Gregory</title>
-    <description>I like turtles.
+    <description>Jack of all trades, master of none. Principal Consultant at [Thoughtworks](https://www.thoughtworks.com/). Pronouns: he/him
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 Oct 2021 10:25:50 +1100</pubDate>
-    <lastBuildDate>Mon, 04 Oct 2021 10:25:50 +1100</lastBuildDate>
+    <pubDate>Mon, 04 Oct 2021 10:27:52 +1100</pubDate>
+    <lastBuildDate>Mon, 04 Oct 2021 10:27:52 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
