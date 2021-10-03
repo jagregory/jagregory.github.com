@@ -6,13 +6,15 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 Oct 2021 10:27:52 +1100</pubDate>
-    <lastBuildDate>Mon, 04 Oct 2021 10:27:52 +1100</lastBuildDate>
+    <pubDate>Mon, 04 Oct 2021 10:33:52 +1100</pubDate>
+    <lastBuildDate>Mon, 04 Oct 2021 10:33:52 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
         <title>Keeping API keys and environment-specifics out of your OpenTelemetry config</title>
         <description>&lt;p&gt;When I was setting up &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt; with my Lambda functions there was something that bothered me: the &lt;a href=&quot;https://opentelemetry.io/&quot;&gt;OpenTelemetry&lt;/a&gt; config file contained my API keys and environment-specific details. I needed to keep my bundle environment-agnostic, and I really didn’t want to be committing API keys to version control. You can read more about the adventure itself in &lt;a href=&quot;/writings/getting-honeycomb-working-with-my-aws-lambda-functions&quot;&gt;my other post&lt;/a&gt;, or continue reading this post for my solution.&lt;/p&gt;
+
+&lt;!-- more --&gt;
 
 &lt;p&gt;OpenTelemetry supports environment variables to override parts of the config file, such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_ENDPOINT&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTEL_EXPORTER_OTLP_HEADERS&lt;/code&gt;. In theory, you could use these to customise your config file. Unfortunately, the AWS Distro for OpenTelemetry on AWS Lambda doesn’t seem to honour these variables.&lt;/p&gt;
 
@@ -39,9 +41,14 @@
     
       <item>
         <title>Honeycomb and OpenTelemetry with AWS Lambda and Node.js (reference)</title>
-        <description>&lt;p&gt;I had a few struggles when getting &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt; and &lt;a href=&quot;https://opentelemetry.io/&quot;&gt;OpenTelemetry&lt;/a&gt; working with my existing Node.js Lambda functions, which rely on automatic and manual instrumentation. You can read more about that &lt;a href=&quot;/writings/getting-honeycomb-working-with-my-aws-lambda-functions&quot;&gt;over here&lt;/a&gt; and the page you’re on right now is the condensed version with my working solution.&lt;/p&gt;
+        <description>&lt;p&gt;This is a condensed guide to how I configured AWS Lambda to work with
+&lt;a href=&quot;https://honeycomb.io&quot;&gt;Honeycomb&lt;/a&gt; and &lt;a href=&quot;https://opentelemetry.io&quot;&gt;OpenTelemetry&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h1 id=&quot;step-1-get-auto-instrumentation-working-with-your-lambda-function&quot;&gt;Step 1: Get auto-instrumentation working with your Lambda function&lt;/h1&gt;
+&lt;!-- more --&gt;
+
+&lt;p&gt;I had a few struggles when getting &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt; and &lt;a href=&quot;https://opentelemetry.io/&quot;&gt;OpenTelemetry&lt;/a&gt; working with my existing Node.js Lambda functions, which rely on automatic and manual instrumentation. You can read more about that &lt;a href=&quot;/writings/getting-honeycomb-working-with-my-aws-lambda-functions&quot;&gt;over here&lt;/a&gt; and the page you’re on right now is the condensed version with my working solution.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-1-get-auto-instrumentation-working-with-your-lambda-function&quot;&gt;Step 1: Get auto-instrumentation working with your Lambda function&lt;/h2&gt;
 
 &lt;p&gt;The first part is getting auto-instrumentation working with OpenTelemetry. This is pretty easy, although I did hit a couple of issues related to bundling.&lt;/p&gt;
 
@@ -53,7 +60,7 @@
 
 &lt;p&gt;At this point you have made no modifications to your application code and auto-instrumentation should be working. The traces will be sent to X-Ray by default, so next is to configure OpenTelemetry to send data to Honeycomb.&lt;/p&gt;
 
-&lt;h1 id=&quot;step-2-customise-your-configuration-to-point-to-honeycomb&quot;&gt;Step 2: Customise your configuration to point to Honeycomb&lt;/h1&gt;
+&lt;h2 id=&quot;step-2-customise-your-configuration-to-point-to-honeycomb&quot;&gt;Step 2: Customise your configuration to point to Honeycomb&lt;/h2&gt;
 
 &lt;p&gt;To customise AWS Distro for OpenTelemetry you have to add your own config file to your Lambda functions and set an environment variable to tell OpenTelemetry to use your overriden config file. Read &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda#custom-configuration-for-the-adot-collector-on-lambda&quot;&gt;custom configuration for the ADOT Collector on Lambda&lt;/a&gt; for more information. There’s also &lt;a href=&quot;https://aws-otel.github.io/docs/components/otlp-exporter#honeycomb&quot;&gt;instructions for Honeycomb&lt;/a&gt; on the AWS Distro site.&lt;/p&gt;
 
@@ -61,7 +68,7 @@
 
 &lt;p&gt;At this point, I wasn’t very happy with having API Keys and environment-specific information in the OpenTelemetry config file. If you’re feeling like that, have a read of my &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;Keeping API keys and environment-specifics out of your OpenTelemetry config&lt;/a&gt; post.&lt;/p&gt;
 
-&lt;h1 id=&quot;step-3-manual-instrumentation-support&quot;&gt;Step 3: Manual instrumentation support&lt;/h1&gt;
+&lt;h2 id=&quot;step-3-manual-instrumentation-support&quot;&gt;Step 3: Manual instrumentation support&lt;/h2&gt;
 
 &lt;p&gt;Until now you haven’t made any changes to your application code; however, if you want to create your own spans and add extra metadata to your traces you’re going to need to add the OpenTelemetry libraries to your application.&lt;/p&gt;
 
@@ -73,7 +80,7 @@
 
 &lt;p&gt;Scatter a few custom traces around your functions and redeploy. You should now start seeing these in Honeycomb too. Done.&lt;/p&gt;
 
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;In hindsight there’s not a lot involved in setting all this up, and it’s quite impressive once I got over a few little hurdles.&lt;/p&gt;
 
@@ -88,11 +95,15 @@
     
       <item>
         <title>Getting Honeycomb working with my AWS Lambda functions</title>
-        <description>&lt;p&gt;I have several existing Lambda functions which are all built on Node.js which I wanted to connect to &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt;. I spent some time over the weekend working through it, and this is my stream-of-consciousness. If you’d like to read just the solution you can jump to &lt;a href=&quot;/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference&quot;&gt;Honeycomb and OpenTelemetry with Lambda and Node.js (reference)&lt;/a&gt;, and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;Keeping API keys and environment-specifics out of your OpenTelemetry config&lt;/a&gt;.&lt;/p&gt;
+        <description>&lt;p&gt;I have several existing Lambda functions which are all built on Node.js which I wanted to connect to &lt;a href=&quot;https://www.honeycomb.io/&quot;&gt;Honeycomb&lt;/a&gt;. I spent some time over the weekend working through it, and this is my stream-of-consciousness.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;If you’d like to read just the solution you can jump to &lt;a href=&quot;/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference&quot;&gt;Honeycomb and OpenTelemetry with Lambda and Node.js (reference)&lt;/a&gt;, and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;Keeping API keys and environment-specifics out of your OpenTelemetry config&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;So, where do I start connecting these Lambdas to Honeycomb?&lt;/p&gt;
 
-&lt;h1 id=&quot;starting-with-opentelemetry&quot;&gt;Starting with OpenTelemetry&lt;/h1&gt;
+&lt;h2 id=&quot;starting-with-opentelemetry&quot;&gt;Starting with OpenTelemetry&lt;/h2&gt;
 
 &lt;p&gt;Honeycomb &lt;a href=&quot;https://docs.honeycomb.io/getting-data-in/opentelemetry/beelines-and-otel/&quot;&gt;encourage you to use OpenTelemetry&lt;/a&gt; to send data to them. It’s nice to see a vendor encourage the use of open standards over their own client libraries (which they also have if you need them).&lt;/p&gt;
 
@@ -102,7 +113,7 @@
 
 &lt;p&gt;My confusion about Node.js support will return later, but for now Liz’s suggestion sends me off in a positive direction.&lt;/p&gt;
 
-&lt;h1 id=&quot;aws-distro-for-opentelemetry&quot;&gt;AWS Distro for OpenTelemetry&lt;/h1&gt;
+&lt;h2 id=&quot;aws-distro-for-opentelemetry&quot;&gt;AWS Distro for OpenTelemetry&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/otel&quot;&gt;AWS Distro for OpenTelemetry&lt;/a&gt; (aka ADOT, just rolls off the tongue) provides several pre-built &lt;a href=&quot;https://aws-otel.github.io/docs/getting-started/lambda/lambda-js&quot;&gt;Lambda Layers&lt;/a&gt; which you can add to your Lambda functions to configure OpenTelemetry for you. There’s a Node.js one, so that’s positive.&lt;/p&gt;
 
@@ -116,7 +127,7 @@
 
 &lt;p&gt;If I look in the Lambda’s logs, there’s signs of an OpenTelemetry Collector running and it’s printing about receiving traces. The traces are still going to X-Ray but it’s a step in the right direction.&lt;/p&gt;
 
-&lt;h1 id=&quot;connecting-to-honeycomb&quot;&gt;Connecting to Honeycomb&lt;/h1&gt;
+&lt;h2 id=&quot;connecting-to-honeycomb&quot;&gt;Connecting to Honeycomb&lt;/h2&gt;
 
 &lt;p&gt;Now to actually get the traces to Honeycomb. The AWS Distro for OpenTelemetry comes pre-packaged with a config file for the Collector which points to X-Ray. If you want your telemetry to go anywhere else you need to provide your own config file.&lt;/p&gt;
 
@@ -152,7 +163,7 @@
 
 &lt;p&gt;At this point I have auto-instrumented code sending traces to Honeycomb. The final step is to get manual instrumentation working.&lt;/p&gt;
 
-&lt;h1 id=&quot;manual-instrumentation-with-opentelemetry&quot;&gt;Manual instrumentation with OpenTelemetry&lt;/h1&gt;
+&lt;h2 id=&quot;manual-instrumentation-with-opentelemetry&quot;&gt;Manual instrumentation with OpenTelemetry&lt;/h2&gt;
 
 &lt;p&gt;This is the bit that I was stuck on for the longest, I think.&lt;/p&gt;
 
@@ -184,7 +195,7 @@
 
 &lt;p&gt;But there is one last thing on my mind. The config file that AWS Distro needs you to create. That config file is where you put your API Keys and other exporter settings. That’s not ideal.&lt;/p&gt;
 
-&lt;h1 id=&quot;making-the-opentelemetry-config-free-of-api-keys-and-environment-specifics&quot;&gt;Making the OpenTelemetry config free of API keys and environment-specifics&lt;/h1&gt;
+&lt;h2 id=&quot;making-the-opentelemetry-config-free-of-api-keys-and-environment-specifics&quot;&gt;Making the OpenTelemetry config free of API keys and environment-specifics&lt;/h2&gt;
 
 &lt;p&gt;To add some extra context, it’s important to understand that I bundle my Lambda functions &lt;em&gt;once&lt;/em&gt; and only once. I don’t build environment-specific bundles, instead the one bundle is “promoted” to different environments. Where this becomes an issue is OpenTelemetry needs me to embed the Honeycomb settings in the config file.&lt;/p&gt;
 
@@ -224,7 +235,7 @@
 
 &lt;p&gt;That’s it. All done. I can rest now.&lt;/p&gt;
 
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;To summarise:&lt;/p&gt;
 
