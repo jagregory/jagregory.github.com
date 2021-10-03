@@ -2,7 +2,7 @@
 layout: post
 title: Getting Honeycomb working with my AWS Lambda functions
 date: 2021-10-03
-published: false
+published: true
 ---
 
 I have several existing Lambda functions which are all built on Node.js which I wanted to connect to [Honeycomb](https://www.honeycomb.io/). I spent some time over the weekend working through it, and this is my stream-of-consciousness. If you'd like to read just the solution you can jump to [Honeycomb and OpenTelemetry with Lambda and Node.js (reference)](/writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference), and if you want to keep your API keys outside of your OpenTelemetry config you can reference environment variables like I describe in [Keeping API keys and environment-specifics out of your OpenTelemetry config](/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config).

@@ -2,7 +2,7 @@
 layout: post
 title: Keeping API keys and environment-specifics out of your OpenTelemetry config
 date: 2021-10-03
-published: false
+published: true
 ---
 
 When I was setting up [Honeycomb](https://www.honeycomb.io/) with my Lambda functions there was something that bothered me: the [OpenTelemetry](https://opentelemetry.io/) config file contained my API keys and environment-specific details. I needed to keep my bundle environment-agnostic, and I really didn't want to be committing API keys to version control. You can read more about the adventure itself in [my other post](/writings/getting-honeycomb-working-with-my-aws-lambda-functions), or continue reading this post for my solution.

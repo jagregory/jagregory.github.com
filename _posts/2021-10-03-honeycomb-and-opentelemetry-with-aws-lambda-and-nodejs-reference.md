@@ -2,7 +2,7 @@
 layout: post
 title: Honeycomb and OpenTelemetry with AWS Lambda and Node.js (reference)
 date: 2021-10-03
-published: false
+published: true
 ---
 
 I had a few struggles when getting [Honeycomb](https://www.honeycomb.io/) and [OpenTelemetry](https://opentelemetry.io/) working with my existing Node.js Lambda functions, which rely on automatic and manual instrumentation. You can read more about that [over here](/writings/getting-honeycomb-working-with-my-aws-lambda-functions) and the page you're on right now is the condensed version with my working solution.
