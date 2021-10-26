@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 26 Oct 2021 18:34:30 +1100</pubDate>
-    <lastBuildDate>Tue, 26 Oct 2021 18:34:30 +1100</lastBuildDate>
+    <pubDate>Tue, 26 Oct 2021 18:42:02 +1100</pubDate>
+    <lastBuildDate>Tue, 26 Oct 2021 18:42:02 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -171,6 +171,8 @@ you’re copying.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Lots of time passes.&lt;/em&gt; Turns out copying files that have been collected over five years from twenty
 different regions takes a lot of time.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/cloudtrail-s3-sync-logs.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Finally when that’s all done, delete those old buckets and any other CloudTrails and patch up any
 security holes you created. Nice, twenty trails and buckets down to just one.&lt;/p&gt;
