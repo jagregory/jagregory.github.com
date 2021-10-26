@@ -118,8 +118,10 @@ policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-m
 new bucket to transition older logs to cold storage to save you a little bit of money.
 
 Now back over in your main AWS account create (or update) your CloudTrail and point it at the new S3
-bucket in the other account, turn on the multi-region feature on the trail, and then save it and
-you're done.
+bucket in the other account, turn [on the multi-region
+feature](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/receive-cloudtrail-log-files-from-multiple-regions.html)
+on the trail (I think all new trails made in the console are multi-region by the way), and then save
+it and you're done.
 
 At this point you have a CloudTrail which monitors all your regions (and automatically expands to
 new regions as they become available) and sends logs to an S3 bucket in a separate locked-down AWS
