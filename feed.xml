@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 26 Oct 2021 17:46:00 +1100</pubDate>
-    <lastBuildDate>Tue, 26 Oct 2021 17:46:00 +1100</lastBuildDate>
+    <pubDate>Tue, 26 Oct 2021 18:34:30 +1100</pubDate>
+    <lastBuildDate>Tue, 26 Oct 2021 18:34:30 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -126,8 +126,10 @@ policy&lt;/a&gt; on your
 new bucket to transition older logs to cold storage to save you a little bit of money.&lt;/p&gt;
 
 &lt;p&gt;Now back over in your main AWS account create (or update) your CloudTrail and point it at the new S3
-bucket in the other account, turn on the multi-region feature on the trail, and then save it and
-you’re done.&lt;/p&gt;
+bucket in the other account, turn &lt;a href=&quot;https://docs.aws.amazon.com/awscloudtrail/latest/userguide/receive-cloudtrail-log-files-from-multiple-regions.html&quot;&gt;on the multi-region
+feature&lt;/a&gt;
+on the trail (I think all new trails made in the console are multi-region by the way), and then save
+it and you’re done.&lt;/p&gt;
 
 &lt;p&gt;At this point you have a CloudTrail which monitors all your regions (and automatically expands to
 new regions as they become available) and sends logs to an S3 bucket in a separate locked-down AWS
