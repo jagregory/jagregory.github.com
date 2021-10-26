@@ -6,9 +6,183 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 Oct 2021 11:08:49 +1100</pubDate>
-    <lastBuildDate>Mon, 04 Oct 2021 11:08:49 +1100</lastBuildDate>
+    <pubDate>Tue, 26 Oct 2021 17:40:15 +1100</pubDate>
+    <lastBuildDate>Tue, 26 Oct 2021 17:40:15 +1100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Multi-region CloudTrail with logs in another AWS Account</title>
+        <description>&lt;p&gt;I had one &lt;a href=&quot;https://aws.amazon.com/cloudtrail/&quot;&gt;CloudTrail&lt;/a&gt;. Then I had many CloudTrails. Now I have
+only one once again, but a better configured one.&lt;/p&gt;
+
+&lt;p&gt;In this post I walk through my experience of migrating from a less-than-ideal hand-rolled
+multi-region CloudTrail setup to an single multi-region CloudTrail with a sprinkling of extra
+security by using a separate AWS account to store the logs.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;what-is-cloudtrail&quot;&gt;What is CloudTrail?&lt;/h2&gt;
+
+&lt;p&gt;Before we get started, what actually is CloudTrail and why would I want to use it?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What is it?&lt;/strong&gt; The tag line on the &lt;a href=&quot;https://aws.amazon.com/cloudtrail/&quot;&gt;CloudTrail landing page&lt;/a&gt; is
+the official word, but informally CloudTrail collects logs of all the management activity on your
+AWS account and dumps it into an S3 bucket for you to look at later (hopefully never).&lt;/p&gt;
+
+&lt;p&gt;Below is a truncated example of a single CloudTrail event, from CloudTrail itself querying my
+bucket.&lt;/p&gt;
+
+&lt;p&gt;You can see the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eventType&lt;/code&gt;, an AWS API call, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eventName&lt;/code&gt; with the actual call &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetBucketAcl&lt;/code&gt;,
+the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;userIdentity&lt;/code&gt; of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cloudtrail.amazonaws.com&lt;/code&gt; and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resources&lt;/code&gt; it accessed.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventVersion&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1.08&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;userIdentity&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;AWSService&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;invokedBy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;cloudtrail.amazonaws.com&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventTime&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2021-10-26T00:49:57Z&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventSource&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;s3.amazonaws.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventName&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;GetBucketAcl&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;awsRegion&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ap-southeast-2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventType&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;AwsApiCall&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;eventCategory&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Management&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;resources&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;accountId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;...&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;AWS::S3::Bucket&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;ARN&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;arn:aws:s3:::mybucketname&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Why would you use it?&lt;/strong&gt; Auditing activity on your AWS account. If ever you have a security
+incident or are just curious “who deleted that S3 bucket?” then CloudTrail is what you need enabled
+to find that out. Without CloudTrail enabled it’s going to be considerably more difficult for you to
+investigate issues. As a bonus, CloudTrail is free for management logging, you just pay for the
+storage of events in S3.&lt;/p&gt;
+
+&lt;p&gt;When asked what the one thing everyone should do right now to improve their security posture, &lt;a href=&quot;https://aws.amazon.com/blogs/security/definitely-not-an-aws-security-profile-corey-quinn-a-cloud-economist-who-doesnt-work-here/&quot;&gt;Corey
+Quinn
+said&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Easy. Log into the console of your organization’s master account and enable &lt;a href=&quot;https://aws.amazon.com/cloudtrail/&quot;&gt;AWS CloudTrail&lt;/a&gt;
+for all regions and all accounts in your organization. Direct that trail to a locked-down S3
+bucket in a completely separate, highly restricted account, and you’ve got a forensic log of all
+management options across your estate.&lt;/p&gt;
+
+  &lt;p&gt;Worst case, you’ll thank me later. Best case, you’ll never need it.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;the-state-of-my-cloudtrail&quot;&gt;The state of my CloudTrail&lt;/h2&gt;
+
+&lt;p&gt;I did have CloudTrail enabled, so not a bad starting point; however, the setup did leave a few
+things to desire, especially as it’d grown over the past few years.&lt;/p&gt;
+
+&lt;p&gt;In the beginning I had one CloudTrail for the one region in use. The trail logged into an S3 bucket
+in the same AWS account.&lt;/p&gt;
+
+&lt;p&gt;As my AWS footprint expanded to another couple more regions, I replicated that same setup (instead
+of switching to a &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2015/12/turn-on-cloudtrail-across-all-regions-and-support-for-multiple-trails/&quot;&gt;multi-region
+trail&lt;/a&gt;,
+which I was oblivious to) to each additional region. Later, I pushed it to all regions for peace of
+mind. That left me with twenty trails and twenty S3 buckets, all in the same AWS account. Definitely
+not ideal.&lt;/p&gt;
+
+&lt;p&gt;What I wanted to do was to consolidate everything down to a single multi-region CloudTrail and a
+single S3 bucket. For added security, I also wanted to put the S3 bucket in a separate AWS account.
+In my original setup, anyone who compromises credentials on the main account may also be able to
+remove any record of their activity if they could gain access to the CloudTrail S3 bucket. In the
+new setup, the severely locked down secondary AWS account would at least make it much more difficult
+for someone to hide their tracks.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-up-a-multi-region-cloudtrail-with-an-s3-bucket-in-another-account&quot;&gt;Setting up a multi-region CloudTrail with an S3 bucket in another account&lt;/h2&gt;
+
+&lt;p&gt;To have your S3 bucket in another AWS account you’re going to need another AWS account! I suggest
+you make a completely new account for this, the only thing this account will have in is an S3 bucket
+for your CloudTrail logs, by using a new account you reduce the risk of someone else wandering in
+for other reasons.&lt;/p&gt;
+
+&lt;p&gt;Once you’ve made the account, follow the usual security practices and &lt;a href=&quot;https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#lock-away-credentials&quot;&gt;lock down the root
+account&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If the account is within an Organisation, pay close attention to the cross-account role if there is
+one. This role, usually called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OrganizationAccountAccessRole&lt;/code&gt;, allows admin access to the new
+account from your main AWS account. Make sure nobody can assume that role who shouldn’t be able to,
+otherwise they’ll be able to jump into the new account and tamper with your S3 bucket (defeating the
+point of having a separate account).&lt;/p&gt;
+
+&lt;p&gt;Now in your newly locked down account, create an S3 bucket for your CloudTrail logs. Lock that thing
+down too, no public access, nobody has write access. You’ll need to &lt;a href=&quot;https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-set-bucket-policy-for-multiple-accounts.html&quot;&gt;setup a policy to your bucket
+to allow CloudTrail write
+access&lt;/a&gt;
+across accounts.&lt;/p&gt;
+
+&lt;p&gt;Whilst you’re at it, you might want to setup a &lt;a href=&quot;https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html&quot;&gt;lifecycle
+policy&lt;/a&gt; on your
+new bucket to transition older logs to cold storage to save you a little bit of money.&lt;/p&gt;
+
+&lt;p&gt;Now back over in your main AWS account create (or update) your CloudTrail and point it at the new S3
+bucket in the other account, turn on the multi-region feature on the trail, and then save it and
+you’re done.&lt;/p&gt;
+
+&lt;p&gt;At this point you have a CloudTrail which monitors all your regions (and automatically expands to
+new regions as they become available) and sends logs to an S3 bucket in a separate locked-down AWS
+account.&lt;/p&gt;
+
+&lt;p&gt;If you’re like me though, you also have twenty existing buckets which have been accumulating logs
+for years that you’d like to keep…&lt;/p&gt;
+
+&lt;h2 id=&quot;consolidating-up-my-historical-trails&quot;&gt;Consolidating up my historical trails&lt;/h2&gt;
+
+&lt;p&gt;As I mentioned at the start, I’d ended up with twenty CloudTrails each with their own bucket. Those
+buckets had been accumulating logs for five years and, as I’m obligated to keep logs around for
+seven years, I didn’t want to lose these logs as part of my consolidation.&lt;/p&gt;
+
+&lt;p&gt;This is easy, right? “Just move the files from one bucket to the new one!”&lt;/p&gt;
+
+&lt;p&gt;Not so fast. I’ve just locked down the CloudTrail S3 bucket so nobody can write to it apart from
+CloudTrail, and also the bucket is now in a different AWS account and cross-account copying is a
+little trickier.&lt;/p&gt;
+
+&lt;p&gt;Fortunately, this &lt;a href=&quot;https://aws.amazon.com/premiumsupport/knowledge-center/copy-s3-objects-account/&quot;&gt;“How can I copy S3 objects from another AWS
+account?”&lt;/a&gt; FAQ was
+covered most of what I needed.&lt;/p&gt;
+
+&lt;p&gt;Firstly, I needed to punch a hole in my shiny new security policy by granting write access to my AWS
+user so I could copy the files. Watch out for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;s3:x-amz-acl&quot;: &quot;bucket-owner-full-control&quot;&lt;/code&gt;
+requirement. I revoked this access as soon as the copying was complete.&lt;/p&gt;
+
+&lt;p&gt;Secondly, configure &lt;a href=&quot;https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html&quot;&gt;Object
+Ownership&lt;/a&gt; on the
+central S3 bucket so the new AWS account owns the files that are copied to it.&lt;/p&gt;
+
+&lt;p&gt;Then repeatedly for each region, run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 sync --storage-class GLACIER --acl
+bucket-owner-full-control s3://original-cloudtrail-bucket s3://new-cloudtrail-bucket&lt;/code&gt; to copy the
+files over. Thanks to the way CloudTrail logs to the bucket, I didn’t need to do any path
+manipulation, it all can copy into the single bucket without any changes. Again, watch out for the
+ACL setting for the bucket ownership, and optionally set the storage class for the files whilst
+you’re copying.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Lots of time passes.&lt;/em&gt; Turns out copying files that have been collected over five years from twenty
+different regions takes a lot of time.&lt;/p&gt;
+
+&lt;p&gt;Finally when that’s all done, delete those old buckets and any other CloudTrails and patch up any
+security holes you created. Nice, twenty trails and buckets down to just one.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;One CloudTrail better than none, but also better than many. Multi-region (and multi-account)
+CloudTrails are great and pushing your logs off to another AWS account can help reduce your security
+risk by reducing the blast radius of compromised credentials.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 26 Oct 2021 00:00:00 +1100</pubDate>
+        <link>https://www.jagregory.com//writings/multi-region-cloudtrail</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/multi-region-cloudtrail</guid>
+        
+        
+      </item>
     
       <item>
         <title>Keeping API keys and environment-specifics out of your OpenTelemetry config</title>
@@ -898,127 +1072,6 @@ jagregory.sinopia
         
         
         <category>gamedev</category>
-        
-      </item>
-    
-      <item>
-        <title>Compiled Templates for Go</title>
-        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; is a compiled templating language for &lt;a href=&quot;http://golang.org&quot;&gt;Go&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don’t care. &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;Cote&lt;/a&gt; falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Custom code?&lt;/th&gt;
-      &lt;th&gt;Custom markup?&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;ERB&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;HAML&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;Yes&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Jade&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;Yes&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Go html/template&lt;/td&gt;
-      &lt;td&gt;Yes&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;_.template&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Cote&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;Cote uses the same tokens as ERB and ASP.Net (and I imagine quite a few other languages), specificically &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;%= %&amp;gt;&lt;/code&gt; for any code which should write to the output stream and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;% %&amp;gt;&lt;/code&gt; for code which doesn’t. Inside a code block you can write any valid Go code, outside can be anything.&lt;/p&gt;
-
-&lt;div class=&quot;language-erb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;title&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;%=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Title&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;Products&lt;span class=&quot;nt&quot;&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;cp&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Products&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;%=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;cp&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;As mentioned previously, Cote templates are compiled. A template is converted into pure Go and compiled into your package. No dependency on Cote is needed outside of your build pipeline. This adds some overhead to development (a template change requires a recompile), but it makes the impact on runtime as minimal as possible.&lt;/p&gt;
-
-&lt;p&gt;There’s an executable (aptly named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cote&lt;/code&gt;) which will take a template and spit out a Go function which can be called to render the template. Cote uses a very simplistic form of code generation to build your templates. It’s really simple.&lt;/p&gt;
-
-&lt;p&gt;Given the above template, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cote&lt;/code&gt; would produce a Go file roughly like:&lt;/p&gt;
-
-&lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;byte&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;h1&amp;gt;Products&amp;lt;/h1&amp;gt;&amp;lt;ul&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/li&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-  &lt;span class=&quot;c&quot;&gt;// ... snip ...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Brute force. Ugly. Fast, very fast.&lt;/p&gt;
-
-&lt;p&gt;Each template produces a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[]byte&lt;/code&gt; which can easily be written to your HTTP response.&lt;/p&gt;
-
-&lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;templates&quot;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;templates&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProductsLocals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Products listing&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;To learn more about Cote, take a look at the README on Github: &lt;a href=&quot;https://github.com/jagregory/cote&quot;&gt;https://github.com/jagregory/cote&lt;/a&gt;.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 14 Oct 2013 16:12:00 +1100</pubDate>
-        <link>https://www.jagregory.com//writings/compiled-templates-for-go</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/compiled-templates-for-go</guid>
-        
-        <category>golang</category>
-        
         
       </item>
     

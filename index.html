@@ -48,6 +48,31 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/multi-region-cloudtrail">Multi-region CloudTrail with logs in another AWS Account</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I had one <a href="https://aws.amazon.com/cloudtrail/">CloudTrail</a>. Then I had many CloudTrails. Now I have
+only one once again, but a better configured one.</p>
+
+<p>In this post I walk through my experience of migrating from a less-than-ideal hand-rolled
+multi-region CloudTrail setup to an single multi-region CloudTrail with a sprinkling of extra
+security by using a separate AWS account to store the logs.</p>
+
+ <a class="read-more" href="/writings/multi-region-cloudtrail">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2021-10-26">
+                26 Oct 2021
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config">Keeping API keys and environment-specifics out of your OpenTelemetry config</a></h2>
         </header>
         <section class="post-excerpt">
@@ -123,29 +148,6 @@
             
             <time class="post-date" datetime="2020-07-21">
                 21 Jul 2020
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/influxdb-kapacitor-subscription-error">InfluxDB Kapacitor subscription errors</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Post http://kapacitor.default:9092/write?consistency=&amp;db=telegraf&amp;precision=ns&amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
-</code></pre></div></div>
-
-<p>If you’re seeing something like this error in your <a href="https://github.com/influxdata/influxdb">InfluxDB</a> logs, and don’t know what it means: <a href="https://github.com/influxdata/kapacitor">Kapacitor</a> has created one or more subscriptions in your InfluxDB database, and InfluxDB is trying to POST to the Kapacitor endpoint; however, Kapacitor is unreachable. Kapacitor might be unreachable because it’s down, or you have a network partition or other connectivity issue, or in my case you’ve actually just destroyed your Kapacitor instance.</p>
-
- <a class="read-more" href="/writings/influxdb-kapacitor-subscription-error">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2017-03-29">
-                29 Mar 2017
             </time>
         </footer>
     </article>

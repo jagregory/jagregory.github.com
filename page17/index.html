@@ -52,6 +52,28 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/using-ies-conditional-comments-for-targeted-javascript">Using Internet Explorer's conditional comments for targeted JavaScript</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>The <a href="http://blogs.msdn.com/ie/archive/2005/10/12/480242.aspx">demise of CSS hacks</a>, something which has been covered elsewhere to no end, definitely a good thing, but not what I’m covering here - not directly anyway. I’ve been wondering if we can take advantage of this new age of “hack segregation”.</p>
+
+<p>The way I see it is we’re already breaking the rule of separation by using conditional comments in the structure, so why don’t we cease this opportunity to save our friends (users of Firefox, Safari, Opera etc…) some bandwidth by providing IE specific JavaScript in the same way too?</p>
+
+ <a class="read-more" href="/writings/using-ies-conditional-comments-for-targeted-javascript">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2006-06-15">
+                15 Jun 2006
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/sql-server-object-exists-function">SQL Server Object Exists Function</a></h2>
         </header>
         <section class="post-excerpt">
@@ -148,32 +170,6 @@ before I came across this, bad James!</p>
             
             <time class="post-date" datetime="2006-04-26">
                 26 Apr 2006
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/the-problem-with-onload">The problem with onload</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Handling events from within your page has always been a hit and miss affair, especially for somebody who doesn’t like mixing their code and markup. The way to go with events for a long time was to embed an attribute on the element in question; like <code class="language-plaintext highlighter-rouge">onclick="do_something()"</code>.</p>
-
-<p>That works fine, but we sure know it isn’t semantic. The way forward — greatly popularised by the <a href="http://prototype.conio.net">Prototype</a>, <a href="http://dojotoolkit.org/">Dojo</a> and <a href="http://bennolan.com/behaviour/">Behaviour</a> libraries — is to use DOM compliant event listeners. These fire arbitrary code, in a very similar way to attributes, when an event is raised. Unlike attributes these event listeners can be hidden away in their rightful place, the document header.</p>
-
-<p>Perfect - clean semantic markup and real event handling.</p>
-
-<p>…or is it? Unfortunately nothing is ever smooth when dealing with standards (it’s hard to promote the underdog when the underdog barely works anyway…).</p>
-
- <a class="read-more" href="/writings/the-problem-with-onload">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2006-04-12">
-                12 Apr 2006
             </time>
         </footer>
     </article>

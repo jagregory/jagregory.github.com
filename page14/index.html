@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/all-about-dependencies">All about dependencies</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p>This article serves as an introduction to the concept of <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a>, and why you’d want to use it. It is not a getting started guide for using containers. If you’re interested in those, my personal preference is <a href="http://www.castleproject.org/container/">Castle Windsor</a> and you can find their <a href="http://www.castleproject.org/container/gettingstarted/index.html">getting started guide here</a>.</p>
+</blockquote>
+
+<p>What are dependencies? Also referred to as couplings, dependencies are other modules that one module requires to fulfil it’s purpose.</p>
+
+<p>Are dependencies bad? No, of course they’re not, otherwise we wouldn’t be able to create anything. However, highly coupled code can cause a lot of problems for your application.</p>
+
+<p>If your code requires knowledge of how a dependency works, then your code is highly coupled. If your code is tied explicitly to an implementation, then your code is also highly coupled.</p>
+
+ <a class="read-more" href="/writings/all-about-dependencies">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-04-05">
+                05 Apr 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/static-method-abuse">Static method abuse</a></h2>
         </header>
         <section class="post-excerpt">
@@ -132,32 +160,6 @@
             
             <time class="post-date" datetime="2008-03-05">
                 05 Mar 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/objectfield-11">ObjectField 1.1</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I’ve updated the <code class="language-plaintext highlighter-rouge">ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code class="language-plaintext highlighter-rouge">BoundField</code> implementation:</p>
-
-<blockquote>
-  <p>Using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code class="language-plaintext highlighter-rouge">DataBinder</code> has the ability to evaluate a hierarchical path.</p>
-</blockquote>
-
-<p>Which is interesting, because I was using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> in my <code class="language-plaintext highlighter-rouge">ObjectField</code> implementation!</p>
-
- <a class="read-more" href="/writings/objectfield-11">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-02-21">
-                21 Feb 2008
             </time>
         </footer>
     </article>

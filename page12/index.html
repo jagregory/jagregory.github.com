@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/empty-nhibernate-logs-and-poor-performance">Empty NHibernate logs and poor performance</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>We had an issue recently where NHibernate was performing very poorly on our production server, but not on our developer machines or our test server. I investigated the issue and narrowed it down to two symptoms.</p>
+
+<p><strong>Symptom 1:</strong> Very poor performance. I’m talking 10+ seconds per page load, with no more than 5 queries being executed by NHibernate.</p>
+
+<p><strong>Symptom 2:</strong> Empty log files. None of our log files had any data in on the live server, but they did on our other systems.</p>
+
+<p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
+
+ <a class="read-more" href="/writings/empty-nhibernate-logs-and-poor-performance">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-09-12">
+                12 Sep 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/brace-matching-and-your-language-service">Brace Matching and your Language Service</a></h2>
         </header>
         <section class="post-excerpt">
@@ -138,29 +164,6 @@
             
             <time class="post-date" datetime="2008-07-01">
                 01 Jul 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/boo-visual-studio-plugin-progress">Boo Visual Studio plugin progress</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>Quick update on the <a href="/writings/boo-visual-studio-plug-in-1-complete/">Boo plugin I mentioned previously</a>. Jeff Olson announced the <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a> project a couple of days after I announced mine, and we’ve decided to join forces. I’ve begun merging our codebases, and we’re looking to get a release out in the not too distant future.</p>
-
-<p>Our combined code-bases have now got syntax highlighting, intellisense, single file and project support. Not bad going.</p>
-
-<p>We’ve now got a nice little team going as well, which is a big improvement from what was the one man band of my self. One of the contributors, <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">Torkel Ödegaard</a>, has written a <a href="http://www.codinginstinct.com/2008/05/boo-in-visual-studio.html">nice overview</a> of our progress and processes as-well.</p>
- <a class="read-more" href="/writings/boo-visual-studio-plugin-progress">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-05-25">
-                25 May 2008
             </time>
         </footer>
     </article>

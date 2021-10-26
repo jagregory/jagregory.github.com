@@ -52,6 +52,26 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/nested-datagridrepeater-with-key-value-access">Nested DataGrid/Repeater with Key Value access</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>One of my colleagues was having a problem with a datagrid nested in a repeater. We’ve done this kind of thing before with no problems, but this time the dataset wasn’t allowing key access to columns (i.e <code class="language-plaintext highlighter-rouge">Container.DataItem("ID")</code>). We toiled for quite some time trying to figure out why, with no avail. Eventually we just ended up using the direct index of the column; which worked fine as long as we didn’t change the column ordering.</p>
+
+ <a class="read-more" href="/writings/nested-datagridrepeater-with-key-value-access">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2005-10-20">
+                20 Oct 2005
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/sql-server-exists-function-quicker-than-count">SQL Server: Exists() function quicker than Count()</a></h2>
         </header>
         <section class="post-excerpt">
@@ -147,42 +167,6 @@
             
             <time class="post-date" datetime="2005-07-18">
                 18 Jul 2005
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/debugging-glory">Debugging Internet Explorer and Stored Procedures</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p>Note from future James: There’s nothing practically useful here for you now, this has been long-since
-made irrelevant; however, it is an interesting insight into what things used to be like! Kids these
-days etc…</p>
-
-  <p>Having a debugger for JavaScript wasn’t part of the browser itself yet, Firebug was the first good
-example of this and but only came out the year of this post, and Chrome wasn’t a thing for another
-4 years. Instead you had to connect Visual Studio to Internet Explorer, and debug JavaScript that way.</p>
-
-  <p>Similarly, Visual Studio could debug Stored Procedures. I remember this being particularly painful
-and involving copy-and-pasting DLLs into various directories in your system. I’m glad we don’t
-work with Stored Procedures much anymore.</p>
-</blockquote>
-
-<p>Debugging is a great thing… Often though I’ve dreamt of some greater, more useful debugger. It would have helped if I’d actually gone out and looked for such a thing.</p>
-
-<p>Anyway, I haven’t found a better debugger. I’ve found how to use the current one better! I’ve enabled client-side script debugging, which is fantastic. No more using IE or Firefoxes vague error messages, I can now step through code just as you would VB/C#.Net. The big one for me though has to be the ability to debug Stored Procedures, yes SQL Server Stored Procedures. Breakpoints, step-through, the lot.</p>
-
- <a class="read-more" href="/writings/debugging-glory">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2005-05-03">
-                03 May 2005
             </time>
         </footer>
     </article>

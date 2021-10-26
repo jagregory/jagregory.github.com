@@ -52,6 +52,32 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/objectfield-11">ObjectField 1.1</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>I’ve updated the <code class="language-plaintext highlighter-rouge">ObjectField</code> to be considerably simpler than it was before. While writing my <a href="/writings/data-binding-hierarchical-objects/">Data-binding hierarchical objects</a> post I wrote this about the <code class="language-plaintext highlighter-rouge">BoundField</code> implementation:</p>
+
+<blockquote>
+  <p>Using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> to get the property… This strikes me as a bit odd to be honest, because the <code class="language-plaintext highlighter-rouge">DataBinder</code> has the ability to evaluate a hierarchical path.</p>
+</blockquote>
+
+<p>Which is interesting, because I was using a <code class="language-plaintext highlighter-rouge">TypeDescriptor</code> in my <code class="language-plaintext highlighter-rouge">ObjectField</code> implementation!</p>
+
+ <a class="read-more" href="/writings/objectfield-11">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-02-21">
+                21 Feb 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/data-binding-hierarchical-objects">Data-binding hierarchical objects</a></h2>
         </header>
         <section class="post-excerpt">
@@ -166,28 +192,6 @@
             
             <time class="post-date" datetime="2007-12-12">
                 12 Dec 2007
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/on-testing-implementation">On testing implementation</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I’ve found my-self in the situation of retro-fitting a library of code with unit tests, not a good situation to be in. However, what’s more concerning is I’ve just caught my-self writing tests that are heavily testing the implementation of a method; rather than simply testing if the method does what it’s supposed to.</p>
-
-<p>There are a few problems with falling into this trap. Firstly, it’s very brittle. Secondly, you shouldn’t be concerned with the internals. Thirdly, it’s very time consuming.</p>
-
- <a class="read-more" href="/writings/on-testing-implementation">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2007-12-10">
-                10 Dec 2007
             </time>
         </footer>
     </article>

@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/getting-started-with-ometa">Getting started with OMeta#</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> I’m a novice at OMeta, and as such, you shouldn’t take my advice as best-practice. This is based on my exploratory findings.</p>
+</blockquote>
+
+<p>String parsing is hard. I don’t think anyone will deny that. You can parse it by hand, you can use regular expressions, you can walk it character by character. With <a href="/writings/sharpdiff-diff-parsing-in-net/">SharpDiff</a>, I needed to parse some serious text, it was in an expected format, but there are numerous rules surrounding it. I did not fancy parsing it by hand, or with regular expressions.</p>
+
+<p>I considered writing a parser for it, but dismissed that after my dealings with <a href="http://www.antlr.org">ANTLR</a> in <a href="http://www.codeplex.com/BooLangStudio">BooLangStudio</a>. It’s not so much that ANTLR is bad, it’s just long winded; it’s completely <a href="http://en.wikipedia.org/wiki/Visitor_pattern">visitor</a>tastic.</p>
+
+<p>Anyway, after 10 minutes down the path of parsing it myself, I cracked and decided to look into alternatives to ANTLR. I came across <a href="http://www.codeplex.com/ometasharp">OMeta#</a> and (with a reassuring nudge by Jeffery Olson) I went with it.</p>
+
+ <a class="read-more" href="/writings/getting-started-with-ometa">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-10-22">
+                22 Oct 2008
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/smart-indentation-for-visual-studio-extensibility-projects">Smart Indentation for Visual Studio Extensibility projects</a></h2>
         </header>
         <section class="post-excerpt">
@@ -128,32 +156,6 @@
             
             <time class="post-date" datetime="2008-10-07">
                 07 Oct 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/empty-nhibernate-logs-and-poor-performance">Empty NHibernate logs and poor performance</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>We had an issue recently where NHibernate was performing very poorly on our production server, but not on our developer machines or our test server. I investigated the issue and narrowed it down to two symptoms.</p>
-
-<p><strong>Symptom 1:</strong> Very poor performance. I’m talking 10+ seconds per page load, with no more than 5 queries being executed by NHibernate.</p>
-
-<p><strong>Symptom 2:</strong> Empty log files. None of our log files had any data in on the live server, but they did on our other systems.</p>
-
-<p>I decided to investigate the second symptom first, as it may be causing the first (ends up it was).</p>
-
- <a class="read-more" href="/writings/empty-nhibernate-logs-and-poor-performance">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-09-12">
-                12 Sep 2008
             </time>
         </footer>
     </article>

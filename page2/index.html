@@ -52,6 +52,29 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/influxdb-kapacitor-subscription-error">InfluxDB Kapacitor subscription errors</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Post http://kapacitor.default:9092/write?consistency=&amp;db=telegraf&amp;precision=ns&amp;rp=autogen: dial tcp: lookup kapacitor.default on 100.1.1.1:53: no such host service=subscriber
+</code></pre></div></div>
+
+<p>If you’re seeing something like this error in your <a href="https://github.com/influxdata/influxdb">InfluxDB</a> logs, and don’t know what it means: <a href="https://github.com/influxdata/kapacitor">Kapacitor</a> has created one or more subscriptions in your InfluxDB database, and InfluxDB is trying to POST to the Kapacitor endpoint; however, Kapacitor is unreachable. Kapacitor might be unreachable because it’s down, or you have a network partition or other connectivity issue, or in my case you’ve actually just destroyed your Kapacitor instance.</p>
+
+ <a class="read-more" href="/writings/influxdb-kapacitor-subscription-error">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2017-03-29">
+                29 Mar 2017
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/docker-container-out-of-space">Docker container out of disk space</a></h2>
         </header>
         <section class="post-excerpt">
@@ -134,28 +157,6 @@ And your container does too?</p>
             
             <time class="post-date" datetime="2014-01-20">
                 20 Jan 2014
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/compiled-templates-for-go">Compiled Templates for Go</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p><a href="https://github.com/jagregory/cote">Cote</a> is a compiled templating language for <a href="http://golang.org">Go</a>.</p>
-
-<p>Template languages fall roughly into two criteria: template specific language or the same language your system uses, and a custom markup language or they don’t care. <a href="https://github.com/jagregory/cote">Cote</a> falls into the second of both criteria, it uses pure Go for logic and the content can be anything. Your output can be anything text based.</p>
-
- <a class="read-more" href="/writings/compiled-templates-for-go">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2013-10-14">
-                14 Oct 2013
             </time>
         </footer>
     </article>
