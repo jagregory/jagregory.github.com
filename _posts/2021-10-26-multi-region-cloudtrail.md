@@ -50,7 +50,6 @@ the `userIdentity` of `cloudtrail.amazonaws.com` and the `resources` it accessed
 }
 ```
 
-
 **Why would you use it?** Auditing activity on your AWS account. If ever you have a security
 incident or are just curious "who deleted that S3 bucket?" then CloudTrail is what you need enabled
 to find that out. Without CloudTrail enabled it's going to be considerably more difficult for you to
@@ -82,6 +81,8 @@ trail](https://aws.amazon.com/about-aws/whats-new/2015/12/turn-on-cloudtrail-acr
 which I was oblivious to) to each additional region. Later, I pushed it to all regions for peace of
 mind. That left me with twenty trails and twenty S3 buckets, all in the same AWS account. Definitely
 not ideal.
+
+![](/images/too-many-cloudtrails.png)
 
 What I wanted to do was to consolidate everything down to a single multi-region CloudTrail and a
 single S3 bucket. For added security, I also wanted to put the S3 bucket in a separate AWS account.
