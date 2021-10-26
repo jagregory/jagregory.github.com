@@ -164,6 +164,8 @@ you're copying.
 _Lots of time passes._ Turns out copying files that have been collected over five years from twenty
 different regions takes a lot of time.
 
+![](/images/cloudtrail-s3-sync-logs.png)
+
 Finally when that's all done, delete those old buckets and any other CloudTrails and patch up any
 security holes you created. Nice, twenty trails and buckets down to just one.
 
