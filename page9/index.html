@@ -52,6 +52,28 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-and-base-classes">Fluent NHibernate: Auto mapping and base-classes</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>Carrying on with the <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a> Auto Mapping theme, I’ll now demonstrate how to map inheritance hierarchies.</p>
+
+<p>There are two main things that you’d want to do with inherited classes, either ignore the base class all together, or map them using an inheritance strategy. I’m going to start with the former, then move on to the latter.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-and-base-classes">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-26">
+                26 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-components">Fluent NHibernate: Auto Mapping Components</a></h2>
         </header>
         <section class="post-excerpt">
@@ -136,34 +158,6 @@
 <p>This post should be short and sweet. We want to alter our <strong>has many</strong> relationship from <code class="language-plaintext highlighter-rouge">Shelf</code> to <code class="language-plaintext highlighter-rouge">Product</code> so that it has a cascade set on it. We don’t want this to affect all one-to-many’s in our domain, so we need to do this alteration only on the <code class="language-plaintext highlighter-rouge">Shelf</code> entity rather than with an <code class="language-plaintext highlighter-rouge">ITypeConvention</code>.</p>
 
  <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-entity-conventions">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2009-01-11">
-                11 Jan 2009
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-conventions">Fluent NHibernate: Auto Mapping Conventions</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <blockquote>
-  <p><strong>Notice:</strong> The content in this post is out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
-
-  <p>This is a continuation of my previous <a href="/writings/fluent-nhibernate-auto-mapping-introduction/">Auto Mapping Introduction</a> post, and is based on the same revision of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>.</p>
-</blockquote>
-
-<p>Auto mappings are generated based on a set of conventions, assumptions about your environment, that mean you can map your entire domain with a miniscule amount of code. Sometimes however, the conventions we supply are not to your liking, perhaps you’re a control freak and want 100% control, or more likely you’re working against an existing database that has it’s own set of standards. You’d still like to use the auto mapper, but can’t because it maps your entities all wrong.</p>
-
-<p>Luckily for you we’ve thought about that, you can customise the conventions that the auto mapper uses.</p>
-
- <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-conventions">Read more &raquo;</a>
         </section>
         <footer class="post-meta">
             

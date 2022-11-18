@@ -52,6 +52,34 @@
 
     <article class="post">
         <header class="post-header">
+            <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-conventions">Fluent NHibernate: Auto Mapping Conventions</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <blockquote>
+  <p><strong>Notice:</strong> The content in this post is out of date, please refer to the <a href="https://github.com/jagregory/fluent-nhibernate/wiki/Auto-mapping">Auto Mapping</a> page in the <a href="https://github.com/jagregory/fluent-nhibernate/wiki">Fluent NHibernate Wiki</a> for the latest version.</p>
+
+  <p>This is a continuation of my previous <a href="/writings/fluent-nhibernate-auto-mapping-introduction/">Auto Mapping Introduction</a> post, and is based on the same revision of <a href="http://www.fluentnhibernate.org">Fluent NHibernate</a>.</p>
+</blockquote>
+
+<p>Auto mappings are generated based on a set of conventions, assumptions about your environment, that mean you can map your entire domain with a miniscule amount of code. Sometimes however, the conventions we supply are not to your liking, perhaps you’re a control freak and want 100% control, or more likely you’re working against an existing database that has it’s own set of standards. You’d still like to use the auto mapper, but can’t because it maps your entities all wrong.</p>
+
+<p>Luckily for you we’ve thought about that, you can customise the conventions that the auto mapper uses.</p>
+
+ <a class="read-more" href="/writings/fluent-nhibernate-auto-mapping-conventions">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2009-01-11">
+                11 Jan 2009
+            </time>
+        </footer>
+    </article>
+
+    
+
+    <article class="post">
+        <header class="post-header">
             <h2 class="post-title"><a href="/writings/fluent-nhibernate-auto-mapping-introduction">Fluent NHibernate: Auto Mapping Introduction</a></h2>
         </header>
         <section class="post-excerpt">
@@ -142,30 +170,6 @@
             
             <time class="post-date" datetime="2008-11-12">
                 12 Nov 2008
-            </time>
-        </footer>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/yayaml-yet-another-yaml-parser">YaYAML: Yet another YAML parser</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p>I don’t want to make much ceremony around this, but I thought I’d mention it incase anybody else is interested.</p>
-
-<p>As a part of a project I’m working on I needed a simple file to store some data in, and I didn’t want it to be XML (for no reason other than the verbosity). I could have used my own format, but instead I’ve gone for <a href="http://yaml.net">YAML</a>. If you’ve worked with Ruby on Rails at all, then you’ll be familiar with YAML. It’s a human readable (and writable) text format.</p>
-
-<p>Of course, I still needed to be able to parse my YAML document. There was a project announced 2 years ago to create a .Net parser, but like many things, it seems very much abandoned. So, after my <a href="/writings/getting-started-with-ometa/">recent adventure with OMeta#</a>, I thought I’d hack on this too.</p>
-
- <a class="read-more" href="/writings/yayaml-yet-another-yaml-parser">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2008-10-28">
-                28 Oct 2008
             </time>
         </footer>
     </article>

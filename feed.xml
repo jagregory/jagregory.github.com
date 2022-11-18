@@ -6,9 +6,89 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 18 Nov 2022 21:57:53 +0100</pubDate>
-    <lastBuildDate>Fri, 18 Nov 2022 21:57:53 +0100</lastBuildDate>
+    <pubDate>Fri, 18 Nov 2022 22:54:18 +0100</pubDate>
+    <lastBuildDate>Fri, 18 Nov 2022 22:54:18 +0100</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Improving my dev loop with visual regression testing</title>
+        <description>&lt;p&gt;When the pandemic hit we (at my social enterprise side-hustle) quickly built a
+video calling web app for medical students to able to continue their
+“face-to-face” practice exercises, which later grew to allow actual exam
+scenarios for those students, and also then started supporting rehabilitation
+for people with traumatic brain injuries.&lt;/p&gt;
+
+&lt;p&gt;It’s been quite a journey and I’ve learned a lot along the way. Recently, I’ve
+been trying to improve the dev loop for making visual changes to a delicate part
+of the system.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;The video calling feature was built &lt;em&gt;quickly&lt;/em&gt;, adding to an existing ed tech
+platform we already had. During the early pandemic, when work was getting a bit
+thin for my employer, I took a some time off and built the video calling in a
+few weeks. It was a rush to say the least.&lt;/p&gt;
+
+&lt;p&gt;The underlying core services are solid (tying together Twilio APIs with AWS
+Lambda), but the UI has been delicate ever since I built it. A bad combination
+of a rush on my part, relatively nascent browser tech, and cross-browser/device
+compatibility issues.&lt;/p&gt;
+
+&lt;p&gt;Recently, I made some small changes that ended up breaking a small part of the
+call experience for a subset of users.&lt;/p&gt;
+
+&lt;p&gt;Fortunately, the issue was minor (not being able to see your own video in the
+corner of the screen) but it finally kicked me into try to do something to
+improve the reliability of this area which hasn’t really benefitted from the
+traditional test pyramid.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-1---refactor-the-calling-ui-to-work-isolated-in-storybook&quot;&gt;Step 1 - Refactor the calling UI to work isolated in Storybook&lt;/h2&gt;
+
+&lt;p&gt;This was a couple of big changes:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Pulling queries up the stack to make it easier to mock behaviour in stories,
+all data fetching ended up outside the core calling UI.&lt;/li&gt;
+  &lt;li&gt;make it possible to fake cameras, microphones, and screen sharing states. The
+combination of these two things meant I could create Storybook stories for
+scenarios like “only one person has joined the call”, “two people in the
+call, one person has their camera off”, “one person screen sharing, another
+person with a portrait camera” etc…&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;With the Storybook stories I could now eyeball these common variations easily
+enough, which gave me a much quicker feedback loop than actually initiating a
+video call.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-2---visual-regression-tests-against-the-storybook-stories&quot;&gt;Step 2 - Visual regression tests against the Storybook stories&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;a href=&quot;https://percy.io/&quot;&gt;percy.io&lt;/a&gt;, I now take a screenshot of each of those
+stories, in several browsers, at several resolutions and orientations, and then
+diff them against previous snapshots.&lt;/p&gt;
+
+&lt;p&gt;I haven’t hooked this into CI (and I’m undecided if I will) but it’s been very
+useful as a form of regression testing for when I’m iterating over some purely
+visual (e.g. CSS) changes.&lt;/p&gt;
+
+&lt;p&gt;I now make the change in Chrome and test it manually in a few stories, but then
+kick off the percy.io tests and see what it tells me. Much easier than manually
+comparing across different browsers and devices.&lt;/p&gt;
+
+&lt;p&gt;It’s still not perfect, but it’s a big improvement.&lt;/p&gt;
+
+&lt;p&gt;Now I just need to finish the simple task of making my calling UI a pleasant
+experience for my users. 😅&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cross-posted from Mastodon: https://aus.social/@jagregory/109366550345741717&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        <pubDate>Fri, 18 Nov 2022 00:00:00 +0100</pubDate>
+        <link>https://www.jagregory.com//writings/more-reliable-visual-changes</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/more-reliable-visual-changes</guid>
+        
+        
+      </item>
     
       <item>
         <title>Multi-region CloudTrail with logs in another AWS Account</title>
@@ -994,90 +1074,6 @@ jagregory.sinopia
         <link>https://www.jagregory.com//writings/virtualised-development-environments</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/virtualised-development-environments</guid>
         
-        
-      </item>
-    
-      <item>
-        <title>Converting and preserving Michael Abrash&apos;s Graphics Programming Black Book</title>
-        <description>&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt; The Markdown source of Michael Abrash’s Graphics Programming Black Book is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;, there are Epub and Mobi versions on the &lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Github Releases list&lt;/a&gt;, and you can read an online copy of the book &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;It started out as an attempt to read &lt;a href=&quot;http://en.wikipedia.org/wiki/Michael_Abrash&quot;&gt;Michael Abrash’s&lt;/a&gt; Graphics Programming Black Book over the Christmas period. It turned into a epic mission of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt;, and a few blisters.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;But first…&lt;/p&gt;
-
-&lt;h2 id=&quot;a-brief-history-of-3d-gaming&quot;&gt;A brief history of 3D gaming&lt;/h2&gt;
-
-&lt;p&gt;The 1990s was the era of the gaming and graphical revolution for the PC. Prior to which the PC still paled in comparison to the Apple II and the dedicated arcade machines. Things changed fast in this era. Competition was fierce, and the indie game movement (Shareware!) sparked a massive boom in the PC gaming industry. In the space of less than ten years, we went from VGA colour displays and software rendered 2.5D games like &lt;a href=&quot;http://en.wikipedia.org/wiki/Wolfenstein_3D&quot;&gt;Wolfenstein 3D&lt;/a&gt;, to hardware accelerated full 3D multi-player online games like &lt;a href=&quot;http://en.wikipedia.org/wiki/Quake_III_Arena&quot;&gt;Quake III Arena&lt;/a&gt;. That’s progress for you.&lt;/p&gt;
-
-&lt;p&gt;In 1992 &lt;a href=&quot;http://en.wikipedia.org/wiki/Id_Software&quot;&gt;id Software&lt;/a&gt; released Wolfenstein 3D.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Then a year later in 1993 came &lt;a href=&quot;http://en.wikipedia.org/wiki/Doom_\(video_game\)&quot;&gt;Doom&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The team at id Software were now furiously working on a sequel to Doom reusing the same engine. Everyone apart from John Carmack. As was the tradition John had now locked himself away and begun work on the next game engine, Quake. This one was going to be big. Full 3D, no more tricks. Real time lighting. 3D particle effects. Portals. Water. It was going to amaze.&lt;/p&gt;
-
-&lt;p&gt;This is when Michael Abrash joined id Software. Together, Michael and John built the Quake engine. After many sleepless nights and way too much Diet Coke, Quake was finished.&lt;/p&gt;
-
-&lt;p&gt;In 1996 id Software released Quake. PC gaming had truely entered the forefront of 3D gaming.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If you’re interested in learning more this period in gaming, you must read &lt;a href=&quot;http://en.wikipedia.org/wiki/Masters_of_Doom&quot;&gt;Masters of Doom&lt;/a&gt; by David Kushner.&lt;/p&gt;
-
-&lt;h2 id=&quot;whats-this-all-about-then&quot;&gt;What’s this all about then?&lt;/h2&gt;
-
-&lt;p&gt;In 1997, just after finishing Quake, Michael compiled and published a book of his collective writing on graphics programming. Parts were already published around the Internet on Blues News and Dr. Dobbs mostly–blogging before blogging was a thing–and other parts were wrote about his work on Quake. It was a crazy dive into the world of graphics programming and assembly code optimisation, interspersed with some wonderful anecdotes and snippets of historical context. &lt;a href=&quot;http://www.codinghorror.com/blog/2008/02/there-aint-no-such-thing-as-the-fastest-code.html&quot;&gt;Jeff Atwood wrote a lovely little tribute&lt;/a&gt; to this book a few years ago.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;I know what you’re thinking. “This book is about graphics. And assembly language. Plus it’s from, like, 1996, which is approximately 1928 in computer years. It’s of no interest to me as a programmer.” Admit it. You are. But you know what you’re going to do? You’re going to click through anyway and read some of it. Just like in college, &lt;strong&gt;the class topic doesn’t matter when the instructor is a brilliant teacher&lt;/strong&gt;. And that’s exactly what Abrash is.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/abrash-black-book-4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Come Christmas 2013 and I’d entered my annual contemplation on course correcting towards building video games, a desire I’ve had ever since I got the shareware version of Wolfenstein 3D back in the early 90s. As usual, this lead me to reading a bunch on game development and rendering engines in particular. Mostly indulgent. It was Christmas, after all.&lt;/p&gt;
-
-&lt;p&gt;One of the articles I was reading, I can’t remember which now, referenced Michael Abrash’s Graphics Programming Black Book. And a flood of memories came back. I’d tried to read this book once before, I’d even owned it at one point. “I should read it again”, my brain said.&lt;/p&gt;
-
-&lt;p&gt;My physical copy of the book was long gone. I turned to the Internet to try to buy it, out of print and over $200 on ebay. Even if I were willing to pay that, by the time it arrived my Christmas would be over (and probably my annual game developing desire too). “Ebooks, they’re a thing now!” Sadly, the publisher had shut down a few years ago, so they’ve been struggling to keep up with the times. Thankfully, in 2001, Michael and Dr. Dobbs &lt;a href=&quot;http://www.drdobbs.com/parallel/graphics-programming-black-book/184404919&quot;&gt;released a PDF version of the book online&lt;/a&gt; for free. Gotta love these nerdy types, always giving their stuff away.&lt;/p&gt;
-
-&lt;p&gt;Unfortunately–and we’re heading firmly into first-world problems here–the PDFs weren’t the best format for reading casually on a ebook reader such as the Kindle. PDFs aren’t the best format for text which needs to be reflowed, and a book split across multiple files even less so. For my own selfish purposes, I set out to convert the PDFs into something which I could read on my Kindle. I grep’d, and I awk’d, and I sed’d, and eventually I ended up with a set of rough Markdown files I could then convert to a Mobi ebook.&lt;/p&gt;
-
-&lt;p&gt;As with any yak shaving exercise, I missed the exit for &lt;em&gt;Good Enough&lt;/em&gt; by a long margin. I invested more time than I’d originally planned. I think I was up to two days, casually, now. At this point I’d made it my mission to restore this work, as if it were some piece of classical literature, and preserve it for future generations.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;It does make me a little sad that books and online works like this–which influenced so many–can so easily fall away and be forgotten. Not just forgotten, but lost.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;What I’ve ended up with is the book converted into Markdown, in a style which lends itself to ebook publishing. It wasn’t my intention to preserve the layout or style of the book, just the content. In theory, you could read the pure Markdown files and get a quite enjoyable experience. If you choose to read the prepared versions, you benefit from a web-browser and e-reader compatible layout and some modern tweaks like syntax highlighting.&lt;/p&gt;
-
-&lt;p&gt;I contacted Michael about the work I’ve been doing on his book, and asked him if he’d have any issue with me releasing it on Github. His reaction was obvious, in hind sight, “The more people can read it, the better!”.&lt;/p&gt;
-
-&lt;h2 id=&quot;getting-your-hands-on-it&quot;&gt;Getting your hands on it&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Markdown source is available &lt;a href=&quot;https://github.com/jagregory/abrash-black-book&quot;&gt;on Github&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/jagregory/abrash-black-book/releases&quot;&gt;Each Github release&lt;/a&gt; has a download in ePub and Mobi format.&lt;/li&gt;
-  &lt;li&gt;There’s a mirror of the current HTML version over &lt;a href=&quot;http://www.jagregory.com/abrash-black-book/&quot;&gt;on my website&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;The source has a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; for compiling your own ePub and Mobi’s, if you’ve got &lt;a href=&quot;http://johnmacfarlane.net/pandoc/&quot;&gt;pandoc&lt;/a&gt; installed.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;If you spot any issues whilst reading the book, please raise an issue on Github or send a Pull Request.&lt;/p&gt;
-
-&lt;p&gt;All rights, of course, still belong to Michael Abrash. Any errors are probably down to me.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 20 Jan 2014 06:45:00 +0100</pubDate>
-        <link>https://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/converting-and-preserving-michael-abrash-graphics-programming-black-book</guid>
-        
-        
-        <category>gamedev</category>
         
       </item>
     

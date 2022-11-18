@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>James Gregory</title>
+    <meta name="description" content="Jack of all trades, master of none. Principal Consultant at Thoughtworks. Pronouns: he/him
+" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="/">Home</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Improving my dev loop with visual regression testing</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2022-11-18">18 Nov 2022</time>
+                
+            </section>
+        </header>
+
+        <section class="post-content">
+            <p>When the pandemic hit we (at my social enterprise side-hustle) quickly built a
+video calling web app for medical students to able to continue their
+“face-to-face” practice exercises, which later grew to allow actual exam
+scenarios for those students, and also then started supporting rehabilitation
+for people with traumatic brain injuries.</p>
+
+<p>It’s been quite a journey and I’ve learned a lot along the way. Recently, I’ve
+been trying to improve the dev loop for making visual changes to a delicate part
+of the system.</p>
+
+<!-- more -->
+
+<p>The video calling feature was built <em>quickly</em>, adding to an existing ed tech
+platform we already had. During the early pandemic, when work was getting a bit
+thin for my employer, I took a some time off and built the video calling in a
+few weeks. It was a rush to say the least.</p>
+
+<p>The underlying core services are solid (tying together Twilio APIs with AWS
+Lambda), but the UI has been delicate ever since I built it. A bad combination
+of a rush on my part, relatively nascent browser tech, and cross-browser/device
+compatibility issues.</p>
+
+<p>Recently, I made some small changes that ended up breaking a small part of the
+call experience for a subset of users.</p>
+
+<p>Fortunately, the issue was minor (not being able to see your own video in the
+corner of the screen) but it finally kicked me into try to do something to
+improve the reliability of this area which hasn’t really benefitted from the
+traditional test pyramid.</p>
+
+<h2 id="step-1---refactor-the-calling-ui-to-work-isolated-in-storybook">Step 1 - Refactor the calling UI to work isolated in Storybook</h2>
+
+<p>This was a couple of big changes:</p>
+
+<ol>
+  <li>Pulling queries up the stack to make it easier to mock behaviour in stories,
+all data fetching ended up outside the core calling UI.</li>
+  <li>make it possible to fake cameras, microphones, and screen sharing states. The
+combination of these two things meant I could create Storybook stories for
+scenarios like “only one person has joined the call”, “two people in the
+call, one person has their camera off”, “one person screen sharing, another
+person with a portrait camera” etc…</li>
+</ol>
+
+<p>With the Storybook stories I could now eyeball these common variations easily
+enough, which gave me a much quicker feedback loop than actually initiating a
+video call.</p>
+
+<h2 id="step-2---visual-regression-tests-against-the-storybook-stories">Step 2 - Visual regression tests against the Storybook stories</h2>
+
+<p>Using <a href="https://percy.io/">percy.io</a>, I now take a screenshot of each of those
+stories, in several browsers, at several resolutions and orientations, and then
+diff them against previous snapshots.</p>
+
+<p>I haven’t hooked this into CI (and I’m undecided if I will) but it’s been very
+useful as a form of regression testing for when I’m iterating over some purely
+visual (e.g. CSS) changes.</p>
+
+<p>I now make the change in Chrome and test it manually in a few stories, but then
+kick off the percy.io tests and see what it tells me. Much easier than manually
+comparing across different browsers and devices.</p>
+
+<p>It’s still not perfect, but it’s a big improvement.</p>
+
+<p>Now I just need to finish the simple task of making my calling UI a pleasant
+experience for my users. 😅</p>
+
+<blockquote>
+  <p>Cross-posted from Mastodon: https://aus.social/@jagregory/109366550345741717</p>
+</blockquote>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            <!-- If we want to display author's name and bio -->
+            
+
+            
+        </footer>
+    </article>
+</main>
+
+    <footer class="site-footer clearfix">
+      <section class="copyright">
+        <a href="mailto:james@jagregory.com">James Gregory</a> &copy;
+              2022 &bull; <a rel="me" href="https://aus.social/@jagregory">Mastodon</a> &bull; All content licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">cc by-nc-sa 4.0</a>.
+      </section>
+    </footer>
+
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
