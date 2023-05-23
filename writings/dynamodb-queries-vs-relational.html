@@ -118,8 +118,8 @@ attribute value lengths (again binary length). The attribute name counts towards
 <p><em>(the same is true for <code class="language-plaintext highlighter-rouge">Scan</code>)</em></p>
 
 <p>Whilst there’s no hard upper limit on the number of individual records a query or scan can return, they are constrained
-by the total data being returned. When a query exceeds this limit, DynamoDB will respond with all the records it was
-able to process prior to hitting the limit, regardless of how many were asked for.</p>
+by the total size of the data being returned. When a query exceeds this limit, DynamoDB will respond with all the
+records it was able to process prior to hitting the limit, regardless of how many were asked for.</p>
 
 <p>So the maximum you can return from a single query is 1 MB and the largest record you can have is 400 KB, which means in
 absolute worst-case scenario if all your records are the largest they’re allowed to be <strong>your query could return just

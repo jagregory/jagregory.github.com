@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:33:28 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:33:28 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:34:53 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:34:53 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -91,8 +91,8 @@ attribute value lengths (again binary length). The attribute name counts towards
 &lt;p&gt;&lt;em&gt;(the same is true for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Scan&lt;/code&gt;)&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Whilst there’s no hard upper limit on the number of individual records a query or scan can return, they are constrained
-by the total data being returned. When a query exceeds this limit, DynamoDB will respond with all the records it was
-able to process prior to hitting the limit, regardless of how many were asked for.&lt;/p&gt;
+by the total size of the data being returned. When a query exceeds this limit, DynamoDB will respond with all the
+records it was able to process prior to hitting the limit, regardless of how many were asked for.&lt;/p&gt;
 
 &lt;p&gt;So the maximum you can return from a single query is 1 MB and the largest record you can have is 400 KB, which means in
 absolute worst-case scenario if all your records are the largest they’re allowed to be &lt;strong&gt;your query could return just
