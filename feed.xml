@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 18 Nov 2022 22:54:18 +0100</pubDate>
-    <lastBuildDate>Fri, 18 Nov 2022 22:54:18 +0100</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 17:36:15 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 17:36:15 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -83,7 +83,7 @@ experience for my users. 😅&lt;/p&gt;
   &lt;p&gt;Cross-posted from Mastodon: https://aus.social/@jagregory/109366550345741717&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
-        <pubDate>Fri, 18 Nov 2022 00:00:00 +0100</pubDate>
+        <pubDate>Fri, 18 Nov 2022 00:00:00 +1100</pubDate>
         <link>https://www.jagregory.com//writings/more-reliable-visual-changes</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/more-reliable-visual-changes</guid>
         
@@ -263,7 +263,7 @@ security holes you created. Nice, twenty trails and buckets down to just one.&lt
 CloudTrails are great and pushing your logs off to another AWS account can help reduce your security
 risk by reducing the blast radius of compromised credentials.&lt;/p&gt;
 </description>
-        <pubDate>Tue, 26 Oct 2021 00:00:00 +0200</pubDate>
+        <pubDate>Tue, 26 Oct 2021 00:00:00 +1100</pubDate>
         <link>https://www.jagregory.com//writings/multi-region-cloudtrail</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/multi-region-cloudtrail</guid>
         
@@ -292,7 +292,7 @@ risk by reducing the blast radius of compromised credentials.&lt;/p&gt;
 
 &lt;p&gt;I’d prefer if I didn’t have to store a sensitive key in an environment variable either, but it’s a step in the right direction and is better than committing it to version control. There’s an &lt;a href=&quot;https://github.com/open-telemetry/opentelemetry-collector/issues/2469&quot;&gt;open design document on external secret management in OpenTelemetry&lt;/a&gt; which I’ll be keeping an eye on. I’d be much happier if I could just reference an AWS Secrets Manager secret by name in the config, one can dream. Until then, I think this is the best I can do.&lt;/p&gt;
 </description>
-        <pubDate>Sun, 03 Oct 2021 00:00:00 +0200</pubDate>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config</guid>
         
@@ -346,7 +346,7 @@ risk by reducing the blast radius of compromised credentials.&lt;/p&gt;
 
 &lt;p&gt;The biggest challenge was that there’s a &lt;em&gt;lot of documentation&lt;/em&gt;, but nothing that fit exactly what I needed. There’s documentation on AWS Distro for OpenTelemetry with Lambda, manual instrumentation of Node.js with OpenTelemetry, auto-instrumentation of Node.js lambdas etc… and it all overlaps, but nothing gave the full picture.&lt;/p&gt;
 </description>
-        <pubDate>Sun, 03 Oct 2021 00:00:00 +0200</pubDate>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/honeycomb-and-opentelemetry-with-aws-lambda-and-nodejs-reference</guid>
         
@@ -506,7 +506,7 @@ risk by reducing the blast radius of compromised credentials.&lt;/p&gt;
   &lt;li&gt;Create a custom config file pointing to Honeycomb, and use environment variable expansion to &lt;a href=&quot;/writings/keeping-api-keys-and-environment-specifics-out-of-your-opentelemetry-config&quot;&gt;keep the config file environment-agnostic and API keys&lt;/a&gt; out of your version control.&lt;/li&gt;
 &lt;/ol&gt;
 </description>
-        <pubDate>Sun, 03 Oct 2021 00:00:00 +0200</pubDate>
+        <pubDate>Sun, 03 Oct 2021 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/getting-honeycomb-working-with-my-aws-lambda-functions</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/getting-honeycomb-working-with-my-aws-lambda-functions</guid>
         
@@ -654,7 +654,7 @@ s3://bucket-name/dt=2020-07-16/Snapshot-2020-07-16-23-50-41
 &lt;p&gt;And that’s it, done! Files moved.&lt;/p&gt;
 
 </description>
-        <pubDate>Tue, 21 Jul 2020 00:00:00 +0200</pubDate>
+        <pubDate>Tue, 21 Jul 2020 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/bulk-s3-move</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/bulk-s3-move</guid>
         
@@ -691,7 +691,7 @@ autogen          kapacitor-abc ANY  [http://kapacitor.default:9092]
 
 &lt;p&gt;That’s it, the error should stop occurring now. If you destroy a Kapacitor instance, remember to remove it’s subscriptions until there’s resolution on &lt;a href=&quot;https://github.com/influxdata/kapacitor/issues/870&quot;&gt;subscription cleanups&lt;/a&gt;.&lt;/p&gt;
 </description>
-        <pubDate>Wed, 29 Mar 2017 00:00:00 +0200</pubDate>
+        <pubDate>Wed, 29 Mar 2017 00:00:00 +1100</pubDate>
         <link>https://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/influxdb-kapacitor-subscription-error</guid>
         
@@ -790,7 +790,7 @@ Filesystem                   Inodes  IUsed   IFree IUse% Mounted on
 
 &lt;p&gt;Builds are now &lt;span style=&quot;color:green&quot;&gt;green&lt;/span&gt; again. Pretty anti-climactic; but it’s the journey not the destination which counts, right?&lt;/p&gt;
 </description>
-        <pubDate>Fri, 26 Jun 2015 00:00:00 +0200</pubDate>
+        <pubDate>Fri, 26 Jun 2015 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/docker-container-out-of-space</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/docker-container-out-of-space</guid>
         
@@ -952,7 +952,7 @@ jagregory.sinopia
 
 &lt;p&gt;You can read more about running Sinopia &lt;a href=&quot;https://www.npmjs.com/package/sinopia&quot;&gt;on their website&lt;/a&gt;.&lt;/p&gt;
 </description>
-        <pubDate>Tue, 05 May 2015 00:00:00 +0200</pubDate>
+        <pubDate>Tue, 05 May 2015 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/sinopia-private-npm-registry</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/sinopia-private-npm-registry</guid>
         
@@ -1070,7 +1070,7 @@ jagregory.sinopia
 
 &lt;p&gt;It’s also quite cathartic to delete a VM when I’m done with a project. Not seeing the Java Updater pop-up ever again isn’t too bad either.&lt;/p&gt;
 </description>
-        <pubDate>Wed, 12 Feb 2014 23:15:00 +0100</pubDate>
+        <pubDate>Wed, 12 Feb 2014 23:15:00 +1100</pubDate>
         <link>https://www.jagregory.com//writings/virtualised-development-environments</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/virtualised-development-environments</guid>
         
