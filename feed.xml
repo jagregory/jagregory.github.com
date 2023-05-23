@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:34:53 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:34:53 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:46:11 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:46:11 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -111,11 +111,18 @@ same whether or not you use a filter expression.&lt;/p&gt;
   &lt;p&gt;– &lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html&quot;&gt;Query operations in DynamoDB&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Without going into too much detail, what this is saying is DynamoDB reads all your data which matches the partition and
-range keys you used with the query, and then just before returning it to you it filters out data any which match your
-filter expression or projection expressions. By the time the filtering is applied, DynamoDB would have already hit the
-capacity limit. The only benefit filtering and projections have is minimising the amount of data which is transferred
-over the wire and serialized/deserialized, it does not affect the amount of data DynamoDB reads.&lt;/p&gt;
+&lt;p&gt;You can think of this a bit like a &lt;a href=&quot;https://en.wikipedia.org/wiki/MapReduce&quot;&gt;MapReduce&lt;/a&gt;-style algorithm. In the first
+phase DynamoDB reaches out to any nodes which may contain data for your query (map). It collects as much data as it can
+until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or projections (
+reduce), and then returns the results to the caller.&lt;/p&gt;
+
+&lt;p&gt;By the time any DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
+it will scan. This also means the only benefit applying filtering and projections on the query (instead of in your own
+code) is to minimise the amount of data which is transferred and serialized/deserialized.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Why DynamoDB doesn’t pass filters down to the nodes is something for smarter people than me to understand.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;In a result set which has more records available but weren’t returned to us because of the above limits, DynamoDB will
 also return a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; which is the key of the last record in the result set before the limit was exceeded. If
