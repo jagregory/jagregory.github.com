@@ -48,12 +48,15 @@
 
     <article class="post">
         <header class="post-header">
-            <h2 class="post-title"><a href="/writings/dynamodb-queries-vs-relational">How DynamoDB queries behave compared to typical relational databases</a></h2>
+            <h2 class="post-title"><a href="/writings/dynamodb-queries-vs-relational">How DynamoDB queries behave compared to relational databases</a></h2>
         </header>
         <section class="post-excerpt">
-            <p>I wanted to write about Async Iterators in Node.JS when querying DynamoDB tables, but I got side-tracked with a bit of
-the underlying reasoning why it’s necessary more than when using relational databases. Here’s a bit of a refresher on
-how relational databases and DynamoDB differ in their querying behaviour.</p>
+            <p>I wanted to write about how using Async Iterators in Node.JS can make querying DynamoDB tables more pleasant, but I got
+side-tracked with explaining why pagination and is more often necessary when using DynamoDB than when using relational
+databases.</p>
+
+<p>So instead of the thing I meant to write about, here’s a refresher on how bounded and unbounded queries are treated
+differently by typical relational databases and DynamoDB.</p>
 
  <a class="read-more" href="/writings/dynamodb-queries-vs-relational">Read more &raquo;</a>
         </section>
