@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:52:43 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:52:43 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:58:32 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:58:32 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -270,22 +270,20 @@ either when there’s no more &lt;code class=&quot;language-plaintext highlighte
 &lt;h3 id=&quot;a-note-about-filters&quot;&gt;A note about filters&lt;/h3&gt;
 
 &lt;p&gt;Filters add an extra surprise to the mix: Sometimes a DynamoDB query with a filter applied will return an empty result
-set with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; (indicating there’s more data to fetch). This can be surprising the first time it happens.&lt;/p&gt;
+set with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; (indicating there’s more data to fetch). This can be confounding the first time it
+happens.&lt;/p&gt;
 
-&lt;p&gt;If you remember back to the note about filters:&lt;/p&gt;
+&lt;p&gt;If you remember back to the earlier note about filters:&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;DynamoDB calculates the number of read capacity units consumed based on item size, not on the amount of data that is
-returned to an application. For this reason, the number of capacity units consumed is the same whether you request all
-of the attributes (the default behavior) or just some of them (using a projection expression). The number is also the
-same whether or not you use a filter expression.&lt;/p&gt;
-
-  &lt;p&gt;– &lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html&quot;&gt;Query operations in DynamoDB&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;In the first phase DynamoDB reaches out to any nodes which may contain data for your query (map). It collects as much
+data as it can until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or
+projections (reduce), and then returns the results to the caller.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;DynamoDB is first fetching a page worth of data from your partition and then afterward applying any filters you’ve
-provided. What this means is DynamoDB will fetch up to 1 MB of records from your table, and then apply your filter
-&lt;em&gt;which may exclude all the records that were just fetched&lt;/em&gt; and so return you an empty result set.&lt;/p&gt;
+&lt;p&gt;If DynamoDB fetches the maximum 1 MB of data, and then runs a filter, if that filter excludes every record that was just
+fetched, there’ll be nothing left to return and DynamoDB will just return an empty result set with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;
+pointing to the last item it filtered out.&lt;/p&gt;
 
 &lt;p&gt;The main takeaway from this is: rely on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; to tell if there’s no more data available not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Items.length&lt;/code&gt;
 otherwise you may incorrectly assume you’ve fetched all the data when you haven’t.&lt;/p&gt;

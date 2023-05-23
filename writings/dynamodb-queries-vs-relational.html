@@ -297,22 +297,20 @@ either when there’s no more <code class="language-plaintext highlighter-rouge"
 <h3 id="a-note-about-filters">A note about filters</h3>
 
 <p>Filters add an extra surprise to the mix: Sometimes a DynamoDB query with a filter applied will return an empty result
-set with a <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code> (indicating there’s more data to fetch). This can be surprising the first time it happens.</p>
+set with a <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code> (indicating there’s more data to fetch). This can be confounding the first time it
+happens.</p>
 
-<p>If you remember back to the note about filters:</p>
+<p>If you remember back to the earlier note about filters:</p>
 
 <blockquote>
-  <p>DynamoDB calculates the number of read capacity units consumed based on item size, not on the amount of data that is
-returned to an application. For this reason, the number of capacity units consumed is the same whether you request all
-of the attributes (the default behavior) or just some of them (using a projection expression). The number is also the
-same whether or not you use a filter expression.</p>
-
-  <p>– <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html">Query operations in DynamoDB</a></p>
+  <p>In the first phase DynamoDB reaches out to any nodes which may contain data for your query (map). It collects as much
+data as it can until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or
+projections (reduce), and then returns the results to the caller.</p>
 </blockquote>
 
-<p>DynamoDB is first fetching a page worth of data from your partition and then afterward applying any filters you’ve
-provided. What this means is DynamoDB will fetch up to 1 MB of records from your table, and then apply your filter
-<em>which may exclude all the records that were just fetched</em> and so return you an empty result set.</p>
+<p>If DynamoDB fetches the maximum 1 MB of data, and then runs a filter, if that filter excludes every record that was just
+fetched, there’ll be nothing left to return and DynamoDB will just return an empty result set with a <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code>
+pointing to the last item it filtered out.</p>
 
 <p>The main takeaway from this is: rely on <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code> to tell if there’s no more data available not <code class="language-plaintext highlighter-rouge">Items.length</code>
 otherwise you may incorrectly assume you’ve fetched all the data when you haven’t.</p>
