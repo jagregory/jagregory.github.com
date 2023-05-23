@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:30:34 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:30:34 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:33:28 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:33:28 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -73,6 +73,9 @@ make all queries bounded in a much more obvious way than relational databases.&l
 &lt;p&gt;Bounded queries can can use a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Limit&lt;/code&gt; parameter when running a query, but unlike relational databases DynamoDB may
 return fewer than that limit &lt;em&gt;even if there are more records available&lt;/em&gt;. This is a crucial difference from relational
 databases, and will affect how you design your application.&lt;/p&gt;
+
+&lt;p&gt;From here on the behaviour is the same regardless of whether you’re running a bounded or an unbounded query against a
+DynamoDB table.&lt;/p&gt;
 
 &lt;p&gt;From the DynamoDB documentation:&lt;/p&gt;
 
