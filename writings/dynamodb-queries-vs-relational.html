@@ -140,8 +140,8 @@ same whether or not you use a filter expression.</p>
 
 <p>You can think of this a bit like a <a href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a>-style algorithm. In the first
 phase DynamoDB reaches out to any nodes which may contain data for your query (map). It collects as much data as it can
-until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or projections (
-reduce), and then returns the results to the caller.</p>
+until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or projections
+(reduce), and then returns the results to the caller.</p>
 
 <p>By the time any DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
 it will scan. This also means the only benefit applying filtering and projections on the query (instead of in your own
