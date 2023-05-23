@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:21:39 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:21:39 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:30:34 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:30:34 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -23,20 +23,31 @@ differently by typical relational databases and DynamoDB.&lt;/p&gt;
 
 &lt;h2 id=&quot;relational-databases&quot;&gt;Relational databases&lt;/h2&gt;
 
-&lt;p&gt;In relational databases, there’s two kinds of queries to understand: unbounded and bounded.&lt;/p&gt;
+&lt;p&gt;There’s two kinds of queries to understand: unbounded and bounded.&lt;/p&gt;
 
-&lt;p&gt;An unbounded query is one without an explicit upper limit on the number of records. &lt;em&gt;Unbounded queries are generally a
-bad idea&lt;/em&gt;.&lt;/p&gt;
+&lt;h3 id=&quot;unbounded-queries&quot;&gt;Unbounded queries&lt;/h3&gt;
 
-&lt;p&gt;With unbounded queries, as there’s always a hard limit somewhere, you’re putting the responsibility for enforcing the
-limits of your query onto the underlying database engine or hardware. In most cases, the behaviour you see with
-unbounded queries is they will run for as long as possible until they either complete and return all the data you
-requested or fail and return an error. For &lt;em&gt;not too large&lt;/em&gt; tables the observable behaviour is a slower query than usual
-which finally returns all the data, but for large tables you run the risk of hitting timeouts (in the database client or
+&lt;p&gt;An unbounded query is one without an explicit upper limit on the number of records, &lt;em&gt;this is generally a bad idea&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;As there’s always a hard limit somewhere, unbounded queries put the responsibility for enforcing the limits of the
+query onto the underlying database engine or hardware. In most cases, the behaviour you see with unbounded queries is
+they will run for as long as possible until they either complete and return all the data you requested or fail and
+return an error.&lt;/p&gt;
+
+&lt;p&gt;Small tables won’t be an issue, the query will complete quickly and return the data you want.&lt;/p&gt;
+
+&lt;p&gt;Queries over &lt;em&gt;not too large&lt;/em&gt; tables will be slower than usual but will likely complete eventually and return all the
+data.&lt;/p&gt;
+
+&lt;p&gt;Large tables are where the problem lies. You run the risk of hitting timeouts (in the database client or
 server, or lower in the stack) or exhausting resources like available memory which would cause a query to fail and
-potentially affect the health of your database. Unbounded queries can be insidious when they return data from small
-tables which are slowly accumulating data, until one day they’re no longer small and you start experiencing timeouts or
-out of memory issues.&lt;/p&gt;
+potentially affect the health of your database.&lt;/p&gt;
+
+&lt;p&gt;Unbounded queries can be insidious when they are written for small tables which don’t remain small tables. As the tables
+accumulate data over months and years, queries start slowing down, until one day you start experiencing timeouts or out
+of memory issues.&lt;/p&gt;
+
+&lt;h3 id=&quot;bounded-queries&quot;&gt;Bounded queries&lt;/h3&gt;
 
 &lt;p&gt;A bounded query is a query which you’re putting a deliberate and explicit upper limit on the number of records that will
 be returned by the query. In a relational database (such as PostgreSQL or SQL Server) you do this using queries
