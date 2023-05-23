@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:47:49 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:47:49 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 18:50:49 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 18:50:49 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -199,9 +199,9 @@ the size of the data being returned.&lt;/p&gt;
 &lt;p&gt;This time DynamoDB returned us &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3&lt;/code&gt; order records and no &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;, indicating it has reached the end of the
 records which match our query.&lt;/p&gt;
 
-&lt;p&gt;In our application we should be collecting the records as we’re iterating over the pages so when we finally reach the
-last page we can return them as one list to our caller who should be non-the-wiser about this happening (apart from the
-duration).&lt;/p&gt;
+&lt;p&gt;In our application we should be collecting the records as we’re iterating over the pages. When we finally reach the
+last page we can return everything as one list to our caller, who should be non-the-wiser about multiple queries
+happening.&lt;/p&gt;
 
 &lt;h4 id=&quot;a-note-about-limits&quot;&gt;A note about limits&lt;/h4&gt;
 

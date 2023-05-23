@@ -226,9 +226,9 @@ the size of the data being returned.</p>
 <p>This time DynamoDB returned us <code class="language-plaintext highlighter-rouge">3</code> order records and no <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code>, indicating it has reached the end of the
 records which match our query.</p>
 
-<p>In our application we should be collecting the records as we’re iterating over the pages so when we finally reach the
-last page we can return them as one list to our caller who should be non-the-wiser about this happening (apart from the
-duration).</p>
+<p>In our application we should be collecting the records as we’re iterating over the pages. When we finally reach the
+last page we can return everything as one list to our caller, who should be non-the-wiser about multiple queries
+happening.</p>
 
 <h4 id="a-note-about-limits">A note about limits</h4>
 
