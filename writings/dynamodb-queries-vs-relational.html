@@ -232,13 +232,12 @@ happening.</p>
 
 <h4 id="a-note-about-limits">A note about limits</h4>
 
-<p>If you want to constrain the total number of records that DynamoDB will return, you might think supplying a <code class="language-plaintext highlighter-rouge">Limit</code> to
-the query would do the trick, but just watch out because <code class="language-plaintext highlighter-rouge">Limit</code> is better thought of as a batch size or page size limit
-than an overall total records limit.</p>
+<p>If you want to constrain the total number of records that DynamoDB will return <code class="language-plaintext highlighter-rouge">Limit</code> is useful, but bear in mind it is
+better thought of as a “batch size” limit than a “total records” limit.</p>
 
 <blockquote>
   <p>This is also true in relational databases, but because we can do much larger result sets in relational databases it’s
-easy to treat <code class="language-plaintext highlighter-rouge">limit</code> as an overall record limit. When you combine a <code class="language-plaintext highlighter-rouge">limit</code> with an <code class="language-plaintext highlighter-rouge">offset</code> in PostgreSQL you’ll get
+easy to treat <code class="language-plaintext highlighter-rouge">limit</code> as a total record limit. When you combine a <code class="language-plaintext highlighter-rouge">limit</code> with an <code class="language-plaintext highlighter-rouge">offset</code> in PostgreSQL you’ll get
 the same behaviour as below.</p>
 </blockquote>
 
