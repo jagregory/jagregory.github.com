@@ -6,9 +6,274 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 17:36:15 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 17:36:15 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 17:40:32 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 17:40:32 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>How DynamoDB queries behave compared to typical relational databases</title>
+        <description>&lt;p&gt;I wanted to write about Async Iterators in Node.JS when querying DynamoDB tables, but I got side-tracked with a bit of
+the underlying reasoning why it’s necessary more than when using relational databases. Here’s a bit of a refresher on
+how relational databases and DynamoDB differ in their querying behaviour.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h1 id=&quot;relational-databases&quot;&gt;Relational databases&lt;/h1&gt;
+
+&lt;p&gt;In relational databases, there’s two kinds of queries to understand: unbounded and bounded.&lt;/p&gt;
+
+&lt;p&gt;An unbounded query is one without an explicit upper limit on the number of records. &lt;em&gt;Unbounded queries are generally a
+bad idea&lt;/em&gt;, but that’s a subject for another day.&lt;/p&gt;
+
+&lt;p&gt;With an unbounded query what you’re doing is making the bounds hidden and determined by the underlying database engine
+or hardware, rather than truly having no bounds. In the case of most relational databases, the behaviour you see with
+unbounded queries is they will run for as long as possible until they either complete and return all the data or fail
+and return an error. For &lt;em&gt;not too large&lt;/em&gt; tables the observable behaviour is a slower query than usual which finally
+returns all the data, but for large tables you run the risk of hitting timeouts (in the database client or server, or
+lower in the stack) or exhausting resources like available memory which would cause a query to fail completely.&lt;/p&gt;
+
+&lt;p&gt;A bounded query is one which you’re putting a deliberate and explicit upper limit on the number of records that will be
+returned by the query. In a relational database (such as PostgreSQL or SQL Server) you do this using queries
+with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;limit&lt;/code&gt; (or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;top&lt;/code&gt; in SQL Server), such as:&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;limit&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;When you do that, you’re asking for the engine to return you at most &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; users, fewer if there aren’t that many in the
+table. When you use these kinds of conditions the database behaves pretty much how you would expect it to: you ask for
+up to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; rows and it will return you up to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; rows. Assuming you’ve chosen a reasonable limit, by being explicit in
+how many records you’re expecting to return, your query duration and resource consumption should be stable regardless of
+how many rows are present in the table.&lt;/p&gt;
+
+&lt;p&gt;To summarise:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Bounded queries - you ask for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; rows, the database gives you (up to) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; rows.&lt;/li&gt;
+  &lt;li&gt;Unbounded queries - you ask for everything, the database will give you everything or it will fail. All or nothing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;dynamodb&quot;&gt;DynamoDB&lt;/h1&gt;
+
+&lt;p&gt;DynamoDB also supports both bounded and unbounded queries, but for both types of queries it also applies quite strict
+additional constraints which effectively make all queries bounded in a much more obvious way than relational databases.
+You can pass a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Limit&lt;/code&gt; to a query, but unlike relational databases DynamoDB may return fewer than that limit &lt;em&gt;even if
+there are more records available&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;From the DynamoDB documentation:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The result set for a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Query&lt;/code&gt; is limited to 1 MB per call.&lt;/p&gt;
+
+  &lt;p&gt;The maximum item size in DynamoDB is 400 KB, which includes both attribute name binary length (UTF-8 length) and
+attribute value lengths (again binary length). The attribute name counts towards the size limit.&lt;/p&gt;
+
+  &lt;p&gt;– &lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ServiceQuotas.html#limits-api&quot;&gt;API Specific Limits&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;(the same is true for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Scan&lt;/code&gt;)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Whilst there’s no hard upper limit on the number of individual records a query or scan can return, they are constrained
+by the total data being returned. When a query exceeds this limit, DynamoDB will respond with all the records it was
+able to process prior to hitting the limit, regardless of how many were asked for.&lt;/p&gt;
+
+&lt;p&gt;So the maximum you can return from a single query is 1 MB and the largest record you can have is 400 KB, which means in
+absolute worst-case scenario if all your records are the largest they’re allowed to be &lt;strong&gt;your query could return just
+two items&lt;/strong&gt;! even if you asked for everything.&lt;/p&gt;
+
+&lt;p&gt;It’s also worth mentioning the impact of filter expressions and projections, or rather their non-impact. You may think
+that by adding a filter expression (to exclude certain items from your queries) or projection expressions (to limit the
+attributes returned) would allow you to avoid the 1 MB limit but that is not the case:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;DynamoDB calculates the number of read capacity units consumed based on item size, not on the amount of data that is
+returned to an application. For this reason, the number of capacity units consumed is the same whether you request all
+of the attributes (the default behavior) or just some of them (using a projection expression). The number is also the
+same whether or not you use a filter expression.&lt;/p&gt;
+
+  &lt;p&gt;– &lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html&quot;&gt;Query operations in DynamoDB&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Without going into too much detail, what this is saying is DynamoDB reads all your data which matches the partition and
+range keys you used with the query, and then just before returning it to you it filters out data any which match your
+filter expression or projection expressions. By the time the filtering is applied, DynamoDB would have already hit the
+capacity limit. The only benefit filtering and projections have is minimising the amount of data which is transferred
+over the wire and serialized/deserialized, it does not affect the amount of data DynamoDB reads.&lt;/p&gt;
+
+&lt;p&gt;In a result set which has more records available but weren’t returned to us because of the above limits, DynamoDB will
+also return a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; which is the key of the last record in the result set before the limit was exceeded. If
+we pass that key as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ExclusiveStartKey&lt;/code&gt; in a subsequent &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Query&lt;/code&gt;, DynamoDB will carry on from where it left off and
+return you the next batch of records until it either runs out of records to return or it hits a limit again. Repeat that
+process until DynamoDB stops returning a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; in the response and you’ve now retrieved all the data for
+your query (or scan).&lt;/p&gt;
+
+&lt;h2 id=&quot;what-does-this-look-like-in-an-application&quot;&gt;What does this look like in an application?&lt;/h2&gt;
+
+&lt;p&gt;Let’s have a look at how this would behave in an application. First, we’re going to query for all the Orders that a
+particular User has made. We make an initial &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Query&lt;/code&gt; with that user’s ID as the partition key, and don’t supply
+a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; because we’re reading the first page of results.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’ve exaggerated the item sizes in these examples to keep them brief. In reality, your items should ideally be
+considerably smaller than what’s in these examples.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, LastEvaluatedKey: null) -&amp;gt;
+
+  items:
+  - order#1  - 100kb
+  - order#2  - 100kb
+  - order#3  - 100kb
+  - order#4  - 100kb
+  - order#5  - 100kb
+  - order#6  - 100kb
+  - order#7  - 100kb
+  - order#8  - 100kb
+  - order#9  - 100kb
+  - order#10 - 100kb
+  lastEvaluatedKey: order#10
+
+  1 MB limit reached.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;DynamoDB returned 10 order records for that query, it also returned a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; indicating there is more data
+available but it didn’t return it because it hit a limit.&lt;/p&gt;
+
+&lt;p&gt;So we issue a followup query using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ExclusiveStartKey&lt;/code&gt;, &lt;strong&gt;exclusive&lt;/strong&gt; being a significant
+word here meaning that it will start returning records &lt;em&gt;after&lt;/em&gt; this start key:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, ExclusiveStartKey: &quot;order#10&quot;) -&amp;gt;
+
+  items:
+  - order#11 - 100kb
+  - order#12 - 400kb
+  - order#13 - 200kb
+  - order#14 - 200kb
+  - order#15 - 100kb
+  lastEvaluatedKey: order#15
+
+  1 MB limit reached.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;DynamoDB this time returned just 5 order records, and again also returned a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;. We can assume from the
+size of the individual items that so few items were returned because of those large &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200kb&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;400kb&lt;/code&gt; items.&lt;/p&gt;
+
+&lt;p&gt;As we received a last evaluated key, we issue another query:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, ExclusiveStartKey: &quot;order#15&quot;) -&amp;gt;
+
+  items:
+  - order#16 - 100kb
+  - order#17 - 100kb
+  - order#18 - 100kb
+  lastEvaluatedKey: null
+
+  No more records.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This time DynamoDB returned us 3 order records and no &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;, indicating it has reached the end of the
+records which match our query.&lt;/p&gt;
+
+&lt;p&gt;In our application what we should be doing as we’re iterating over these pages is collecting the records somewhere so
+when we finally reach the last page we can return them as one batch to our caller, who would be non-the-wiser about this
+happening (apart from the duration).&lt;/p&gt;
+
+&lt;h3 id=&quot;a-note-about-limits&quot;&gt;A note about limits&lt;/h3&gt;
+
+&lt;p&gt;If you want to constrain the total number of records that DynamoDB will return, you might think supplying a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Limit&lt;/code&gt; to
+the query would do the trick. Well, it might, but it may catch you out.&lt;/p&gt;
+
+&lt;p&gt;Using the examples above, if we were to ask DynamoDB to return only &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;5&lt;/code&gt; records, it would work exactly as you’d expect:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, Limit: 5, LastEvaluatedKey: null) -&amp;gt;
+
+  items:
+  - order#1  - 100kb
+  - order#2  - 100kb
+  - order#3  - 100kb
+  - order#4  - 100kb
+  - order#5  - 100kb
+  lastEvaluatedKey: null
+
+  No more records.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;DynamoDB returns &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;5&lt;/code&gt; records, and doesn’t have a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; because there’s no more data to return.&lt;/p&gt;
+
+&lt;p&gt;However, what if we wanted to return &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; items?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, Limit: 30, LastEvaluatedKey: null) -&amp;gt;
+
+  items:
+  - order#1  - 100kb
+  - order#2  - 100kb
+  - order#3  - 100kb
+  - order#4  - 100kb
+  - order#5  - 100kb
+  - order#6  - 100kb
+  - order#7  - 100kb
+  - order#8  - 100kb
+  - order#9  - 100kb
+  - order#10 - 100kb
+  lastEvaluatedKey: order#10
+
+  1 MB limit reached.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As before, DynamoDB makes an attempt to return &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; records but stops at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10&lt;/code&gt; because of the aforementioned limits. So
+again as before we issue a followup query, but what should we pass as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Limit&lt;/code&gt; this time?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, Limit: ???, ExclusiveStartKey: &quot;order#10&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is where you realise the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Limit&lt;/code&gt; is a page size limit or a batch size limit, not a total record limit. You can’t
+just pass &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; to every subsequent query because DynamoDB will just keep attempting to fetch &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt; more records every
+time and go until it runs out of data in the table.&lt;/p&gt;
+
+&lt;p&gt;Instead, you need to keep a rolling tally yourself, and use that to determine an appropriate limit:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Query(pk: &quot;user1&quot;, Limit: 30 - totalFetchedSoFar, ExclusiveStartKey: &quot;order#10&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;a-note-about-filters&quot;&gt;A note about filters&lt;/h2&gt;
+
+&lt;p&gt;Filters add an extra surprise to the mix. Sometimes a DynamoDB query with a filter applied will return an empty result
+set and just an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;!&lt;/p&gt;
+
+&lt;p&gt;If you remember back to the note about filters:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;DynamoDB calculates the number of read capacity units consumed based on item size, not on the amount of data that is
+returned to an application. For this reason, the number of capacity units consumed is the same whether you request all
+of the attributes (the default behavior) or just some of them (using a projection expression). The number is also the
+same whether or not you use a filter expression.&lt;/p&gt;
+
+  &lt;p&gt;– &lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html&quot;&gt;Query operations in DynamoDB&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;DynamoDB is first fetching a page worth of data from your partition and then afterwards applying any filters you’ve
+provided. What this means is DynamoDB will fetch up to 1 MB of records from your table, and then apply your filter
+&lt;em&gt;which may exclude all the records that were just fetched&lt;/em&gt; and return you an empty result set.&lt;/p&gt;
+
+&lt;p&gt;The main takeaway from this is: rely on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; to mean there’s no more data available not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Items.length&lt;/code&gt;
+otherwise you may get false positives and incorrectly assume there are no more records when actually there are more.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Relational databases tend to be predictable. You ask them for an amount of rows and they’ll give you those rows, or
+they’ll die trying. They’ll run out of memory, run out of time, or your users will just move on before they’ve
+completed. But they will give you those rows you asked for.&lt;/p&gt;
+
+&lt;p&gt;DynamoDB on the other hand is much less accomodating. Whether we ask DynamoDB for everything or just ask for just &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;30&lt;/code&gt;
+records, there’s a strong chance DynamoDB will decide to give you fewer records than you expect. You need to factor this
+into how you write your data access code, because it’s much more likely to happen than you expect, and this is why
+handling pagination of queries in DynamoDB is essential.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 23 May 2023 00:00:00 +1000</pubDate>
+        <link>https://www.jagregory.com//writings/dynamodb-queries-vs-relational</link>
+        <guid isPermaLink="true">https://www.jagregory.com//writings/dynamodb-queries-vs-relational</guid>
+        
+        
+      </item>
     
       <item>
         <title>Improving my dev loop with visual regression testing</title>
@@ -955,124 +1220,6 @@ jagregory.sinopia
         <pubDate>Tue, 05 May 2015 00:00:00 +1000</pubDate>
         <link>https://www.jagregory.com//writings/sinopia-private-npm-registry</link>
         <guid isPermaLink="true">https://www.jagregory.com//writings/sinopia-private-npm-registry</guid>
-        
-        
-      </item>
-    
-      <item>
-        <title>My ever evolving development virtualisation situation</title>
-        <description>&lt;p&gt;Over the past few years I’ve moved closer and closer to virtualising my entire development environment. It started with developing for Windows whilst using a Mac, continued when I refused to sully my machine with some godforsaken Oracle product, and has now reached completion with the arrival of a new laptop and an unwillingness to install RVM again.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;The first attempt used &lt;a href=&quot;http://www.vagrantup.com/&quot;&gt;Vagrant&lt;/a&gt; to create a simple Virtual Machine which acted as a surrogate development environment. All my current project’s development dependencies would be installed on the box, and I’d SSH into it to start servers or run tests etc…&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;CentOS-6.4-x86_64-v20130731&apos;&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[java]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[nodejs::install_from_package]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[postgresql]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[rvm::system]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It had its perks such as developing on an OS which would be used for the production servers and the obvious protecting my host machine from project specific software; nevertheless, doing everything on the VM itself quickly became painful. LiveReload? &lt;em&gt;No.&lt;/em&gt; Customised Sublime Text? &lt;em&gt;Nope.&lt;/em&gt; Photoshop? &lt;em&gt;No way.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Vagrant’s &lt;a href=&quot;http://docs.vagrantup.com/v2/synced-folders/basic_usage.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;synched_folder&lt;/code&gt;&lt;/a&gt; feature allows you to share a directory from your host and expose it in the VMs file system, acting much like a regular symlink. By adding this I had my source code on my host system and could use my native editors all while still executing the code within the VM. The best of both worlds.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Another optimisation was using &lt;a href=&quot;http://docs.vagrantup.com/v2/vagrantfile/ssh_settings.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;forward_agent&lt;/code&gt;&lt;/a&gt;, which forwards the VM’s SSH via your host ssh-agent. You can use your ssh keys from your host box within the VM without doing any &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cp ~/.ssh&lt;/code&gt; nastiness. This means I can push and pull with git whether I’m inside or outside my VM. It doesn’t sound all that amazing until you’ve failed at running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git pull&lt;/code&gt; for the tenth time from within your VM.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Other than that, all this is really doing is spinning up a VM and installing all the dependencies. The up side is those dependencies are no longer on my host, so I can just bin the VM when I leave a client.&lt;/p&gt;
-
-&lt;p&gt;I liked the idea of working in a more ever-so-slightly more production like environment too. This stuck with me.&lt;/p&gt;
-
-&lt;h2 id=&quot;it-grows&quot;&gt;It grows&lt;/h2&gt;
-
-&lt;p&gt;What I didn’t like about that setup was I still had my database installed right next to my app. That’s nothing like how it would be running when deployed, so why should it be like that in development?&lt;/p&gt;
-
-&lt;p&gt;And so my Vagrantfile grew.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;no&quot;&gt;Vagrant&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;configure&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;CentOS-6.4-x86_64-v20130731&apos;&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ssh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;forward_agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;synced_folder&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/jagregory/dev/myclient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/vagrant/workspace&quot;&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;app&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&apos;recipe[java]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&apos;recipe[nodejs::install_from_package]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&apos;recipe[rvm::system]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;db&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;s1&quot;&gt;&apos;recipe[postgresql]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And then there were two. I had a VM for my app and a VM for the database. My development environment had acquired some of the qualities of “real” environments through the forced separation of app and database. This had the added benefit of pushing some considerations of service resolution and dealing with different environments into development space-and-time.&lt;/p&gt;
-
-&lt;p&gt;And then it grew again.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;smtp-stub&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[java]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And again.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;admin-app&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[nodejs::install_from_package]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And again.&lt;/p&gt;
-
-&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;reverse-proxy&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;provision&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:chef_solo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;chef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;run_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;s1&quot;&gt;&apos;recipe[nginx]&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;My virtualised development environment was now complete. The Vagrantfile resembles a production-like environment–warts and all–whilst maintaining the ability to develop on it. Separate VMs for each application, configured only with the languages and tools needed for that particular application. Services were localised which had only existed as shared resources, and others split out when they’d been lumped in with the main application for convenience. Other hidden bits of infrastructure started making their way into VMs too, such as the mysterious &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reverse-proxy&lt;/code&gt; box which had never made an appearance in development until now. The Chef cookbooks which were creating these development VMs were also now being used to provision our other “real” environments, and vice-versa.&lt;/p&gt;
-
-&lt;p&gt;This is by no means a simple setup, it has a lot of moving parts, and its more complex to maintain; but guess what? That’s because the app has a lot of moving parts and is quite complex!&lt;/p&gt;
-
-&lt;p&gt;It’s nice to not live in isolated developer-la-la-land for a change. I thoroughly encourage you to experiment with this setup, especially if you’re developing on a OSX or Windows machine. As a developer setup it’s closer to a realistic deployment environment than I’ve had before. I can encounter and fix infrastructure related issues way before changes hit an end-to-end build, and it forces you to understand how your application will be deployed and run. Dev meet Ops, Ops meet Dev.&lt;/p&gt;
-
-&lt;p&gt;It’s also quite cathartic to delete a VM when I’m done with a project. Not seeing the Java Updater pop-up ever again isn’t too bad either.&lt;/p&gt;
-</description>
-        <pubDate>Wed, 12 Feb 2014 23:15:00 +1100</pubDate>
-        <link>https://www.jagregory.com//writings/virtualised-development-environments</link>
-        <guid isPermaLink="true">https://www.jagregory.com//writings/virtualised-development-environments</guid>
         
         
       </item>

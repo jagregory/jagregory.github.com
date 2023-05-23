@@ -41,12 +41,34 @@
             <a class="newer-posts" href="/page14/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 15 of 21 </span>
+    <span class="page-number"> Page 15 of 22 </span>
      
         <a class="older-posts" href="/page16/" title="Next Page">Older Posts &raquo;</a>
      
 </nav>
     </div>
+
+    
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="/writings/getfilename-nant-task">getfilename NAnt task</a></h2>
+        </header>
+        <section class="post-excerpt">
+            <p>As part of my current quest to fully automate our build, I found my self needing the ability to copy a database backup from our remote server. The backup is in a folder along with several other backups, with a filename based on the date. I didn’t fancy trying to programmatically guess the filename, so I wrote an NAnt task to grab the newest file in a directory. Thanks to <a href="http://blogs.geekdojo.net/rcase">Richard Case</a> for his overview of how to <a href="http://blogs.geekdojo.net/rcase/archive/2005/01/06/5971.aspx">create a custom NAnt task</a>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">getfilename</code> task simply gets the filename of a file in a directory, then pushes the name into the specified property. The filename to find can be based on the creation date, last modified date etc…</p>
+
+ <a class="read-more" href="/writings/getfilename-nant-task">Read more &raquo;</a>
+        </section>
+        <footer class="post-meta">
+            
+            
+            <time class="post-date" datetime="2008-03-12">
+                12 Mar 2008
+            </time>
+        </footer>
+    </article>
 
     
 
@@ -154,59 +176,13 @@
 
     
 
-    <article class="post">
-        <header class="post-header">
-            <h2 class="post-title"><a href="/writings/nhibernate-and-the-sqltypeexception">NHibernate and the SqlTypeException</a></h2>
-        </header>
-        <section class="post-excerpt">
-            <p><a href="http://www.nhibernate.org">NHibernate</a> is a wonderful piece of technology, I love it probably more than is reasonable for code. It does however, occasionally scare you with some seemingly odd behavior. I say seemingly, because every time I’ve had trouble it’s actually ended up being my own fault. <em>This is one of those times.</em></p>
-
-<p>Picture a simple page, with a <a href="/writings/delegrid/">DeleGrid</a> control, being bound using NHiberate. Baring in mind how the DeleGrid works, two queries were being executed, one to return the first page of data and another to get the total row-count for the grid. <em>These queries were identical apart from the paging in one, and the projection in the other.</em></p>
-
-<p>Upon execution of the second query, NHibernate was throwing a <code class="language-plaintext highlighter-rouge">SqlTypeException</code> for a <code class="language-plaintext highlighter-rouge">SqlDateTime</code> overflow. <code class="language-plaintext highlighter-rouge">SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM</code>. This was pretty bizarre. Why on earth would the first query succeed (and bring back records, fully populated), but the same query again would die.</p>
-
-<p>A good place to start for NHibernate debugging is always the logs, so I delved in. I discovered NHibernate was attempting to execute an update statement just before it tried the second query. It just kept getting stranger, why would a straightforward query cause an update?</p>
-
-<p>I thought i’d investigate why the update statement was failing first, then I’d tackle the problem of why it was even updating at all. Looking at the query I identified the column that was causing the exception, it was (as expected) a <code class="language-plaintext highlighter-rouge">DateTime</code> column that was trying to be set to <code class="language-plaintext highlighter-rouge">DateTime.MinValue</code>. This exception is thrown because .Net and SQL Server have different ideas over what the minimum value for a <code class="language-plaintext highlighter-rouge">DateTime</code> should be.</p>
-
-<p>Now, why would this column be being set at all? Well, it ends up that the column in the database was nullable, but the property in the object wasn’t. So because <code class="language-plaintext highlighter-rouge">DateTime</code> is a value type and cannot be set to <code class="language-plaintext highlighter-rouge">null</code>, NHibernate was populating it with the closest value to <code class="language-plaintext highlighter-rouge">null</code> as it could manage.</p>
-
-<p>That was the key, as soon as I had that realisation, it was obvious what the problem was.</p>
-
-<p>NHibernate knew that the database had a nullable column, but it had to manage with the non-nullable field on the object. When it came to run the second query, it noticed that the property wasn’t null as the mapping file said it should be, so it determined the value must have changed. It then attempted to persist those changes before executing the query!</p>
-
-<h2 id="to-break-it-down">To break it down</h2>
-
-<ol>
-  <li>Nullable column pulled into a non-nullable field forces NHibernate to create the smallest value it can.</li>
-  <li>NHibernate then checks for any changes, expecting a <code class="language-plaintext highlighter-rouge">null</code> on that field but finding a value.</li>
-  <li>Object now considered dirty because value has allegedly changed.</li>
-  <li>NHibernate performs an update before it pulls back the data agian.</li>
-</ol>
-
-<p>So the fix was simply to make the <code class="language-plaintext highlighter-rouge">DateTime</code> in the object a <code class="language-plaintext highlighter-rouge">DateTime?</code>, a nullable <code class="language-plaintext highlighter-rouge">DateTime</code>. That got rid of the false update, and fixed my queries. Simple when you know what the problem is.</p>
-
-<p><strong>So the moral of the story is:</strong> Make sure everything is in sync - schema, mappings and POCOs.</p>
- <a class="read-more" href="/writings/nhibernate-and-the-sqltypeexception">Read more &raquo;</a>
-        </section>
-        <footer class="post-meta">
-            
-            
-            <time class="post-date" datetime="2007-12-18">
-                18 Dec 2007
-            </time>
-        </footer>
-    </article>
-
-    
-
     <nav class="pagination" role="pagination">
     
         
             <a class="newer-posts" href="/page14/" title="Previous Page">&laquo; Newer Posts</a>
       
     
-    <span class="page-number"> Page 15 of 21 </span>
+    <span class="page-number"> Page 15 of 22 </span>
      
         <a class="older-posts" href="/page16/" title="Next Page">Older Posts &raquo;</a>
      
