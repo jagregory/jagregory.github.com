@@ -308,9 +308,9 @@ data as it can until it hits the 1 MB limit, then it stops. Then a second phase 
 projections (reduce), and then returns the results to the caller.</p>
 </blockquote>
 
-<p>If DynamoDB fetches the maximum 1 MB of data, and then runs a filter, if that filter excludes every record that was just
-fetched, there’ll be nothing left to return and DynamoDB will just return an empty result set with a <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code>
-pointing to the last item it filtered out.</p>
+<p>If DynamoDB fetches the maximum 1 MB of data and then applies a filter, if that filter excludes every record that was
+just fetched, there’ll be nothing left to return. In this case, DynamoDB will return an empty result set with
+a <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code> pointing to the last item it filtered out.</p>
 
 <p>The main takeaway from this is: rely on <code class="language-plaintext highlighter-rouge">LastEvaluatedKey</code> to tell if there’s no more data available not <code class="language-plaintext highlighter-rouge">Items.length</code>
 otherwise you may incorrectly assume you’ve fetched all the data when you haven’t.</p>

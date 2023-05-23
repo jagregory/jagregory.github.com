@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 18:58:32 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 18:58:32 +1000</lastBuildDate>
+    <pubDate>Tue, 23 May 2023 19:00:49 +1000</pubDate>
+    <lastBuildDate>Tue, 23 May 2023 19:00:49 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -281,9 +281,9 @@ data as it can until it hits the 1 MB limit, then it stops. Then a second phase 
 projections (reduce), and then returns the results to the caller.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;If DynamoDB fetches the maximum 1 MB of data, and then runs a filter, if that filter excludes every record that was just
-fetched, there’ll be nothing left to return and DynamoDB will just return an empty result set with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt;
-pointing to the last item it filtered out.&lt;/p&gt;
+&lt;p&gt;If DynamoDB fetches the maximum 1 MB of data and then applies a filter, if that filter excludes every record that was
+just fetched, there’ll be nothing left to return. In this case, DynamoDB will return an empty result set with
+a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; pointing to the last item it filtered out.&lt;/p&gt;
 
 &lt;p&gt;The main takeaway from this is: rely on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LastEvaluatedKey&lt;/code&gt; to tell if there’s no more data available not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Items.length&lt;/code&gt;
 otherwise you may incorrectly assume you’ve fetched all the data when you haven’t.&lt;/p&gt;
