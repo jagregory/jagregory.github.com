@@ -103,7 +103,7 @@ phase DynamoDB reaches out to any nodes which may contain data for your query (m
 until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or projections
 (reduce), and then returns the results to the caller.
 
-By the time any DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
+By the time DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
 it will scan. This also means the only benefit applying filtering and projections on the query (instead of in your own
 code) is to minimise the amount of data which is transferred and serialized/deserialized.
 
