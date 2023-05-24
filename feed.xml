@@ -6,8 +6,8 @@
 </description>
     <link>https://www.jagregory.com//</link>
     <atom:link href="https://www.jagregory.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 23 May 2023 19:00:49 +1000</pubDate>
-    <lastBuildDate>Tue, 23 May 2023 19:00:49 +1000</lastBuildDate>
+    <pubDate>Wed, 24 May 2023 12:21:36 +1000</pubDate>
+    <lastBuildDate>Wed, 24 May 2023 12:21:36 +1000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -116,7 +116,7 @@ phase DynamoDB reaches out to any nodes which may contain data for your query (m
 until it hits the 1 MB limit, then it stops. Then a second phase starts where it applies any filters or projections
 (reduce), and then returns the results to the caller.&lt;/p&gt;
 
-&lt;p&gt;By the time any DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
+&lt;p&gt;By the time DynamoDB applies any filtering to your queries it has already reached the limits of the amount of data
 it will scan. This also means the only benefit applying filtering and projections on the query (instead of in your own
 code) is to minimise the amount of data which is transferred and serialized/deserialized.&lt;/p&gt;
 
